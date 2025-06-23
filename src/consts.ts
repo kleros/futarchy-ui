@@ -1,4 +1,5 @@
 import { type Abi } from "viem";
+import { gnosis } from "viem/chains";
 
 import { CowSwapAbi } from "@/abi/CowSwap";
 import { RouterAbi } from "@/abi/Router";
@@ -95,3 +96,5 @@ export const projects: Array<IProject> = [
 ];
 
 export const cowSwapAppCode = "futarchy-test";
+
+export const DEFAULT_CHAIN = gnosis;
