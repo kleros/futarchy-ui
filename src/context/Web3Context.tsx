@@ -1,15 +1,15 @@
 "use client";
 
 import React, { type ReactNode } from "react";
+
+import { gnosis } from "@reown/appkit/networks";
+import { createAppKit } from "@reown/appkit/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createAppKit } from "@reown/appkit/react";
-import { gnosis } from "@reown/appkit/networks";
-
-import { reownProjectId } from "@/consts";
 import { wagmiAdapter } from "@/wagmiConfig";
 
+import { reownProjectId } from "@/consts";
 const queryClient = new QueryClient();
 
 if (!reownProjectId) {

@@ -6,11 +6,13 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+
 import { TradingSdk, OrderBookApi, SubgraphApi } from "@cowprotocol/cow-sdk";
 import { gnosis } from "@reown/appkit/networks";
 
-import { cowSwapAppCode } from "@/consts";
 import { useEthersSigner } from "@/hooks/useEthersSigner";
+
+import { cowSwapAppCode } from "@/consts";
 
 interface ICowContext {
   sdk: TradingSdk;

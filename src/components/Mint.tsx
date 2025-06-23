@@ -1,11 +1,4 @@
 import React, { useState } from "react";
-import { useToggle } from "react-use";
-import { useAccount, useBalance, useConfig } from "wagmi";
-import { waitForTransactionReceipt } from "@wagmi/core";
-import { parseUnits, formatUnits } from "viem";
-import clsx from "clsx";
-
-import BigNumber from "bignumber.js";
 
 import {
   Button,
@@ -13,15 +6,23 @@ import {
   BigNumberField,
   Switch,
 } from "@kleros/ui-components-library";
+import { waitForTransactionReceipt } from "@wagmi/core";
+import BigNumber from "bignumber.js";
+import clsx from "clsx";
+import { useToggle } from "react-use";
+import { parseUnits, formatUnits } from "viem";
+import { useAccount, useBalance, useConfig } from "wagmi";
 
-import ProjectAmount from "@/components/ProjectAmount";
-import { projects } from "@/consts";
 import {
   useSimulateGnosisRouterSplitFromBase,
   useSimulateSDaiAdapterDepositXdai,
   useWriteGnosisRouterSplitFromBase,
   useReadSDaiBalanceOf,
 } from "@/generated";
+
+import ProjectAmount from "@/components/ProjectAmount";
+
+import { projects } from "@/consts";
 
 const Mint: React.FC = () => {
   const { address } = useAccount();

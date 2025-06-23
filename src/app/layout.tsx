@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 
+import localFont from "next/font/local";
 import { headers } from "next/headers";
 
-import Web3Context from "@/context/Web3Context";
 import CowContextProvider from "@/context/CowContext";
+import Web3Context from "@/context/Web3Context";
+
 import Header from "@/components/Header";
 
 import "@kleros/ui-components-library/style.css";

@@ -1,8 +1,6 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { useSize } from "react-use";
-import clsx from "clsx";
-import { OrderKind } from "@cowprotocol/cow-sdk";
 
+import { OrderKind } from "@cowprotocol/cow-sdk";
 import {
   Card,
   Slider,
@@ -10,6 +8,8 @@ import {
   NumberField,
   Button,
 } from "@kleros/ui-components-library";
+import clsx from "clsx";
+import { useSize } from "react-use";
 
 import {
   sDaiAddress,
@@ -17,10 +17,10 @@ import {
   useWriteSDaiIncreaseAllowance,
 } from "@/generated";
 
-import { getContractInfo } from "@/consts";
-
 import { useCowSdk } from "@/context/CowContext";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
+
+import { getContractInfo } from "@/consts";
 
 interface IProjectFunding {
   name: string;

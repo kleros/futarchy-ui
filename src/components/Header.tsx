@@ -2,9 +2,9 @@
 
 import React from "react";
 
-import RealTLogo from "@/assets/svg/RealT.svg";
-
 import ConnectButton from "@/components/ConnectButton";
+
+import RealTLogo from "@/assets/svg/RealT.svg";
 
 const Header = () => {
   return (

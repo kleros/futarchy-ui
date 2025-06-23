@@ -1,5 +1,6 @@
-import { providers } from "ethers";
 import { useMemo } from "react";
+
+import { providers } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 import { Config, useConnectorClient } from "wagmi";
 
