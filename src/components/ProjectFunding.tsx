@@ -14,8 +14,8 @@ import { useSize, useToggle } from "react-use";
 import { useConfig, useAccount } from "wagmi";
 
 import {
-  sDaiAddress,
-  useReadSDaiAllowance,
+  useReadErc20Allowance,
+  useReadErc20BalanceOf,
   useWriteSDaiApprove,
 } from "@/generated";
 
@@ -29,8 +29,11 @@ interface IProjectFunding {
   color: string;
   upToken: string;
   downToken: string;
+  underlyingToken: `0x${number}`;
   minValue: number;
   maxValue: number;
+  precision: number;
+  details: string;
 }
 
 const ProjectFunding: React.FC<IProjectFunding> = ({
@@ -38,27 +41,42 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   color,
   upToken,
   downToken,
+  underlyingToken,
   minValue,
   maxValue,
+  precision,
+  details,
 }) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
   const [prediction, setPrediction] = useState(0);
   const [userInteracting, toggleUserInteracting] = useToggle(false);
-  const { sdk, orderBook } = useCowSdk();
+  const { sdk } = useCowSdk();
 
   const { address: cowSwapAddress } = getContractInfo("cowSwap");
 
-  const { data: allowance, refetch: refetchAllowance } = useReadSDaiAllowance({
+  const { data: allowance, refetch: refetchAllowance } = useReadErc20Allowance({
+    address: underlyingToken,
     args: [address ?? "0x", cowSwapAddress],
     query: {
       enabled: typeof address !== "undefined",
     },
   });
 
+  const { data: underlyingBalance } = useReadErc20BalanceOf({
+    address: underlyingToken,
+    args: [address ?? "0x"],
+    query: {
+      enabled: typeof address !== "undefined",
+    },
+  });
+
   const isAllowance = useMemo(
-    () => typeof allowance !== "undefined" && allowance < 100000000000000000n,
-    [allowance],
+    () =>
+      typeof allowance !== "undefined" &&
+      typeof underlyingBalance !== "undefined" &&
+      allowance < underlyingBalance,
+    [allowance, underlyingBalance],
   );
 
   const { data: marketPrice } = useMarketQuote(upToken);
@@ -66,50 +84,74 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   const marketEstimate = useMemo(
     () =>
       typeof marketPrice !== "undefined"
-        ? +(marketPrice * maxValue).toFixed(1)
+        ? +(marketPrice * maxValue * precision).toFixed(1)
         : 0,
-    [marketPrice, maxValue],
+    [marketPrice, maxValue, precision],
   );
 
   const { writeContractAsync: increaseAllowance } = useWriteSDaiApprove();
 
   const handleAllowance = useCallback(async () => {
-    const hash = await increaseAllowance({
-      args: [cowSwapAddress, BigInt("100000000000000000")],
-    });
-    await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
-    refetchAllowance();
-  }, [wagmiConfig, cowSwapAddress, increaseAllowance, refetchAllowance]);
-
-  const handlePredict = useCallback(
-    async (buyToken: string, buyAmount: string) => {
-      const orderId = await sdk.postLimitOrder({
-        kind: OrderKind.SELL,
-        sellToken: sDaiAddress,
-        sellTokenDecimals: 18,
-        sellAmount: "1000000000000000",
-        buyToken,
-        buyTokenDecimals: 18,
-        buyAmount,
-        partiallyFillable: true,
+    if (typeof underlyingBalance !== "undefined") {
+      const hash = await increaseAllowance({
+        args: [cowSwapAddress, underlyingBalance],
       });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const orderData = await orderBook.getOrder(orderId);
-    },
-    [sdk, orderBook],
-  );
+      await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
+      refetchAllowance();
+    }
+  }, [
+    wagmiConfig,
+    cowSwapAddress,
+    increaseAllowance,
+    refetchAllowance,
+    underlyingBalance,
+  ]);
+
+  const handlePredict = useCallback(async () => {
+    if (typeof underlyingBalance !== "undefined") {
+      const isUp = prediction > marketEstimate;
+      const buyAmount =
+        (BigInt((prediction / maxValue) * precision * 1000) *
+          underlyingBalance) /
+        BigInt(1000);
+      const buyToken = isUp ? upToken : downToken;
+      if (typeof underlyingBalance !== "undefined") {
+        await sdk.postLimitOrder({
+          kind: OrderKind.SELL,
+          sellToken: underlyingToken,
+          sellTokenDecimals: 18,
+          sellAmount: underlyingBalance.toString(),
+          buyToken,
+          buyTokenDecimals: 18,
+          buyAmount: buyAmount.toString(),
+          partiallyFillable: true,
+        });
+      }
+    }
+  }, [
+    sdk,
+    underlyingBalance,
+    underlyingToken,
+    downToken,
+    marketEstimate,
+    maxValue,
+    precision,
+    prediction,
+    upToken,
+  ]);
 
   const [sized] = useSize(({ width }) => (
     <div className="relative w-full">
       <Slider
         className="w-full"
-        {...{ minValue, maxValue }}
+        maxValue={maxValue * precision}
+        minValue={minValue * precision}
         value={prediction}
         leftLabel=""
         rightLabel=""
         aria-label="Slider"
         callback={setPrediction}
-        formatter={(value) => `${(value / 10).toFixed(1)}%`}
+        formatter={(value) => `${(value / precision).toFixed(1)}%`}
       />
       <div
         className="absolute bottom-0"
@@ -129,7 +171,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             "bg-klerosUIComponentsPrimaryBlue rounded-sm px-1 text-center"
           }
         >
-          {`${(marketEstimate / 10).toFixed(2)}%`}
+          {`${(marketEstimate / precision).toFixed(2)}%`}
         </div>
         <span className="mx-auto block h-9 w-1 rounded-full bg-black" />
       </div>
@@ -156,11 +198,16 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             <NumberField
               aria-label="Prediction"
               className="w-auto"
-              value={prediction / 10}
-              onChange={(e) => setPrediction(e * 10)}
+              value={prediction / precision}
+              onChange={(e) => setPrediction(e * precision)}
             />
             <Button
-              isDisabled={typeof address === "undefined" || userInteracting}
+              isDisabled={
+                typeof address === "undefined" ||
+                typeof underlyingBalance === "undefined" ||
+                typeof allowance === "undefined" ||
+                userInteracting
+              }
               isLoading={userInteracting}
               text={isAllowance ? "Allow" : "Predict"}
               aria-label="Predict Button"
@@ -170,15 +217,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
                   if (isAllowance) {
                     await handleAllowance();
                   } else {
-                    const isUp = prediction > marketEstimate;
-                    const sellAmount = BigInt(1000000000000000);
-                    const amount =
-                      (BigInt((prediction / 40) * 1000) * sellAmount) /
-                      BigInt(1000);
-                    await handlePredict(
-                      isUp ? upToken : downToken,
-                      amount.toString(),
-                    );
+                    await handlePredict();
                   }
                 } finally {
                   toggleUserInteracting(false);
@@ -200,7 +239,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
       <Accordion
         aria-label="accordion"
         className="w-full"
-        items={[{ title: "Details", body: <p>Hello</p> }]}
+        items={[{ title: "Details", body: <p>{details}</p> }]}
       />
     </Card>
   );
