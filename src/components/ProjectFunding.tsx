@@ -8,13 +8,15 @@ import {
   NumberField,
   Button,
 } from "@kleros/ui-components-library";
+import { waitForTransactionReceipt } from "@wagmi/core";
 import clsx from "clsx";
-import { useSize } from "react-use";
+import { useSize, useToggle } from "react-use";
+import { useConfig, useAccount } from "wagmi";
 
 import {
   sDaiAddress,
   useReadSDaiAllowance,
-  useWriteSDaiIncreaseAllowance,
+  useWriteSDaiApprove,
 } from "@/generated";
 
 import { useCowSdk } from "@/context/CowContext";
@@ -39,14 +41,25 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   minValue,
   maxValue,
 }) => {
+  const wagmiConfig = useConfig();
+  const { address } = useAccount();
   const [prediction, setPrediction] = useState(0);
+  const [userInteracting, toggleUserInteracting] = useToggle(false);
   const { sdk, orderBook } = useCowSdk();
 
   const { address: cowSwapAddress } = getContractInfo("cowSwap");
 
-  const { data: allowance } = useReadSDaiAllowance({
-    args: ["0xC68F522a48Ee16afa75337602538cF9f90c71Bb4", cowSwapAddress],
+  const { data: allowance, refetch: refetchAllowance } = useReadSDaiAllowance({
+    args: [address ?? "0x", cowSwapAddress],
+    query: {
+      enabled: typeof address !== "undefined",
+    },
   });
+
+  const isAllowance = useMemo(
+    () => typeof allowance !== "undefined" && allowance < 100000000000000000n,
+    [allowance],
+  );
 
   const { data: marketPrice } = useMarketQuote(upToken);
 
@@ -58,34 +71,32 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     [marketPrice, maxValue],
   );
 
-  const { writeContractAsync: increaseAllowance } =
-    useWriteSDaiIncreaseAllowance();
+  const { writeContractAsync: increaseAllowance } = useWriteSDaiApprove();
+
+  const handleAllowance = useCallback(async () => {
+    const hash = await increaseAllowance({
+      args: [cowSwapAddress, BigInt("100000000000000000")],
+    });
+    await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
+    refetchAllowance();
+  }, [wagmiConfig, cowSwapAddress, increaseAllowance, refetchAllowance]);
 
   const handlePredict = useCallback(
     async (buyToken: string, buyAmount: string) => {
-      if (
-        typeof allowance !== "undefined" &&
-        allowance < BigInt(1000000000000000)
-      ) {
-        await increaseAllowance({
-          args: [cowSwapAddress, BigInt(1000000000000000)],
-        });
-      } else {
-        const orderId = await sdk.postLimitOrder({
-          kind: OrderKind.SELL,
-          sellToken: sDaiAddress,
-          sellTokenDecimals: 18,
-          sellAmount: "1000000000000000",
-          buyToken,
-          buyTokenDecimals: 18,
-          buyAmount,
-          partiallyFillable: true,
-        });
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const orderData = await orderBook.getOrder(orderId);
-      }
+      const orderId = await sdk.postLimitOrder({
+        kind: OrderKind.SELL,
+        sellToken: sDaiAddress,
+        sellTokenDecimals: 18,
+        sellAmount: "1000000000000000",
+        buyToken,
+        buyTokenDecimals: 18,
+        buyAmount,
+        partiallyFillable: true,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const orderData = await orderBook.getOrder(orderId);
     },
-    [sdk, orderBook, allowance, cowSwapAddress, increaseAllowance],
+    [sdk, orderBook],
   );
 
   const [sized] = useSize(({ width }) => (
@@ -149,17 +160,29 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
               onChange={(e) => setPrediction(e * 10)}
             />
             <Button
-              text={
-                allowance && allowance < 1000000000000000n ? "Allow" : "Predict"
-              }
-              aria-label="Predict"
-              onPress={() => {
-                const isUp = prediction > marketEstimate;
-                const sellAmount = BigInt(1000000000000000);
-                const amount =
-                  (BigInt((prediction / 40) * 1000) * sellAmount) /
-                  BigInt(1000);
-                handlePredict(isUp ? upToken : downToken, amount.toString());
+              isDisabled={typeof address === "undefined" || userInteracting}
+              isLoading={userInteracting}
+              text={isAllowance ? "Allow" : "Predict"}
+              aria-label="Predict Button"
+              onPress={async () => {
+                toggleUserInteracting(true);
+                try {
+                  if (isAllowance) {
+                    await handleAllowance();
+                  } else {
+                    const isUp = prediction > marketEstimate;
+                    const sellAmount = BigInt(1000000000000000);
+                    const amount =
+                      (BigInt((prediction / 40) * 1000) * sellAmount) /
+                      BigInt(1000);
+                    await handlePredict(
+                      isUp ? upToken : downToken,
+                      amount.toString(),
+                    );
+                  }
+                } finally {
+                  toggleUserInteracting(false);
+                }
               }}
             />
           </div>
