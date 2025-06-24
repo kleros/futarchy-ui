@@ -1,11 +1,24 @@
 @import "tailwindcss";
-@import "../../node_modules/@kleros/ui-components-library/dist/theme/theme.css";
+@import "../../node_modules/@kleros/ui-components-library/dist/assets/theme.css";
+@source "../../node_modules/@kleros/ui-components-library";
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-light-mode-red-2: #f75c7b;
   --color-light-mode-green-2: #3fec65;
+  --color-footer-background: #1d6aaa;
+
+  @keyframes slideInLeft {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  --animate-slide-in-left: slideInLeft 0.5s ease-out;
 }
 
 /*

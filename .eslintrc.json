@@ -5,5 +5,74 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
-  "ignorePatterns": ["**/**/generated.ts"]
+  "ignorePatterns": ["**/**/generated.ts"],
+  "rules": {
+    "max-len": [
+      "warn",
+      {
+        "code": 120
+      }
+    ],
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "next**",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "{@/hooks{,/**},@/context{,/**},@generated{,/**}}",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/components{,/**}",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/assets{,/**}",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/utils{,/**}",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "{@/consts{,/**},@/abi/**}",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "./*",
+            "group": "sibling",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
+  }
 }

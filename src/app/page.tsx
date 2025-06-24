@@ -4,11 +4,13 @@ import React from "react";
 
 import { Card } from "@kleros/ui-components-library";
 
-import { projects } from "@/consts";
+import { useChartData } from "@/hooks/useChartData";
+
+import Chart from "@/components/Chart";
 import Mint from "@/components/Mint";
 import ProjectFunding from "@/components/ProjectFunding";
-import Chart from "@/components/Chart";
-import { useChartData } from "@/hooks/useChartData";
+
+import { projects } from "@/consts";
 
 export default function Home() {
   const { data: chartData } = useChartData(

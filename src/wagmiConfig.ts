@@ -1,6 +1,6 @@
-import { cookieStorage, createStorage, fallback, http } from "wagmi";
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { gnosis, mainnet } from "@reown/appkit/networks";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { cookieStorage, createStorage, fallback, http } from "wagmi";
 
 import { reownProjectId } from "@/consts";
 

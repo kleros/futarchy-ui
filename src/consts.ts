@@ -1,9 +1,10 @@
 import { type Abi } from "viem";
+import { gnosis } from "viem/chains";
 
+import { CowSwapAbi } from "@/abi/CowSwap";
 import { RouterAbi } from "@/abi/Router";
-import { sDAIAbi } from "./abi/sDAI";
+import { sDAIAbi } from "@/abi/sDAI";
 import { sDAIAdapterAbi } from "@/abi/sDAIAdapter";
-import { CowSwapAbi } from "./abi/CowSwap";
 
 export const reownProjectId = process.env.NEXT_PUBLIC_REOWN_PROJECTID;
 
@@ -95,3 +96,5 @@ export const projects: Array<IProject> = [
 ];
 
 export const cowSwapAppCode = "futarchy-test";
+
+export const DEFAULT_CHAIN = gnosis;

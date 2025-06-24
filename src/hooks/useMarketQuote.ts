@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { useCowSdk } from "@/context/CowContext";
 import { OrderKind } from "@cowprotocol/cow-sdk";
+import { useQuery } from "@tanstack/react-query";
+
 import { sDaiAddress } from "@/generated";
+
+import { useCowSdk } from "@/context/CowContext";
 
 export const useMarketQuote = (token: string) => {
   const { sdk } = useCowSdk();

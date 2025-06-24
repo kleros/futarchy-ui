@@ -1,8 +1,8 @@
 import React from "react";
-import { useAccount } from "wagmi";
 
-import { useAppKit } from "@reown/appkit/react";
 import { Button } from "@kleros/ui-components-library";
+import { useAppKit } from "@reown/appkit/react";
+import { useAccount } from "wagmi";
 
 import { shortenAddress } from "@/utils";
 
