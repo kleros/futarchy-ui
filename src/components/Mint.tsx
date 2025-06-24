@@ -20,9 +20,9 @@ import {
   useReadSDaiBalanceOf,
 } from "@/generated";
 
-import ProjectAmount from "@/components/ProjectAmount";
+import { projects } from "@/projects";
 
-import { projects } from "@/consts";
+import ProjectAmount from "@/components/ProjectAmount";
 
 const Mint: React.FC = () => {
   const { address } = useAccount();
