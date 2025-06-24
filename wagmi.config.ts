@@ -1,7 +1,7 @@
 import { defineConfig } from "@wagmi/cli";
 import { react } from "@wagmi/cli/plugins";
+import { erc20Abi } from "viem";
 
-import { ERC20Abi } from "@/abi/ERC20";
 import { getContractInfo } from "@/consts";
 
 const gnosisRouter = getContractInfo("gnosisRouter");
@@ -14,7 +14,7 @@ export default defineConfig({
     { ...gnosisRouter },
     { ...sDAI },
     { ...sDAIAdapter },
-    { name: "ERC20", abi: ERC20Abi },
+    { name: "ERC20", abi: erc20Abi },
   ],
   plugins: [react()],
 });
