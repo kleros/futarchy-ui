@@ -22,25 +22,36 @@ interface IDataPoint {
 
 type IReturn = Array<Array<IDataPoint>>;
 
-export type IChartData = Array<{ timestamp: number; value: number }>;
+export type IChartData = Record<
+  string,
+  { maxValue: number; data: Array<{ timestamp: number; value: number }> }
+>;
 
-export const useChartData = (marketId: string, maxValue: number) =>
+export const useChartData = (
+  markets: Array<{ marketId: string; maxValue: number; marketName: string }>,
+) =>
   useQuery({
-    queryKey: [`chart-${marketId}`],
+    queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append("marketId", marketId);
-      params.append("chainId", "100");
+      return await Promise.all(
+        markets.map(async ({ marketId, maxValue, marketName }) => {
+          const params = new URLSearchParams();
+          params.append("marketId", marketId);
+          params.append("chainId", "100");
 
-      const rawData: IReturn = await fetch(
-        `/api/market-chart?${params.toString()}`,
-      ).then((res) => res.json());
+          const rawData: IReturn = await fetch(
+            `/api/market-chart?${params.toString()}`,
+          ).then((res) => res.json());
 
-      const processed: IChartData = rawData[1].map((dataPoint) => ({
-        timestamp: dataPoint.periodStartUnix,
-        value: parseFloat(dataPoint.token1Price.slice(0, 9)) * maxValue,
-      }));
+          const processed: IChartData[""]["data"] = rawData[1].map(
+            (dataPoint) => ({
+              timestamp: dataPoint.periodStartUnix,
+              value: parseFloat(dataPoint.token1Price.slice(0, 9)) * maxValue,
+            }),
+          );
 
-      return processed;
+          return { [marketName]: { maxValue, data: processed } };
+        }),
+      );
     },
   });

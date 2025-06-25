@@ -6,23 +6,32 @@ import { Card } from "@kleros/ui-components-library";
 
 import { useChartData } from "@/hooks/useChartData";
 
-import Chart from "@/components/Chart";
 import Mint from "@/components/Mint";
 import ProjectFunding from "@/components/ProjectFunding";
 
 import { projects } from "@/consts";
 
+import Chart from "./components/Chart";
+import Header from "./components/Header";
+
 export default function Home() {
-  const { data: chartData } = useChartData(
-    "0xa77dd0d6988f0f79b056d3196fa67f2488370909",
-    4,
-  );
+  const { data: chartData } = useChartData([
+    {
+      marketId: "0xa77dd0d6988f0f79b056d3196fa67f2488370909",
+      maxValue: 4,
+      marketName: "Property A",
+    },
+    {
+      marketId: "0x19AEAa9495d865FdbB7699C595F6ECc4575a4dcd",
+      maxValue: 5,
+      marketName: "Property B",
+    },
+  ]);
+
   return (
-    <div className="w-full py-12">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="text-klerosUIComponentsPrimaryText text-2xl font-bold">
-          Session 1 - Property Prices
-        </h1>
+    <div className="w-full px-4 py-12 md:px-8 lg:px-32">
+      <div className="mx-auto max-w-294">
+        <Header />
         <div className="h-96">
           {typeof chartData !== "undefined" ? <Chart data={chartData} /> : null}
         </div>

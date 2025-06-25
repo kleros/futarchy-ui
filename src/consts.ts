@@ -71,7 +71,7 @@ export const projects: Array<IProject> = [
     downToken: "0x8932198b384F8cb090bBE825cF0a1061f436F053",
     minValue: 0,
     maxValue: 40,
-    marketId: "0xa77dd0d6988f0f79b056d3196fa67f2488370909",
+    marketId: "0x19AEAa9495d865FdbB7699C595F6ECc4575a4dcd",
   },
   {
     name: "Project 3",
