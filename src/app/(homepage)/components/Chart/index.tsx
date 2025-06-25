@@ -105,8 +105,8 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   return (
     <div className="mt-6 flex size-full flex-col">
       <Legend {...{ marketsData }} />
-      <h2 className="text-klerosUIComponentsPrimaryText mt-6 text-base font-semibold">
-        Market Estimate Price
+      <h2 className="text-klerosUIComponentsPrimaryText mt-6 mb-4 text-base font-semibold">
+        Market Estimate Scores
       </h2>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart

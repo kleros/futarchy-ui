@@ -242,7 +242,6 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
       </div>
       <div className="flex gap-2">
         <PositionValue {...{ upToken, downToken }} />
-        <p>|</p>
         <OpenOrders />
       </div>
       <Accordion

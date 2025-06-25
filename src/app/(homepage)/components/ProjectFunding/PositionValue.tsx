@@ -23,7 +23,7 @@ const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
         <p>
           {`Current Position Value: `}
           <span className="font-bold"> {totalValue.toFixed(5)} </span>
-          sDAI
+          {`sDAI |`}
         </p>
       </div>
     );
