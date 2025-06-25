@@ -12,7 +12,7 @@ const ProjectAmount: React.FC<IProjectAmount> = ({ amount, name, color }) => {
   return (
     <div className="bg-klerosUIComponentsMediumBlue flex h-min items-center">
       <BigNumberField
-        className="mr-4 w-24"
+        className="mr-4 w-24 [&_input]:rounded-r-none [&_input]:border-r-0"
         inputProps={{ className: "text-klerosUIComponentsSecondaryText" }}
         value={amount}
         isDisabled

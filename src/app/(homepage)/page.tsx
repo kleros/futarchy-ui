@@ -7,13 +7,13 @@ import { Card } from "@kleros/ui-components-library";
 import { useChartData } from "@/hooks/useChartData";
 
 import Loader from "@/components/Loader";
-import Mint from "@/components/Mint";
 import ProjectFunding from "@/components/ProjectFunding";
 
 import { markets } from "@/consts/markets";
 
 import Chart from "./components/Chart";
 import Header from "./components/Header";
+import ParticipateSection from "./components/ParticipateSection";
 
 export default function Home() {
   const { data: chartData } = useChartData(markets);
@@ -29,19 +29,9 @@ export default function Home() {
             <Loader />
           )}
         </div>
-        <h2 className="text-klerosUIComponentsPrimaryText mt-12 text-xl font-bold">
-          Participate
-        </h2>
+
         <div className="flex flex-col gap-4">
-          <Card
-            round
-            className="border-klerosUIComponentsSecondaryPurple h-auto w-full px-8 pt-6 pb-12"
-          >
-            <p className="text-klerosUIComponentsPrimaryText">
-              <strong>1st</strong> Convert sDAI or xDAI into Project Tokens
-            </p>
-            <Mint />
-          </Card>
+          <ParticipateSection />
           <Card
             round
             className="border-klerosUIComponentsSecondaryPurple h-auto w-full px-8 py-6"
