@@ -12,16 +12,17 @@ import {
 
 import { type IChartData } from "@/hooks/useChartData";
 
+import { IMarket } from "@/consts/markets";
+
 import Legend from "./Legend";
 
-export const LINE_COLORS = [
-  "#D14EFF",
-  "#FF9900",
-  "#009AFF",
-  "#00C42B",
-  "#00FFFF",
-  "#FFFF00",
-];
+export type MarketsData = Record<
+  string,
+  {
+    market: IMarket;
+    data: Array<{ timestamp: number; value: number }>;
+  }
+>;
 
 const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   const marketNames = useMemo(() => {
@@ -29,14 +30,11 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     return data.flatMap((marketData) => Object.keys(marketData));
   }, [data]);
 
-  const [series, maxYDomain] = useMemo(() => {
+  const [series, maxYDomain, marketsData] = useMemo(() => {
     if (!data.length) return [[], 0];
     let maxYAxis = 0;
     // Combine all market data
-    const marketsData: Record<
-      string,
-      { maxValue: number; data: Array<{ timestamp: number; value: number }> }
-    > = {};
+    const marketsData: MarketsData = {};
     data.forEach((marketData) => {
       Object.entries(marketData).forEach(([marketName, marketInfo]) => {
         marketsData[marketName] = marketInfo;
@@ -61,7 +59,8 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       const dataPoint: Record<string, number> = { timestamp };
 
       Object.entries(marketsData).forEach(([marketName, marketInfo]) => {
-        const { data, maxValue } = marketInfo;
+        const { data, market } = marketInfo;
+        const maxValue = market.maxValue;
 
         // Find valid start index (skip extreme values)
         let validStartIndex = 0;
@@ -98,12 +97,12 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     });
 
     maxYAxis = Math.ceil(maxYAxis);
-    return [processedData, maxYAxis];
+    return [processedData, maxYAxis, marketsData];
   }, [data]);
 
   return (
     <div className="mt-6 flex size-full flex-col">
-      <Legend {...{ marketNames }} />
+      <Legend {...{ marketsData }} />
       <h2 className="text-klerosUIComponentsPrimaryText mt-6 text-base font-semibold">
         Market Estimate Price
       </h2>
@@ -112,12 +111,12 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
           data={series}
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
         >
-          {marketNames.map((marketName, index) => (
+          {marketNames.map((marketName) => (
             <Line
               key={marketName}
               dataKey={marketName}
               type="monotone"
-              stroke={LINE_COLORS[index % LINE_COLORS.length]}
+              stroke={marketsData?.[marketName].market.color ?? "#009AFF"}
               dot={false}
             />
           ))}

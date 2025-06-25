@@ -3,9 +3,9 @@ import clsx from "clsx";
 import ChartBarIcon from "@/assets/svg/chart-bar.svg";
 import StatsBarIcon from "@/assets/svg/stats-bar.svg";
 
-import { LINE_COLORS } from ".";
+import { type MarketsData } from ".";
 
-const Legend: React.FC<{ marketNames?: string[] }> = ({ marketNames }) => {
+const Legend: React.FC<{ marketsData?: MarketsData }> = ({ marketsData }) => {
   return (
     <div
       className={clsx(
@@ -13,21 +13,23 @@ const Legend: React.FC<{ marketNames?: string[] }> = ({ marketNames }) => {
         "items-start justify-center md:flex-row md:items-center md:justify-between",
       )}
     >
-      <ul className="flex flex-wrap gap-4">
-        {marketNames?.map((name, index) => (
-          <li key={`item-${index}`} className="flex items-center gap-2">
-            <div
-              className="size-2 rounded-full"
-              style={{
-                backgroundColor: LINE_COLORS[index % LINE_COLORS.length],
-              }}
-            />
-            <span className="text-klerosUIComponentsPrimaryText text-sm">
-              {name}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {typeof marketsData !== "undefined" ? (
+        <ul className="flex flex-wrap gap-4">
+          {Object.entries(marketsData).map(([name, { market }], index) => (
+            <li key={`item-${index}`} className="flex items-center gap-2">
+              <div
+                className="size-2 rounded-full"
+                style={{
+                  backgroundColor: market.color,
+                }}
+              />
+              <span className="text-klerosUIComponentsPrimaryText text-sm">
+                {name}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
       <div className="flex gap-8">
         <div className="flex items-center gap-2">
           <StatsBarIcon className="size-4" />

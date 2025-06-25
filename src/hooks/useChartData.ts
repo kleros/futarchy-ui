@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { IMarket } from "@/consts/markets";
+
 interface IDataPoint {
   pool: {
     id: string;
@@ -24,17 +26,16 @@ type IReturn = Array<Array<IDataPoint>>;
 
 export type IChartData = Record<
   string,
-  { maxValue: number; data: Array<{ timestamp: number; value: number }> }
+  { market: IMarket; data: Array<{ timestamp: number; value: number }> }
 >;
 
-export const useChartData = (
-  markets: Array<{ marketId: string; maxValue: number; marketName: string }>,
-) =>
+export const useChartData = (markets: Array<IMarket>) =>
   useQuery({
     queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
     queryFn: async () => {
       return await Promise.all(
-        markets.map(async ({ marketId, maxValue, marketName }) => {
+        markets.map(async (market) => {
+          const { marketId, maxValue, name } = market;
           const params = new URLSearchParams();
           params.append("marketId", marketId);
           params.append("chainId", "100");
@@ -50,7 +51,7 @@ export const useChartData = (
             }),
           );
 
-          return { [marketName]: { maxValue, data: processed } };
+          return { [name]: { market, data: processed } };
         }),
       );
     },
