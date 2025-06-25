@@ -4,27 +4,30 @@ import React from "react";
 
 import { Card } from "@kleros/ui-components-library";
 
-import { projects } from "@/projects";
-
 import { useChartData } from "@/hooks/useChartData";
 
-import Chart from "@/components/Chart";
+import Loader from "@/components/Loader";
 import Mint from "@/components/Mint";
 import ProjectFunding from "@/components/ProjectFunding";
 
+import { markets } from "@/consts/markets";
+
+import Chart from "./components/Chart";
+import Header from "./components/Header";
+
 export default function Home() {
-  const { data: chartData } = useChartData(
-    "0xa77dd0d6988f0f79b056d3196fa67f2488370909",
-    4,
-  );
+  const { data: chartData } = useChartData(markets);
+
   return (
-    <div className="w-full py-12">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="text-klerosUIComponentsPrimaryText text-2xl font-bold">
-          Session 1 - Property Prices
-        </h1>
+    <div className="w-full px-4 py-12 md:px-8 lg:px-32">
+      <div className="mx-auto max-w-294">
+        <Header />
         <div className="h-96">
-          {typeof chartData !== "undefined" ? <Chart data={chartData} /> : null}
+          {typeof chartData !== "undefined" ? (
+            <Chart data={chartData} />
+          ) : (
+            <Loader />
+          )}
         </div>
         <h2 className="text-klerosUIComponentsPrimaryText mt-12 text-xl font-bold">
           Participate
@@ -49,8 +52,8 @@ export default function Home() {
             </p>
           </Card>
           <div className="mt-8 flex flex-col gap-4">
-            {projects.map((project) => (
-              <ProjectFunding key={project.name} {...project} />
+            {markets.map((market) => (
+              <ProjectFunding key={market.name} {...market} />
             ))}
           </div>
         </div>

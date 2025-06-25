@@ -20,9 +20,9 @@ import {
   useReadSDaiBalanceOf,
 } from "@/generated";
 
-import { projects } from "@/projects";
-
 import ProjectAmount from "@/components/ProjectAmount";
+
+import { markets } from "@/consts/markets";
 
 const Mint: React.FC = () => {
   const { address } = useAccount();
@@ -93,7 +93,7 @@ const Mint: React.FC = () => {
           "grid-flow-row grid-cols-4 gap-4 px-4 pt-6 pb-12",
         )}
       >
-        {projects.map(({ name, color }) => (
+        {markets.map(({ name, color }) => (
           <ProjectAmount
             key={name}
             {...{ name, color }}
