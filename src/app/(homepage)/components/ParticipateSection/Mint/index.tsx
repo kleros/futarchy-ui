@@ -58,7 +58,13 @@ const Mint: React.FC = () => {
   const { writeContractAsync } = useWriteGnosisRouterSplitFromBase();
 
   return (
-    <div className="flex flex-col gap-8.5">
+    <Card
+      round
+      className={clsx(
+        "border-gradient-purple-blue h-auto w-full border-none px-4 pt-4 pb-10.5 md:px-7.25 md:pt-6",
+        "flex flex-col gap-8.5",
+      )}
+    >
       <div className="flex flex-wrap gap-x-25.25 gap-y-4">
         <TopLeftInfo
           balance={
@@ -117,7 +123,7 @@ const Mint: React.FC = () => {
           }}
         />
       </Card>
-    </div>
+    </Card>
   );
 };
 
