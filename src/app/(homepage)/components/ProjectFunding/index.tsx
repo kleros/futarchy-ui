@@ -11,6 +11,7 @@ import {
 import { waitForTransactionReceipt } from "@wagmi/core";
 import clsx from "clsx";
 import { useSize, useToggle } from "react-use";
+import { Address } from "viem";
 import { useConfig, useAccount } from "wagmi";
 
 import {
@@ -24,12 +25,15 @@ import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { getContractInfo } from "@/consts";
 
+import OpenOrders from "./OpenOrders";
+import PositionValue from "./PositionValue";
+
 interface IProjectFunding {
   name: string;
   color: string;
-  upToken: string;
-  downToken: string;
-  underlyingToken: `0x${number}`;
+  upToken: Address;
+  downToken: Address;
+  underlyingToken: Address;
   minValue: number;
   maxValue: number;
   precision: number;
@@ -151,7 +155,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         rightLabel=""
         aria-label="Slider"
         callback={setPrediction}
-        formatter={(value) => `${(value / precision).toFixed(1)}%`}
+        formatter={(value) => `${(value / precision).toFixed(0)}`}
       />
       <div
         className="absolute bottom-0"
@@ -171,7 +175,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             "bg-klerosUIComponentsPrimaryBlue rounded-sm px-1 text-center"
           }
         >
-          {`${(marketEstimate / precision).toFixed(2)}%`}
+          {`${(marketEstimate / precision).toFixed(2)}`}
         </div>
         <span className="mx-auto block h-9 w-1 rounded-full bg-black" />
       </div>
@@ -192,7 +196,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         <div className="px-4"> {sized} </div>
         <div>
           <label className="text-klerosUIComponentsSecondaryText">
-            My Estimate (%)
+            My Estimate (Score)
           </label>
           <div className="flex">
             <NumberField
@@ -235,6 +239,10 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             {`${prediction > marketEstimate ? "Higher" : "Lower"} than the market`}
           </label>
         </div>
+      </div>
+      <div className="flex gap-2">
+        <PositionValue {...{ upToken, downToken }} />
+        <OpenOrders />
       </div>
       <Accordion
         aria-label="accordion"

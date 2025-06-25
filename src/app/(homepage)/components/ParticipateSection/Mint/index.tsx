@@ -101,7 +101,7 @@ const Mint: React.FC = () => {
           isLoading={isMinting}
           isDisabled={isMinting}
           className="absolute right-1/2 bottom-0 translate-1/2"
-          text="Convert to Property Tokens"
+          text="Convert to Movie Tokens"
           onClick={async () => {
             toggleIsMinting(true);
             try {

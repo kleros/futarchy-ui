@@ -7,13 +7,13 @@ import { Card } from "@kleros/ui-components-library";
 import { useChartData } from "@/hooks/useChartData";
 
 import Loader from "@/components/Loader";
-import ProjectFunding from "@/components/ProjectFunding";
 
 import { markets } from "@/consts/markets";
 
 import Chart from "./components/Chart";
 import Header from "./components/Header";
 import ParticipateSection from "./components/ParticipateSection";
+import ProjectFunding from "./components/ProjectFunding";
 
 export default function Home() {
   const { data: chartData } = useChartData(markets);

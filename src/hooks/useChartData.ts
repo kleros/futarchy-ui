@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 
 import { IMarket } from "@/consts/markets";
@@ -35,7 +37,7 @@ export const useChartData = (markets: Array<IMarket>) =>
     queryFn: async () => {
       return await Promise.all(
         markets.map(async (market) => {
-          const { marketId, maxValue, name } = market;
+          const { marketId, maxValue, name, underlyingToken } = market;
           const params = new URLSearchParams();
           params.append("marketId", marketId);
           params.append("chainId", "100");
@@ -47,7 +49,14 @@ export const useChartData = (markets: Array<IMarket>) =>
           const processed: IChartData[""]["data"] = rawData[1].map(
             (dataPoint) => ({
               timestamp: dataPoint.periodStartUnix,
-              value: parseFloat(dataPoint.token1Price.slice(0, 9)) * maxValue,
+              value:
+                parseFloat(
+                  (dataPoint.pool.token0.id.toLowerCase() ===
+                  underlyingToken.toLowerCase()
+                    ? dataPoint.token0Price
+                    : dataPoint.token1Price
+                  ).slice(0, 9),
+                ) * maxValue,
             }),
           );
 
