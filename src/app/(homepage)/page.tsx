@@ -4,12 +4,12 @@ import React from "react";
 
 import { Card } from "@kleros/ui-components-library";
 
+import { projects } from "@/projects";
+
 import { useChartData } from "@/hooks/useChartData";
 
 import Mint from "@/components/Mint";
 import ProjectFunding from "@/components/ProjectFunding";
-
-import { projects } from "@/consts";
 
 import Chart from "./components/Chart";
 import Header from "./components/Header";
