@@ -8,12 +8,12 @@ import { useChartData } from "@/hooks/useChartData";
 
 import Loader from "@/components/Loader";
 import Mint from "@/components/Mint";
-import ProjectFunding from "@/components/ProjectFunding";
 
 import { markets } from "@/consts/markets";
 
 import Chart from "./components/Chart";
 import Header from "./components/Header";
+import ProjectFunding from "./components/ProjectFunding";
 
 export default function Home() {
   const { data: chartData } = useChartData(markets);
@@ -38,7 +38,7 @@ export default function Home() {
             className="border-klerosUIComponentsSecondaryPurple h-auto w-full px-8 pt-6 pb-12"
           >
             <p className="text-klerosUIComponentsPrimaryText">
-              <strong>1st</strong> Convert sDAI or xDAI into Project Tokens
+              <strong>1st</strong> Convert sDAI or xDAI into Movie Tokens
             </p>
             <Mint />
           </Card>

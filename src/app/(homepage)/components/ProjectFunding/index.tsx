@@ -25,7 +25,7 @@ import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { getContractInfo } from "@/consts";
 
-import OpenOrders from "./OpenOrders.tsx";
+import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
 
 interface IProjectFunding {
@@ -155,7 +155,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         rightLabel=""
         aria-label="Slider"
         callback={setPrediction}
-        formatter={(value) => `${(value / precision).toFixed(1)}%`}
+        formatter={(value) => `${(value / precision).toFixed(0)}`}
       />
       <div
         className="absolute bottom-0"
@@ -175,7 +175,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             "bg-klerosUIComponentsPrimaryBlue rounded-sm px-1 text-center"
           }
         >
-          {`${(marketEstimate / precision).toFixed(2)}%`}
+          {`${(marketEstimate / precision).toFixed(2)}`}
         </div>
         <span className="mx-auto block h-9 w-1 rounded-full bg-black" />
       </div>
@@ -196,7 +196,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         <div className="px-4"> {sized} </div>
         <div>
           <label className="text-klerosUIComponentsSecondaryText">
-            My Estimate (%)
+            My Estimate (Score)
           </label>
           <div className="flex">
             <NumberField

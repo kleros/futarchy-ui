@@ -46,7 +46,6 @@ const useTokenPositionValue = (token: Address, address: Address) => {
     [balance],
   );
 
-  console.log({ normalizedBalance, price });
   return useMemo(
     () => normalizedBalance * (price ?? 0),
     [normalizedBalance, price],
