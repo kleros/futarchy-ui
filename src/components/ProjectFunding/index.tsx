@@ -11,6 +11,7 @@ import {
 import { waitForTransactionReceipt } from "@wagmi/core";
 import clsx from "clsx";
 import { useSize, useToggle } from "react-use";
+import { Address } from "viem";
 import { useConfig, useAccount } from "wagmi";
 
 import {
@@ -24,12 +25,15 @@ import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { getContractInfo } from "@/consts";
 
+import OpenOrders from "./OpenOrders.tsx";
+import PositionValue from "./PositionValue";
+
 interface IProjectFunding {
   name: string;
   color: string;
-  upToken: string;
-  downToken: string;
-  underlyingToken: `0x${number}`;
+  upToken: Address;
+  downToken: Address;
+  underlyingToken: Address;
   minValue: number;
   maxValue: number;
   precision: number;
@@ -235,6 +239,11 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             {`${prediction > marketEstimate ? "Higher" : "Lower"} than the market`}
           </label>
         </div>
+      </div>
+      <div className="flex gap-2">
+        <PositionValue {...{ upToken, downToken }} />
+        <p>|</p>
+        <OpenOrders />
       </div>
       <Accordion
         aria-label="accordion"
