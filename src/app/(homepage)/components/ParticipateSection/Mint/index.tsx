@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 
-import {
-  Button,
-  Card,
-  BigNumberField,
-  Switch,
-} from "@kleros/ui-components-library";
+import { Button, Card } from "@kleros/ui-components-library";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import BigNumber from "bignumber.js";
 import clsx from "clsx";
@@ -20,9 +15,13 @@ import {
   useReadSDaiBalanceOf,
 } from "@/generated";
 
-import ProjectAmount from "@/components/ProjectAmount";
+import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
 import { markets } from "@/consts/markets";
+
+import AmountInput, { TokenType } from "./AmountInput";
+import ProjectAmount from "./ProjectAmount";
+import TopLeftInfo from "./TopLeftInfo";
 
 const Mint: React.FC = () => {
   const { address } = useAccount();
@@ -35,7 +34,7 @@ const Mint: React.FC = () => {
   });
 
   const [amount, setAmount] = useState<BigNumber>(BigNumber("0"));
-  const [isSDaiSelected, toggleSDaiSelected] = useToggle(false);
+  const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
 
   const [isMinting, toggleIsMinting] = useToggle(false);
 
@@ -59,40 +58,34 @@ const Mint: React.FC = () => {
   const { writeContractAsync } = useWriteGnosisRouterSplitFromBase();
 
   return (
-    <div className="flex flex-col items-center gap-8">
-      <div className="flex items-end gap-8">
-        <BigNumberField
-          className="inline-block w-36"
-          value={amount}
-          onChange={setAmount}
-          variant={resultDeposit.isError ? "error" : undefined}
-          message={
-            resultDeposit.isError ? resultDeposit.error.message : undefined
+    <div className="flex flex-col gap-8.5">
+      <div className="flex flex-wrap gap-x-25.25 gap-y-4">
+        <TopLeftInfo
+          balance={
+            selectedToken === TokenType.sDAI
+              ? (balanceSDai ?? 0n)
+              : (balanceXDai?.value ?? 0n)
           }
-          label={
-            isSDaiSelected
-              ? `max. ${parseFloat(formatUnits(balanceSDai ?? 0n, 18)).toFixed(2)} sDAI`
-              : `max. ${parseFloat(
-                  formatUnits(
-                    balanceXDai?.value ?? 0n,
-                    balanceXDai?.decimals ?? 18,
-                  ),
-                ).toFixed(2)} xDAI`
-          }
+          isSDaiSelected={selectedToken === TokenType.sDAI}
         />
-        <div className="flex flex-col items-center">
-          <label className="text-klerosUIComponentsPrimaryText block">
-            sDAI
-          </label>
-          <Switch small onChange={toggleSDaiSelected} />
-        </div>
+        <AmountInput {...{ amount, setAmount, setSelectedToken }} />
       </div>
+
       <Card
         className={clsx(
-          "border-klerosUIComponentsPrimaryBlue relative grid h-auto w-full",
-          "grid-flow-row grid-cols-4 gap-4 px-4 pt-6 pb-12",
+          "border-klerosUIComponentsSecondaryBlue relative grid h-auto w-full",
+          "px-4 pt-6 pb-12",
+          "grid w-full grid-cols-[repeat(auto-fit,minmax(200px,260px))] place-content-center gap-4",
         )}
       >
+        <div
+          className={clsx(
+            "absolute top-0 right-1/2 translate-x-1/2 -translate-y-6.5",
+            "rounded-base bg-klerosUIComponentsPrimaryBlue flex w-23.25 items-center justify-center py-3",
+          )}
+        >
+          <ArrowDownIcon className="size-3.5" />
+        </div>
         {markets.map(({ name, color }) => (
           <ProjectAmount
             key={name}
