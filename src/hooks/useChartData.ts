@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { IMarket } from "@/consts/markets";
+
 interface IDataPoint {
   pool: {
     id: string;
@@ -22,25 +24,35 @@ interface IDataPoint {
 
 type IReturn = Array<Array<IDataPoint>>;
 
-export type IChartData = Array<{ timestamp: number; value: number }>;
+export type IChartData = Record<
+  string,
+  { market: IMarket; data: Array<{ timestamp: number; value: number }> }
+>;
 
-export const useChartData = (marketId: string, maxValue: number) =>
+export const useChartData = (markets: Array<IMarket>) =>
   useQuery({
-    queryKey: [`chart-${marketId}`],
+    queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append("marketId", marketId);
-      params.append("chainId", "100");
+      return await Promise.all(
+        markets.map(async (market) => {
+          const { marketId, maxValue, name } = market;
+          const params = new URLSearchParams();
+          params.append("marketId", marketId);
+          params.append("chainId", "100");
 
-      const rawData: IReturn = await fetch(
-        `/api/market-chart?${params.toString()}`,
-      ).then((res) => res.json());
+          const rawData: IReturn = await fetch(
+            `/api/market-chart?${params.toString()}`,
+          ).then((res) => res.json());
 
-      const processed: IChartData = rawData[1].map((dataPoint) => ({
-        timestamp: dataPoint.periodStartUnix,
-        value: parseFloat(dataPoint.token1Price.slice(0, 9)) * maxValue,
-      }));
+          const processed: IChartData[""]["data"] = rawData[1].map(
+            (dataPoint) => ({
+              timestamp: dataPoint.periodStartUnix,
+              value: parseFloat(dataPoint.token1Price.slice(0, 9)) * maxValue,
+            }),
+          );
 
-      return processed;
+          return { [name]: { market, data: processed } };
+        }),
+      );
     },
   });
