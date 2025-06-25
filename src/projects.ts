@@ -36,7 +36,7 @@ export const projects: Array<IProject> = [
     minValue: 0,
     maxValue: 4,
     precision: 10,
-    marketId: "0xa77dd0d6988f0f79b056d3196fa67f2488370909",
+    marketId: "0x19AEAa9495d865FdbB7699C595F6ECc4575a4dcd",
   },
   {
     name: "Project 3",

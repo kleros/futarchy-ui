@@ -8,6 +8,7 @@ import { projects } from "@/projects";
 
 import { useChartData } from "@/hooks/useChartData";
 
+import Loader from "@/components/Loader";
 import Mint from "@/components/Mint";
 import ProjectFunding from "@/components/ProjectFunding";
 
@@ -33,7 +34,11 @@ export default function Home() {
       <div className="mx-auto max-w-294">
         <Header />
         <div className="h-96">
-          {typeof chartData !== "undefined" ? <Chart data={chartData} /> : null}
+          {typeof chartData !== "undefined" ? (
+            <Chart data={chartData} />
+          ) : (
+            <Loader />
+          )}
         </div>
         <h2 className="text-klerosUIComponentsPrimaryText mt-12 text-xl font-bold">
           Participate
