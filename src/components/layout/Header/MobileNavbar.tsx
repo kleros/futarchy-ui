@@ -34,7 +34,7 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
         <LightButton
           text=""
           icon={<HamburgerIcon />}
-          onClick={toggleIsMenuOpen}
+          onPress={toggleIsMenuOpen}
         />
       </div>
       <Modal

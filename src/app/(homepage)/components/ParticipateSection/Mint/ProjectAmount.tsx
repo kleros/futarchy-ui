@@ -1,9 +1,10 @@
 import React from "react";
 
 import { BigNumberField, Tooltip } from "@kleros/ui-components-library";
+import { formatUnits } from "viem";
 
 interface IProjectAmount {
-  amount: BigNumber;
+  amount: bigint;
   name: string;
   color: string;
 }
@@ -17,7 +18,7 @@ const ProjectAmount: React.FC<IProjectAmount> = ({ amount, name, color }) => {
       <BigNumberField
         className="mr-4 w-24 [&_input]:rounded-r-none [&_input]:border-r-0"
         inputProps={{ className: "text-klerosUIComponentsSecondaryText" }}
-        value={amount}
+        value={formatUnits(amount, 18)}
         isDisabled
       />
       <span

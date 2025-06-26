@@ -19,13 +19,14 @@ import { useConfig, useAccount } from "wagmi";
 import {
   useReadErc20Allowance,
   useReadErc20BalanceOf,
-  useWriteSDaiApprove,
+  useWriteErc20Approve,
 } from "@/generated";
 
 import { useCowSdk } from "@/context/CowContext";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { getContractInfo } from "@/consts";
+import { endTime } from "@/consts/markets";
 
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
@@ -66,6 +67,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     address: underlyingToken,
     args: [address ?? "0x", cowSwapAddress],
     query: {
+      staleTime: 5000,
       enabled: typeof address !== "undefined",
     },
   });
@@ -74,6 +76,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     address: underlyingToken,
     args: [address ?? "0x"],
     query: {
+      staleTime: 5000,
       enabled: typeof address !== "undefined",
     },
   });
@@ -98,11 +101,12 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
 
   const isUpPredict = prediction > marketEstimate;
 
-  const { writeContractAsync: increaseAllowance } = useWriteSDaiApprove();
+  const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
 
   const handleAllowance = useCallback(async () => {
     if (typeof underlyingBalance !== "undefined") {
       const hash = await increaseAllowance({
+        address: underlyingToken,
         args: [cowSwapAddress, underlyingBalance],
       });
       await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
@@ -114,6 +118,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     increaseAllowance,
     refetchAllowance,
     underlyingBalance,
+    underlyingToken,
   ]);
 
   const handlePredict = useCallback(async () => {
@@ -134,6 +139,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
           buyTokenDecimals: 18,
           buyAmount: buyAmount.toString(),
           partiallyFillable: true,
+          validTo: endTime,
         });
       }
     }
