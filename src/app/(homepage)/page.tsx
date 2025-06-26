@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import CowContextProvider from "@/context/CowContext";
 import { useChartData } from "@/hooks/useChartData";
 
 import Loader from "@/components/Loader";
@@ -32,15 +33,15 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <ParticipateSection />
-
-          <div className="mt-8 flex flex-col gap-4">
-            {markets.map((market) => (
-              <ProjectFunding key={market.name} {...market} />
-            ))}
-          </div>
-
-          <AdvancedSection />
+          <CowContextProvider>
+            <ParticipateSection />
+            <div className="mt-8 flex flex-col gap-4">
+              {markets.map((market) => (
+                <ProjectFunding key={market.name} {...market} />
+              ))}
+            </div>
+            <AdvancedSection />
+          </CowContextProvider>
         </div>
       </div>
     </div>
