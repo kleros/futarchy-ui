@@ -1,5 +1,10 @@
 import { Address } from "viem";
 
+export const parentMarket: Address =
+  "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
+
+export const endTime: number = 1753999199;
+
 export interface IDetails {
   imdbURL: string;
   posterURL: string;
