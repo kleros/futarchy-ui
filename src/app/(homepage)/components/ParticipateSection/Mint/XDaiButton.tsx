@@ -26,7 +26,11 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   refetchXDai,
   refetchSDai,
 }) => {
-  const result = useSimulateGnosisRouterSplitFromBase({
+  const {
+    data: result,
+    isLoading,
+    isError,
+  } = useSimulateGnosisRouterSplitFromBase({
     args: [parentMarket],
     value: amount,
     query: {
@@ -40,14 +44,14 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   return (
     <Button
       isLoading={isMinting}
-      isDisabled={isMinting}
+      isDisabled={isMinting || isLoading || isError}
       className="absolute right-1/2 bottom-0 translate-1/2"
       text="Convert to Movie Tokens"
       onPress={async () => {
         toggleIsMinting(true);
         try {
-          if (typeof result.data !== "undefined") {
-            const tx = await writeContractAsync(result.data?.request);
+          if (typeof result !== "undefined") {
+            const tx = await writeContractAsync(result.request);
             await waitForTransactionReceipt(config, { hash: tx });
             refetchSDai();
             refetchXDai();
