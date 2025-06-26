@@ -8,11 +8,19 @@ const ParticipateSection: React.FC = () => {
       <h2 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
         Participate
       </h2>
+
+      <Mint />
       <Card
         round
-        className="border-gradient-purple-blue h-auto w-full border-none px-4 pt-4 pb-10.5 md:px-7.25 md:pt-6"
+        className="border-gradient-purple-blue h-auto w-full border-none px-4 py-6 md:px-8"
       >
-        <Mint />
+        <p className="text-klerosUIComponentsSecondaryText text-sm">
+          <strong className="text-klerosUIComponentsPrimaryText text-base">
+            2nd
+          </strong>{" "}
+          Set estimates for the projects below. You can choose how many projects
+          you want to predict.
+        </p>
       </Card>
     </div>
   );

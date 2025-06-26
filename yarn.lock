@@ -2188,9 +2188,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kleros/ui-components-library@npm:^3.0.1":
-  version: 3.4.5
-  resolution: "@kleros/ui-components-library@npm:3.4.5"
+"@kleros/ui-components-library@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "@kleros/ui-components-library@npm:3.5.0"
   dependencies:
     "@internationalized/date": "npm:^3.7.0"
     bignumber.js: "npm:^9.1.2"
@@ -2211,7 +2211,7 @@ __metadata:
     react-dom: ^18.0.0
     react-is: ^18.0.0
     tailwindcss: ^4.0.11
-  checksum: 10c0/ef3d0851dabe2454444cfe5ea43bb74db65a0257321165e41c3b26128bf99ef43d44baf67735246237b9345aee280431d3d88f5088d5cf0103edce47e03fe9ff
+  checksum: 10c0/15816779d1c7ec5ae5203c166f8bb9ccd842918256fbe56cdb5d2c9e23db0b24b83578c95e5c88f508787567c4cb66c250670182988d8162222afedc19143fe0
   languageName: node
   linkType: hard
 
@@ -8899,7 +8899,7 @@ __metadata:
   resolution: "futarchy-poc-14@workspace:."
   dependencies:
     "@cowprotocol/cow-sdk": "npm:^5.10.3"
-    "@kleros/ui-components-library": "npm:^3.0.1"
+    "@kleros/ui-components-library": "npm:^3.5.0"
     "@reown/appkit": "npm:^1.7.3"
     "@reown/appkit-adapter-wagmi": "npm:^1.7.3"
     "@svgr/webpack": "npm:^8.1.0"

@@ -11,6 +11,8 @@ import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 
+import clsx from "clsx";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -35,9 +37,12 @@ export default function RootLayout({
   const cookies = headers().get("cookie");
 
   return (
-    <html lang="en" className="">
+    <html lang="en" className="box-border size-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-klerosUIComponentsLightBackground antialiased`}
+        className={clsx(
+          `${geistSans.variable} ${geistMono.variable} bg-klerosUIComponentsLightBackground antialiased`,
+          "flex size-full flex-col",
+        )}
       >
         <Web3Context {...{ cookies }}>
           <Header />
