@@ -15,7 +15,7 @@ import {
 
 import { parentMarket } from "@/consts/markets";
 
-interface IXDaiButton {
+interface ISDaiButton {
   amount: bigint;
   isMinting: boolean;
   toggleIsMinting: (value: boolean) => void;
@@ -23,7 +23,7 @@ interface IXDaiButton {
   refetchXDai: () => void;
 }
 
-const XDaiButton: React.FC<IXDaiButton> = ({
+const SDaiButton: React.FC<ISDaiButton> = ({
   amount,
   isMinting,
   toggleIsMinting,
@@ -86,4 +86,4 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   );
 };
 
-export default XDaiButton;
+export default SDaiButton;
