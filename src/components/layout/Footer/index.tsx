@@ -46,7 +46,11 @@ const SocialMedia = () => (
   <div className="flex">
     {Object.values(socialmedia).map(({ url, icon: Icon }) => (
       <Link key={url} href={url} target="_blank" rel="noreferrer">
-        <LightButton icon={<Icon />} text="" className="[&_svg]:mr-0" />
+        <LightButton
+          icon={<Icon className="[&_path]:!fill-white" />}
+          text=""
+          className="[&_svg]:mr-0"
+        />
       </Link>
     ))}
   </div>

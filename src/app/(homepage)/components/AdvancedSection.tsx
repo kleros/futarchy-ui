@@ -2,8 +2,9 @@ import { Card } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import Link from "next/link";
 
+import SeerLogo from "@/components/SeerLogo";
+
 import ExternalArrow from "@/assets/svg/external-arrow.svg";
-import SeerLogo from "@/assets/svg/seer-logo.svg";
 
 const AdvancedSection: React.FC = () => {
   return (

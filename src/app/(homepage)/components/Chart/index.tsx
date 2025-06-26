@@ -2,6 +2,8 @@
 
 import React, { useMemo } from "react";
 
+import { useTheme } from "next-themes";
+
 import { format } from "date-fns";
 import {
   ResponsiveContainer,
@@ -27,6 +29,7 @@ export type MarketsData = Record<
 >;
 
 const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
+  const { theme } = useTheme();
   const marketNames = useMemo(() => {
     // Extract all market names from the data
     return data.flatMap((marketData) => Object.keys(marketData));
@@ -102,6 +105,11 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     return [processedData, maxYAxis, marketsData];
   }, [data]);
 
+  const accentColor = useMemo(() => {
+    if (theme === "light") return "#999";
+    else return "#BECCE5";
+  }, [theme]);
+
   return (
     <div className="mt-6 flex size-full flex-col">
       <Legend {...{ marketsData }} />
@@ -129,7 +137,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
             tickFormatter={(timestamp) =>
               format(new Date(timestamp * 1000), "dd LLL")
             }
-            tick={{ fill: "#999", fontSize: "12px" }}
+            tick={{ fill: accentColor, fontSize: "12px" }}
             domain={["dataMin", "dataMax"]}
             axisLine={false}
             tickSize={0}
@@ -143,10 +151,11 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
             tickSize={0}
             tickMargin={16}
             width={30}
-            tick={{ fill: "#999", fontSize: "12px" }}
+            tick={{ fill: accentColor, fontSize: "12px" }}
           />
           <Tooltip
             defaultIndex={series.length - 1}
+            cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
             content={({ active, payload: payloads, viewBox, coordinate }) => {
               const isVisible =
                 active && payloads && payloads.length && viewBox?.height;
@@ -169,7 +178,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
                     >
                       {isVisible ? (
                         <p className="text-klerosUIComponentsLightBackground text-right text-xs">
-                          {value}
+                          {Number(value).toFixed(2)}
                         </p>
                       ) : null}
                     </div>

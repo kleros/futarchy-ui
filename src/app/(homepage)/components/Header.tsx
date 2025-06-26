@@ -1,10 +1,11 @@
 import clsx from "clsx";
 import Image from "next/image";
 
+import SeerLogo from "@/components/SeerLogo";
+
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
 import ChartBar from "@/assets/svg/chart-bar.svg";
 import Cronometer from "@/assets/svg/cronometer.svg";
-import SeerLogo from "@/assets/svg/seer-logo.svg";
 
 const Header: React.FC = () => {
   return (

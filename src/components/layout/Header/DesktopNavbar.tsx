@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import ConnectWallet from "@/components/ConnectWallet";
 import LightButton from "@/components/LightButton";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import HelpIcon from "@/assets/menu-icons/help.svg";
 import GnosisIcon from "@/assets/svg/gnosis.svg";
@@ -42,12 +43,15 @@ const DesktopNavbar: React.FC<IDesktopNavbar> = ({ toggleIsHelpOpen }) => {
         </div>
         <GnosisIcon className="mr-2.5 size-6" />
         <ConnectWallet />
-        <LightButton
-          text=""
-          onClick={toggleIsHelpOpen}
-          icon={<HelpIcon className="size-4" />}
-          className="flex min-h-8 items-center"
-        />
+        <div className="flex items-center">
+          <LightButton
+            text=""
+            onClick={toggleIsHelpOpen}
+            icon={<HelpIcon className="size-4" />}
+            className="flex min-h-8 items-center"
+          />
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

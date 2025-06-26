@@ -1,5 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 
+import { useTheme } from "next-themes";
+
 import { OrderKind } from "@cowprotocol/cow-sdk";
 import {
   Card,
@@ -53,6 +55,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
 }) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
+  const { theme } = useTheme();
   const [prediction, setPrediction] = useState(0);
   const [userInteracting, toggleUserInteracting] = useToggle(false);
   const { sdk } = useCowSdk();
@@ -146,6 +149,11 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     upToken,
   ]);
 
+  const sliderTheme = useMemo(() => {
+    if (theme === "light") return isUpPredict ? "#3FEC65" : "#F75C7B";
+    else return isUpPredict ? "#D2FFDC" : "#FFD2DB";
+  }, [theme, isUpPredict]);
+
   const [sized] = useSize(({ width }) => (
     <div className="relative w-full">
       <Slider
@@ -163,8 +171,8 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         formatter={(value) => `${(value / precision).toFixed(0)}`}
         // @ts-expect-error other values not needed
         theme={{
-          sliderColor: isUpPredict ? "#3FEC65" : "#F75C7B",
-          thumbColor: isUpPredict ? "#3FEC65" : "#F75C7B",
+          sliderColor: sliderTheme,
+          thumbColor: sliderTheme,
         }}
       />
       <div
@@ -181,12 +189,14 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
           Market
         </label>
         <div
-          className={"rounded-base px-2 py-0.75 text-center text-xs"}
+          className={
+            "rounded-base text-klerosUIComponentsLightBackground px-2 py-0.75 text-center text-xs"
+          }
           style={{ backgroundColor: color }}
         >
           {`${(marketEstimate / precision).toFixed(2)}`}
         </div>
-        <span className="mx-auto block h-9 w-0.75 rounded-b-full bg-black" />
+        <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
       </div>
     </div>
   ));

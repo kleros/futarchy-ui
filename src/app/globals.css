@@ -8,6 +8,7 @@
   --color-light-mode-red-2: #f75c7b;
   --color-light-mode-green-2: #3fec65;
   --color-footer-background: #1d6aaa;
+  --color-whiteLowOpacityStrong: #ffffff26;
 
   @keyframes slideInLeft {
     0% {
@@ -135,5 +136,9 @@
         25px 50%,
         25px 50%;
     }
+  }
+
+  .hover-short-transition {
+    transition: 0.1s;
   }
 }

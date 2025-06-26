@@ -40,8 +40,8 @@ export default function Home() {
                 <ProjectFunding key={market.name} {...market} />
               ))}
             </div>
-            <AdvancedSection />
           </CowContextProvider>
+          <AdvancedSection />
         </div>
       </div>
     </div>

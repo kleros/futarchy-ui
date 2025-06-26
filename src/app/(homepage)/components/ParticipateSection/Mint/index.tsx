@@ -90,7 +90,7 @@ const Mint: React.FC = () => {
             "rounded-base bg-klerosUIComponentsPrimaryBlue flex w-23.25 items-center justify-center py-3",
           )}
         >
-          <ArrowDownIcon className="size-3.5" />
+          <ArrowDownIcon className="[&_path]:fill-klerosUIComponentsWhiteBackground size-3.5" />
         </div>
         {markets.map(({ name, color }) => (
           <ProjectAmount

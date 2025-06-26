@@ -11,6 +11,7 @@ import {
   IdenticonOrAvatar,
 } from "@/components/ConnectWallet/AccountDisplay";
 import LightButton from "@/components/LightButton";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import HelpIcon from "@/assets/menu-icons/help.svg";
 import HamburgerIcon from "@/assets/svg/hamburger.svg";
@@ -32,13 +33,7 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
         <Logo />
         <LightButton
           text=""
-          icon={
-            <HamburgerIcon
-              className={clsx(
-                "[&_path]:fill-klerosUIComponentsPrimaryText/75 hover:[&_path]:fill-klerosUIComponentsPrimaryText",
-              )}
-            />
-          }
+          icon={<HamburgerIcon />}
           onClick={toggleIsMenuOpen}
         />
       </div>
@@ -98,24 +93,17 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
         </div>
 
         <hr className="border-klerosUIComponentsStroke w-full" />
-
-        <LightButton
-          className={clsx(
-            "[&>p]:text-klerosUIComponentsPrimaryText [&>p]:ml-2 [&>p]:font-normal",
-            "hover:[&>p]:text-klerosUIComponentsSecondaryPurple transition-colors duration-200",
-            "pl-0",
-            "transition-transform duration-200 hover:scale-102",
-          )}
-          text="Help"
-          icon={
-            <HelpIcon
-              className={clsx(
-                "fill-klerosUIComponentsSecondaryPurple [&_path]:fill-klerosUIComponentsSecondaryPurple size-4",
-              )}
-            />
-          }
-          onPress={toggleIsHelpOpen}
-        />
+        <div>
+          <LightButton
+            className={clsx(
+              "[&>p]:text-klerosUIComponentsPrimaryText [&>p]:ml-2 [&>p]:font-normal",
+            )}
+            text="Help"
+            icon={<HelpIcon className={clsx("size-4")} />}
+            onPress={toggleIsHelpOpen}
+          />
+          <ThemeToggle withText />
+        </div>
       </Modal>
     </>
   );
