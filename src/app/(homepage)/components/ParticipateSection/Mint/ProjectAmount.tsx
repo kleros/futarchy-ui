@@ -1,12 +1,15 @@
 import React from "react";
 
-import { BigNumberField } from "@kleros/ui-components-library";
+import { BigNumberField, Tooltip } from "@kleros/ui-components-library";
 
 interface IProjectAmount {
   amount: BigNumber;
   name: string;
   color: string;
 }
+
+const shortenName = (name: string) =>
+  name.length > 16 ? `${name.slice(0, 12)}...` : name;
 
 const ProjectAmount: React.FC<IProjectAmount> = ({ amount, name, color }) => {
   return (
@@ -21,7 +24,11 @@ const ProjectAmount: React.FC<IProjectAmount> = ({ amount, name, color }) => {
         className="mr-2 size-2 rounded-full"
         style={{ backgroundColor: color }}
       />
-      <label className="text-klerosUIComponentsPrimaryText">{name}</label>
+      <Tooltip text={name} closeDelay={125}>
+        <label className="text-klerosUIComponentsPrimaryText">
+          {shortenName(name)}
+        </label>
+      </Tooltip>
     </div>
   );
 };
