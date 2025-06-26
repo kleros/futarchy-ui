@@ -26,10 +26,6 @@ const AmountInput: React.FC<IAmountInput> = ({
           "[&_input]:rounded-r-none [&_input]:border-none [&_input]:focus:shadow-none",
         )}
         onChange={(e) => {
-          console.log({
-            rawValue: e,
-            processed: parseUnits(e.toString(), 18),
-          });
           setAmount(parseUnits(e.toString(), 18));
         }}
         minValue={"0"}
