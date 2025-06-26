@@ -11,6 +11,8 @@ import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 
+import { ThemeProvider } from "next-themes";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -35,7 +37,7 @@ export default function RootLayout({
   const cookies = headers().get("cookie");
 
   return (
-    <html lang="en" className="box-border size-full">
+    <html lang="en" className="box-border size-full" suppressHydrationWarning>
       <body
         className={clsx(
           `${geistSans.variable} ${geistMono.variable} bg-klerosUIComponentsLightBackground antialiased`,
@@ -43,9 +45,11 @@ export default function RootLayout({
         )}
       >
         <Web3Context {...{ cookies }}>
-          <Header />
-          {children}
-          <Footer />
+          <ThemeProvider themes={["light", "dark"]} attribute="class">
+            <Header />
+            {children}
+            <Footer />
+          </ThemeProvider>
         </Web3Context>
       </body>
     </html>
