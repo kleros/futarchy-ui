@@ -1,9 +1,11 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import SeerLogoLight from "@/assets/svg/seer-logo-light.svg";
-import SeerLogoDark from "@/assets/svg/seer-logo-dark.svg";
 import { useEffect, useState } from "react";
+
+import { useTheme } from "next-themes";
+
+import SeerLogoDark from "@/assets/svg/seer-logo-dark.svg";
+import SeerLogoLight from "@/assets/svg/seer-logo-light.svg";
 
 const SeerLogo: React.FC<{ className?: string }> = ({ className }) => {
   const { resolvedTheme } = useTheme();
