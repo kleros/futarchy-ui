@@ -1,5 +1,6 @@
 import { BigNumberField, DropdownSelect } from "@kleros/ui-components-library";
 import clsx from "clsx";
+import { parseUnits } from "viem";
 
 import DAIIcon from "@/assets/svg/dai.svg";
 
@@ -8,13 +9,12 @@ export enum TokenType {
   xDAI,
 }
 interface IAmountInput {
-  amount: BigNumber;
-  setAmount: (amount: BigNumber) => void;
+  amount: bigint;
+  setAmount: (amount: bigint) => void;
   setSelectedToken: (token: TokenType) => void;
 }
 
 const AmountInput: React.FC<IAmountInput> = ({
-  amount,
   setAmount,
   setSelectedToken,
 }) => {
@@ -25,8 +25,13 @@ const AmountInput: React.FC<IAmountInput> = ({
           "inline-block w-36",
           "[&_input]:rounded-r-none [&_input]:border-none [&_input]:focus:shadow-none",
         )}
-        value={amount}
-        onChange={setAmount}
+        onChange={(e) => {
+          console.log({
+            rawValue: e,
+            processed: parseUnits(e.toString(), 18),
+          });
+          setAmount(parseUnits(e.toString(), 18));
+        }}
         minValue={"0"}
         // variant={resultDeposit.isError ? "error" : undefined}
         // message={

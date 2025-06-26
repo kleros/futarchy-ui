@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
-import { Button, Card } from "@kleros/ui-components-library";
-import { waitForTransactionReceipt } from "@wagmi/core";
-import BigNumber from "bignumber.js";
+import { Card } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { useToggle } from "react-use";
-import { parseUnits, formatUnits } from "viem";
-import { useAccount, useBalance, useConfig } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 
 import {
-  useSimulateGnosisRouterSplitFromBase,
   useSimulateSDaiAdapterDepositXdai,
-  useWriteGnosisRouterSplitFromBase,
   useReadSDaiBalanceOf,
 } from "@/generated";
 
@@ -21,11 +16,12 @@ import { markets } from "@/consts/markets";
 
 import AmountInput, { TokenType } from "./AmountInput";
 import ProjectAmount from "./ProjectAmount";
+import SDaiButton from "./SDaiButton";
 import TopLeftInfo from "./TopLeftInfo";
+import XDaiButton from "./XDaiButton";
 
 const Mint: React.FC = () => {
   const { address } = useAccount();
-  const config = useConfig();
   const { data: balanceXDai, refetch: refetchXDai } = useBalance({
     address,
   });
@@ -33,29 +29,24 @@ const Mint: React.FC = () => {
     args: [address!],
   });
 
-  const [amount, setAmount] = useState<BigNumber>(BigNumber("0"));
+  const [amount, setAmount] = useState<bigint>(0n);
   const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
 
   const [isMinting, toggleIsMinting] = useToggle(false);
 
   const resultDeposit = useSimulateSDaiAdapterDepositXdai({
     args: [address!],
-    value: BigInt(parseUnits(amount.toString(), 18)),
+    value: amount,
     query: {
-      enabled: typeof address !== "undefined" && amount.gt(0),
+      enabled: typeof address !== "undefined" && amount > 0,
       retry: false,
     },
   });
 
-  const resultSplit = useSimulateGnosisRouterSplitFromBase({
-    args: ["0x6c40Dfc5EF3568DA192010cc831f2e6900DF439e"],
-    value: BigInt(parseUnits(amount.toString(), 18)),
-    query: {
-      enabled: typeof address !== "undefined" && amount.gt(0),
-    },
-  });
-
-  const { writeContractAsync } = useWriteGnosisRouterSplitFromBase();
+  const isSDaiSelected = useMemo(
+    () => selectedToken === TokenType.sDAI,
+    [selectedToken],
+  );
 
   return (
     <Card
@@ -68,11 +59,9 @@ const Mint: React.FC = () => {
       <div className="flex flex-wrap gap-x-25.25 gap-y-4">
         <TopLeftInfo
           balance={
-            selectedToken === TokenType.sDAI
-              ? (balanceSDai ?? 0n)
-              : (balanceXDai?.value ?? 0n)
+            isSDaiSelected ? (balanceSDai ?? 0n) : (balanceXDai?.value ?? 0n)
           }
-          isSDaiSelected={selectedToken === TokenType.sDAI}
+          {...{ isSDaiSelected }}
         />
         <AmountInput {...{ amount, setAmount, setSelectedToken }} />
       </div>
@@ -97,31 +86,35 @@ const Mint: React.FC = () => {
             key={name}
             {...{ name, color }}
             amount={
-              resultDeposit.data
-                ? BigNumber(formatUnits(resultDeposit.data.result, 18))
-                : BigNumber("0")
+              isSDaiSelected
+                ? amount
+                : resultDeposit.data
+                  ? resultDeposit.data.result
+                  : 0n
             }
           />
         ))}
-        <Button
-          isLoading={isMinting}
-          isDisabled={isMinting}
-          className="absolute right-1/2 bottom-0 translate-1/2"
-          text="Convert to Movie Tokens"
-          onClick={async () => {
-            toggleIsMinting(true);
-            try {
-              if (typeof resultSplit.data !== "undefined") {
-                const tx = await writeContractAsync(resultSplit.data?.request);
-                await waitForTransactionReceipt(config, { hash: tx });
-                refetchSDai();
-                refetchXDai();
-              }
-            } finally {
-              toggleIsMinting(false);
-            }
-          }}
-        />
+        {isSDaiSelected ? (
+          <SDaiButton
+            {...{
+              amount,
+              refetchSDai,
+              refetchXDai,
+              isMinting,
+              toggleIsMinting,
+            }}
+          />
+        ) : (
+          <XDaiButton
+            {...{
+              amount,
+              refetchSDai,
+              refetchXDai,
+              isMinting,
+              toggleIsMinting,
+            }}
+          />
+        )}
       </Card>
     </Card>
   );
