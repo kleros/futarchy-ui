@@ -48,6 +48,17 @@ const Mint: React.FC = () => {
     [selectedToken],
   );
 
+  const notEnoughBalance = useMemo(() => {
+    if (
+      typeof amount === "undefined" ||
+      typeof balanceXDai === "undefined" ||
+      typeof balanceSDai === "undefined"
+    )
+      return false;
+    else if (isSDaiSelected) return amount > balanceSDai;
+    else return amount > balanceXDai.value;
+  }, [balanceXDai, balanceSDai, amount, isSDaiSelected]);
+
   return (
     <Card
       round
@@ -63,7 +74,9 @@ const Mint: React.FC = () => {
           }
           {...{ isSDaiSelected }}
         />
-        <AmountInput {...{ amount, setAmount, setSelectedToken }} />
+        <AmountInput
+          {...{ amount, setAmount, setSelectedToken, notEnoughBalance }}
+        />
       </div>
 
       <Card
