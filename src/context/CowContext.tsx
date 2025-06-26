@@ -12,6 +12,8 @@ import { gnosis } from "@reown/appkit/networks";
 
 import { useEthersSigner } from "@/hooks/useEthersSigner";
 
+import FullScreenLoader from "@/components/FullScreenLoader";
+
 import { cowSwapAppCode } from "@/consts";
 
 interface ICowContext {
@@ -47,7 +49,7 @@ const CowContextProvider: React.FC<{ children: ReactNode }> = ({
     return new SubgraphApi({ chainId: gnosis.id });
   }, []);
 
-  if (sdk === null) return <div>Loading</div>;
+  if (sdk === null) return <FullScreenLoader />;
 
   return (
     <CowContext.Provider value={{ sdk, orderBook, cowSubgraph }}>

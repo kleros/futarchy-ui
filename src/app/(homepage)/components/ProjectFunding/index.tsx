@@ -93,6 +93,8 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     [marketPrice, maxValue, precision],
   );
 
+  const isUpPredict = prediction > marketEstimate;
+
   const { writeContractAsync: increaseAllowance } = useWriteSDaiApprove();
 
   const handleAllowance = useCallback(async () => {
@@ -147,7 +149,10 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   const [sized] = useSize(({ width }) => (
     <div className="relative w-full">
       <Slider
-        className="w-full"
+        className={clsx(
+          "w-full",
+          "[&_#slider-label]:!text-klerosUIComponentsPrimaryText [&_#slider-label]:font-semibold",
+        )}
         maxValue={maxValue * precision}
         minValue={minValue * precision}
         value={prediction}
@@ -156,6 +161,11 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         aria-label="Slider"
         callback={setPrediction}
         formatter={(value) => `${(value / precision).toFixed(0)}`}
+        // @ts-expect-error other values not needed
+        theme={{
+          sliderColor: isUpPredict ? "#3FEC65" : "#F75C7B",
+          thumbColor: isUpPredict ? "#3FEC65" : "#F75C7B",
+        }}
       />
       <div
         className="absolute bottom-0"
@@ -165,43 +175,49 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
       >
         <label
           className={
-            "text-klerosUIComponentsPrimaryText block w-full text-center"
+            "text-klerosUIComponentsPrimaryText block w-full text-center text-xs"
           }
         >
           Market
         </label>
         <div
-          className={
-            "bg-klerosUIComponentsPrimaryBlue rounded-sm px-1 text-center"
-          }
+          className={"rounded-base px-2 py-0.75 text-center text-xs"}
+          style={{ backgroundColor: color }}
         >
           {`${(marketEstimate / precision).toFixed(2)}`}
         </div>
-        <span className="mx-auto block h-9 w-1 rounded-full bg-black" />
+        <span className="mx-auto block h-9 w-0.75 rounded-b-full bg-black" />
       </div>
     </div>
   ));
 
   return (
-    <Card aria-label="card" className="h-auto w-full px-8 py-6">
-      <div className="flex items-center gap-2">
-        <span
-          className="size-2 rounded-full"
-          style={{ backgroundColor: color }}
-        />
-        <h3 className="text-klerosUIComponentsPrimaryText font-bold">{name}</h3>
-      </div>
+    <Card
+      aria-label="card"
+      className="bg-klerosUIComponentsLightBackground flex h-auto w-full flex-col gap-4 px-4 py-6 md:px-8"
+    >
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex max-w-full min-w-[300px] grow basis-[70%] flex-col gap-8">
+          <div className="flex items-center gap-2">
+            <span
+              className="size-2 rounded-full"
+              style={{ backgroundColor: color }}
+            />
+            <h3 className="text-klerosUIComponentsPrimaryText font-semibold">
+              {name}
+            </h3>
+          </div>
+          <div className="px-4"> {sized} </div>
+        </div>
 
-      <div className="grid grid-cols-[75%_25%] items-center">
-        <div className="px-4"> {sized} </div>
-        <div>
-          <label className="text-klerosUIComponentsSecondaryText">
+        <div className="bg max-w-[284px] min-w-[264px] shrink-0 grow basis-[25%]">
+          <label className="text-klerosUIComponentsSecondaryText text-sm">
             My Estimate (Score)
           </label>
-          <div className="flex">
+          <div className="border-klerosUIComponentsStroke rounded-base flex flex-nowrap border">
             <NumberField
               aria-label="Prediction"
-              className="w-auto"
+              className="w-auto [&_input]:border-none"
               value={prediction / precision}
               onChange={(e) => setPrediction(e * precision)}
             />
@@ -236,19 +252,24 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
                 : "text-light-mode-red-2",
             )}
           >
-            {`${prediction > marketEstimate ? "Higher" : "Lower"} than the market`}
+            {`${prediction > marketEstimate ? "↑ Higher" : "↓ Lower"} than the market`}
           </label>
         </div>
       </div>
-      <div className="flex gap-2">
-        <PositionValue {...{ upToken, downToken }} />
-        <OpenOrders />
+      <div className="flex w-full flex-col">
+        <div className="flex gap-2">
+          <PositionValue {...{ upToken, downToken }} />
+          <OpenOrders />
+        </div>
+        <Accordion
+          aria-label="accordion"
+          className={clsx(
+            "w-full",
+            "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
+          )}
+          items={[{ title: "Details", body: <p>{details}</p> }]}
+        />
       </div>
-      <Accordion
-        aria-label="accordion"
-        className="w-full"
-        items={[{ title: "Details", body: <p>{details}</p> }]}
-      />
     </Card>
   );
 };
