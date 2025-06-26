@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 
+import clsx from "clsx";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
 
-import CowContextProvider from "@/context/CowContext";
 import Web3Context from "@/context/Web3Context";
 
 import "@kleros/ui-components-library/style.css";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-
-import clsx from "clsx";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -46,7 +44,7 @@ export default function RootLayout({
       >
         <Web3Context {...{ cookies }}>
           <Header />
-          <CowContextProvider> {children} </CowContextProvider>
+          {children}
           <Footer />
         </Web3Context>
       </body>

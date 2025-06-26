@@ -9,9 +9,11 @@ import React, {
 
 import { TradingSdk, OrderBookApi, SubgraphApi } from "@cowprotocol/cow-sdk";
 import { gnosis } from "@reown/appkit/networks";
+import { useAccount } from "wagmi";
 
 import { useEthersSigner } from "@/hooks/useEthersSigner";
 
+import ConnectWallet from "@/components/ConnectWallet";
 import FullScreenLoader from "@/components/FullScreenLoader";
 
 import { cowSwapAppCode } from "@/consts";
@@ -28,6 +30,7 @@ const CowContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const signer = useEthersSigner({ chainId: 100 });
+  const { address } = useAccount();
 
   const sdk = useMemo(() => {
     if (typeof signer === "undefined") return null;
@@ -49,7 +52,19 @@ const CowContextProvider: React.FC<{ children: ReactNode }> = ({
     return new SubgraphApi({ chainId: gnosis.id });
   }, []);
 
-  if (sdk === null) return <FullScreenLoader />;
+  if (typeof address === "undefined")
+    return (
+      <div className="mt-28 w-full">
+        <ConnectWallet text="Connect To Participate" className="mx-auto" />
+      </div>
+    );
+
+  if (sdk === null)
+    return (
+      <div className="mt-6">
+        <FullScreenLoader />
+      </div>
+    );
 
   return (
     <CowContext.Provider value={{ sdk, orderBook, cowSubgraph }}>

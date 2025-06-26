@@ -36,7 +36,10 @@ export const SwitchChainButton: React.FC<{ className?: string }> = ({
   );
 };
 
-const ConnectButton: React.FC<{ className?: string }> = ({ className }) => {
+const ConnectButton: React.FC<{ text?: string; className?: string }> = ({
+  text,
+  className,
+}) => {
   const { open } = useAppKit();
   const { open: isOpen } = useAppKitState();
   return (
@@ -44,20 +47,23 @@ const ConnectButton: React.FC<{ className?: string }> = ({ className }) => {
       {...{ className }}
       isDisabled={isOpen}
       small
-      text="Connect"
+      text={text ?? "Connect"}
       onPress={async () => open({ view: "Connect" })}
     />
   );
 };
 
-const ConnectWallet: React.FC<{ className?: string }> = ({ className }) => {
+const ConnectWallet: React.FC<{ text?: string; className?: string }> = ({
+  className,
+  text,
+}) => {
   const { isConnected, chainId } = useAccount();
 
   if (isConnected) {
     if (chainId !== DEFAULT_CHAIN.id) {
       return <SwitchChainButton {...{ className }} />;
     } else return <AccountDisplay />;
-  } else return <ConnectButton {...{ className }} />;
+  } else return <ConnectButton {...{ text, className }} />;
 };
 
 export default ConnectWallet;
