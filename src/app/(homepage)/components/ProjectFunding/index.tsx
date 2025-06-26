@@ -13,7 +13,6 @@ import {
 import { waitForTransactionReceipt } from "@wagmi/core";
 import clsx from "clsx";
 import { useSize, useToggle } from "react-use";
-import { Address } from "viem";
 import { useConfig, useAccount } from "wagmi";
 
 import {
@@ -26,24 +25,13 @@ import { useCowSdk } from "@/context/CowContext";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { getContractInfo } from "@/consts";
-import { endTime } from "@/consts/markets";
+import { IMarket, endTime } from "@/consts/markets";
 
+import Details from "./Details";
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
 
-interface IProjectFunding {
-  name: string;
-  color: string;
-  upToken: Address;
-  downToken: Address;
-  underlyingToken: Address;
-  minValue: number;
-  maxValue: number;
-  precision: number;
-  details: string;
-}
-
-const ProjectFunding: React.FC<IProjectFunding> = ({
+const ProjectFunding: React.FC<IMarket> = ({
   name,
   color,
   upToken,
@@ -283,7 +271,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
             "w-full",
             "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
           )}
-          items={[{ title: "Details", body: <p>{details}</p> }]}
+          items={[{ title: "Details", body: <Details {...details} /> }]}
         />
       </div>
     </Card>
