@@ -21,7 +21,7 @@ const Header: React.FC = () => {
             Trading Period:
           </span>
           <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-            3 Months
+            1 Month
           </span>
         </div>
         <Countdown />
