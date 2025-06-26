@@ -1,11 +1,13 @@
+import { useMemo } from "react";
+
 import { useTheme } from "next-themes";
 
 import MoonIcon from "@/assets/svg/moon.svg";
 import SunIcon from "@/assets/svg/sun.svg";
 
-import LightButton from "./LightButton";
 import { cn } from "@/utils";
-import { useMemo } from "react";
+
+import LightButton from "./LightButton";
 
 const ThemeToggle: React.FC<{
   className?: string;

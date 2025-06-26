@@ -5,7 +5,8 @@ import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
 import ChartBar from "@/assets/svg/chart-bar.svg";
-import Cronometer from "@/assets/svg/cronometer.svg";
+
+import Countdown from "./Countdown";
 
 const Header: React.FC = () => {
   return (
@@ -23,15 +24,7 @@ const Header: React.FC = () => {
             3 Months
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <Cronometer className="size-3.5" />
-          <span className="text-klerosUIComponentsSecondaryText text-sm">
-            Countdown:
-          </span>
-          <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-            29d 11h:11m
-          </span>
-        </div>
+        <Countdown />
       </div>
 
       <div
