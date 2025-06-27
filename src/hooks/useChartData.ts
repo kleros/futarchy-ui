@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { formatUnits } from "viem";
 
 import { IMarket } from "@/consts/markets";
 
@@ -31,6 +32,21 @@ export type IChartData = Record<
   { market: IMarket; data: Array<{ timestamp: number; value: number }> }
 >;
 
+const getSqrtPrices = (
+  sqrtPrice: string,
+): { token0Price: `${number}`; token1Price: `${number}` } => {
+  const sqrtPriceBigInt = BigInt(sqrtPrice);
+  const token0Price = formatUnits(
+    (2n ** 192n * 10n ** 18n) / (sqrtPriceBigInt * sqrtPriceBigInt),
+    18,
+  ) as `${number}`;
+  const token1Price = formatUnits(
+    (sqrtPriceBigInt * sqrtPriceBigInt * 10n ** 18n) / 2n ** 192n,
+    18,
+  ) as `${number}`;
+  return { token0Price, token1Price };
+};
+
 export const useChartData = (markets: Array<IMarket>) =>
   useQuery({
     queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
@@ -47,17 +63,30 @@ export const useChartData = (markets: Array<IMarket>) =>
           ).then((res) => res.json());
 
           const processed: IChartData[""]["data"] = rawData[1].map(
-            (dataPoint) => ({
-              timestamp: dataPoint.periodStartUnix,
-              value:
-                parseFloat(
-                  (dataPoint.pool.token0.id.toLowerCase() ===
-                  underlyingToken.toLowerCase()
-                    ? dataPoint.token0Price
-                    : dataPoint.token1Price
-                  ).slice(0, 9),
-                ) * maxValue,
-            }),
+            (dataPoint) => {
+              let token0Price = dataPoint.token0Price;
+              let token1Price = dataPoint.token1Price;
+              const sqrtPrice = dataPoint.sqrtPrice;
+              if (
+                token0Price === "0" &&
+                token1Price === "0" &&
+                sqrtPrice &&
+                sqrtPrice !== "0"
+              ) {
+                ({ token0Price, token1Price } = getSqrtPrices(sqrtPrice));
+              }
+              return {
+                timestamp: dataPoint.periodStartUnix,
+                value:
+                  parseFloat(
+                    (dataPoint.pool.token0.id.toLowerCase() ===
+                    underlyingToken.toLowerCase()
+                      ? token0Price
+                      : token1Price
+                    ).slice(0, 9),
+                  ) * maxValue,
+              };
+            },
           );
 
           return { [name]: { market, data: processed } };
