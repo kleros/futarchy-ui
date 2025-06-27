@@ -22,7 +22,7 @@ import {
 } from "@/generated";
 
 import { useCowSdk } from "@/context/CowContext";
-import { useMarketQuote } from "@/hooks/useMarketQuote";
+import { IChartData } from "@/hooks/useChartData";
 
 import { getContractInfo } from "@/consts";
 import { IMarket, endTime } from "@/consts/markets";
@@ -31,7 +31,11 @@ import Details from "./Details";
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
 
-const ProjectFunding: React.FC<IMarket> = ({
+interface IProjectFunding extends IMarket {
+  chartData?: IChartData[];
+}
+
+const ProjectFunding: React.FC<IProjectFunding> = ({
   name,
   color,
   upToken,
@@ -41,6 +45,7 @@ const ProjectFunding: React.FC<IMarket> = ({
   maxValue,
   precision,
   details,
+  chartData,
 }) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
@@ -77,7 +82,19 @@ const ProjectFunding: React.FC<IMarket> = ({
     [allowance, underlyingBalance],
   );
 
-  const { data: marketPrice } = useMarketQuote(upToken);
+  const marketPrice = useMemo(() => {
+    if (typeof chartData !== "undefined") {
+      const chartSlot = chartData.find(
+        (data) => Object.values(data)[0].market.upToken === upToken,
+      );
+      if (typeof chartSlot !== "undefined") {
+        const lastValue = Object.entries(chartSlot)[0][1].data.at(-1)?.value;
+        if (typeof lastValue !== "undefined") {
+          return lastValue / maxValue;
+        }
+      }
+    }
+  }, [chartData, upToken, maxValue]);
 
   const marketEstimate = useMemo(
     () =>
@@ -262,7 +279,10 @@ const ProjectFunding: React.FC<IMarket> = ({
       </div>
       <div className="flex w-full flex-col">
         <div className="flex gap-2">
-          <PositionValue {...{ upToken, downToken }} />
+          <PositionValue
+            {...{ upToken, downToken }}
+            marketPrice={marketPrice ?? 0}
+          />
           <OpenOrders />
         </div>
         <Accordion

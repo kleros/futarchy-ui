@@ -37,7 +37,11 @@ export default function Home() {
             <ParticipateSection />
             <div className="mt-8 flex flex-col gap-4">
               {markets.map((market) => (
-                <ProjectFunding key={market.name} {...market} />
+                <ProjectFunding
+                  key={market.name}
+                  chartData={chartData}
+                  {...market}
+                />
               ))}
             </div>
           </CowContextProvider>
