@@ -8,7 +8,7 @@ import { useCowSdk } from "@/context/CowContext";
 export const useMarketQuote = (token: string) => {
   const { sdk } = useCowSdk();
   return useQuery({
-    queryKey: [`market-${token}`],
+    queryKey: [`market-${token.toLowerCase()}`],
     staleTime: 10000,
     retry: (failureCount) => failureCount < 3,
     queryFn: async () => {

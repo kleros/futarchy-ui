@@ -48,7 +48,7 @@ const getSqrtPrices = (
 };
 
 export const useChartData = (markets: Array<IMarket>) =>
-  useQuery({
+  useQuery<IChartData[]>({
     queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
     queryFn: async () => {
       return await Promise.all(

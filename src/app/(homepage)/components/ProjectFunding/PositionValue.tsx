@@ -5,17 +5,24 @@ import { useAccount } from "wagmi";
 
 import { useReadErc20BalanceOf } from "@/generated";
 
-import { useMarketQuote } from "@/hooks/useMarketQuote";
-
 interface IPositionValue {
   upToken: Address;
   downToken: Address;
+  marketPrice: number;
 }
 
-const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
+const PositionValue: React.FC<IPositionValue> = ({
+  upToken,
+  downToken,
+  marketPrice,
+}) => {
   const { address } = useAccount();
-  const upValue = useTokenPositionValue(upToken, address ?? "0x");
-  const downValue = useTokenPositionValue(downToken, address ?? "0x");
+  const upValue = useTokenPositionValue(upToken, address ?? "0x", marketPrice);
+  const downValue = useTokenPositionValue(
+    downToken,
+    address ?? "0x",
+    1 - marketPrice,
+  );
   const totalValue = useMemo(() => upValue + downValue, [upValue, downValue]);
   if (totalValue > 0) {
     return (
@@ -32,8 +39,11 @@ const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
   }
 };
 
-const useTokenPositionValue = (token: Address, address: Address) => {
-  const { data: price } = useMarketQuote(token);
+const useTokenPositionValue = (
+  token: Address,
+  address: Address,
+  price: number,
+) => {
   const { data: balance } = useReadErc20BalanceOf({
     address: token,
     args: [address ?? "0x"],
