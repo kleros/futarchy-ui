@@ -10,7 +10,9 @@ export const useMarketQuote = (token: string) => {
   return useQuery({
     queryKey: [`market-${token}`],
     staleTime: 10000,
+    retry: (failureCount) => failureCount < 3,
     queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
       const { quoteResults } = await sdk.getQuote({
         kind: OrderKind.SELL,
         sellToken: token,
