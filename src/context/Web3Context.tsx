@@ -29,6 +29,7 @@ createAppKit({
   networks: [gnosis],
   defaultNetwork: gnosis,
   metadata: metadata,
+  enableCoinbase: false,
   features: {
     analytics: false,
   },
