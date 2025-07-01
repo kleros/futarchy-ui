@@ -5,7 +5,11 @@ import { useAccount } from "wagmi";
 
 import { getTradeArgs } from "@/utils/trade";
 
-export const useMarketQuote = (token: string, collateralToken: string) => {
+export const useMarketQuote = (
+  token: string,
+  collateralToken: string,
+  amount?: string,
+) => {
   const { address } = useAccount();
   return useQuery({
     queryKey: [`market-${token.toLowerCase()}`],
@@ -14,9 +18,15 @@ export const useMarketQuote = (token: string, collateralToken: string) => {
     queryFn: async () => {
       await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
 
-      const args = getTradeArgs(gnosis.id, "1", token, collateralToken, "buy");
+      const args = getTradeArgs(
+        gnosis.id,
+        amount ?? "1",
+        token,
+        collateralToken,
+        "buy",
+      );
 
-      const res = await SwaprV3Trade.getQuote(
+      return await SwaprV3Trade.getQuote(
         {
           amount: args.currencyAmountIn,
           quoteCurrency: args.currencyOut,
@@ -27,8 +37,6 @@ export const useMarketQuote = (token: string, collateralToken: string) => {
         undefined,
         false,
       );
-
-      return parseFloat(res?.executionPrice.toFixed(4) ?? "0");
     },
   });
 };
