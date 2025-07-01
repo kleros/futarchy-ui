@@ -14,13 +14,19 @@ const Countdown: React.FC = () => {
   }: CountdownRenderProps) => {
     if (completed) {
       return (
-        <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+        <span
+          className="text-klerosUIComponentsPrimaryText text-sm font-semibold"
+          suppressHydrationWarning
+        >
           Ended
         </span>
       );
     } else {
       return (
-        <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+        <span
+          className="text-klerosUIComponentsPrimaryText text-sm font-semibold"
+          suppressHydrationWarning
+        >
           {days > 0 && `${days}d `}
           {hours > 0 && `${hours}h:`}
           {minutes > 0 && `${minutes}m `}
