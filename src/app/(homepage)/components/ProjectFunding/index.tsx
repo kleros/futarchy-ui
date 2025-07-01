@@ -2,7 +2,6 @@ import React, { useCallback, useState, useMemo } from "react";
 
 import { useTheme } from "next-themes";
 
-import { OrderKind } from "@cowprotocol/cow-sdk";
 import {
   Card,
   Slider,
@@ -10,9 +9,10 @@ import {
   NumberField,
   Button,
 } from "@kleros/ui-components-library";
-import { waitForTransactionReceipt } from "@wagmi/core";
+import { waitForTransactionReceipt, sendTransaction } from "@wagmi/core";
 import clsx from "clsx";
 import { useSize, useToggle } from "react-use";
+import { formatUnits } from "viem";
 import { useConfig, useAccount } from "wagmi";
 
 import {
@@ -21,11 +21,10 @@ import {
   useWriteErc20Approve,
 } from "@/generated";
 
-import { useCowSdk } from "@/context/CowContext";
 import { IChartData } from "@/hooks/useChartData";
+import { useMarketQuote } from "@/hooks/useMarketQuote";
 
-import { getContractInfo } from "@/consts";
-import { IMarket, endTime } from "@/consts/markets";
+import { IMarket } from "@/consts/markets";
 
 import Details from "./Details";
 import OpenOrders from "./OpenOrders";
@@ -45,34 +44,31 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   maxValue,
   precision,
   details,
-  chartData,
 }) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
   const { theme } = useTheme();
   const [prediction, setPrediction] = useState(0);
   const [userInteracting, toggleUserInteracting] = useToggle(false);
-  const { sdk } = useCowSdk();
-
-  const { address: cowSwapAddress } = getContractInfo("cowSwap");
 
   const { data: allowance, refetch: refetchAllowance } = useReadErc20Allowance({
     address: underlyingToken,
-    args: [address ?? "0x", cowSwapAddress],
+    args: [address ?? "0x", "0xffb643e73f280b97809a8b41f7232ab401a04ee1"],
     query: {
       staleTime: 5000,
       enabled: typeof address !== "undefined",
     },
   });
 
-  const { data: underlyingBalance } = useReadErc20BalanceOf({
-    address: underlyingToken,
-    args: [address ?? "0x"],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
+  const { data: underlyingBalance, refetch: refetchBalance } =
+    useReadErc20BalanceOf({
+      address: underlyingToken,
+      args: [address ?? "0x"],
+      query: {
+        staleTime: 5000,
+        enabled: typeof address !== "undefined",
+      },
+    });
 
   const isAllowance = useMemo(
     () =>
@@ -82,19 +78,22 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     [allowance, underlyingBalance],
   );
 
-  const marketPrice = useMemo(() => {
-    if (typeof chartData !== "undefined") {
-      const chartSlot = chartData.find(
-        (data) => Object.values(data)[0].market.upToken === upToken,
-      );
-      if (typeof chartSlot !== "undefined") {
-        const lastValue = Object.entries(chartSlot)[0][1].data.at(-1)?.value;
-        if (typeof lastValue !== "undefined") {
-          return lastValue / maxValue;
-        }
-      }
-    }
-  }, [chartData, upToken, maxValue]);
+  const { data: marketQuote } = useMarketQuote(
+    upToken,
+    underlyingToken,
+    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
+  );
+
+  const { data: marketDownQuote } = useMarketQuote(
+    downToken,
+    underlyingToken,
+    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
+  );
+
+  const marketPrice = useMemo(
+    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
+    [marketQuote],
+  );
 
   const marketEstimate = useMemo(
     () =>
@@ -112,14 +111,13 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     if (typeof underlyingBalance !== "undefined") {
       const hash = await increaseAllowance({
         address: underlyingToken,
-        args: [cowSwapAddress, underlyingBalance],
+        args: ["0xffb643e73f280b97809a8b41f7232ab401a04ee1", underlyingBalance],
       });
       await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
       refetchAllowance();
     }
   }, [
     wagmiConfig,
-    cowSwapAddress,
     increaseAllowance,
     refetchAllowance,
     underlyingBalance,
@@ -127,37 +125,25 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   ]);
 
   const handlePredict = useCallback(async () => {
-    if (typeof underlyingBalance !== "undefined") {
-      const isUp = prediction > marketEstimate;
-      const buyAmount =
-        (BigInt((prediction / maxValue) * precision * 1000) *
-          underlyingBalance) /
-        BigInt(1000);
-      const buyToken = isUp ? upToken : downToken;
-      if (typeof underlyingBalance !== "undefined") {
-        await sdk.postLimitOrder({
-          kind: OrderKind.SELL,
-          sellToken: underlyingToken,
-          sellTokenDecimals: 18,
-          sellAmount: underlyingBalance.toString(),
-          buyToken,
-          buyTokenDecimals: 18,
-          buyAmount: buyAmount.toString(),
-          partiallyFillable: true,
-          validTo: endTime,
-        });
-      }
-    }
+    const tx = await (
+      isUpPredict ? marketQuote : marketDownQuote
+    )?.swapTransaction({
+      recipient: address!,
+    });
+    const hash = await sendTransaction(wagmiConfig, {
+      to: tx!.to as `0x${string}`,
+      data: tx!.data!.toString() as `0x${string}`,
+      value: BigInt(tx?.value?.toString() || 0),
+    });
+    await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
+    refetchBalance();
   }, [
-    sdk,
-    underlyingBalance,
-    underlyingToken,
-    downToken,
-    marketEstimate,
-    maxValue,
-    precision,
-    prediction,
-    upToken,
+    address,
+    marketQuote,
+    marketDownQuote,
+    wagmiConfig,
+    isUpPredict,
+    refetchBalance,
   ]);
 
   const sliderTheme = useMemo(() => {
@@ -246,11 +232,18 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
               isDisabled={
                 typeof address === "undefined" ||
                 typeof underlyingBalance === "undefined" ||
+                underlyingBalance === 0n ||
                 typeof allowance === "undefined" ||
                 userInteracting
               }
               isLoading={userInteracting}
-              text={isAllowance ? "Allow" : "Predict"}
+              text={
+                isAllowance
+                  ? "Allow"
+                  : underlyingBalance === 0n
+                    ? "Done"
+                    : "Predict"
+              }
               aria-label="Predict Button"
               onPress={async () => {
                 toggleUserInteracting(true);

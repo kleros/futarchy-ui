@@ -4,17 +4,22 @@ import React, { type ReactNode } from "react";
 
 import { gnosis } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
+import { configureRpcProviders } from "@swapr/sdk";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 
 import { wagmiAdapter } from "@/wagmiConfig";
 
-import { reownProjectId } from "@/consts";
+import { reownProjectId, GNOSIS_RPC } from "@/consts";
 const queryClient = new QueryClient();
 
 if (!reownProjectId) {
   throw new Error("Project ID is not defined");
 }
+
+configureRpcProviders({
+  [gnosis.id]: GNOSIS_RPC,
+});
 
 const metadata = {
   name: "Test",
