@@ -1,29 +1,34 @@
-import { OrderKind } from "@cowprotocol/cow-sdk";
+import { SwaprV3Trade, TradeType } from "@swapr/sdk";
 import { useQuery } from "@tanstack/react-query";
+import { gnosis } from "viem/chains";
+import { useAccount } from "wagmi";
 
-import { sDaiAddress } from "@/generated";
+import { getTradeArgs } from "@/utils/trade";
 
-import { useCowSdk } from "@/context/CowContext";
-
-export const useMarketQuote = (token: string) => {
-  const { sdk } = useCowSdk();
+export const useMarketQuote = (token: string, collateralToken: string) => {
+  const { address } = useAccount();
   return useQuery({
     queryKey: [`market-${token.toLowerCase()}`],
     staleTime: 10000,
     retry: (failureCount) => failureCount < 3,
     queryFn: async () => {
       await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
-      const { quoteResults } = await sdk.getQuote({
-        kind: OrderKind.SELL,
-        sellToken: token,
-        buyToken: sDaiAddress,
-        buyTokenDecimals: 18,
-        sellTokenDecimals: 18,
-        amount: "1000000000000000000",
-      });
-      const marketPriceInt =
-        BigInt(quoteResults.quoteResponse.quote.buyAmount) / 100000000000000n;
-      return parseInt(marketPriceInt.toString()) / 10000;
+
+      const args = getTradeArgs(gnosis.id, "1", token, collateralToken, "buy");
+
+      const res = await SwaprV3Trade.getQuote(
+        {
+          amount: args.currencyAmountIn,
+          quoteCurrency: args.currencyOut,
+          recipient: address,
+          tradeType: TradeType.EXACT_INPUT,
+          maximumSlippage: args.maximumSlippage,
+        },
+        undefined,
+        false,
+      );
+
+      return parseFloat(res?.executionPrice.toFixed(4) ?? "0");
     },
   });
 };

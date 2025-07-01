@@ -23,6 +23,7 @@ import {
 
 import { useCowSdk } from "@/context/CowContext";
 import { IChartData } from "@/hooks/useChartData";
+import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { getContractInfo } from "@/consts";
 import { IMarket, endTime } from "@/consts/markets";
@@ -95,7 +96,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
       }
     }
   }, [chartData, upToken, maxValue]);
-
+  useMarketQuote(upToken, underlyingToken);
   const marketEstimate = useMemo(
     () =>
       typeof marketPrice !== "undefined"
