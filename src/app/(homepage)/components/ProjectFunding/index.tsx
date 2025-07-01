@@ -60,14 +60,15 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     },
   });
 
-  const { data: underlyingBalance } = useReadErc20BalanceOf({
-    address: underlyingToken,
-    args: [address ?? "0x"],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
+  const { data: underlyingBalance, refetch: refetchBalance } =
+    useReadErc20BalanceOf({
+      address: underlyingToken,
+      args: [address ?? "0x"],
+      query: {
+        staleTime: 5000,
+        enabled: typeof address !== "undefined",
+      },
+    });
 
   const isAllowance = useMemo(
     () =>
@@ -129,12 +130,21 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     )?.swapTransaction({
       recipient: address!,
     });
-    await sendTransaction(wagmiConfig, {
+    const hash = await sendTransaction(wagmiConfig, {
       to: tx!.to as `0x${string}`,
       data: tx!.data!.toString() as `0x${string}`,
       value: BigInt(tx?.value?.toString() || 0),
     });
-  }, [address, marketQuote, marketDownQuote, wagmiConfig, isUpPredict]);
+    await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
+    refetchBalance();
+  }, [
+    address,
+    marketQuote,
+    marketDownQuote,
+    wagmiConfig,
+    isUpPredict,
+    refetchBalance,
+  ]);
 
   const sliderTheme = useMemo(() => {
     if (theme === "light") return isUpPredict ? "#3FEC65" : "#F75C7B";

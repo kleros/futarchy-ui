@@ -8,6 +8,8 @@ import { sDAIAdapterAbi } from "@/abi/sDAIAdapter";
 
 export const reownProjectId = process.env.NEXT_PUBLIC_REOWN_PROJECTID;
 
+export const GNOSIS_RPC = process.env.NEXT_PUBLIC_GNOSIS_RPC;
+
 interface IContract {
   address: `0x${string}`;
   abi: Abi;

@@ -10,14 +10,12 @@ import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 
 import { wagmiAdapter } from "@/wagmiConfig";
 
-import { reownProjectId } from "@/consts";
+import { reownProjectId, GNOSIS_RPC } from "@/consts";
 const queryClient = new QueryClient();
 
 if (!reownProjectId) {
   throw new Error("Project ID is not defined");
 }
-
-const GNOSIS_RPC = "";
 
 configureRpcProviders({
   [gnosis.id]: GNOSIS_RPC,

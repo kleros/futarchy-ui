@@ -23,7 +23,10 @@ const PositionValue: React.FC<IPositionValue> = ({
     address ?? "0x",
     1 - marketPrice,
   );
-  const totalValue = useMemo(() => upValue + downValue, [upValue, downValue]);
+  const totalValue = useMemo(
+    () => (upValue + downValue) / 5,
+    [upValue, downValue],
+  );
   if (totalValue > 0) {
     return (
       <div>
@@ -48,6 +51,7 @@ const useTokenPositionValue = (
     address: token,
     args: [address ?? "0x"],
     query: {
+      staleTime: 5000,
       enabled: typeof address !== "undefined",
     },
   });
