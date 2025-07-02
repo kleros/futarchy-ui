@@ -22,11 +22,11 @@ export default function Home() {
     <div className="w-full px-4 py-12 md:px-8 lg:px-32">
       <div className="mx-auto max-w-294">
         <Header />
-        <div className="h-96">
+        <div className="min-h-96">
           {typeof chartData !== "undefined" ? (
             <Chart data={chartData} />
           ) : (
-            <div className="flex size-full items-center justify-center">
+            <div className="flex h-96 w-full items-center justify-center">
               <Loader />
             </div>
           )}

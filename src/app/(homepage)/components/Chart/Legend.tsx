@@ -30,24 +30,28 @@ const Legend: React.FC<{ marketsData?: MarketsData }> = ({ marketsData }) => {
           ))}
         </ul>
       ) : null}
-      <div className="flex gap-8">
-        <div className="flex items-center gap-2">
-          <StatsBarIcon className="size-4" />
-          <span className="text-klerosUIComponentsPrimaryText text-sm">
-            250.k
-          </span>
-          <span className="text-klerosUIComponentsSecondaryText text-sm">
-            Volume
-          </span>
+      {false ? (
+        <div className="flex gap-8">
+          <div className="flex items-center gap-2">
+            <StatsBarIcon className="size-4" />
+            <span className="text-klerosUIComponentsPrimaryText text-sm">
+              250.k
+            </span>
+            <span className="text-klerosUIComponentsSecondaryText text-sm">
+              Volume
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ChartBarIcon className="size-4" />
+            <span className="text-klerosUIComponentsPrimaryText text-sm">
+              88
+            </span>
+            <span className="text-klerosUIComponentsSecondaryText text-sm">
+              Trades
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <ChartBarIcon className="size-4" />
-          <span className="text-klerosUIComponentsPrimaryText text-sm">88</span>
-          <span className="text-klerosUIComponentsSecondaryText text-sm">
-            Trades
-          </span>
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 };
