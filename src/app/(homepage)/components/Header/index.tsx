@@ -41,7 +41,7 @@ const Header: React.FC = () => {
         <div className="flex size-full flex-wrap items-center gap-6 px-6 py-3.75">
           <SeerLogo />
           <p className="text-klerosUIComponentsPrimaryText text-base">
-            If watched, what score will Clément give the movie?
+            If watched, what score will Clément give to the movie?
           </p>
         </div>
       </div>
