@@ -61,7 +61,7 @@ const SDaiButton: React.FC<ISDaiButton> = ({
   return (
     <Button
       isLoading={isMinting}
-      isDisabled={isMinting || isLoading || (!isAllowance && isError)}
+      isDisabled={isMinting || (!isAllowance && (isLoading || isError))}
       className="absolute right-1/2 bottom-0 translate-1/2"
       text={isAllowance ? "Allow sDAI" : "Convert to Movie Tokens"}
       onPress={async () => {
