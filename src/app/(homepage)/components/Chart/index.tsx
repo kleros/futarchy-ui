@@ -116,7 +116,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       <h2 className="text-klerosUIComponentsPrimaryText mt-6 mb-4 text-base font-semibold">
         Market Estimate Scores
       </h2>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={200}>
         <LineChart
           data={series}
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
@@ -154,11 +154,11 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
             tick={{ fill: accentColor, fontSize: "12px" }}
           />
           <Tooltip
-            defaultIndex={series.length - 1}
+            defaultIndex={series?.length - 1}
             cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
             content={({ active, payload: payloads, viewBox, coordinate }) => {
               const isVisible =
-                active && payloads && payloads.length && viewBox?.height;
+                active && payloads && payloads?.length && viewBox?.height;
 
               return isVisible
                 ? payloads.map(({ color, value }, index) => (
