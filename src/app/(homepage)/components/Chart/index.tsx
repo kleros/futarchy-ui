@@ -155,39 +155,39 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   );
 };
 
-          // <Tooltip
-          //   defaultIndex={series?.length - 1}
-          //   cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
-          //   content={({ active, payload: payloads, viewBox, coordinate }) => {
-          //     const isVisible =
-          //       active && payloads && payloads?.length && viewBox?.height;
-          //
-          //     return isVisible
-          //       ? payloads.map(({ color, value }, index) => (
-          //           <div
-          //             key={`tooltip-${index}`}
-          //             className="rounded-base absolute top-0 left-0 -translate-x-full -translate-y-1/2 px-2 py-0.75"
-          //             style={{
-          //               visibility: isVisible ? "visible" : "hidden",
-          //               backgroundColor: isVisible ? color : "transparent",
-          //               top:
-          //                 viewBox?.height && value && maxYDomain
-          //                   ? viewBox?.height -
-          //                     ((value as number) / maxYDomain) * viewBox?.height
-          //                   : coordinate?.y,
-          //               left: coordinate?.x,
-          //             }}
-          //           >
-          //             {isVisible ? (
-          //               <p className="text-klerosUIComponentsLightBackground text-right text-xs">
-          //                 {Number(value).toFixed(2)}
-          //               </p>
-          //             ) : null}
-          //           </div>
-          //         ))
-          //       : null;
-          //   }}
-          // />
+// <Tooltip
+//   defaultIndex={series?.length - 1}
+//   cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
+//   content={({ active, payload: payloads, viewBox, coordinate }) => {
+//     const isVisible =
+//       active && payloads && payloads?.length && viewBox?.height;
+//
+//     return isVisible
+//       ? payloads.map(({ color, value }, index) => (
+//           <div
+//             key={`tooltip-${index}`}
+//             className="rounded-base absolute top-0 left-0 -translate-x-full -translate-y-1/2 px-2 py-0.75"
+//             style={{
+//               visibility: isVisible ? "visible" : "hidden",
+//               backgroundColor: isVisible ? color : "transparent",
+//               top:
+//                 viewBox?.height && value && maxYDomain
+//                   ? viewBox?.height -
+//                     ((value as number) / maxYDomain) * viewBox?.height
+//                   : coordinate?.y,
+//               left: coordinate?.x,
+//             }}
+//           >
+//             {isVisible ? (
+//               <p className="text-klerosUIComponentsLightBackground text-right text-xs">
+//                 {Number(value).toFixed(2)}
+//               </p>
+//             ) : null}
+//           </div>
+//         ))
+//       : null;
+//   }}
+// />
 const getTimestamps = (firstTimestamp: number, lastTimestamp: number) => {
   let currentTimestamp = firstTimestamp;
   const timestamps: Array<number> = [];
