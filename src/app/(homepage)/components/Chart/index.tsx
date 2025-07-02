@@ -5,14 +5,8 @@ import React, { useMemo } from "react";
 import { useTheme } from "next-themes";
 
 import { format } from "date-fns";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
+// Tooltip,
 
 import { type IChartData } from "@/hooks/useChartData";
 
@@ -35,6 +29,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     return data.flatMap((marketData) => Object.keys(marketData));
   }, [data]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [series, maxYDomain, marketsData] = useMemo(() => {
     if (!data.length) return [[], 0];
     let maxYAxis = 0;
@@ -47,6 +42,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     });
 
     // Find the earliest timestamp across all markets
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const earliestTimestamp = Math.min(
       ...Object.values(marketsData).map((market) =>
         market.data.length > 0 ? market.data[0].timestamp : Infinity,
