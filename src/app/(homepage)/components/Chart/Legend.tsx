@@ -15,19 +15,21 @@ const Legend: React.FC<{ marketsData?: MarketsData }> = ({ marketsData }) => {
     >
       {typeof marketsData !== "undefined" ? (
         <ul className="flex flex-wrap gap-4">
-          {Object.entries(marketsData).map(([name, { market }], index) => (
-            <li key={`item-${index}`} className="flex items-center gap-2">
-              <div
-                className="size-2 rounded-full"
-                style={{
-                  backgroundColor: market.color,
-                }}
-              />
-              <span className="text-klerosUIComponentsPrimaryText text-sm">
-                {name}
-              </span>
-            </li>
-          ))}
+          {Object.entries(marketsData).map(
+            ([name, { market, data }], index) => (
+              <li key={`item-${index}`} className="flex items-center gap-2">
+                <div
+                  className="size-2 rounded-full"
+                  style={{
+                    backgroundColor: market.color,
+                  }}
+                />
+                <span className="text-klerosUIComponentsPrimaryText text-sm">
+                  {name} <strong>{`${data.at(-1)?.value.toFixed(2)}%`}</strong>
+                </span>
+              </li>
+            ),
+          )}
         </ul>
       ) : null}
       {false ? (

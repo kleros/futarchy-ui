@@ -27,7 +27,7 @@ export interface IMarket {
 export const markets: Array<IMarket> = [
   {
     name: "Judge Dredd (1995)",
-    color: "#D14EFF",
+    color: "#E6194B",
     upToken: "0x0ee25eb2e22c01fa832dd5fea5637fba4cd5e870",
     downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
     underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
@@ -46,7 +46,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Bacurau (2019)",
-    color: "#FF6B6B",
+    color: "#3CB44B",
     upToken: "0x028ec9938471bbad5167c2e5281144a94d1acbe9",
     downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
     underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
@@ -65,7 +65,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "The Hitchhiker's Guide to the Galaxy (2005)",
-    color: "#FFD93D",
+    color: "#FFA500",
     upToken: "0xad2248b8eaa3e3a405c1ba79dd436947f8b427df",
     downToken: "0xdd510abc6a848662371c3455717949035cc24019",
     underlyingToken: "0xfb06c25e59302d8a0318d6df41a2f29deeea1c8a",
@@ -83,7 +83,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Everything, Everywhere, All At Once (2022)",
-    color: "#6BCB77",
+    color: "#911EB4",
     upToken: "0xfa020fcd05e0b91dae83a2a08c5b5533edf8c851",
     downToken: "0x372d0798ffe8c3aa982a15258c0fea22c6a768df",
     underlyingToken: "0xe85d556d1aaae2f6027336e468e9c981251a4bef",
@@ -101,7 +101,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "12 angry men (1957)",
-    color: "#4D96FF",
+    color: "#46F0F0",
     upToken: "0x7ee3806d16dc6a76bef2b11880b70cc70f74fa1a",
     downToken: "0x34f8572eab463606a014c37ff68b78ac9361cacc",
     underlyingToken: "0xb3933fd994af5db7ae985a0d62ed2dda918a839b",
@@ -120,7 +120,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Alien (1979)",
-    color: "#845EC2",
+    color: "#BFEF45",
     upToken: "0x37e70bae5e87327feece73a7c227446571f92137",
     downToken: "0x31e3d82a613e5aeea7c3a65c3d657cacaaaf2674",
     underlyingToken: "0x6d0407b5ae419fdd92ffdc64abf04c5f28950e02",
@@ -139,7 +139,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Demolition Man (1993)",
-    color: "#FF9671",
+    color: "#F032E6",
     upToken: "0x53a9011c5570bfb8148954c4f49a6625dc44077b",
     downToken: "0x64974d3bf944fafec6fa19a900f3679a716b3a86",
     underlyingToken: "0x20025021e440edd39d486f3c6a1d7adb9c269faf",
@@ -158,7 +158,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Barbie (2023)",
-    color: "#0081CF",
+    color: "#FFE119",
     upToken: "0xaed0fad91e7149ec84bb4d0a2a77be819169275f",
     downToken: "0x044e1b6d8aacbda5699423578bd200484f7473c3",
     underlyingToken: "0x67d0f938ea12e7e30b8ccc24dd031d656cc3927d",
@@ -177,7 +177,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Eduardo e Mônica (2020)",
-    color: "#FFC75F",
+    color: "#4363D8",
     upToken: "0x9d64a3e7e55880f3c8f9c584ed32397bb6f0b9f6",
     downToken: "0xe9d025d3cbd783d6a92626b650a32f7cbaca0e7d",
     underlyingToken: "0x58ce7a53abeca1db90cec0e6b7dcbe3a36d986c4",
@@ -196,7 +196,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Thor: The Dark World (2013)",
-    color: "#00C9A7",
+    color: "#008080",
     upToken: "0x0c569fbc021119b778ea160efd718a5d592ef46c",
     downToken: "0xd8d2dfe1912239451b5a4a0462006e95393f2151",
     underlyingToken: "0x72ec9aade867b5b41705c6a83f66bc56485669b5",
@@ -215,7 +215,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Talk to me (2022)",
-    color: "#C34A36",
+    color: "#9A6324",
     upToken: "0xf3c17e909bd1f9367ecdc786d137465d7ee96b6a",
     downToken: "0xf99be182b6b0e6d994509ecdced281b94100435f",
     underlyingToken: "0x2b3a8ac53ba42da13f542a867d2859642fb1db44",
@@ -234,7 +234,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Fast & Furious 6 (2013)",
-    color: "#9B51E0",
+    color: "#FF1493",
     upToken: "0x850d2ffa4475296cfbbd76247894a773e3b1be6c",
     downToken: "0xb28c716f63b0dd272f62e25765a914baeebab8c2",
     underlyingToken: "0x71c3df5edcab48cfb6a1a99255eff063f33b6265",
@@ -253,7 +253,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Elysium (2013)",
-    color: "#2D4059",
+    color: "#808080",
     upToken: "0xe9427a7a32daad2d29db2aad809b2a44060d8fc8",
     downToken: "0x75b5cd86828f7c9009e30619a83b1b2da67f1342",
     underlyingToken: "0xf52e0e144b73a0d5748bc53667efe3ba62fe5695",
@@ -272,7 +272,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Session 9 (2001)",
-    color: "#F9F871",
+    color: "#006400",
     upToken: "0xe080c03ad6bc9f8fd5b45b5d3bf14ebcfa1ec0b5",
     downToken: "0x76cce8491785789c2c5542f043ec6c35b12cd909",
     underlyingToken: "0x1086a95c224dd586809a7f4d875b4f09d2ac9290",
@@ -291,7 +291,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "Mamma Mia! (2008)",
-    color: "#B0A8B9",
+    color: "#20B2AA",
     upToken: "0xfa82984fc8ddeb71fdb2e6e471f30995178ad5f0",
     downToken: "0x5d528dbec7e37927d8af41bfb1b54e7641dd3ccb",
     underlyingToken: "0x11ed86c399f455819f495cda1256e9b52afd0971",

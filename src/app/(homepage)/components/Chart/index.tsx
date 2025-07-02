@@ -57,7 +57,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     const latestTimestamp = Date.now() / 1000;
 
     // Generate common timestamps for all markets
-    const timestamps = getTimestamps(earliestTimestamp, latestTimestamp);
+    const timestamps = getTimestamps(1751328000, latestTimestamp);
 
     // Process data for each market
     const processedData = timestamps.map((timestamp) => {
@@ -146,45 +146,12 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
           <YAxis
             // scale is required to be 'linear' for Tooltip position calculation to work.
             scale="linear"
-            domain={[0, maxYDomain ?? "auto"]}
+            domain={["auto", "auto"]}
             axisLine={false}
             tickSize={0}
             tickMargin={16}
-            width={30}
+            width={40}
             tick={{ fill: accentColor, fontSize: "12px" }}
-          />
-          <Tooltip
-            defaultIndex={series?.length - 1}
-            cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
-            content={({ active, payload: payloads, viewBox, coordinate }) => {
-              const isVisible =
-                active && payloads && payloads?.length && viewBox?.height;
-
-              return isVisible
-                ? payloads.map(({ color, value }, index) => (
-                    <div
-                      key={`tooltip-${index}`}
-                      className="rounded-base absolute top-0 left-0 -translate-x-full -translate-y-1/2 px-2 py-0.75"
-                      style={{
-                        visibility: isVisible ? "visible" : "hidden",
-                        backgroundColor: isVisible ? color : "transparent",
-                        top:
-                          viewBox?.height && value && maxYDomain
-                            ? viewBox?.height -
-                              ((value as number) / maxYDomain) * viewBox?.height
-                            : coordinate?.y,
-                        left: coordinate?.x,
-                      }}
-                    >
-                      {isVisible ? (
-                        <p className="text-klerosUIComponentsLightBackground text-right text-xs">
-                          {Number(value).toFixed(2)}
-                        </p>
-                      ) : null}
-                    </div>
-                  ))
-                : null;
-            }}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -192,13 +159,47 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   );
 };
 
+          // <Tooltip
+          //   defaultIndex={series?.length - 1}
+          //   cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
+          //   content={({ active, payload: payloads, viewBox, coordinate }) => {
+          //     const isVisible =
+          //       active && payloads && payloads?.length && viewBox?.height;
+          //
+          //     return isVisible
+          //       ? payloads.map(({ color, value }, index) => (
+          //           <div
+          //             key={`tooltip-${index}`}
+          //             className="rounded-base absolute top-0 left-0 -translate-x-full -translate-y-1/2 px-2 py-0.75"
+          //             style={{
+          //               visibility: isVisible ? "visible" : "hidden",
+          //               backgroundColor: isVisible ? color : "transparent",
+          //               top:
+          //                 viewBox?.height && value && maxYDomain
+          //                   ? viewBox?.height -
+          //                     ((value as number) / maxYDomain) * viewBox?.height
+          //                   : coordinate?.y,
+          //               left: coordinate?.x,
+          //             }}
+          //           >
+          //             {isVisible ? (
+          //               <p className="text-klerosUIComponentsLightBackground text-right text-xs">
+          //                 {Number(value).toFixed(2)}
+          //               </p>
+          //             ) : null}
+          //           </div>
+          //         ))
+          //       : null;
+          //   }}
+          // />
 const getTimestamps = (firstTimestamp: number, lastTimestamp: number) => {
   let currentTimestamp = firstTimestamp;
   const timestamps: Array<number> = [];
   while (currentTimestamp <= lastTimestamp) {
     timestamps.push(currentTimestamp);
-    currentTimestamp += 60 * 60 * 12;
+    currentTimestamp += 60 * 60 * 4;
   }
+  timestamps.push(lastTimestamp);
   return timestamps;
 };
 
