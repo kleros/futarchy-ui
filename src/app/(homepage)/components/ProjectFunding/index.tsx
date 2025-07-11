@@ -27,6 +27,7 @@ import { useMarketQuote } from "@/hooks/useMarketQuote";
 import { IMarket } from "@/consts/markets";
 
 import Details from "./Details";
+import MintPopUp from "./MintPopUp";
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
 
@@ -37,6 +38,7 @@ interface IProjectFunding extends IMarket {
 const ProjectFunding: React.FC<IProjectFunding> = ({
   name,
   color,
+  marketId,
   upToken,
   downToken,
   underlyingToken,
@@ -50,6 +52,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
   const { theme } = useTheme();
   const [prediction, setPrediction] = useState(0);
   const [userInteracting, toggleUserInteracting] = useToggle(false);
+  const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
 
   const { data: allowance, refetch: refetchAllowance } = useReadErc20Allowance({
     address: underlyingToken,
@@ -84,10 +87,20 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
   );
 
+  const upPrice = useMemo(
+    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
+    [marketQuote],
+  );
+
   const { data: marketDownQuote } = useMarketQuote(
     downToken,
     underlyingToken,
     underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
+  );
+
+  const downPrice = useMemo(
+    () => 1 / parseFloat(marketDownQuote?.executionPrice.toFixed(4) ?? "0"),
+    [marketDownQuote],
   );
 
   const marketPrice = useMemo(
@@ -248,7 +261,10 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
               onPress={async () => {
                 toggleUserInteracting(true);
                 try {
-                  if (isAllowance) {
+                  if (upPrice + downPrice > 1) {
+                    toggleIsPopUpOpen(true);
+                    console.log("toggling popup");
+                  } else if (isAllowance) {
                     await handleAllowance();
                   } else {
                     await handlePredict();
@@ -287,6 +303,11 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
           items={[{ title: "Details", body: <Details {...details} /> }]}
         />
       </div>
+      <MintPopUp
+        isOpen={isPopUpOpen}
+        toggleIsOpen={toggleIsPopUpOpen}
+        {...{ marketId }}
+      />
     </Card>
   );
 };

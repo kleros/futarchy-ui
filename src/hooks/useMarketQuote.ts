@@ -9,10 +9,12 @@ export const useMarketQuote = (
   token: string,
   collateralToken: string,
   amount?: string,
+  enabled: boolean = true,
 ) => {
   const { address } = useAccount();
   return useQuery({
-    queryKey: [`market-${token.toLowerCase()}`],
+    enabled,
+    queryKey: [`market-${token.toLowerCase()}`, amount],
     staleTime: 10000,
     retry: (failureCount) => failureCount < 3,
     queryFn: async () => {
