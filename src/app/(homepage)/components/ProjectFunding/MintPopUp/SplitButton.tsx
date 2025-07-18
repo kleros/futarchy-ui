@@ -7,45 +7,42 @@ import { Address } from "viem";
 import { useConfig, useAccount } from "wagmi";
 
 import {
-  useReadErc20Allowance,
-  useReadErc20BalanceOf,
   useWriteErc20Approve,
   gnosisRouterAddress,
   useWriteGnosisRouterSplitPosition,
+  sDaiAddress,
 } from "@/generated";
+
+import { useAllowance } from "@/hooks/useAllowance";
+import { useBalance } from "@/hooks/useBalance";
+
+import { isUndefined } from "@/utils";
 
 interface ISplitButton {
   marketId: `0x${string}`;
   underlyingToken: Address;
+  initialBalanceRef: React.MutableRefObject<bigint | null>;
 }
 
-const SplitButton: React.FC<ISplitButton> = ({ marketId, underlyingToken }) => {
+const SplitButton: React.FC<ISplitButton> = ({
+  marketId,
+  underlyingToken,
+  initialBalanceRef,
+}) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
   const [isInteracting, toggleIsInteracting] = useToggle(false);
 
-  const { data: underlyingBalance } = useReadErc20BalanceOf({
-    address: underlyingToken,
-    args: [address ?? "0x"],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
+  const { data: underlyingBalance } = useBalance(underlyingToken);
 
-  const { data: allowance, refetch: refetchAllowance } = useReadErc20Allowance({
-    address: underlyingToken,
-    args: [address ?? "0x", gnosisRouterAddress],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
-
+  const { data: allowance, refetch: refetchAllowance } = useAllowance(
+    underlyingToken,
+    gnosisRouterAddress,
+  );
   const isAllowance = useMemo(
     () =>
-      typeof allowance !== "undefined" &&
-      typeof underlyingBalance !== "undefined" &&
+      !isUndefined(allowance) &&
+      !isUndefined(underlyingBalance) &&
       allowance < underlyingBalance,
     [allowance, underlyingBalance],
   );
@@ -53,7 +50,11 @@ const SplitButton: React.FC<ISplitButton> = ({ marketId, underlyingToken }) => {
   const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
 
   const handleAllowance = useCallback(async () => {
-    if (typeof underlyingBalance !== "undefined") {
+    if (!isUndefined(underlyingBalance)) {
+      // keep track of the balance we started with,
+      // so we don't accidentally trade the already existing UP/DOWN tokens user may have
+      initialBalanceRef.current = underlyingBalance;
+
       const hash = await increaseAllowance({
         address: underlyingToken,
         args: [gnosisRouterAddress, underlyingBalance],
@@ -67,6 +68,7 @@ const SplitButton: React.FC<ISplitButton> = ({ marketId, underlyingToken }) => {
     refetchAllowance,
     underlyingBalance,
     underlyingToken,
+    initialBalanceRef,
   ]);
 
   const { writeContractAsync: splitPosition } =
@@ -75,10 +77,10 @@ const SplitButton: React.FC<ISplitButton> = ({ marketId, underlyingToken }) => {
   const handleSplit = useCallback(async () => {
     if (typeof underlyingBalance !== "undefined") {
       splitPosition({
-        args: [underlyingToken, marketId, underlyingBalance],
+        args: [sDaiAddress, marketId, underlyingBalance],
       });
     }
-  }, [splitPosition, underlyingToken, marketId, underlyingBalance]);
+  }, [splitPosition, marketId, underlyingBalance]);
 
   return (
     <Button
@@ -90,10 +92,8 @@ const SplitButton: React.FC<ISplitButton> = ({ marketId, underlyingToken }) => {
         isInteracting
       }
       isLoading={isInteracting}
-      text={
-        isAllowance ? "Allow" : underlyingBalance === 0n ? "Done" : "Predict"
-      }
-      aria-label="Predict Button"
+      text={isAllowance ? "Allow" : underlyingBalance === 0n ? "Done" : "Mint"}
+      aria-label="Mint Button"
       onPress={async () => {
         toggleIsInteracting(true);
         try {

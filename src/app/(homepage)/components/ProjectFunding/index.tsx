@@ -1,77 +1,58 @@
 import React, { useCallback, useState, useMemo } from "react";
 
-import { useTheme } from "next-themes";
-
 import {
   Card,
-  Slider,
   Accordion,
   NumberField,
   Button,
 } from "@kleros/ui-components-library";
 import { waitForTransactionReceipt, sendTransaction } from "@wagmi/core";
 import clsx from "clsx";
-import { useSize, useToggle } from "react-use";
-import { formatUnits } from "viem";
+import { useToggle } from "react-use";
 import { useConfig, useAccount } from "wagmi";
 
-import {
-  useReadErc20Allowance,
-  useReadErc20BalanceOf,
-  useWriteErc20Approve,
-} from "@/generated";
+import { useWriteErc20Approve } from "@/generated";
 
-import { IChartData } from "@/hooks/useChartData";
-import { useMarketQuote } from "@/hooks/useMarketQuote";
-
-import { IMarket } from "@/consts/markets";
+import { useMarketContext } from "@/context/MarketContext";
+import { useAllowance } from "@/hooks/useAllowance";
+import { useBalance } from "@/hooks/useBalance";
 
 import Details from "./Details";
 import MintPopUp from "./MintPopUp";
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
+import PredictionSlider from "./PredictionSlider";
 
-interface IProjectFunding extends IMarket {
-  chartData?: IChartData[];
-}
+const ProjectFunding: React.FC = ({}) => {
+  const {
+    upPrice,
+    marketQuote,
+    marketDownQuote,
+    isUpPredict,
+    differenceBetweenRoutes,
+    market,
+  } = useMarketContext();
+  const {
+    name,
+    color,
+    upToken,
+    downToken,
+    underlyingToken,
+    precision,
+    details,
+  } = market;
 
-const ProjectFunding: React.FC<IProjectFunding> = ({
-  name,
-  color,
-  marketId,
-  upToken,
-  downToken,
-  underlyingToken,
-  minValue,
-  maxValue,
-  precision,
-  details,
-}) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
-  const { theme } = useTheme();
   const [prediction, setPrediction] = useState(0);
   const [userInteracting, toggleUserInteracting] = useToggle(false);
   const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
 
-  const { data: allowance, refetch: refetchAllowance } = useReadErc20Allowance({
-    address: underlyingToken,
-    args: [address ?? "0x", "0xffb643e73f280b97809a8b41f7232ab401a04ee1"],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
+  const { data: allowance, refetch: refetchAllowance } =
+    useAllowance(underlyingToken);
 
   const { data: underlyingBalance, refetch: refetchBalance } =
-    useReadErc20BalanceOf({
-      address: underlyingToken,
-      args: [address ?? "0x"],
-      query: {
-        staleTime: 5000,
-        enabled: typeof address !== "undefined",
-      },
-    });
+    useBalance(underlyingToken);
 
   const isAllowance = useMemo(
     () =>
@@ -80,43 +61,6 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
       allowance < underlyingBalance,
     [allowance, underlyingBalance],
   );
-
-  const { data: marketQuote } = useMarketQuote(
-    upToken,
-    underlyingToken,
-    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-  );
-
-  const upPrice = useMemo(
-    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
-    [marketQuote],
-  );
-
-  const { data: marketDownQuote } = useMarketQuote(
-    downToken,
-    underlyingToken,
-    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-  );
-
-  const downPrice = useMemo(
-    () => 1 / parseFloat(marketDownQuote?.executionPrice.toFixed(4) ?? "0"),
-    [marketDownQuote],
-  );
-
-  const marketPrice = useMemo(
-    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
-    [marketQuote],
-  );
-
-  const marketEstimate = useMemo(
-    () =>
-      typeof marketPrice !== "undefined"
-        ? +(marketPrice * maxValue * precision).toFixed(1)
-        : 0,
-    [marketPrice, maxValue, precision],
-  );
-
-  const isUpPredict = prediction > marketEstimate;
 
   const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
 
@@ -159,58 +103,6 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
     refetchBalance,
   ]);
 
-  const sliderTheme = useMemo(() => {
-    if (theme === "light") return isUpPredict ? "#3FEC65" : "#F75C7B";
-    else return isUpPredict ? "#D2FFDC" : "#FFD2DB";
-  }, [theme, isUpPredict]);
-
-  const [sized] = useSize(({ width }) => (
-    <div className="relative w-full">
-      <Slider
-        className={clsx(
-          "w-full",
-          "[&_#slider-label]:!text-klerosUIComponentsPrimaryText [&_#slider-label]:font-semibold",
-        )}
-        maxValue={maxValue * precision}
-        minValue={minValue * precision}
-        value={prediction}
-        leftLabel=""
-        rightLabel=""
-        aria-label="Slider"
-        callback={setPrediction}
-        formatter={(value) => `${(value / precision).toFixed(0)}`}
-        // @ts-expect-error other values not needed
-        theme={{
-          sliderColor: sliderTheme,
-          thumbColor: sliderTheme,
-        }}
-      />
-      <div
-        className="absolute bottom-0"
-        style={{
-          transform: `translateX(calc(${typeof marketPrice !== "undefined" ? marketPrice * width : 0}px - 50%))`,
-        }}
-      >
-        <label
-          className={
-            "text-klerosUIComponentsPrimaryText block w-full text-center text-xs"
-          }
-        >
-          Market
-        </label>
-        <div
-          className={
-            "rounded-base text-klerosUIComponentsLightBackground px-2 py-0.75 text-center text-xs"
-          }
-          style={{ backgroundColor: color }}
-        >
-          {`${(marketEstimate / precision).toFixed(2)}`}
-        </div>
-        <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
-      </div>
-    </div>
-  ));
-
   return (
     <Card
       aria-label="card"
@@ -227,7 +119,9 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
               {name}
             </h3>
           </div>
-          <div className="px-4"> {sized} </div>
+          <div className="px-4">
+            <PredictionSlider />
+          </div>
         </div>
 
         <div className="bg max-w-[284px] min-w-[264px] shrink-0 grow basis-[25%]">
@@ -261,9 +155,8 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
               onPress={async () => {
                 toggleUserInteracting(true);
                 try {
-                  if (upPrice + downPrice > 1) {
+                  if (differenceBetweenRoutes > 0) {
                     toggleIsPopUpOpen(true);
-                    console.log("toggling popup");
                   } else if (isAllowance) {
                     await handleAllowance();
                   } else {
@@ -277,12 +170,10 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
           </div>
           <label
             className={clsx(
-              prediction > marketEstimate
-                ? "text-light-mode-green-2"
-                : "text-light-mode-red-2",
+              isUpPredict ? "text-light-mode-green-2" : "text-light-mode-red-2",
             )}
           >
-            {`${prediction > marketEstimate ? "↑ Higher" : "↓ Lower"} than the market`}
+            {`${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
           </label>
         </div>
       </div>
@@ -290,7 +181,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
         <div className="flex gap-2">
           <PositionValue
             {...{ upToken, downToken }}
-            marketPrice={marketPrice ?? 0}
+            marketPrice={upPrice ?? 0}
           />
           <OpenOrders />
         </div>
@@ -303,11 +194,7 @@ const ProjectFunding: React.FC<IProjectFunding> = ({
           items={[{ title: "Details", body: <Details {...details} /> }]}
         />
       </div>
-      <MintPopUp
-        isOpen={isPopUpOpen}
-        toggleIsOpen={toggleIsPopUpOpen}
-        {...{ marketId }}
-      />
+      <MintPopUp isOpen={isPopUpOpen} toggleIsOpen={toggleIsPopUpOpen} />
     </Card>
   );
 };

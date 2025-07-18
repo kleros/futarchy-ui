@@ -1,9 +1,8 @@
-import { SwaprV3Trade, TradeType } from "@swapr/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { gnosis } from "viem/chains";
 import { useAccount } from "wagmi";
 
-import { getTradeArgs } from "@/utils/trade";
+import { getSwaprQuote } from "@/utils/swapr";
 
 export const useMarketQuote = (
   token: string,
@@ -20,25 +19,13 @@ export const useMarketQuote = (
     queryFn: async () => {
       await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
 
-      const args = getTradeArgs(
-        gnosis.id,
-        amount ?? "1",
-        token,
+      return await getSwaprQuote({
+        address,
+        chain: gnosis.id,
+        outcomeToken: token,
         collateralToken,
-        "buy",
-      );
-
-      return await SwaprV3Trade.getQuote(
-        {
-          amount: args.currencyAmountIn,
-          quoteCurrency: args.currencyOut,
-          recipient: address,
-          tradeType: TradeType.EXACT_INPUT,
-          maximumSlippage: args.maximumSlippage,
-        },
-        undefined,
-        false,
-      );
+        amount: amount ?? "1",
+      });
     },
   });
 };

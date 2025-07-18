@@ -1,117 +1,66 @@
-import React, { useCallback } from "react";
+import React, { useRef } from "react";
 
-import { Modal, Button } from "@kleros/ui-components-library";
-import { waitForTransactionReceipt, sendTransaction } from "@wagmi/core";
-import { Address } from "viem";
-import { useConfig, useAccount } from "wagmi";
+import { Modal } from "@kleros/ui-components-library";
 
-import {
-  useReadErc20Allowance,
-  useReadErc20BalanceOf,
-  useWriteErc20Approve,
-  gnosisRouterAddress,
-  useSimulateGnosisRouterSplitPosition,
-  useWriteGnosisRouterSplitPosition,
-} from "@/generated";
+import { useMarketContext } from "@/context/MarketContext";
 
-import { useMarketQuote } from "@/hooks/useMarketQuote";
+import SplitButton from "./SplitButton";
+import TradeButton from "./TradeButton";
 
 interface IMintPopUp {
-  isUpPredict: boolean;
-  upToken: Address;
-  downToken: Address;
-  underlyingToken: Address;
   isOpen?: boolean;
   toggleIsOpen?: () => void;
 }
 
-const MintPopUp: React.FC<IMintPopUp> = ({
-  isUpPredict,
-  upToken,
-  downToken,
-  underlyingToken,
-  isOpen,
-  toggleIsOpen,
-}) => {
-  const wagmiConfig = useConfig();
-  const { address } = useAccount();
-
-  const { data: underlyingBalance, refetch: refetchBalance } =
-    useReadErc20BalanceOf({
-      address: underlyingToken,
-      args: [address ?? "0x"],
-      query: {
-        staleTime: 5000,
-        enabled: typeof address !== "undefined",
-      },
-    });
-
-  const { data: allowance, refetch: refetchAllowance } = useReadErc20Allowance({
-    address: underlyingToken,
-    args: [address ?? "0x", gnosisRouterAddress],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
-
-  const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
-
-  const handleAllowance = useCallback(async () => {
-    if (typeof underlyingBalance !== "undefined") {
-      const hash = await increaseAllowance({
-        address: underlyingToken,
-        args: [gnosisRouterAddress, underlyingBalance],
-      });
-      await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
-      refetchAllowance();
-    }
-  }, [
-    wagmiConfig,
-    increaseAllowance,
-    refetchAllowance,
-    underlyingBalance,
-    underlyingToken,
-  ]);
-
+const MintPopUp: React.FC<IMintPopUp> = ({ isOpen, toggleIsOpen }) => {
   const {
-    data: resultSplitPosition,
-    isLoading,
-    isError,
-  } = useSimulateGnosisRouterSplitPosition({
-    args: [underlyingToken, marketId, underlyingBalance!],
-    query: {
-      enabled: typeof address !== "undefined" && (underlyingBalance ?? 0n) > 0n,
-    },
-  });
-
-  const { writeContractAsync: splitPosition } =
-    useWriteGnosisRouterSplitPosition();
-
-  const { data: marketQuote } = useMarketQuote(
-    upToken,
-    underlyingToken,
-    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-  );
-
-  const upPrice = useMemo(
-    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
-    [marketQuote],
-  );
+    isUpPredict,
+    percentageIncrease,
+    expectedFromMintRoute,
+    market,
+    // mintSellQuote,
+    // mintReBuyQuote,
+  } = useMarketContext();
+  const { marketId, underlyingToken, upToken, downToken } = market;
+  const initialBalanceRef = useRef<bigint | null>(null);
 
   return (
     <Modal
-      className="w-[500px]"
+      className="h-fit w-[500px] p-4"
       isDismissable
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
     >
-      <div className="flex size-full items-center justify-center">
+      <div className="flex size-full flex-col items-center justify-center gap-4">
         <p className="text-klerosUIComponentsPrimaryText font-semibold">
           {"It's better to mint and sell."}
         </p>
-        <Button text="Batch" />
-        <Button text="Approve" />
+        <div className="flex items-center gap-2">
+          <p className="text-klerosUIComponentsPrimaryText">
+            Expected Return: {expectedFromMintRoute?.toFixed(2)}{" "}
+            {isUpPredict ? "UP" : "DOWN"} tokens
+          </p>
+          <small className="text-klerosUIComponentsSuccess">
+            &#9206; {percentageIncrease}%
+          </small>
+        </div>
+        <SplitButton {...{ marketId, underlyingToken, initialBalanceRef }} />
+        {/* if user was initially buying upToken, we need to sell downToken, 
+        to obtain underlyingToken to further buy more upToken. Vice versa */}
+        <TradeButton
+          buyToken={underlyingToken}
+          sellToken={isUpPredict ? downToken : upToken}
+          // note that we only want to sell the UP/DOWN token received from the split,
+          // which is the same as the amount we passed in `splitPosition` (underlying token balance)
+          amount={initialBalanceRef.current}
+          // quote={mintSellQuote}
+        />
+        {/* buy the upToken/downToken with the underlyingToken acquired from above trade */}
+        <TradeButton
+          buyToken={isUpPredict ? upToken : downToken}
+          sellToken={underlyingToken}
+          // quote={mintReBuyQuote}
+        />
       </div>
     </Modal>
   );
