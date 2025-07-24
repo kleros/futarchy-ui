@@ -14,7 +14,7 @@
     "@kleros/ui-components-library": "^3.5.0",
     "@reown/appkit": "^1.7.11",
     "@reown/appkit-adapter-wagmi": "^1.7.11",
-    "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#029ff9d47fcd3e87474f9f9fc7baa3c6d13d9b66",
+    "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#6dea7e63f7e05c84a4374717ee1ad5baca86f7de",
     "@tanstack/react-query": "^5.74.4",
     "@wagmi/core": "^2.17.3",
     "clsx": "^2.1.1",
