@@ -2,10 +2,11 @@
 
 import React from "react";
 
-import CowContextProvider from "@/context/CowContext";
+import { CardInteractionProvider } from "@/context/CardInteractionContext";
 import MarketContextProvider from "@/context/MarketContext";
 import { useChartData } from "@/hooks/useChartData";
 
+import EnsureChain from "@/components/EnsureChain";
 import Loader from "@/components/Loader";
 
 import { markets } from "@/consts/markets";
@@ -34,16 +35,19 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <CowContextProvider>
+          <EnsureChain>
             <ParticipateSection />
-            <div className="mt-8 flex flex-col gap-4">
-              {markets.map((market) => (
-                <MarketContextProvider key={market.name} {...market}>
-                  <ProjectFunding key={market.name} />
-                </MarketContextProvider>
-              ))}
-            </div>
-          </CowContextProvider>
+            <CardInteractionProvider>
+              <div className="mt-8 flex flex-col gap-4">
+                {markets.map((market) => (
+                  <MarketContextProvider key={market.marketId} {...market}>
+                    <ProjectFunding key={market.marketId} />
+                  </MarketContextProvider>
+                ))}
+              </div>
+            </CardInteractionProvider>
+          </EnsureChain>
+
           <AdvancedSection />
         </div>
       </div>

@@ -19,6 +19,8 @@ import { isUndefined } from "@/utils";
 
 import { IMarket } from "@/consts/markets";
 
+import { useCardInteraction } from "./CardInteractionContext";
+
 interface IMarketContext {
   upPrice: number;
   downPrice: number;
@@ -34,6 +36,8 @@ interface IMarketContext {
   prediction: number;
   setPrediction: (prediction: number) => void;
   market: IMarket;
+  isLoading: boolean;
+  isLoadingMarketQuote: boolean;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -46,13 +50,17 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   children,
   ...market
 }) => {
-  const { underlyingToken, upToken, downToken, maxValue, precision } = market;
+  const { activeCardId } = useCardInteraction();
+
+  const { underlyingToken, upToken, downToken, maxValue, precision, marketId } =
+    market;
+  const shouldFetch = marketId === activeCardId;
 
   const [prediction, setPrediction] = useState(0);
 
   const { data: underlyingBalance } = useBalance(underlyingToken);
 
-  const { data: marketQuote } = useMarketQuote(
+  const { data: marketQuote, isLoading: isLoadingMarketQuote } = useMarketQuote(
     upToken,
     underlyingToken,
     underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
@@ -65,11 +73,13 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const marketPrice = upPrice;
 
-  const { data: marketDownQuote } = useMarketQuote(
-    downToken,
-    underlyingToken,
-    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-  );
+  const { data: marketDownQuote, isLoading: isLoadingMarketDownQuote } =
+    useMarketQuote(
+      downToken,
+      underlyingToken,
+      underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
+      shouldFetch,
+    );
 
   const downPrice = useMemo(
     () => 1 / parseFloat(marketDownQuote?.executionPrice.toFixed(4) ?? "0"),
@@ -86,18 +96,24 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const isUpPredict = prediction > marketEstimate;
 
-  const { data: upToDownAlternateRoute } = useAlternateRoute(
-    upToken,
-    downToken,
-    underlyingToken,
-    formatUnits(underlyingBalance ?? 0n, 18),
-  );
+  const { data: upToDownAlternateRoute, isLoading: isLoadingUpAlternateRoute } =
+    useAlternateRoute(
+      upToken,
+      downToken,
+      underlyingToken,
+      formatUnits(underlyingBalance ?? 0n, 18),
+      shouldFetch,
+    );
 
-  const { data: downToUpAlternateRoute } = useAlternateRoute(
+  const {
+    data: downToUpAlternateRoute,
+    isLoading: isLoadingDownAlternateRoute,
+  } = useAlternateRoute(
     downToken,
     upToken,
     underlyingToken,
     formatUnits(underlyingBalance ?? 0n, 18),
+    shouldFetch,
   );
 
   const expectedFromMintRoute = useMemo(
@@ -154,6 +170,12 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     return expectedFromMintRoute - expectedFromDefaultRoute;
   }, [expectedFromMintRoute, expectedFromDefaultRoute]);
 
+  const isLoading =
+    isLoadingMarketQuote ||
+    isLoadingMarketDownQuote ||
+    isLoadingUpAlternateRoute ||
+    isLoadingDownAlternateRoute;
+
   const value = useMemo(
     () => ({
       upPrice,
@@ -170,6 +192,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       prediction,
       setPrediction,
       market,
+      isLoading,
+      isLoadingMarketQuote,
     }),
     [
       upPrice,
@@ -186,6 +210,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       prediction,
       setPrediction,
       market,
+      isLoading,
+      isLoadingMarketQuote,
     ],
   );
 

@@ -9,6 +9,8 @@ import { useAccount, useConfig } from "wagmi";
 
 import { useWriteErc20Approve } from "@/generated";
 
+import { useCardInteraction } from "@/context/CardInteractionContext";
+import { useMarketContext } from "@/context/MarketContext";
 import { useAllowance } from "@/hooks/useAllowance";
 import { useBalance } from "@/hooks/useBalance";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
@@ -25,6 +27,10 @@ const TradeButton: React.FC<ITradeButton> = ({
   sellToken,
   amount,
 }) => {
+  const { market } = useMarketContext();
+  const { marketId } = market;
+  const { activeCardId } = useCardInteraction();
+
   const { address } = useAccount();
   const wagmiConfig = useConfig();
   const [userInteracting, toggleUserInteracting] = useToggle(false);
@@ -49,6 +55,7 @@ const TradeButton: React.FC<ITradeButton> = ({
     buyToken,
     sellToken,
     amountToTrade ? formatUnits(amountToTrade, 18) : "1",
+    activeCardId === marketId,
   );
 
   const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();

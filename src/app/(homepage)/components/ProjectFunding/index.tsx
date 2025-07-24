@@ -13,9 +13,12 @@ import { useConfig, useAccount } from "wagmi";
 
 import { useWriteErc20Approve } from "@/generated";
 
+import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
 import { useAllowance } from "@/hooks/useAllowance";
 import { useBalance } from "@/hooks/useBalance";
+
+import { isUndefined } from "@/utils";
 
 import Details from "./Details";
 import MintPopUp from "./MintPopUp";
@@ -24,6 +27,7 @@ import PositionValue from "./PositionValue";
 import PredictionSlider from "./PredictionSlider";
 
 const ProjectFunding: React.FC = ({}) => {
+  const { setActiveCardId } = useCardInteraction();
   const {
     upPrice,
     marketQuote,
@@ -40,6 +44,7 @@ const ProjectFunding: React.FC = ({}) => {
     underlyingToken,
     precision,
     details,
+    marketId,
   } = market;
 
   const wagmiConfig = useConfig();
@@ -106,7 +111,11 @@ const ProjectFunding: React.FC = ({}) => {
   return (
     <Card
       aria-label="card"
-      className="bg-klerosUIComponentsLightBackground flex h-auto w-full flex-col gap-4 px-4 py-6 md:px-8"
+      className={clsx(
+        "bg-klerosUIComponentsLightBackground flex h-auto w-full flex-col gap-4 px-4 py-6 md:px-8",
+        "hover:shadow-md",
+      )}
+      onClick={() => setActiveCardId(marketId)}
     >
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex max-w-full min-w-[300px] grow basis-[70%] flex-col gap-8">
@@ -137,10 +146,10 @@ const ProjectFunding: React.FC = ({}) => {
             />
             <Button
               isDisabled={
-                typeof address === "undefined" ||
-                typeof underlyingBalance === "undefined" ||
+                isUndefined(address) ||
+                isUndefined(underlyingBalance) ||
                 underlyingBalance === 0n ||
-                typeof allowance === "undefined" ||
+                isUndefined(allowance) ||
                 userInteracting
               }
               isLoading={userInteracting}

@@ -8,6 +8,8 @@ import { useSize } from "react-use";
 
 import { useMarketContext } from "@/context/MarketContext";
 
+import { isUndefined } from "@/utils";
+
 const PredictionSlider: React.FC = () => {
   const { theme } = useTheme();
   const {
@@ -17,6 +19,7 @@ const PredictionSlider: React.FC = () => {
     setPrediction,
     marketEstimate,
     market,
+    isLoadingMarketQuote,
   } = useMarketContext();
   const { maxValue, minValue, precision, color } = market;
 
@@ -49,7 +52,7 @@ const PredictionSlider: React.FC = () => {
       <div
         className="absolute bottom-0"
         style={{
-          transform: `translateX(calc(${typeof marketPrice !== "undefined" ? marketPrice * width : 0}px - 50%))`,
+          transform: `translateX(calc(${!isUndefined(marketPrice) ? marketPrice * width : 0}px - 50%))`,
         }}
       >
         <label
@@ -60,9 +63,10 @@ const PredictionSlider: React.FC = () => {
           Market
         </label>
         <div
-          className={
-            "rounded-base text-klerosUIComponentsLightBackground px-2 py-0.75 text-center text-xs"
-          }
+          className={clsx(
+            "rounded-base text-klerosUIComponentsLightBackground px-2 py-0.75 text-center text-xs",
+            isLoadingMarketQuote && "animate-pulse",
+          )}
           style={{ backgroundColor: color }}
         >
           {`${(marketEstimate / precision).toFixed(2)}`}
