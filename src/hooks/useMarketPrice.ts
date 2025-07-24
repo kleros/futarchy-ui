@@ -1,14 +1,15 @@
-import { JSBI } from "@swapr/sdk";
+import { Price, Token, TokenAmount } from "@swapr/sdk";
 import { useQuery } from "@tanstack/react-query";
-import { Price, Token } from "@uniswap/sdk-core";
-import { Address } from "viem";
+import { Address, parseEther } from "viem";
 import { gnosis } from "viem/chains";
 import { usePublicClient } from "wagmi";
 
-import { computePoolAddress } from "@/utils/swapr";
+import { SWAPR_QUOTER_ADDRESS } from "@/utils/swapr";
+import { getCurrenciesFromTokens } from "@/utils/trade";
 
-import { SwaprPoolAbi } from "@/abi/SwaprPool";
+import { SwaprQuoter } from "@/abi/SwaprQuoter";
 
+// NOTE: assumes there is only one route, which is through the Outcome-Collateral token pool
 export const useMarketPrice = (
   outcomeToken: Address,
   collateralToken: Address,
@@ -21,35 +22,32 @@ export const useMarketPrice = (
       try {
         if (!publicClient) return "0";
 
-        const tokenA = new Token(gnosis.id, outcomeToken, 18);
-        const tokenB = new Token(gnosis.id, collateralToken, 18);
-        const { address } = computePoolAddress({
-          tokenA,
-          tokenB,
+        const simulation = await publicClient.simulateContract({
+          address: SWAPR_QUOTER_ADDRESS,
+          abi: SwaprQuoter,
+          functionName: "quoteExactInputSingle",
+          args: [collateralToken, outcomeToken, parseEther("1"), 0n],
         });
 
-        const [price] = await publicClient.readContract({
-          address,
-          abi: SwaprPoolAbi,
-          functionName: "globalState",
+        const { currencyIn, currencyOut, currencyAmountIn } =
+          getCurrenciesFromTokens(
+            gnosis.id,
+            outcomeToken,
+            collateralToken,
+            "1",
+          );
+
+        const simulationPrice = new Price({
+          baseCurrency: currencyIn,
+          quoteCurrency: currencyOut,
+          denominator: currencyAmountIn.raw,
+          numerator: new TokenAmount(
+            new Token(gnosis.id, collateralToken, 18),
+            simulation.result[0],
+          ).raw,
         });
 
-        const Q96 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(96));
-        const Q192 = JSBI.exponentiate(Q96, JSBI.BigInt(2));
-
-        const SQ = JSBI.multiply(
-          JSBI.BigInt(price.toString()),
-          JSBI.BigInt(price.toString()),
-        );
-        const wasSorted = tokenB.sortsBefore(tokenA);
-        const tokenPrice = new Price(
-          tokenA,
-          tokenB,
-          wasSorted ? Q192 : SQ,
-          wasSorted ? SQ : Q192,
-        );
-
-        return tokenPrice.toFixed();
+        return simulationPrice.toFixed();
       } catch {
         return "0";
       }
