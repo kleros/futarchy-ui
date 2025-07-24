@@ -13,6 +13,7 @@ import { formatUnits } from "viem";
 
 import { useAlternateRoute } from "@/hooks/useAlternateRoute";
 import { useBalance } from "@/hooks/useBalance";
+import { useMarketPrice } from "@/hooks/useMarketPrice";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { isUndefined } from "@/utils";
@@ -24,6 +25,7 @@ import { useCardInteraction } from "./CardInteractionContext";
 interface IMarketContext {
   upPrice: number;
   downPrice: number;
+  marketPrice: number;
   marketEstimate: number;
   marketQuote: SwaprV3Trade | null | undefined;
   marketDownQuote: SwaprV3Trade | null | undefined;
@@ -37,7 +39,7 @@ interface IMarketContext {
   setPrediction: (prediction: number) => void;
   market: IMarket;
   isLoading: boolean;
-  isLoadingMarketQuote: boolean;
+  isLoadingMarketPrice: boolean;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -60,10 +62,13 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const { data: underlyingBalance } = useBalance(underlyingToken);
 
+  const { data: marketPriceRaw, isLoading: isLoadingMarketPrice } =
+    useMarketPrice(upToken, underlyingToken);
   const { data: marketQuote, isLoading: isLoadingMarketQuote } = useMarketQuote(
     upToken,
     underlyingToken,
     underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
+    shouldFetch,
   );
 
   const upPrice = useMemo(
@@ -71,7 +76,10 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [marketQuote],
   );
 
-  const marketPrice = upPrice;
+  const marketPrice = useMemo(
+    () => 1 / parseFloat(marketPriceRaw ?? "0"),
+    [marketPriceRaw],
+  );
 
   const { data: marketDownQuote, isLoading: isLoadingMarketDownQuote } =
     useMarketQuote(
@@ -180,6 +188,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     () => ({
       upPrice,
       downPrice,
+      marketPrice,
       marketEstimate,
       marketQuote,
       marketDownQuote,
@@ -193,11 +202,12 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       setPrediction,
       market,
       isLoading,
-      isLoadingMarketQuote,
+      isLoadingMarketPrice,
     }),
     [
       upPrice,
       downPrice,
+      marketPrice,
       marketEstimate,
       marketQuote,
       marketDownQuote,
@@ -211,7 +221,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       setPrediction,
       market,
       isLoading,
-      isLoadingMarketQuote,
+      isLoadingMarketPrice,
     ],
   );
 

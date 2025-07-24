@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import {
   Card,
@@ -8,6 +8,7 @@ import {
 } from "@kleros/ui-components-library";
 import { waitForTransactionReceipt, sendTransaction } from "@wagmi/core";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import { useToggle } from "react-use";
 import { useConfig, useAccount } from "wagmi";
 
@@ -18,14 +19,19 @@ import { useMarketContext } from "@/context/MarketContext";
 import { useAllowance } from "@/hooks/useAllowance";
 import { useBalance } from "@/hooks/useBalance";
 
+import { Skeleton } from "@/components/Skeleton";
+
 import { isUndefined } from "@/utils";
 
 import Details from "./Details";
 import MintPopUp from "./MintPopUp";
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
-import PredictionSlider from "./PredictionSlider";
 
+const PredictionSlider = dynamic(() => import("./PredictionSlider"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-16 w-full" />,
+});
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
   const {
@@ -35,6 +41,8 @@ const ProjectFunding: React.FC = ({}) => {
     isUpPredict,
     differenceBetweenRoutes,
     market,
+    prediction,
+    setPrediction,
   } = useMarketContext();
   const {
     name,
@@ -49,7 +57,6 @@ const ProjectFunding: React.FC = ({}) => {
 
   const wagmiConfig = useConfig();
   const { address } = useAccount();
-  const [prediction, setPrediction] = useState(0);
   const [userInteracting, toggleUserInteracting] = useToggle(false);
   const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
 

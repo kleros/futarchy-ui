@@ -14,12 +14,12 @@ const PredictionSlider: React.FC = () => {
   const { theme } = useTheme();
   const {
     isUpPredict,
-    upPrice: marketPrice,
+    marketPrice,
     prediction,
     setPrediction,
     marketEstimate,
     market,
-    isLoadingMarketQuote,
+    isLoadingMarketPrice,
   } = useMarketContext();
   const { maxValue, minValue, precision, color } = market;
 
@@ -65,7 +65,7 @@ const PredictionSlider: React.FC = () => {
         <div
           className={clsx(
             "rounded-base text-klerosUIComponentsLightBackground px-2 py-0.75 text-center text-xs",
-            isLoadingMarketQuote && "animate-pulse",
+            isLoadingMarketPrice && "animate-pulse",
           )}
           style={{ backgroundColor: color }}
         >
