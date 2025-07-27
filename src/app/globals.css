@@ -2,6 +2,8 @@
 @import "../../node_modules/@kleros/ui-components-library/dist/assets/theme.css";
 @source "../../node_modules/@kleros/ui-components-library";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -20,6 +22,28 @@
   }
 
   --animate-slide-in-left: slideInLeft 0.5s ease-out;
+
+  @keyframes slideOutLeft {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  --animate-slide-out-left: slideOutLeft 0.5s ease-out;
+
+  @keyframes slideInRight {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  --animate-slide-in-right: slideInRight 0.5s ease-out;
 }
 
 /*

@@ -32,6 +32,7 @@ interface IMarketContext {
   mintSellQuote: SwaprV3Trade | null | undefined;
   mintReBuyQuote: SwaprV3Trade | null | undefined;
   expectedFromMintRoute?: number;
+  expectedFromDefaultRoute?: number;
   percentageIncrease: string;
   isUpPredict: boolean;
   differenceBetweenRoutes: number;
@@ -203,6 +204,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       market,
       isLoading,
       isLoadingMarketPrice,
+      expectedFromDefaultRoute,
     }),
     [
       upPrice,
@@ -222,6 +224,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       market,
       isLoading,
       isLoadingMarketPrice,
+      expectedFromDefaultRoute,
     ],
   );
 

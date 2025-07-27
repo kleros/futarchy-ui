@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 
 import {
   Card,
@@ -6,114 +6,38 @@ import {
   NumberField,
   Button,
 } from "@kleros/ui-components-library";
-import { waitForTransactionReceipt, sendTransaction } from "@wagmi/core";
 import clsx from "clsx";
-import dynamic from "next/dynamic";
 import { useToggle } from "react-use";
-import { useConfig, useAccount } from "wagmi";
-
-import { useWriteErc20Approve } from "@/generated";
 
 import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
-import { useAllowance } from "@/hooks/useAllowance";
 import { useBalance } from "@/hooks/useBalance";
-
-import { Skeleton } from "@/components/Skeleton";
 
 import { isUndefined } from "@/utils";
 
 import Details from "./Details";
-import MintPopUp from "./MintPopUp";
 import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
+import PredictionSlider from "./PredictionSlider";
+import PredictPopup from "./PredictPopup";
 
-const PredictionSlider = dynamic(() => import("./PredictionSlider"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-16 w-full" />,
-});
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
-  const {
-    upPrice,
-    marketQuote,
-    marketDownQuote,
-    isUpPredict,
-    differenceBetweenRoutes,
-    market,
-    prediction,
-    setPrediction,
-  } = useMarketContext();
+  const { upPrice, isUpPredict, market, prediction, setPrediction } =
+    useMarketContext();
   const {
     name,
     color,
     upToken,
     downToken,
-    underlyingToken,
     precision,
     details,
     marketId,
-  } = market;
-
-  const wagmiConfig = useConfig();
-  const { address } = useAccount();
-  const [userInteracting, toggleUserInteracting] = useToggle(false);
-  const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
-
-  const { data: allowance, refetch: refetchAllowance } =
-    useAllowance(underlyingToken);
-
-  const { data: underlyingBalance, refetch: refetchBalance } =
-    useBalance(underlyingToken);
-
-  const isAllowance = useMemo(
-    () =>
-      typeof allowance !== "undefined" &&
-      typeof underlyingBalance !== "undefined" &&
-      allowance < underlyingBalance,
-    [allowance, underlyingBalance],
-  );
-
-  const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
-
-  const handleAllowance = useCallback(async () => {
-    if (typeof underlyingBalance !== "undefined") {
-      const hash = await increaseAllowance({
-        address: underlyingToken,
-        args: ["0xffb643e73f280b97809a8b41f7232ab401a04ee1", underlyingBalance],
-      });
-      await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
-      refetchAllowance();
-    }
-  }, [
-    wagmiConfig,
-    increaseAllowance,
-    refetchAllowance,
-    underlyingBalance,
     underlyingToken,
-  ]);
+  } = market;
+  const { data: underlyingBalance } = useBalance(underlyingToken);
 
-  const handlePredict = useCallback(async () => {
-    const tx = await (
-      isUpPredict ? marketQuote : marketDownQuote
-    )?.swapTransaction({
-      recipient: address!,
-    });
-    const hash = await sendTransaction(wagmiConfig, {
-      to: tx!.to as `0x${string}`,
-      data: tx!.data!.toString() as `0x${string}`,
-      value: BigInt(tx?.value?.toString() || 0),
-    });
-    await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
-    refetchBalance();
-  }, [
-    address,
-    marketQuote,
-    marketDownQuote,
-    wagmiConfig,
-    isUpPredict,
-    refetchBalance,
-  ]);
+  const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
 
   return (
     <Card
@@ -152,35 +76,14 @@ const ProjectFunding: React.FC = ({}) => {
               onChange={(e) => setPrediction(e * precision)}
             />
             <Button
-              isDisabled={
-                isUndefined(address) ||
-                isUndefined(underlyingBalance) ||
-                underlyingBalance === 0n ||
-                isUndefined(allowance) ||
-                userInteracting
-              }
-              isLoading={userInteracting}
-              text={
-                isAllowance
-                  ? "Allow"
-                  : underlyingBalance === 0n
-                    ? "Done"
-                    : "Predict"
-              }
+              text={"Predict"}
               aria-label="Predict Button"
+              isDisabled={
+                isUndefined(underlyingBalance) || underlyingBalance === 0n
+              }
               onPress={async () => {
-                toggleUserInteracting(true);
-                try {
-                  if (differenceBetweenRoutes > 0) {
-                    toggleIsPopUpOpen(true);
-                  } else if (isAllowance) {
-                    await handleAllowance();
-                  } else {
-                    await handlePredict();
-                  }
-                } finally {
-                  toggleUserInteracting(false);
-                }
+                setActiveCardId(marketId);
+                toggleIsPopUpOpen();
               }}
             />
           </div>
@@ -210,7 +113,7 @@ const ProjectFunding: React.FC = ({}) => {
           items={[{ title: "Details", body: <Details {...details} /> }]}
         />
       </div>
-      <MintPopUp isOpen={isPopUpOpen} toggleIsOpen={toggleIsPopUpOpen} />
+      <PredictPopup isOpen={isPopUpOpen} toggleIsOpen={toggleIsPopUpOpen} />
     </Card>
   );
 };

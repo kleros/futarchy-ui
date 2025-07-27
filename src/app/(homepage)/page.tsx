@@ -9,6 +9,8 @@ import { useChartData } from "@/hooks/useChartData";
 import EnsureChain from "@/components/EnsureChain";
 import Loader from "@/components/Loader";
 
+import { isUndefined } from "@/utils";
+
 import { markets } from "@/consts/markets";
 
 import AdvancedSection from "./components/AdvancedSection";
@@ -25,7 +27,7 @@ export default function Home() {
       <div className="mx-auto max-w-294">
         <Header />
         <div className="min-h-96">
-          {typeof chartData !== "undefined" ? (
+          {!isUndefined(chartData) ? (
             <Chart data={chartData} />
           ) : (
             <div className="flex h-96 w-full items-center justify-center">

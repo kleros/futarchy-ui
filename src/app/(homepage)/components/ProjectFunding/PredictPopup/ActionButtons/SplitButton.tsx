@@ -21,13 +21,13 @@ import { isUndefined } from "@/utils";
 interface ISplitButton {
   marketId: `0x${string}`;
   underlyingToken: Address;
-  initialBalanceRef: React.MutableRefObject<bigint | null>;
+  setNextStep: () => void;
 }
 
 const SplitButton: React.FC<ISplitButton> = ({
   marketId,
   underlyingToken,
-  initialBalanceRef,
+  setNextStep,
 }) => {
   const wagmiConfig = useConfig();
   const { address } = useAccount();
@@ -50,17 +50,20 @@ const SplitButton: React.FC<ISplitButton> = ({
   const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
 
   const handleAllowance = useCallback(async () => {
-    if (!isUndefined(underlyingBalance)) {
-      // keep track of the balance we started with,
-      // so we don't accidentally trade the already existing UP/DOWN tokens user may have
-      initialBalanceRef.current = underlyingBalance;
-
-      const hash = await increaseAllowance({
-        address: underlyingToken,
-        args: [gnosisRouterAddress, underlyingBalance],
-      });
-      await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
-      refetchAllowance();
+    try {
+      if (!isUndefined(underlyingBalance)) {
+        const hash = await increaseAllowance({
+          address: underlyingToken,
+          args: [gnosisRouterAddress, underlyingBalance],
+        });
+        await waitForTransactionReceipt(wagmiConfig, {
+          hash,
+          confirmations: 2,
+        });
+        refetchAllowance();
+      }
+    } catch (err) {
+      console.log("handleAllowance:", err);
     }
   }, [
     wagmiConfig,
@@ -68,31 +71,35 @@ const SplitButton: React.FC<ISplitButton> = ({
     refetchAllowance,
     underlyingBalance,
     underlyingToken,
-    initialBalanceRef,
   ]);
 
   const { writeContractAsync: splitPosition } =
     useWriteGnosisRouterSplitPosition();
 
   const handleSplit = useCallback(async () => {
-    if (typeof underlyingBalance !== "undefined") {
-      splitPosition({
-        args: [sDaiAddress, marketId, underlyingBalance],
-      });
+    try {
+      if (!isUndefined(underlyingBalance)) {
+        const hash = await splitPosition({
+          args: [sDaiAddress, marketId, underlyingBalance],
+        });
+        await waitForTransactionReceipt(wagmiConfig, {
+          hash,
+          confirmations: 2,
+        });
+        setNextStep();
+      }
+    } catch (err) {
+      console.log("handleSplit:", err);
     }
-  }, [splitPosition, marketId, underlyingBalance]);
+  }, [splitPosition, marketId, underlyingBalance, setNextStep, wagmiConfig]);
 
   return (
     <Button
       isDisabled={
-        typeof address === "undefined" ||
-        typeof underlyingBalance === "undefined" ||
-        underlyingBalance === 0n ||
-        typeof allowance === "undefined" ||
-        isInteracting
+        isUndefined(address) || isUndefined(allowance) || isInteracting
       }
       isLoading={isInteracting}
-      text={isAllowance ? "Allow" : underlyingBalance === 0n ? "Done" : "Mint"}
+      text={isAllowance ? "Allow" : "Mint"}
       aria-label="Mint Button"
       onPress={async () => {
         toggleIsInteracting(true);
