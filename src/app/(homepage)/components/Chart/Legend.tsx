@@ -1,3 +1,4 @@
+import { Tag } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
 import ChartBarIcon from "@/assets/svg/chart-bar.svg";
@@ -5,32 +6,49 @@ import StatsBarIcon from "@/assets/svg/stats-bar.svg";
 
 import { type MarketsData } from ".";
 
-const Legend: React.FC<{ marketsData?: MarketsData }> = ({ marketsData }) => {
+interface ILegend {
+  marketsData?: MarketsData;
+  visibleMarkets: Set<string>;
+  onToggleMarket: (marketName: string) => void;
+}
+
+const Legend: React.FC<ILegend> = ({
+  marketsData,
+  visibleMarkets,
+  onToggleMarket,
+}) => {
   return (
     <div
       className={clsx(
         "flex flex-col-reverse gap-4",
-        "items-start justify-center md:flex-row md:items-center md:justify-between",
+        "border-klerosUIComponentsStroke items-start justify-center md:flex-row md:items-center md:justify-between",
       )}
     >
       {typeof marketsData !== "undefined" ? (
-        <ul className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2">
           {Object.entries(marketsData).map(
-            ([name, { market, data }], index) => (
-              <li key={`item-${index}`} className="flex items-center gap-2">
-                <div
-                  className="size-2 rounded-full"
+            ([name, { market, data }], index) => {
+              const isVisible = visibleMarkets.has(name);
+              return (
+                <Tag
+                  key={`item-${index}`}
+                  text={`${name} ${data.at(-1)?.value.toFixed(2)}%`}
+                  active={isVisible}
+                  onClick={() => onToggleMarket(name)}
+                  className={clsx(
+                    "h-6 cursor-pointer !border [&_p]:text-xs",
+                    isVisible
+                      ? "bg-klerosUIComponentsMediumBlue"
+                      : "bg-transparent",
+                  )}
                   style={{
-                    backgroundColor: market.color,
+                    borderColor: market.color,
                   }}
                 />
-                <span className="text-klerosUIComponentsPrimaryText text-sm">
-                  {name} <strong>{`${data.at(-1)?.value.toFixed(2)}%`}</strong>
-                </span>
-              </li>
-            ),
+              );
+            },
           )}
-        </ul>
+        </div>
       ) : null}
       {false ? (
         <div className="flex gap-8">

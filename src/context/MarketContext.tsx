@@ -57,11 +57,15 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const { underlyingToken, upToken, downToken, maxValue, precision, marketId } =
     market;
-  const shouldFetch = marketId === activeCardId;
 
   const [prediction, setPrediction] = useState(0);
 
   const { data: underlyingBalance } = useBalance(underlyingToken);
+
+  const shouldFetch =
+    marketId === activeCardId &&
+    !isUndefined(underlyingBalance) &&
+    underlyingBalance !== 0n;
 
   const { data: marketPriceRaw, isLoading: isLoadingMarketPrice } =
     useMarketPrice(upToken, underlyingToken);
