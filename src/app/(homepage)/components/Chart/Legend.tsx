@@ -25,29 +25,46 @@ const Legend: React.FC<ILegend> = ({
       )}
     >
       {typeof marketsData !== "undefined" ? (
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(marketsData).map(
-            ([name, { market, data }], index) => {
-              const isVisible = visibleMarkets.has(name);
-              return (
-                <Tag
-                  key={`item-${index}`}
-                  text={`${name} ${data.at(-1)?.value.toFixed(2)}%`}
-                  active={isVisible}
-                  onClick={() => onToggleMarket(name)}
-                  className={clsx(
-                    "h-6 cursor-pointer !border [&_p]:text-xs",
-                    isVisible
-                      ? "bg-klerosUIComponentsMediumBlue"
-                      : "bg-transparent",
-                  )}
-                  style={{
-                    borderColor: market.color,
-                  }}
-                />
-              );
-            },
-          )}
+        <div>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(marketsData).map(
+              ([name, { market, data }], index) => {
+                const isVisible = visibleMarkets.has(name);
+                return (
+                  <Tag
+                    key={`item-${index}`}
+                    text={`${name} ${data.at(-1)?.value.toFixed(2)}%`}
+                    active={isVisible}
+                    onClick={() => onToggleMarket(name)}
+                    className={clsx(
+                      "h-6 cursor-pointer [&_p]:text-xs",
+                      isVisible
+                        ? "bg-klerosUIComponentsMediumBlue"
+                        : "[&_p]:text-klerosUIComponentsSecondaryText bg-transparent",
+                    )}
+                    style={{
+                      borderColor: isVisible ? market.color : "transparent",
+                    }}
+                  />
+                );
+              },
+            )}
+          </div>
+          <Tag
+            key="all"
+            text={visibleMarkets.size > 0 ? "Clear All" : "Check All"}
+            onClick={() => {
+              const originalSize = visibleMarkets.size;
+              Object.entries(marketsData).forEach(([name]) => {
+                if (
+                  originalSize === 0 ||
+                  (originalSize > 0 && visibleMarkets.has(name))
+                )
+                  onToggleMarket(name);
+              });
+            }}
+            className="mt-3 block h-6 cursor-pointer [&_p]:text-xs"
+          />
         </div>
       ) : null}
       {false ? (

@@ -29,9 +29,9 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     return data.flatMap((marketData) => Object.keys(marketData));
   }, [data]);
 
-  const [visibleMarkets, setVisibleMarkets] = useState<Set<string>>(() => {
-    return new Set(marketNames);
-  });
+  const [visibleMarkets, setVisibleMarkets] = useState<Set<string>>(
+    new Set(marketNames),
+  );
 
   React.useEffect(() => {
     setVisibleMarkets(new Set(marketNames));
