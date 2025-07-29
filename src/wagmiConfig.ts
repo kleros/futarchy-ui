@@ -18,8 +18,12 @@ export const wagmiAdapter = new WagmiAdapter({
   projectId: reownProjectId,
   networks,
   transports: {
-    [gnosis.id]: fallback([http("https://rpc.gnosis.gateway.fm")]),
-    [mainnet.id]: fallback([http("https://eth-mainnet.g.alchemy.com/v2/demo")]),
+    [gnosis.id]: fallback([
+      http("https://rpc.gnosis.gateway.fm", { batch: true }),
+    ]),
+    [mainnet.id]: fallback([
+      http("https://eth-mainnet.g.alchemy.com/v2/demo", { batch: true }),
+    ]),
   },
 });
 

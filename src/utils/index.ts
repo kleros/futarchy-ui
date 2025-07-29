@@ -35,3 +35,8 @@ export const parseWagmiError = (
 
   return metaMessage ?? shortMessage ?? error.message;
 };
+
+export const isUndefined = (
+  maybeObject: unknown,
+): maybeObject is undefined | null =>
+  typeof maybeObject === "undefined" || maybeObject === null;

@@ -2,10 +2,14 @@
 
 import React from "react";
 
-import CowContextProvider from "@/context/CowContext";
+import { CardInteractionProvider } from "@/context/CardInteractionContext";
+import MarketContextProvider from "@/context/MarketContext";
 import { useChartData } from "@/hooks/useChartData";
 
+import EnsureChain from "@/components/EnsureChain";
 import Loader from "@/components/Loader";
+
+import { isUndefined } from "@/utils";
 
 import { markets } from "@/consts/markets";
 
@@ -23,7 +27,7 @@ export default function Home() {
       <div className="mx-auto max-w-294">
         <Header />
         <div className="min-h-96">
-          {typeof chartData !== "undefined" ? (
+          {!isUndefined(chartData) ? (
             <Chart data={chartData} />
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
@@ -33,18 +37,19 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <CowContextProvider>
+          <EnsureChain>
             <ParticipateSection />
-            <div className="mt-8 flex flex-col gap-4">
-              {markets.map((market) => (
-                <ProjectFunding
-                  key={market.name}
-                  chartData={chartData}
-                  {...market}
-                />
-              ))}
-            </div>
-          </CowContextProvider>
+            <CardInteractionProvider>
+              <div className="mt-8 flex flex-col gap-4">
+                {markets.map((market) => (
+                  <MarketContextProvider key={market.marketId} {...market}>
+                    <ProjectFunding key={market.marketId} />
+                  </MarketContextProvider>
+                ))}
+              </div>
+            </CardInteractionProvider>
+          </EnsureChain>
+
           <AdvancedSection />
         </div>
       </div>

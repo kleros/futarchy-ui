@@ -46,3 +46,5 @@ export const getContractInfo = (
 export const cowSwapAppCode = "futarchy-test";
 
 export const DEFAULT_CHAIN = gnosis;
+
+export const SWAPR_CONTRACT = "0xffb643e73f280b97809a8b41f7232ab401a04ee1";

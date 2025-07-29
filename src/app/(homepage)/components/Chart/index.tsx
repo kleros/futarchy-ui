@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import { useTheme } from "next-themes";
 
@@ -28,6 +28,26 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     // Extract all market names from the data
     return data.flatMap((marketData) => Object.keys(marketData));
   }, [data]);
+
+  const [visibleMarkets, setVisibleMarkets] = useState<Set<string>>(
+    new Set(marketNames),
+  );
+
+  React.useEffect(() => {
+    setVisibleMarkets(new Set(marketNames));
+  }, [marketNames]);
+
+  const handleToggleMarket = (marketName: string) => {
+    setVisibleMarkets((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(marketName)) {
+        newSet.delete(marketName);
+      } else {
+        newSet.add(marketName);
+      }
+      return newSet;
+    });
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [series, maxYDomain, marketsData] = useMemo(() => {
@@ -108,7 +128,11 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
 
   return (
     <div className="mt-6 flex size-full flex-col">
-      <Legend {...{ marketsData }} />
+      <Legend
+        marketsData={marketsData}
+        visibleMarkets={visibleMarkets}
+        onToggleMarket={handleToggleMarket}
+      />
       <h2 className="text-klerosUIComponentsPrimaryText mt-6 mb-4 text-base font-semibold">
         Market Estimate Scores
       </h2>
@@ -117,15 +141,17 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
           data={series}
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
         >
-          {marketNames.map((marketName) => (
-            <Line
-              key={marketName}
-              dataKey={marketName}
-              type="monotone"
-              stroke={marketsData?.[marketName].market.color ?? "#009AFF"}
-              dot={false}
-            />
-          ))}
+          {marketNames
+            .filter((marketName) => visibleMarkets.has(marketName))
+            .map((marketName) => (
+              <Line
+                key={marketName}
+                dataKey={marketName}
+                type="monotone"
+                stroke={marketsData?.[marketName].market.color ?? "#009AFF"}
+                dot={false}
+              />
+            ))}
           <XAxis
             dataKey="timestamp"
             type="number"

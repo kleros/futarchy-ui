@@ -5153,9 +5153,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swapr/sdk@https://github.com/seer-pm/swapr-sdk#029ff9d47fcd3e87474f9f9fc7baa3c6d13d9b66":
+"@swapr/sdk@https://github.com/seer-pm/swapr-sdk#6dea7e63f7e05c84a4374717ee1ad5baca86f7de":
   version: 1.12.0
-  resolution: "@swapr/sdk@https://github.com/seer-pm/swapr-sdk.git#commit=029ff9d47fcd3e87474f9f9fc7baa3c6d13d9b66"
+  resolution: "@swapr/sdk@https://github.com/seer-pm/swapr-sdk.git#commit=6dea7e63f7e05c84a4374717ee1ad5baca86f7de"
   dependencies:
     "@cowprotocol/app-data": "npm:^2.1.0"
     "@cowprotocol/cow-sdk": "npm:^2.3.1"
@@ -5187,7 +5187,7 @@ __metadata:
     tslib: "npm:^2.3.1"
   peerDependencies:
     ethers: ^5.4.0
-  checksum: 10c0/720bcc24ce1eca57b5a21b8edac471e23ab95fd611219ba3143ceee05f42d6586748d4f04ac9f8957f9b6ffb64bc9e5a88c0d95d3cb4704d7ecce3055914c3bd
+  checksum: 10c0/eace673072661f43de750b72dd93045f341c7499190e0da603c4319667e692365bc77710e72cc1b628e5210232cb93891d47eb4ec41a6a5e26b9a0daebf07c3e
   languageName: node
   linkType: hard
 
@@ -9478,7 +9478,7 @@ __metadata:
     "@reown/appkit": "npm:^1.7.11"
     "@reown/appkit-adapter-wagmi": "npm:^1.7.11"
     "@svgr/webpack": "npm:^8.1.0"
-    "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#029ff9d47fcd3e87474f9f9fc7baa3c6d13d9b66"
+    "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#6dea7e63f7e05c84a4374717ee1ad5baca86f7de"
     "@tailwindcss/postcss": "npm:^4.1.4"
     "@tanstack/react-query": "npm:^5.74.4"
     "@types/node": "npm:^20"

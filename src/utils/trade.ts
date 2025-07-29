@@ -45,7 +45,7 @@ export function getTradeArgs(
   };
 }
 
-function getCurrenciesFromTokens(
+export function getCurrenciesFromTokens(
   chainId: number,
   buyToken: string,
   sellToken: string,
