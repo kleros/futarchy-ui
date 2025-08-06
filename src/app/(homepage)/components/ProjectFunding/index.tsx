@@ -16,14 +16,13 @@ import { useBalance } from "@/hooks/useBalance";
 import { isUndefined } from "@/utils";
 
 import Details from "./Details";
-import OpenOrders from "./OpenOrders";
 import PositionValue from "./PositionValue";
 import PredictionSlider from "./PredictionSlider";
 import PredictPopup from "./PredictPopup";
 
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
-  const { upPrice, isUpPredict, market, prediction, setPrediction } =
+  const { marketPrice, isUpPredict, market, prediction, setPrediction } =
     useMarketContext();
   const {
     name,
@@ -100,9 +99,9 @@ const ProjectFunding: React.FC = ({}) => {
         <div className="flex gap-2">
           <PositionValue
             {...{ upToken, downToken }}
-            marketPrice={upPrice ?? 0}
+            marketPrice={marketPrice ?? 0}
           />
-          <OpenOrders />
+          {/* <OpenOrders /> */}
         </div>
         <Accordion
           aria-label="accordion"
