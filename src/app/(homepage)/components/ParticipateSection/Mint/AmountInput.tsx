@@ -1,6 +1,6 @@
 import { BigNumberField, DropdownSelect } from "@kleros/ui-components-library";
 import clsx from "clsx";
-import { parseUnits } from "viem";
+import { parseUnits, formatUnits } from "viem";
 
 import DAIIcon from "@/assets/svg/dai.svg";
 
@@ -9,16 +9,19 @@ export enum TokenType {
   xDAI,
 }
 interface IAmountInput {
-  amount: bigint;
   setAmount: (amount: bigint) => void;
   setSelectedToken: (token: TokenType) => void;
   notEnoughBalance: boolean;
+  defaultValue?: bigint;
+  value?: bigint;
 }
 
 const AmountInput: React.FC<IAmountInput> = ({
   setAmount,
   setSelectedToken,
   notEnoughBalance,
+  defaultValue,
+  value,
 }) => {
   return (
     <div className="relative mb-4">
@@ -33,6 +36,15 @@ const AmountInput: React.FC<IAmountInput> = ({
           }}
           minValue={"0"}
           variant={notEnoughBalance ? "error" : undefined}
+          defaultValue={
+            typeof defaultValue !== "undefined"
+              ? formatUnits(defaultValue, 18)
+              : undefined
+          }
+          value={
+            typeof value !== "undefined" ? formatUnits(value, 18) : undefined
+          }
+          isDisabled={typeof value !== "undefined"}
         />
         <DropdownSelect
           className={clsx(
