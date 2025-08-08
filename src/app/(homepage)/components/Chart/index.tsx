@@ -4,9 +4,17 @@ import React, { useMemo, useState } from "react";
 
 import { useTheme } from "next-themes";
 
+import { Card } from "@kleros/ui-components-library";
+import clsx from "clsx";
 import { format } from "date-fns";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
-// Tooltip,
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 
 import { type IChartData } from "@/hooks/useChartData";
 
@@ -149,7 +157,10 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
                 dataKey={marketName}
                 type="monotone"
                 stroke={marketsData?.[marketName].market.color ?? "#009AFF"}
+                // shown when tooltip is visible
+                activeDot={{ strokeWidth: 0 }}
                 dot={false}
+                strokeWidth={1.5}
               />
             ))}
           <XAxis
@@ -166,8 +177,6 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
             tickMargin={16}
           />
           <YAxis
-            // scale is required to be 'linear' for Tooltip position calculation to work.
-            scale="linear"
             domain={["auto", "auto"]}
             axisLine={false}
             tickSize={0}
@@ -175,45 +184,66 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
             width={40}
             tick={{ fill: accentColor, fontSize: "12px" }}
           />
+          <Tooltip
+            wrapperStyle={{ zIndex: 10 }}
+            cursor={{
+              stroke: accentColor,
+              strokeDasharray: "4",
+              strokeWidth: 1,
+              opacity: 0.5,
+            }}
+            content={({ active, payload: payloads, viewBox, label }) => {
+              const isVisible =
+                active && payloads && payloads?.length && viewBox?.height;
+
+              return isVisible ? (
+                <Card
+                  className={clsx(
+                    "h-fit w-fit p-2 px-3 shadow-md",
+                    "flex flex-col gap-4",
+                  )}
+                >
+                  <h3 className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+                    {new Date(Number(label) * 1000).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "2-digit",
+                        hour: "numeric",
+                        minute: "numeric",
+                        timeZone: "GMT",
+                      },
+                    )}
+                  </h3>
+                  <ul className="flex flex-col gap-2">
+                    {payloads.map(({ color, value, name }, index) => (
+                      <li
+                        className="flex items-center gap-2"
+                        key={`${index}-${name}`}
+                      >
+                        <div
+                          className="size-2 rounded-full"
+                          style={{ backgroundColor: color }}
+                        />
+                        <p className="text-klerosUIComponentsPrimaryText flex-1 grow text-sm">
+                          {name}
+                        </p>
+                        <p className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+                          {Number(value).toFixed(2)}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              ) : null;
+            }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-// <Tooltip
-//   defaultIndex={series?.length - 1}
-//   cursor={{ stroke: accentColor, strokeWidth: 1, opacity: 0.5 }}
-//   content={({ active, payload: payloads, viewBox, coordinate }) => {
-//     const isVisible =
-//       active && payloads && payloads?.length && viewBox?.height;
-//
-//     return isVisible
-//       ? payloads.map(({ color, value }, index) => (
-//           <div
-//             key={`tooltip-${index}`}
-//             className="rounded-base absolute top-0 left-0 -translate-x-full -translate-y-1/2 px-2 py-0.75"
-//             style={{
-//               visibility: isVisible ? "visible" : "hidden",
-//               backgroundColor: isVisible ? color : "transparent",
-//               top:
-//                 viewBox?.height && value && maxYDomain
-//                   ? viewBox?.height -
-//                     ((value as number) / maxYDomain) * viewBox?.height
-//                   : coordinate?.y,
-//               left: coordinate?.x,
-//             }}
-//           >
-//             {isVisible ? (
-//               <p className="text-klerosUIComponentsLightBackground text-right text-xs">
-//                 {Number(value).toFixed(2)}
-//               </p>
-//             ) : null}
-//           </div>
-//         ))
-//       : null;
-//   }}
-// />
 const getTimestamps = (firstTimestamp: number, lastTimestamp: number) => {
   let currentTimestamp = firstTimestamp;
   const timestamps: Array<number> = [];
