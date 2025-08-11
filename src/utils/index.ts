@@ -16,7 +16,13 @@ export const shortenAddress = (address: Address) =>
   `${address.slice(0, 6)}...${address.slice(-5, -1)}`;
 
 export const formatValue = (value: bigint, decimals = 18) => {
-  return parseFloat(formatUnits(value, decimals)).toFixed(2);
+  const formattedValue = formatUnits(value, decimals);
+  if (formattedValue === "0") {
+    return "0";
+  } else {
+    const parsedValue = parseFloat(formattedValue);
+    return parsedValue > 0.01 ? parsedValue.toFixed(2) : "<0.01";
+  }
 };
 
 /**

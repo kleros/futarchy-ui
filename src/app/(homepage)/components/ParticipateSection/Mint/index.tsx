@@ -132,10 +132,11 @@ const Mint: React.FC = () => {
             )}
           />
         </div>
-        {markets.map(({ name, color }) => (
+        {markets.map(({ name, color }, i) => (
           <ProjectAmount
             key={name}
             {...{ name, color }}
+            balance={marketBalances?.data?.[i].result as bigint}
             amount={((): bigint => {
               if (!isSplit) {
                 if (minMarketBalance) {
