@@ -14,9 +14,11 @@ import { parentMarket } from "@/consts/markets";
 interface IXDaiButton {
   amount: bigint;
   isMinting: boolean;
+  setAmount: (a: bigint) => void;
   toggleIsMinting: (value: boolean) => void;
   refetchSDai: () => void;
   refetchXDai: () => void;
+  refetchBalances: () => void;
 }
 
 const XDaiButton: React.FC<IXDaiButton> = ({
@@ -25,6 +27,8 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   toggleIsMinting,
   refetchXDai,
   refetchSDai,
+  refetchBalances,
+  setAmount,
 }) => {
   const {
     data: result,
@@ -55,6 +59,8 @@ const XDaiButton: React.FC<IXDaiButton> = ({
             await waitForTransactionReceipt(config, { hash: tx });
             refetchSDai();
             refetchXDai();
+            refetchBalances();
+            setAmount(0n);
           }
         } finally {
           toggleIsMinting(false);

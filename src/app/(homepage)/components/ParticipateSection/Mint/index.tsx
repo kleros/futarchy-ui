@@ -154,8 +154,10 @@ const Mint: React.FC = () => {
         {isSplit ? (
           isSDaiSelected ? (
             <SDaiButton
+              refetchBalances={marketBalances.refetch}
               {...{
                 amount,
+                setAmount,
                 refetchSDai,
                 refetchXDai,
                 isMinting,
@@ -164,8 +166,10 @@ const Mint: React.FC = () => {
             />
           ) : (
             <XDaiButton
+              refetchBalances={marketBalances.refetch}
               {...{
                 amount,
+                setAmount,
                 refetchSDai,
                 refetchXDai,
                 isMinting,

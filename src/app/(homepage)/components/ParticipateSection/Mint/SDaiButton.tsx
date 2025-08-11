@@ -17,10 +17,12 @@ import { parentMarket } from "@/consts/markets";
 
 interface ISDaiButton {
   amount: bigint;
+  setAmount: (a: bigint) => void;
   isMinting: boolean;
   toggleIsMinting: (value: boolean) => void;
   refetchSDai: () => void;
   refetchXDai: () => void;
+  refetchBalances: () => void;
 }
 
 const SDaiButton: React.FC<ISDaiButton> = ({
@@ -29,6 +31,8 @@ const SDaiButton: React.FC<ISDaiButton> = ({
   toggleIsMinting,
   refetchXDai,
   refetchSDai,
+  refetchBalances,
+  setAmount,
 }) => {
   const { address } = useAccount();
 
@@ -36,6 +40,7 @@ const SDaiButton: React.FC<ISDaiButton> = ({
     data: result,
     isLoading,
     isError,
+    refetch: refetchSimulation,
   } = useSimulateGnosisRouterSplitPosition({
     args: [sDaiAddress, parentMarket, amount],
     query: {
@@ -76,11 +81,14 @@ const SDaiButton: React.FC<ISDaiButton> = ({
               confirmations: 2,
             });
             refetchAllowance();
+            refetchSimulation();
           } else if (typeof result !== "undefined") {
             const tx = await writeContractAsync(result.request);
             await waitForTransactionReceipt(wagmiConfig, { hash: tx });
             refetchSDai();
             refetchXDai();
+            refetchBalances();
+            setAmount(0n);
           }
         } finally {
           toggleIsMinting(false);
