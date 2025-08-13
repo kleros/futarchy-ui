@@ -103,7 +103,7 @@ const Mint: React.FC = () => {
           />
         ) : (
           <AmountInput
-            key="no-split"
+            key="merge"
             value={minMarketBalance}
             {...{ setAmount, setSelectedToken, notEnoughBalance }}
           />

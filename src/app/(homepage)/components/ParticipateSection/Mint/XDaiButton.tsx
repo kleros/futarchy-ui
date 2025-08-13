@@ -14,7 +14,6 @@ import { parentMarket } from "@/consts/markets";
 interface IXDaiButton {
   amount: bigint;
   isMinting: boolean;
-  setAmount: (a: bigint) => void;
   toggleIsMinting: (value: boolean) => void;
   refetchSDai: () => void;
   refetchXDai: () => void;
@@ -28,7 +27,6 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   refetchXDai,
   refetchSDai,
   refetchBalances,
-  setAmount,
 }) => {
   const {
     data: result,
@@ -48,7 +46,7 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   return (
     <Button
       isLoading={isMinting}
-      isDisabled={isMinting || isLoading || isError}
+      isDisabled={amount === 0n || isMinting || isLoading || isError}
       className="absolute right-1/2 bottom-0 translate-1/2"
       text="Convert to Movie Tokens"
       onPress={async () => {
@@ -60,7 +58,6 @@ const XDaiButton: React.FC<IXDaiButton> = ({
             refetchSDai();
             refetchXDai();
             refetchBalances();
-            setAmount(0n);
           }
         } finally {
           toggleIsMinting(false);

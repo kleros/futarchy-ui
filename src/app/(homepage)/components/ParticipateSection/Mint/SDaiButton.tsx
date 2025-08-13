@@ -17,7 +17,6 @@ import { parentMarket } from "@/consts/markets";
 
 interface ISDaiButton {
   amount: bigint;
-  setAmount: (a: bigint) => void;
   isMinting: boolean;
   toggleIsMinting: (value: boolean) => void;
   refetchSDai: () => void;
@@ -32,7 +31,6 @@ const SDaiButton: React.FC<ISDaiButton> = ({
   refetchXDai,
   refetchSDai,
   refetchBalances,
-  setAmount,
 }) => {
   const { address } = useAccount();
 
@@ -66,7 +64,9 @@ const SDaiButton: React.FC<ISDaiButton> = ({
   return (
     <Button
       isLoading={isMinting}
-      isDisabled={isMinting || (!isAllowance && (isLoading || isError))}
+      isDisabled={
+        amount === 0n || isMinting || (!isAllowance && (isLoading || isError))
+      }
       className="absolute right-1/2 bottom-0 translate-1/2"
       text={isAllowance ? "Allow sDAI" : "Convert to Movie Tokens"}
       onPress={async () => {
@@ -88,7 +88,6 @@ const SDaiButton: React.FC<ISDaiButton> = ({
             refetchSDai();
             refetchXDai();
             refetchBalances();
-            setAmount(0n);
           }
         } finally {
           toggleIsMinting(false);
