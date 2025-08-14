@@ -17,6 +17,7 @@ interface IXDaiButton {
   toggleIsMinting: (value: boolean) => void;
   refetchSDai: () => void;
   refetchXDai: () => void;
+  refetchBalances: () => void;
 }
 
 const XDaiButton: React.FC<IXDaiButton> = ({
@@ -25,6 +26,7 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   toggleIsMinting,
   refetchXDai,
   refetchSDai,
+  refetchBalances,
 }) => {
   const {
     data: result,
@@ -44,7 +46,7 @@ const XDaiButton: React.FC<IXDaiButton> = ({
   return (
     <Button
       isLoading={isMinting}
-      isDisabled={isMinting || isLoading || isError}
+      isDisabled={amount === 0n || isMinting || isLoading || isError}
       className="absolute right-1/2 bottom-0 translate-1/2"
       text="Convert to Movie Tokens"
       onPress={async () => {
@@ -55,6 +57,7 @@ const XDaiButton: React.FC<IXDaiButton> = ({
             await waitForTransactionReceipt(config, { hash: tx });
             refetchSDai();
             refetchXDai();
+            refetchBalances();
           }
         } finally {
           toggleIsMinting(false);
