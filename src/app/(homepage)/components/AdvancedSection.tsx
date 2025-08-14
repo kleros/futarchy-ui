@@ -23,9 +23,10 @@ const AdvancedSection: React.FC = () => {
         <p className="text-klerosUIComponentsSecondaryText text-sm">
           Check the opportunities if you want to LP or Trade specific outcome
           tokens in Seer.&nbsp;
-          {/* TODO: update link */}
           <Link
-            href={"/"}
+            href={
+              "https://app.seer.pm/markets/100/ierr-which-day-will-be-evaluated-by-the-gourmet-committee/?outcome=Tuesday+28+July"
+            }
             target="_blank"
             rel="noreferrer noopener"
             className="text-klerosUIComponentsPrimaryBlue items-center text-sm"
