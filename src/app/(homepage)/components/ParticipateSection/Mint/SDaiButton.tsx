@@ -87,6 +87,7 @@ const SDaiButton: React.FC<ISDaiButton> = ({
             await waitForTransactionReceipt(wagmiConfig, { hash: tx });
             refetchSDai();
             refetchXDai();
+            refetchAllowance();
             refetchBalances();
           }
         } finally {
