@@ -6,7 +6,7 @@ export const parentMarket: Address =
 export const invalidMarket: Address =
   "0xBF9696d9a921a9F79f3d6f07556Fb7E7052a0B1D";
 
-export const endTime: number = 1757776813;
+export const endTime: number = 1755561599;
 
 export interface IDetails {
   imdbURL?: string;
