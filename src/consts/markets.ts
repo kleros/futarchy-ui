@@ -3,6 +3,9 @@ import { Address } from "viem";
 export const parentMarket: Address =
   "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
 
+export const invalidMarket: Address =
+  "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
+
 export const endTime: number = 1753999199;
 
 export interface IDetails {

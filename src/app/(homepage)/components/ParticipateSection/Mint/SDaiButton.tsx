@@ -21,6 +21,7 @@ interface ISDaiButton {
   toggleIsMinting: (value: boolean) => void;
   refetchSDai: () => void;
   refetchXDai: () => void;
+  refetchBalances: () => void;
 }
 
 const SDaiButton: React.FC<ISDaiButton> = ({
@@ -29,6 +30,7 @@ const SDaiButton: React.FC<ISDaiButton> = ({
   toggleIsMinting,
   refetchXDai,
   refetchSDai,
+  refetchBalances,
 }) => {
   const { address } = useAccount();
 
@@ -36,6 +38,7 @@ const SDaiButton: React.FC<ISDaiButton> = ({
     data: result,
     isLoading,
     isError,
+    refetch: refetchSimulation,
   } = useSimulateGnosisRouterSplitPosition({
     args: [sDaiAddress, parentMarket, amount],
     query: {
@@ -61,7 +64,9 @@ const SDaiButton: React.FC<ISDaiButton> = ({
   return (
     <Button
       isLoading={isMinting}
-      isDisabled={isMinting || (!isAllowance && (isLoading || isError))}
+      isDisabled={
+        amount === 0n || isMinting || (!isAllowance && (isLoading || isError))
+      }
       className="absolute right-1/2 bottom-0 translate-1/2"
       text={isAllowance ? "Allow sDAI" : "Convert to Movie Tokens"}
       onPress={async () => {
@@ -76,11 +81,13 @@ const SDaiButton: React.FC<ISDaiButton> = ({
               confirmations: 2,
             });
             refetchAllowance();
+            refetchSimulation();
           } else if (typeof result !== "undefined") {
             const tx = await writeContractAsync(result.request);
             await waitForTransactionReceipt(wagmiConfig, { hash: tx });
             refetchSDai();
             refetchXDai();
+            refetchBalances();
           }
         } finally {
           toggleIsMinting(false);

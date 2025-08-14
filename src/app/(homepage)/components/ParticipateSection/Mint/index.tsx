@@ -10,11 +10,14 @@ import {
   useReadSDaiBalanceOf,
 } from "@/generated";
 
+import { useTokenBalances } from "@/hooks/useTokenBalances";
+
 import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
 import { markets } from "@/consts/markets";
 
 import AmountInput, { TokenType } from "./AmountInput";
+import MergeButton from "./MergeButton";
 import ProjectAmount from "./ProjectAmount";
 import SDaiButton from "./SDaiButton";
 import TopLeftInfo from "./TopLeftInfo";
@@ -33,6 +36,7 @@ const Mint: React.FC = () => {
   const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
 
   const [isMinting, toggleIsMinting] = useToggle(false);
+  const [isSplit, toggleIsSplit] = useToggle(true);
 
   const resultDeposit = useSimulateSDaiAdapterDepositXdai({
     args: [address!],
@@ -42,6 +46,23 @@ const Mint: React.FC = () => {
       retry: false,
     },
   });
+
+  const marketBalances = useTokenBalances(
+    markets.map(({ underlyingToken }) => underlyingToken),
+  );
+
+  const minMarketBalance = useMemo<bigint>(() => {
+    if (typeof marketBalances.data !== "undefined") {
+      if (marketBalances.data.some(({ result }) => typeof result !== "bigint"))
+        return 0n;
+      const flatResults = marketBalances.data.map(({ result }) => result);
+      const minResult = flatResults.reduce((acc, curr) =>
+        curr! < acc! ? curr : acc,
+      );
+      return minResult as bigint;
+    }
+    return 0n;
+  }, [marketBalances]);
 
   const isSDaiSelected = useMemo(
     () => selectedToken === TokenType.sDAI,
@@ -74,9 +95,19 @@ const Mint: React.FC = () => {
           }
           {...{ isSDaiSelected }}
         />
-        <AmountInput
-          {...{ amount, setAmount, setSelectedToken, notEnoughBalance }}
-        />
+        {isSplit ? (
+          <AmountInput
+            key="split"
+            defaultValue={amount === 0n ? undefined : amount}
+            {...{ setAmount, setSelectedToken, notEnoughBalance }}
+          />
+        ) : (
+          <AmountInput
+            key="merge"
+            value={minMarketBalance}
+            {...{ setAmount, setSelectedToken, notEnoughBalance }}
+          />
+        )}
       </div>
 
       <Card
@@ -90,39 +121,68 @@ const Mint: React.FC = () => {
           className={clsx(
             "absolute top-0 right-1/2 translate-x-1/2 -translate-y-6.5",
             "rounded-base bg-klerosUIComponentsPrimaryBlue flex w-23.25 items-center justify-center py-3",
+            "hover:cursor-pointer",
           )}
+          onClick={toggleIsSplit}
         >
-          <ArrowDownIcon className="[&_path]:fill-klerosUIComponentsWhiteBackground size-3.5" />
+          <ArrowDownIcon
+            className={clsx(
+              "[&_path]:fill-klerosUIComponentsWhiteBackground size-3.5",
+              !isSplit && "rotate-180",
+            )}
+          />
         </div>
-        {markets.map(({ name, color }) => (
+        {markets.map(({ name, color }, i) => (
           <ProjectAmount
             key={name}
             {...{ name, color }}
-            amount={
-              isSDaiSelected
-                ? amount
-                : resultDeposit.data
-                  ? resultDeposit.data.result
-                  : 0n
-            }
+            balance={marketBalances?.data?.[i].result as bigint}
+            amount={((): bigint => {
+              if (!isSplit) {
+                if (minMarketBalance) {
+                  return minMarketBalance;
+                }
+              } else if (isSDaiSelected) {
+                return amount;
+              } else if (resultDeposit.data) {
+                return resultDeposit.data.result;
+              }
+              return 0n;
+            })()}
           />
         ))}
-        {isSDaiSelected ? (
-          <SDaiButton
-            {...{
-              amount,
-              refetchSDai,
-              refetchXDai,
-              isMinting,
-              toggleIsMinting,
-            }}
-          />
+        {isSplit ? (
+          isSDaiSelected ? (
+            <SDaiButton
+              refetchBalances={marketBalances.refetch}
+              {...{
+                amount,
+                setAmount,
+                refetchSDai,
+                refetchXDai,
+                isMinting,
+                toggleIsMinting,
+              }}
+            />
+          ) : (
+            <XDaiButton
+              refetchBalances={marketBalances.refetch}
+              {...{
+                amount,
+                setAmount,
+                refetchSDai,
+                refetchXDai,
+                isMinting,
+                toggleIsMinting,
+              }}
+            />
+          )
         ) : (
-          <XDaiButton
+          <MergeButton
+            amount={minMarketBalance}
+            refetchBalances={marketBalances.refetch}
             {...{
-              amount,
               refetchSDai,
-              refetchXDai,
               isMinting,
               toggleIsMinting,
             }}
