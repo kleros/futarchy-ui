@@ -36,7 +36,7 @@ interface IMarketContext {
   percentageIncrease: string;
   isUpPredict: boolean;
   differenceBetweenRoutes: number;
-  prediction: number;
+  prediction: number | undefined;
   setPrediction: (prediction: number) => void;
   market: IMarket;
   isLoading: boolean;
@@ -58,7 +58,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const { underlyingToken, upToken, downToken, maxValue, precision, marketId } =
     market;
 
-  const [prediction, setPrediction] = useState(0);
+  const [prediction, setPrediction] = useState<number | undefined>(undefined);
 
   const { data: underlyingBalance } = useBalance(underlyingToken);
 
@@ -107,7 +107,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [marketPrice, maxValue, precision],
   );
 
-  const isUpPredict = prediction > marketEstimate;
+  const isUpPredict = (prediction ?? 0) > marketEstimate;
 
   const { data: upToDownAlternateRoute, isLoading: isLoadingUpAlternateRoute } =
     useAlternateRoute(

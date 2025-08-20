@@ -43,7 +43,7 @@ const PredictionSliderContent: React.FC = () => {
           )}
           maxValue={maxValue * precision}
           minValue={minValue * precision}
-          value={prediction}
+          value={prediction ?? marketEstimate}
           leftLabel=""
           rightLabel=""
           aria-label="Slider"
