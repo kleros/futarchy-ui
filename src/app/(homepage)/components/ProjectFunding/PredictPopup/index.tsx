@@ -20,8 +20,8 @@ const PredictPopup: React.FC<IPredictPopup> = ({ isOpen, toggleIsOpen }) => {
   return (
     <Modal
       className="h-fit w-max overflow-x-hidden p-6 py-8"
-      isDismissable
       onOpenChange={toggleIsOpen}
+      isDismissable={!isMinting}
       {...{ isOpen }}
     >
       {isMinting ? (
