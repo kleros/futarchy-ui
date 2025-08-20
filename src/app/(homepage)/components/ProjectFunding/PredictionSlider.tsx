@@ -15,6 +15,19 @@ import { Skeleton } from "@/components/Skeleton";
 
 import { isUndefined } from "@/utils";
 
+const LoadingSkeleton: React.FC = () => (
+  <div className="relative w-full">
+    <Skeleton className="h-2 w-full rounded-[30px]" />
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3">
+      <Skeleton className="h-[22px] w-[42px]" />
+      <Skeleton
+        className="mx-auto h-9 w-0.75 rounded-b-full"
+        variant="secondary"
+      />
+    </div>
+  </div>
+);
+
 const PredictionSliderContent: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const {
@@ -25,6 +38,7 @@ const PredictionSliderContent: React.FC = () => {
     marketEstimate,
     market,
     isLoadingMarketPrice,
+    showEstimateVariant,
   } = useMarketContext();
   const { maxValue, minValue, precision, color } = market;
 
@@ -50,13 +64,17 @@ const PredictionSliderContent: React.FC = () => {
           callback={setPrediction}
           formatter={(value) => `${(value / precision).toFixed(0)}`}
           // @ts-expect-error other values not needed
-          theme={{
-            sliderColor: sliderTheme,
-            thumbColor: sliderTheme,
-          }}
+          theme={
+            showEstimateVariant
+              ? {
+                  sliderColor: sliderTheme,
+                  thumbColor: sliderTheme,
+                }
+              : undefined
+          }
         />
         <div
-          className="absolute bottom-0"
+          className="pointer-events-none absolute bottom-0"
           style={{
             transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%))`,
           }}
@@ -80,25 +98,14 @@ const PredictionSliderContent: React.FC = () => {
     { width: 300 },
   );
 
-  return sized;
+  return isUndefined(marketEstimate) ? <LoadingSkeleton /> : sized;
 };
 
 const PredictionSlider = dynamic(
   () => Promise.resolve(PredictionSliderContent),
   {
     ssr: false,
-    loading: () => (
-      <div className="relative w-full">
-        <Skeleton className="h-2 w-full rounded-[30px]" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3">
-          <Skeleton className="h-[22px] w-[42px]" />
-          <Skeleton
-            className="mx-auto h-9 w-0.75 rounded-b-full"
-            variant="secondary"
-          />
-        </div>
-      </div>
-    ),
+    loading: () => <LoadingSkeleton />,
   },
 );
 

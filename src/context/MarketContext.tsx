@@ -6,6 +6,7 @@ import React, {
   useContext,
   useMemo,
   useState,
+  useEffect,
 } from "react";
 
 import { SwaprV3Trade } from "@swapr/sdk";
@@ -36,11 +37,12 @@ interface IMarketContext {
   percentageIncrease: string;
   isUpPredict: boolean;
   differenceBetweenRoutes: number;
-  prediction: number;
+  prediction: number | undefined;
   setPrediction: (prediction: number) => void;
   market: IMarket;
   isLoading: boolean;
   isLoadingMarketPrice: boolean;
+  showEstimateVariant: boolean;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -58,7 +60,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const { underlyingToken, upToken, downToken, maxValue, precision, marketId } =
     market;
 
-  const [prediction, setPrediction] = useState(0);
+  const [prediction, setPrediction] = useState<number | undefined>(undefined);
 
   const { data: underlyingBalance } = useBalance(underlyingToken);
 
@@ -107,7 +109,23 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [marketPrice, maxValue, precision],
   );
 
-  const isUpPredict = prediction > marketEstimate;
+  useEffect(() => {
+    if (isUndefined(prediction) && !isUndefined(marketEstimate)) {
+      setPrediction(
+        Math.round(marketEstimate * market.precision) / market.precision,
+      );
+    }
+  }, [prediction, marketEstimate, market.precision]);
+
+  const isUpPredict = (prediction ?? 0) > marketEstimate;
+
+  const showEstimateVariant = useMemo(() => {
+    if (isUndefined(prediction)) return false;
+    return (
+      Math.abs(prediction - marketEstimate) >
+      market.maxValue / market.precision / 100
+    );
+  }, [prediction, market, marketEstimate]);
 
   const { data: upToDownAlternateRoute, isLoading: isLoadingUpAlternateRoute } =
     useAlternateRoute(
@@ -209,6 +227,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoading,
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
+      showEstimateVariant,
     }),
     [
       upPrice,
@@ -229,6 +248,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoading,
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
+      showEstimateVariant,
     ],
   );
 
