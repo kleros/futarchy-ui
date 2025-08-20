@@ -42,6 +42,7 @@ interface IMarketContext {
   market: IMarket;
   isLoading: boolean;
   isLoadingMarketPrice: boolean;
+  showEstimateVariant: boolean;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -117,6 +118,14 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   }, [prediction, marketEstimate, market.precision]);
 
   const isUpPredict = (prediction ?? 0) > marketEstimate;
+
+  const showEstimateVariant = useMemo(() => {
+    if (isUndefined(prediction)) return false;
+    return (
+      Math.abs(prediction - marketEstimate) >
+      market.maxValue / market.precision / 100
+    );
+  }, [prediction, market, marketEstimate]);
 
   const { data: upToDownAlternateRoute, isLoading: isLoadingUpAlternateRoute } =
     useAlternateRoute(
@@ -218,6 +227,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoading,
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
+      showEstimateVariant,
     }),
     [
       upPrice,
@@ -238,6 +248,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoading,
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
+      showEstimateVariant,
     ],
   );
 

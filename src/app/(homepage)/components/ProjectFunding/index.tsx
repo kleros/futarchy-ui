@@ -22,8 +22,14 @@ import PredictPopup from "./PredictPopup";
 
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
-  const { marketPrice, isUpPredict, market, prediction, setPrediction } =
-    useMarketContext();
+  const {
+    marketPrice,
+    isUpPredict,
+    market,
+    prediction,
+    setPrediction,
+    showEstimateVariant,
+  } = useMarketContext();
   const {
     name,
     color,
@@ -91,6 +97,7 @@ const ProjectFunding: React.FC = ({}) => {
           <label
             className={clsx(
               isUpPredict ? "text-light-mode-green-2" : "text-light-mode-red-2",
+              showEstimateVariant ? "visible" : "invisible",
             )}
           >
             {`${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
