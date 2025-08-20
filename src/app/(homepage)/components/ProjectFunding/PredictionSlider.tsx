@@ -25,6 +25,7 @@ const PredictionSliderContent: React.FC = () => {
     marketEstimate,
     market,
     isLoadingMarketPrice,
+    showEstimateVariant,
   } = useMarketContext();
   const { maxValue, minValue, precision, color } = market;
 
@@ -50,10 +51,14 @@ const PredictionSliderContent: React.FC = () => {
           callback={setPrediction}
           formatter={(value) => `${(value / precision).toFixed(0)}`}
           // @ts-expect-error other values not needed
-          theme={{
-            sliderColor: sliderTheme,
-            thumbColor: sliderTheme,
-          }}
+          theme={
+            showEstimateVariant
+              ? {
+                  sliderColor: sliderTheme,
+                  thumbColor: sliderTheme,
+                }
+              : undefined
+          }
         />
         <div
           className="absolute bottom-0"
