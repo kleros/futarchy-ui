@@ -71,7 +71,9 @@ const ProjectFunding: React.FC = ({}) => {
             <NumberField
               aria-label="Prediction"
               className="w-auto [&_input]:border-none"
-              value={prediction / precision}
+              value={
+                !isUndefined(prediction) ? prediction / precision : undefined
+              }
               onChange={(e) => setPrediction(e * precision)}
             />
             <Button
