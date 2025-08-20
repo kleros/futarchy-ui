@@ -69,7 +69,7 @@ const PredictionSliderContent: React.FC = () => {
           }}
         />
         <div
-          className="absolute bottom-0"
+          className="pointer-events-none absolute bottom-0"
           style={{
             transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%))`,
           }}
