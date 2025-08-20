@@ -15,6 +15,19 @@ import { Skeleton } from "@/components/Skeleton";
 
 import { isUndefined } from "@/utils";
 
+const LoadingSkeleton: React.FC = () => (
+  <div className="relative w-full">
+    <Skeleton className="h-2 w-full rounded-[30px]" />
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3">
+      <Skeleton className="h-[22px] w-[42px]" />
+      <Skeleton
+        className="mx-auto h-9 w-0.75 rounded-b-full"
+        variant="secondary"
+      />
+    </div>
+  </div>
+);
+
 const PredictionSliderContent: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const {
@@ -43,7 +56,7 @@ const PredictionSliderContent: React.FC = () => {
           )}
           maxValue={maxValue * precision}
           minValue={minValue * precision}
-          value={prediction ?? marketEstimate}
+          value={prediction}
           leftLabel=""
           rightLabel=""
           aria-label="Slider"
@@ -80,25 +93,14 @@ const PredictionSliderContent: React.FC = () => {
     { width: 300 },
   );
 
-  return sized;
+  return isUndefined(marketEstimate) ? <LoadingSkeleton /> : sized;
 };
 
 const PredictionSlider = dynamic(
   () => Promise.resolve(PredictionSliderContent),
   {
     ssr: false,
-    loading: () => (
-      <div className="relative w-full">
-        <Skeleton className="h-2 w-full rounded-[30px]" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3">
-          <Skeleton className="h-[22px] w-[42px]" />
-          <Skeleton
-            className="mx-auto h-9 w-0.75 rounded-b-full"
-            variant="secondary"
-          />
-        </div>
-      </div>
-    ),
+    loading: () => <LoadingSkeleton />,
   },
 );
 

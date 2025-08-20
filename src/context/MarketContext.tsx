@@ -6,6 +6,7 @@ import React, {
   useContext,
   useMemo,
   useState,
+  useEffect,
 } from "react";
 
 import { SwaprV3Trade } from "@swapr/sdk";
@@ -106,6 +107,12 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
         : 0,
     [marketPrice, maxValue, precision],
   );
+
+  useEffect(() => {
+    if (isUndefined(prediction) && !isUndefined(marketEstimate)) {
+      setPrediction(marketEstimate);
+    }
+  }, [prediction, marketEstimate]);
 
   const isUpPredict = (prediction ?? 0) > marketEstimate;
 
