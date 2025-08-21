@@ -2,6 +2,10 @@ import { useState } from "react";
 
 import { Modal } from "@kleros/ui-components-library";
 
+import LightButton from "@/components/LightButton";
+
+import CloseIcon from "@/assets/svg/close-icon.svg";
+
 import DefaultPredict from "./DefaultPredict";
 import MintSell from "./MintSell";
 import MintSellSteps from "./MintSellSteps";
@@ -19,11 +23,18 @@ const PredictPopup: React.FC<IPredictPopup> = ({ isOpen, toggleIsOpen }) => {
   const [isMinting, setIsMinting] = useState(false);
   return (
     <Modal
-      className="h-fit w-max overflow-x-hidden p-6 py-8"
-      isDismissable
+      className="relative h-fit w-max overflow-x-hidden p-6 py-8"
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
     >
+      <LightButton
+        className="absolute top-4 right-4 p-1"
+        text=""
+        icon={
+          <CloseIcon className="[&_path]:stroke-klerosUIComponentsSecondaryText size-4" />
+        }
+        onPress={toggleIsOpen}
+      />
       {isMinting ? (
         <MintSellSteps
           close={() => setIsMinting(false)}

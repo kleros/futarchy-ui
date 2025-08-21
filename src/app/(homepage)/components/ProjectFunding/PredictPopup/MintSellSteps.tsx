@@ -76,7 +76,7 @@ const MintSellSteps: React.FC<IMintSellSteps> = ({ close, toggleIsOpen }) => {
         items={steps}
       />
       <div className="flex gap-[13.5px]">
-        <Button text="Close" variant="secondary" onPress={close} />
+        <Button text="Back" variant="secondary" onPress={close} />
         {currentStep === Step.Mint && (
           <SplitButton
             {...{ marketId, underlyingToken, initialBalanceRef }}
