@@ -15,10 +15,10 @@ import { isUndefined } from "@/utils";
 
 import { SWAPR_CONTRACT } from "@/consts";
 
-const DefaultPredictButton: React.FC<{ toggleIsOpen: () => void }> = ({
+const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
   toggleIsOpen,
 }) => {
-  const { marketQuote, marketDownQuote, isUpPredict, market } =
+  const { marketQuote, marketDownQuote, isUpPredict, market, isLoading } =
     useMarketContext();
   const { underlyingToken } = market;
 
@@ -79,7 +79,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen: () => void }> = ({
       });
       await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
       refetchBalance();
-      toggleIsOpen();
+      toggleIsOpen?.();
     } catch (err) {
       console.log("handlePredict:", err);
     }
@@ -98,9 +98,11 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen: () => void }> = ({
         isUndefined(address) ||
         isUndefined(underlyingBalance) ||
         isUndefined(allowance) ||
-        userInteracting
+        userInteracting ||
+        underlyingBalance === 0n ||
+        isLoading
       }
-      isLoading={userInteracting}
+      isLoading={userInteracting || isLoading}
       text={isAllowance ? "Allow" : "Predict"}
       aria-label="Predict Button"
       onPress={async () => {
