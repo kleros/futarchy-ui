@@ -1,40 +1,85 @@
 import React, { useMemo } from "react";
 
-import { formatUnits, Address } from "viem";
+import clsx from "clsx";
+import { formatUnits, Address, formatEther } from "viem";
 import { useAccount } from "wagmi";
 
-import { useReadErc20BalanceOf } from "@/generated";
+import { sDaiAddress, useReadErc20BalanceOf } from "@/generated";
+
+import { useMarketPrice } from "@/hooks/useMarketPrice";
+
+import { formatValue, isUndefined } from "@/utils";
 
 interface IPositionValue {
   upToken: Address;
   downToken: Address;
-  marketPrice: number;
 }
 
-const PositionValue: React.FC<IPositionValue> = ({
-  upToken,
-  downToken,
-  marketPrice,
-}) => {
+const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
   const { address } = useAccount();
-  const upValue = useTokenPositionValue(upToken, address ?? "0x", marketPrice);
-  const downValue = useTokenPositionValue(
-    downToken,
-    address ?? "0x",
-    1 - marketPrice,
-  );
-  const totalValue = useMemo(
-    () => (upValue + downValue) / 5,
-    [upValue, downValue],
-  );
+  const {
+    value: upValue,
+    balance: upBalance,
+    price: upPrice,
+  } = useTokenPositionValue(upToken, address ?? "0x");
+  const {
+    value: downValue,
+    balance: downBalance,
+    price: downPrice,
+  } = useTokenPositionValue(downToken, address ?? "0x");
+  const totalValue = upValue + downValue;
+
   if (totalValue > 0) {
     return (
-      <div>
-        <p>
-          {`Current Position Value: `}
-          <span className="font-bold"> {totalValue.toFixed(5)} </span>
-          {`sDAI`}
-        </p>
+      <div className="flex flex-col gap-2">
+        <h3 className="text-klerosUIComponentsPrimaryText">
+          Current position value:
+        </h3>
+        <div
+          className={clsx(
+            "flex flex-col justify-start gap-4",
+            "flex-wrap md:flex-row md:justify-center",
+          )}
+        >
+          {!isUndefined(upBalance) && upBalance > 0 ? (
+            <>
+              <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
+                <span className="font-bold">
+                  {formatValue(upBalance ?? 0n, 18)} UP &nbsp;
+                </span>
+                ~{upValue.toFixed(5)} sDAI &nbsp;
+                <span className="text-klerosUIComponentsSecondaryText text-xs">
+                  ({upPrice.toFixed(5)} sDAI per UP)
+                </span>
+              </p>
+              <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
+                {" | "}
+              </span>
+            </>
+          ) : null}
+
+          {!isUndefined(downBalance) && downBalance > 0 ? (
+            <>
+              <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
+                <span className="font-bold">
+                  {formatValue(downBalance ?? 0n, 18)} DOWN &nbsp;
+                </span>
+                ~{downValue.toFixed(5)} sDAI &nbsp;
+                <span className="text-klerosUIComponentsSecondaryText text-xs">
+                  ({downPrice.toFixed(5)} sDAI per DOWN)
+                </span>
+              </p>
+              <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
+                {" | "}
+              </span>
+            </>
+          ) : null}
+
+          <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
+            Total:
+            <span className="font-bold"> {totalValue.toFixed(5)} sDAI </span>
+          </p>
+        </div>
       </div>
     );
   } else {
@@ -42,11 +87,7 @@ const PositionValue: React.FC<IPositionValue> = ({
   }
 };
 
-const useTokenPositionValue = (
-  token: Address,
-  address: Address,
-  price: number,
-) => {
+const useTokenPositionValue = (token: Address, address: Address) => {
   const { data: balance } = useReadErc20BalanceOf({
     address: token,
     args: [address ?? "0x"],
@@ -55,15 +96,26 @@ const useTokenPositionValue = (
       enabled: typeof address !== "undefined",
     },
   });
+
+  const { data: priceRaw } = useMarketPrice(
+    token,
+    sDaiAddress,
+    formatEther(balance ?? 0n),
+  );
+
+  const price = parseFloat(priceRaw ?? "0");
+
   const normalizedBalance = useMemo(
     () => parseFloat(formatUnits(balance ?? 0n, 18)),
     [balance],
   );
 
-  return useMemo(
+  const value = useMemo(
     () => normalizedBalance * (price ?? 0),
     [normalizedBalance, price],
   );
+
+  return { balance, value, price };
 };
 
 export default PositionValue;
