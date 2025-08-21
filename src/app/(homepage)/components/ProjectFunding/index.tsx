@@ -15,6 +15,8 @@ import { useBalance } from "@/hooks/useBalance";
 
 import { isUndefined } from "@/utils";
 
+import DefaultPredictButton from "./PredictPopup/ActionButtons/DefaultPredictButton";
+
 import Details from "./Details";
 import PositionValue from "./PositionValue";
 import PredictionSlider from "./PredictionSlider";
@@ -29,6 +31,8 @@ const ProjectFunding: React.FC = ({}) => {
     prediction,
     setPrediction,
     showEstimateVariant,
+    differenceBetweenRoutes,
+    isLoading: isLoadingComplexRoute,
   } = useMarketContext();
   const {
     name,
@@ -82,17 +86,24 @@ const ProjectFunding: React.FC = ({}) => {
               }
               onChange={(e) => setPrediction(e * precision)}
             />
-            <Button
-              text={"Predict"}
-              aria-label="Predict Button"
-              isDisabled={
-                isUndefined(underlyingBalance) || underlyingBalance === 0n
-              }
-              onPress={async () => {
-                setActiveCardId(marketId);
-                toggleIsPopUpOpen();
-              }}
-            />
+            {differenceBetweenRoutes > 0 ? (
+              <Button
+                text={"Predict"}
+                aria-label="Predict Button"
+                isDisabled={
+                  isUndefined(underlyingBalance) ||
+                  underlyingBalance === 0n ||
+                  isLoadingComplexRoute
+                }
+                isLoading={isLoadingComplexRoute}
+                onPress={async () => {
+                  setActiveCardId(marketId);
+                  toggleIsPopUpOpen();
+                }}
+              />
+            ) : (
+              <DefaultPredictButton />
+            )}
           </div>
           <label
             className={clsx(
