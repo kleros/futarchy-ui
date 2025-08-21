@@ -9,15 +9,21 @@ import { getCurrenciesFromTokens } from "@/utils/trade";
 
 import { SwaprQuoter } from "@/abi/SwaprQuoter";
 
-// NOTE: assumes there is only one route, which is through the Outcome-Collateral token pool
+/**
+ * @param targetToken The token you want the price of, in terms of baseToken
+ * @param baseToken The token you want to get the price in terms of
+ * @param amount optional defaults to "1"
+ * @returns The price of targetToken in terms of baseToken. targetTokens per baseToken. Ex:- 1 TARGET = 4 BASE
+ * @note assumes there is only one route, which is through the target-base token pool
+ */
 export const useMarketPrice = (
-  outcomeToken: Address,
-  collateralToken: Address,
+  targetToken: Address,
+  baseToken: Address,
   amount = "1",
 ) => {
   const publicClient = usePublicClient();
   return useQuery({
-    queryKey: ["market-price", outcomeToken, collateralToken],
+    queryKey: ["market-price", baseToken, targetToken],
     refetchInterval: 10_000,
     enabled: amount !== "0",
     queryFn: async () => {
@@ -28,23 +34,18 @@ export const useMarketPrice = (
           address: SWAPR_QUOTER_ADDRESS,
           abi: SwaprQuoter,
           functionName: "quoteExactInputSingle",
-          args: [collateralToken, outcomeToken, parseEther(amount), 0n],
+          args: [targetToken, baseToken, parseEther(amount), 0n],
         });
 
         const { currencyIn, currencyOut, currencyAmountIn } =
-          getCurrenciesFromTokens(
-            gnosis.id,
-            outcomeToken,
-            collateralToken,
-            amount,
-          );
+          getCurrenciesFromTokens(gnosis.id, baseToken, targetToken, amount);
 
         const simulationPrice = new Price({
           baseCurrency: currencyIn,
           quoteCurrency: currencyOut,
           denominator: currencyAmountIn.raw,
           numerator: new TokenAmount(
-            new Token(gnosis.id, collateralToken, 18),
+            new Token(gnosis.id, targetToken, 18),
             simulation.result[0],
           ).raw,
         });

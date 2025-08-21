@@ -98,8 +98,8 @@ const useTokenPositionValue = (token: Address, address: Address) => {
   });
 
   const { data: priceRaw } = useMarketPrice(
-    sDaiAddress,
     token,
+    sDaiAddress,
     formatEther(balance ?? 0n),
   );
 

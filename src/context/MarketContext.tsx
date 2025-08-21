@@ -84,7 +84,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   );
 
   const marketPrice = useMemo(
-    () => 1 / parseFloat(marketPriceRaw ?? "0"),
+    () => parseFloat(marketPriceRaw ?? "0"),
     [marketPriceRaw],
   );
 
