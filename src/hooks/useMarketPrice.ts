@@ -13,11 +13,13 @@ import { SwaprQuoter } from "@/abi/SwaprQuoter";
 export const useMarketPrice = (
   outcomeToken: Address,
   collateralToken: Address,
+  amount = "1",
 ) => {
   const publicClient = usePublicClient();
   return useQuery({
     queryKey: ["market-price", outcomeToken, collateralToken],
     refetchInterval: 10_000,
+    enabled: amount !== "0",
     queryFn: async () => {
       try {
         if (!publicClient) return "0";
@@ -26,7 +28,7 @@ export const useMarketPrice = (
           address: SWAPR_QUOTER_ADDRESS,
           abi: SwaprQuoter,
           functionName: "quoteExactInputSingle",
-          args: [collateralToken, outcomeToken, parseEther("1"), 0n],
+          args: [collateralToken, outcomeToken, parseEther(amount), 0n],
         });
 
         const { currencyIn, currencyOut, currencyAmountIn } =
@@ -34,7 +36,7 @@ export const useMarketPrice = (
             gnosis.id,
             outcomeToken,
             collateralToken,
-            "1",
+            amount,
           );
 
         const simulationPrice = new Price({

@@ -23,7 +23,6 @@ import PredictPopup from "./PredictPopup";
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
   const {
-    marketPrice,
     isUpPredict,
     market,
     prediction,
@@ -106,10 +105,7 @@ const ProjectFunding: React.FC = ({}) => {
       </div>
       <div className="flex w-full flex-col">
         <div className="flex gap-2">
-          <PositionValue
-            {...{ upToken, downToken }}
-            marketPrice={marketPrice ?? 0}
-          />
+          <PositionValue {...{ upToken, downToken }} />
           {/* <OpenOrders /> */}
         </div>
         <Accordion
