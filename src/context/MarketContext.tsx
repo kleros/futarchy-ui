@@ -110,7 +110,11 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   );
 
   useEffect(() => {
-    if (isUndefined(prediction) && !isUndefined(marketEstimate)) {
+    if (
+      isUndefined(prediction) &&
+      !isUndefined(marketEstimate) &&
+      isFinite(marketEstimate)
+    ) {
       setPrediction(
         Math.round(marketEstimate * market.precision) / market.precision,
       );
