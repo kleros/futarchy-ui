@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { NextResponse, NextRequest } from "next/server";
 
 export async function OPTIONS() {
