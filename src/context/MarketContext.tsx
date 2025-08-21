@@ -119,7 +119,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
         Math.round(marketEstimate * market.precision) / market.precision,
       );
     }
-  }, [prediction, marketEstimate, market.precision, marketPriceRaw]);
+  }, [prediction, marketEstimate, market.precision]);
 
   const isUpPredict = (prediction ?? 0) > marketEstimate;
 
