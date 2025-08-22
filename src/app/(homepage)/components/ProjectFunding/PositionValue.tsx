@@ -4,29 +4,36 @@ import clsx from "clsx";
 import { formatUnits, Address, formatEther } from "viem";
 import { useAccount } from "wagmi";
 
-import { sDaiAddress, useReadErc20BalanceOf } from "@/generated";
+import { useReadErc20BalanceOf } from "@/generated";
 
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 
 import { formatValue, isUndefined } from "@/utils";
 
+import { projectsChosen } from "@/consts/markets";
+
 interface IPositionValue {
   upToken: Address;
   downToken: Address;
+  underlyingToken: Address;
 }
 
-const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
+const PositionValue: React.FC<IPositionValue> = ({
+  upToken,
+  downToken,
+  underlyingToken,
+}) => {
   const { address } = useAccount();
   const {
     value: upValue,
     balance: upBalance,
     price: upPrice,
-  } = useTokenPositionValue(upToken, address ?? "0x");
+  } = useTokenPositionValue(upToken, underlyingToken, address ?? "0x");
   const {
     value: downValue,
     balance: downBalance,
     price: downPrice,
-  } = useTokenPositionValue(downToken, address ?? "0x");
+  } = useTokenPositionValue(downToken, underlyingToken, address ?? "0x");
   const totalValue = upValue + downValue;
 
   if (totalValue > 0) {
@@ -87,7 +94,11 @@ const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
   }
 };
 
-const useTokenPositionValue = (token: Address, address: Address) => {
+const useTokenPositionValue = (
+  token: Address,
+  underlyingToken: Address,
+  address: Address,
+) => {
   const { data: balance } = useReadErc20BalanceOf({
     address: token,
     args: [address ?? "0x"],
@@ -99,11 +110,13 @@ const useTokenPositionValue = (token: Address, address: Address) => {
 
   const { data: priceRaw } = useMarketPrice(
     token,
-    sDaiAddress,
+    underlyingToken,
     formatEther(balance ?? 0n),
   );
 
-  const price = parseFloat(priceRaw ?? "0");
+  const price = !isUndefined(priceRaw)
+    ? parseFloat(priceRaw) / projectsChosen
+    : 0;
 
   const normalizedBalance = useMemo(
     () => parseFloat(formatUnits(balance ?? 0n, 18)),

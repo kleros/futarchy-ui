@@ -116,7 +116,7 @@ const ProjectFunding: React.FC = ({}) => {
       </div>
       <div className="flex w-full flex-col">
         <div className="flex gap-2">
-          <PositionValue {...{ upToken, downToken }} />
+          <PositionValue {...{ upToken, downToken, underlyingToken }} />
           {/* <OpenOrders /> */}
         </div>
         <Accordion
