@@ -1,26 +1,17 @@
 import React from "react";
 
-import {
-  Card,
-  Accordion,
-  NumberField,
-  Button,
-} from "@kleros/ui-components-library";
+import { Card, Accordion, NumberField } from "@kleros/ui-components-library";
 import clsx from "clsx";
-import { useToggle } from "react-use";
 
 import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
-import { useBalance } from "@/hooks/useBalance";
 
 import { isUndefined } from "@/utils";
 
-import DefaultPredictButton from "./PredictPopup/ActionButtons/DefaultPredictButton";
-
 import Details from "./Details";
 import PositionValue from "./PositionValue";
+import PredictButton from "./PredictButton";
 import PredictionSlider from "./PredictionSlider";
-import PredictPopup from "./PredictPopup";
 
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
@@ -30,22 +21,9 @@ const ProjectFunding: React.FC = ({}) => {
     prediction,
     setPrediction,
     showEstimateVariant,
-    differenceBetweenRoutes,
-    isLoading: isLoadingComplexRoute,
   } = useMarketContext();
-  const {
-    name,
-    color,
-    upToken,
-    downToken,
-    precision,
-    details,
-    marketId,
-    underlyingToken,
-  } = market;
-  const { data: underlyingBalance } = useBalance(underlyingToken);
-
-  const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
+  const { name, color, upToken, downToken, precision, details, marketId } =
+    market;
 
   return (
     <Card
@@ -85,24 +63,7 @@ const ProjectFunding: React.FC = ({}) => {
               }
               onChange={(e) => setPrediction(e * precision)}
             />
-            {differenceBetweenRoutes > 0 ? (
-              <Button
-                text={"Predict"}
-                aria-label="Predict Button"
-                isDisabled={
-                  isUndefined(underlyingBalance) ||
-                  underlyingBalance === 0n ||
-                  isLoadingComplexRoute
-                }
-                isLoading={isLoadingComplexRoute}
-                onPress={async () => {
-                  setActiveCardId(marketId);
-                  toggleIsPopUpOpen();
-                }}
-              />
-            ) : (
-              <DefaultPredictButton />
-            )}
+            <PredictButton />
           </div>
           <label
             className={clsx(
@@ -128,7 +89,6 @@ const ProjectFunding: React.FC = ({}) => {
           items={[{ title: "Details", body: <Details {...details} /> }]}
         />
       </div>
-      <PredictPopup isOpen={isPopUpOpen} toggleIsOpen={toggleIsPopUpOpen} />
     </Card>
   );
 };
