@@ -1,5 +1,7 @@
 import { Address } from "viem";
 
+export const projectsChosen = 5;
+
 export const parentMarket: Address =
   "0x582d1692198561a7594c5034e57340bc10621e86";
 
