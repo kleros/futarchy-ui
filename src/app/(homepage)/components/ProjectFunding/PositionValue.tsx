@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 
 import clsx from "clsx";
 import { formatUnits, Address, formatEther } from "viem";
-import { useAccount } from "wagmi";
 
-import { sDaiAddress, useReadErc20BalanceOf } from "@/generated";
+import { sDaiAddress } from "@/generated";
 
+import { useBalance } from "@/hooks/useBalance";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 
 import { formatValue, isUndefined } from "@/utils";
@@ -16,17 +16,17 @@ interface IPositionValue {
 }
 
 const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
-  const { address } = useAccount();
   const {
     value: upValue,
     balance: upBalance,
     price: upPrice,
-  } = useTokenPositionValue(upToken, address ?? "0x");
+  } = useTokenPositionValue(upToken);
   const {
     value: downValue,
     balance: downBalance,
     price: downPrice,
-  } = useTokenPositionValue(downToken, address ?? "0x");
+  } = useTokenPositionValue(downToken);
+
   const totalValue = upValue + downValue;
 
   if (totalValue > 0) {
@@ -87,15 +87,8 @@ const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
   }
 };
 
-const useTokenPositionValue = (token: Address, address: Address) => {
-  const { data: balance } = useReadErc20BalanceOf({
-    address: token,
-    args: [address ?? "0x"],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
-  });
+const useTokenPositionValue = (token: Address) => {
+  const { data: balance } = useBalance(token);
 
   const { data: priceRaw } = useMarketPrice(
     token,

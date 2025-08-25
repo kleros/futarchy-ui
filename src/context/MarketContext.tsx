@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useCallback,
 } from "react";
 
 import { SwaprV3Trade } from "@swapr/sdk";
@@ -43,6 +44,7 @@ interface IMarketContext {
   isLoading: boolean;
   isLoadingMarketPrice: boolean;
   showEstimateVariant: boolean;
+  refetchQuotes: () => void;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -61,8 +63,10 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     market;
 
   const [prediction, setPrediction] = useState<number | undefined>(undefined);
+  const [isRefetching, setIsRefetching] = useState(false);
 
-  const { data: underlyingBalance } = useBalance(underlyingToken);
+  const { data: underlyingBalance, refetch: refetchUnderlyingBalance } =
+    useBalance(underlyingToken);
 
   const shouldFetch =
     marketId === activeCardId &&
@@ -71,7 +75,11 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const { data: marketPriceRaw, isLoading: isLoadingMarketPrice } =
     useMarketPrice(upToken, underlyingToken);
-  const { data: marketQuote, isLoading: isLoadingMarketQuote } = useMarketQuote(
+  const {
+    data: marketQuote,
+    isLoading: isLoadingMarketQuote,
+    refetch: refetchMarktetUpQuote,
+  } = useMarketQuote(
     upToken,
     underlyingToken,
     underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
@@ -88,13 +96,16 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [marketPriceRaw],
   );
 
-  const { data: marketDownQuote, isLoading: isLoadingMarketDownQuote } =
-    useMarketQuote(
-      downToken,
-      underlyingToken,
-      underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-      shouldFetch,
-    );
+  const {
+    data: marketDownQuote,
+    isLoading: isLoadingMarketDownQuote,
+    refetch: refetchMarktetDownQuote,
+  } = useMarketQuote(
+    downToken,
+    underlyingToken,
+    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
+    shouldFetch,
+  );
 
   const downPrice = useMemo(
     () => 1 / parseFloat(marketDownQuote?.executionPrice.toFixed(4) ?? "0"),
@@ -131,18 +142,22 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     );
   }, [prediction, market, marketEstimate]);
 
-  const { data: upToDownAlternateRoute, isLoading: isLoadingUpAlternateRoute } =
-    useAlternateRoute(
-      upToken,
-      downToken,
-      underlyingToken,
-      formatUnits(underlyingBalance ?? 0n, 18),
-      shouldFetch,
-    );
+  const {
+    data: upToDownAlternateRoute,
+    isLoading: isLoadingUpAlternateRoute,
+    refetch: refetchUpAlternateRoute,
+  } = useAlternateRoute(
+    upToken,
+    downToken,
+    underlyingToken,
+    formatUnits(underlyingBalance ?? 0n, 18),
+    shouldFetch,
+  );
 
   const {
     data: downToUpAlternateRoute,
     isLoading: isLoadingDownAlternateRoute,
+    refetch: refetchDownAlternateRoute,
   } = useAlternateRoute(
     downToken,
     upToken,
@@ -150,6 +165,26 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     formatUnits(underlyingBalance ?? 0n, 18),
     shouldFetch,
   );
+
+  const refetchQuotes = useCallback(() => {
+    setIsRefetching(true);
+    refetchUnderlyingBalance().then(async () => {
+      await Promise.all([
+        refetchUpAlternateRoute(),
+        refetchDownAlternateRoute(),
+        refetchMarktetUpQuote(),
+        refetchMarktetDownQuote(),
+      ]);
+
+      setIsRefetching(false);
+    });
+  }, [
+    refetchUnderlyingBalance,
+    refetchDownAlternateRoute,
+    refetchUpAlternateRoute,
+    refetchMarktetDownQuote,
+    refetchMarktetUpQuote,
+  ]);
 
   const expectedFromMintRoute = useMemo(
     () =>
@@ -209,7 +244,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     isLoadingMarketQuote ||
     isLoadingMarketDownQuote ||
     isLoadingUpAlternateRoute ||
-    isLoadingDownAlternateRoute;
+    isLoadingDownAlternateRoute ||
+    isRefetching;
 
   const value = useMemo(
     () => ({
@@ -232,6 +268,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
       showEstimateVariant,
+      refetchQuotes,
     }),
     [
       upPrice,
@@ -253,6 +290,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
       showEstimateVariant,
+      refetchQuotes,
     ],
   );
 
