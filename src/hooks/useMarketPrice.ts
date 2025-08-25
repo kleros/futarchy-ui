@@ -22,13 +22,13 @@ export const useMarketPrice = (
   amount = "1",
 ) => {
   const publicClient = usePublicClient();
-  return useQuery({
+  return useQuery<{ price: string; status: boolean }>({
     queryKey: ["market-price", baseToken, targetToken, amount],
     refetchInterval: 10_000,
     enabled: amount !== "0",
     queryFn: async () => {
       try {
-        if (!publicClient) return "0";
+        if (!publicClient) return { price: "0", status: false };
 
         const simulation = await publicClient.simulateContract({
           address: SWAPR_QUOTER_ADDRESS,
@@ -50,9 +50,9 @@ export const useMarketPrice = (
           ).raw,
         });
 
-        return simulationPrice.toFixed();
+        return { price: simulationPrice.toFixed(), status: true };
       } catch {
-        return "0";
+        return { price: "0", status: false };
       }
     },
   });

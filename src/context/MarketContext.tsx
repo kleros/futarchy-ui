@@ -15,6 +15,7 @@ import { formatUnits } from "viem";
 
 import { useAlternateRoute } from "@/hooks/useAlternateRoute";
 import { useBalance } from "@/hooks/useBalance";
+import { IChartData } from "@/hooks/useChartData";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
 
@@ -44,6 +45,7 @@ interface IMarketContext {
   isLoading: boolean;
   isLoadingMarketPrice: boolean;
   showEstimateVariant: boolean;
+  hasLiquidity: boolean | undefined;
   refetchQuotes: () => void;
 }
 
@@ -51,10 +53,12 @@ const MarketContext = createContext<IMarketContext | undefined>(undefined);
 
 interface IMarketContextProvider extends IMarket {
   children: ReactNode;
+  lastDataPoint: IChartData[string]["data"][number] | undefined;
 }
 
 const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   children,
+  lastDataPoint,
   ...market
 }) => {
   const { activeCardId } = useCardInteraction();
@@ -91,10 +95,17 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [marketQuote],
   );
 
-  const marketPrice = useMemo(
-    () => parseFloat(marketPriceRaw ?? "0"),
-    [marketPriceRaw],
-  );
+  const hasLiquidity = useMemo(() => marketPriceRaw?.status, [marketPriceRaw]);
+
+  const marketPrice = useMemo(() => {
+    if (hasLiquidity) {
+      return parseFloat(marketPriceRaw?.price ?? "0");
+    } else if (!isUndefined(lastDataPoint?.value)) {
+      return lastDataPoint?.value / maxValue;
+    } else {
+      return 0;
+    }
+  }, [marketPriceRaw, hasLiquidity, lastDataPoint, maxValue]);
 
   const {
     data: marketDownQuote,
@@ -135,12 +146,12 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const isUpPredict = (prediction ?? 0) > marketEstimate;
 
   const showEstimateVariant = useMemo(() => {
-    if (isUndefined(prediction)) return false;
+    if (isUndefined(prediction) || !hasLiquidity) return false;
     return (
       Math.abs(prediction - marketEstimate) >
       market.maxValue / market.precision / 100
     );
-  }, [prediction, market, marketEstimate]);
+  }, [prediction, market, marketEstimate, hasLiquidity]);
 
   const {
     data: upToDownAlternateRoute,
@@ -268,6 +279,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
       showEstimateVariant,
+      hasLiquidity,
       refetchQuotes,
     }),
     [
@@ -290,6 +302,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isLoadingMarketPrice,
       expectedFromDefaultRoute,
       showEstimateVariant,
+      hasLiquidity,
       refetchQuotes,
     ],
   );

@@ -21,6 +21,7 @@ const ProjectFunding: React.FC = ({}) => {
     prediction,
     setPrediction,
     showEstimateVariant,
+    hasLiquidity,
   } = useMarketContext();
   const { name, color, upToken, downToken, precision, details, marketId } =
     market;
@@ -56,6 +57,7 @@ const ProjectFunding: React.FC = ({}) => {
           </label>
           <div className="border-klerosUIComponentsStroke rounded-base flex flex-nowrap border">
             <NumberField
+              isDisabled={!hasLiquidity}
               aria-label="Prediction"
               className="w-auto [&_input]:border-none"
               value={
@@ -67,11 +69,17 @@ const ProjectFunding: React.FC = ({}) => {
           </div>
           <label
             className={clsx(
-              isUpPredict ? "text-light-mode-green-2" : "text-light-mode-red-2",
-              showEstimateVariant ? "visible" : "invisible",
+              !hasLiquidity
+                ? "text-klerosUIComponentsWarning"
+                : isUpPredict
+                  ? "text-light-mode-green-2"
+                  : "text-light-mode-red-2",
+              showEstimateVariant || !hasLiquidity ? "visible" : "invisible",
             )}
           >
-            {`${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
+            {!hasLiquidity
+              ? "There isn't enough liquidity"
+              : `${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
           </label>
         </div>
       </div>
