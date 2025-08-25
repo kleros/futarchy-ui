@@ -39,6 +39,7 @@ const PredictionSliderContent: React.FC = () => {
     market,
     isLoadingMarketPrice,
     showEstimateVariant,
+    hasLiquidity,
   } = useMarketContext();
   const { maxValue, minValue, precision, color } = market;
 
@@ -72,6 +73,7 @@ const PredictionSliderContent: React.FC = () => {
                 }
               : undefined
           }
+          isDisabled={!hasLiquidity}
         />
         <div
           className="pointer-events-none absolute bottom-0"

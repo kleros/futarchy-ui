@@ -41,8 +41,12 @@ export default function Home() {
             <ParticipateSection />
             <CardInteractionProvider>
               <div className="mt-8 flex flex-col gap-4">
-                {markets.map((market) => (
-                  <MarketContextProvider key={market.marketId} {...market}>
+                {markets.map((market, i) => (
+                  <MarketContextProvider
+                    key={market.marketId}
+                    lastDataPoint={chartData?.[i][market.name].data.at(-1)}
+                    {...market}
+                  >
                     <ProjectFunding key={market.marketId} />
                   </MarketContextProvider>
                 ))}
