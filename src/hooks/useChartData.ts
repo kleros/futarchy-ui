@@ -51,9 +51,9 @@ export const useChartData = (markets: Array<IMarket>) =>
   useQuery<IChartData[]>({
     queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
     queryFn: async () => {
-      const { data }: { data: IReturn[] } = await fetch(
-        "api/market-chart",
-      ).then((res) => res.json());
+      const { data }: { data: IReturn[] } = await fetch("api/market-chart", {
+        next: { revalidate: 300 },
+      }).then((res) => res.json());
       return data.map((rawData: IReturn, i: number) => {
         const market = markets[i];
         const processed: IChartData[""]["data"] = rawData[1].map(
