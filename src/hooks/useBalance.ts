@@ -11,6 +11,7 @@ export const useBalance = (token: Address) => {
     query: {
       staleTime: 5000,
       enabled: typeof address !== "undefined",
+      refetchInterval: 5000,
     },
   });
 };

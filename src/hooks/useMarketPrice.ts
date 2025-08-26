@@ -23,7 +23,7 @@ export const useMarketPrice = (
 ) => {
   const publicClient = usePublicClient();
   return useQuery({
-    queryKey: ["market-price", baseToken, targetToken],
+    queryKey: ["market-price", baseToken, targetToken, amount],
     refetchInterval: 10_000,
     enabled: amount !== "0",
     queryFn: async () => {
