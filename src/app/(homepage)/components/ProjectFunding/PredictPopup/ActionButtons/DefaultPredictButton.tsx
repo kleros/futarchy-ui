@@ -18,8 +18,14 @@ import { SWAPR_CONTRACT } from "@/consts";
 const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
   toggleIsOpen,
 }) => {
-  const { marketQuote, marketDownQuote, isUpPredict, market, isLoading } =
-    useMarketContext();
+  const {
+    marketQuote,
+    marketDownQuote,
+    isUpPredict,
+    market,
+    isLoading,
+    hasLiquidity,
+  } = useMarketContext();
   const { underlyingToken } = market;
 
   const wagmiConfig = useConfig();
@@ -95,6 +101,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
   return (
     <Button
       isDisabled={
+        !hasLiquidity ||
         isUndefined(address) ||
         isUndefined(underlyingBalance) ||
         isUndefined(allowance) ||

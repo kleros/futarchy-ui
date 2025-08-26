@@ -32,6 +32,7 @@ const PredictButton: React.FC = () => {
     isUpPredict,
     differenceBetweenRoutes,
     isLoading: isLoadingComplexRoute,
+    hasLiquidity,
     refetchQuotes,
   } = useMarketContext();
 
@@ -66,6 +67,7 @@ const PredictButton: React.FC = () => {
             text={"Predict"}
             aria-label="Predict Button"
             isDisabled={
+              !hasLiquidity ||
               isUndefined(underlyingBalance) ||
               underlyingBalance === 0n ||
               isLoadingComplexRoute
@@ -86,7 +88,11 @@ const PredictButton: React.FC = () => {
   // if previous prediction present, liquidate that to set a new prediction
   return (
     <>
-      <Button text="Predict" onPress={toggleIsOpen} />
+      <Button
+        text="Predict"
+        onPress={toggleIsOpen}
+        isDisabled={!hasLiquidity}
+      />
       <Modal
         className="relative h-fit w-max overflow-x-hidden p-6 py-8"
         onOpenChange={toggleIsOpen}
