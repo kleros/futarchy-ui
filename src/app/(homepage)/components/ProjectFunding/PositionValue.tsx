@@ -90,13 +90,13 @@ const PositionValue: React.FC<IPositionValue> = ({ upToken, downToken }) => {
 const useTokenPositionValue = (token: Address) => {
   const { data: balance } = useBalance(token);
 
-  const { data: priceRaw } = useMarketPrice(
+  const { data } = useMarketPrice(
     token,
     sDaiAddress,
     formatEther(balance ?? 0n),
   );
 
-  const price = parseFloat(priceRaw ?? "0");
+  const price = parseFloat(data?.price ?? "0");
 
   const normalizedBalance = useMemo(
     () => parseFloat(formatUnits(balance ?? 0n, 18)),
