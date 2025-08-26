@@ -1,4 +1,10 @@
-import { NextResponse, NextRequest } from "next/server";
+export const revalidate = 300;
+
+import { NextResponse } from "next/server";
+
+import { markets } from "@/consts/markets";
+
+const chainId = "100";
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -11,17 +17,20 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const marketId = searchParams.get("marketId");
-  const chainId = searchParams.get("chainId");
+export async function GET() {
+  const data = await Promise.all(
+    markets.map(async (market) => {
+      const { marketId } = market;
 
-  const upstream = await fetch(
-    `https://app.seer.pm/.netlify/functions/market-chart?marketId=${marketId}&chainId=${chainId}`,
+      const upstream = await fetch(
+        `https://app.seer.pm/.netlify/functions/market-chart?marketId=${marketId}&chainId=${chainId}`,
+        { next: { revalidate: 300 } },
+      );
+      return await upstream.json();
+    }),
   );
-  const data = await upstream.json();
 
-  const res = NextResponse.json(data, { status: upstream.status });
+  const res = NextResponse.json({ data });
   res.headers.set("Access-Control-Allow-Origin", "*");
   return res;
 }
