@@ -22,8 +22,16 @@ const ProjectFunding: React.FC = ({}) => {
     setPrediction,
     showEstimateVariant,
   } = useMarketContext();
-  const { name, color, upToken, downToken, precision, details, marketId } =
-    market;
+  const {
+    name,
+    color,
+    upToken,
+    downToken,
+    precision,
+    details,
+    marketId,
+    underlyingToken,
+  } = market;
 
   return (
     <Card
