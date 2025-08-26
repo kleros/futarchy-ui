@@ -23,8 +23,16 @@ const ProjectFunding: React.FC = ({}) => {
     showEstimateVariant,
     hasLiquidity,
   } = useMarketContext();
-  const { name, color, upToken, downToken, precision, details, marketId } =
-    market;
+  const {
+    name,
+    color,
+    upToken,
+    downToken,
+    precision,
+    details,
+    marketId,
+    underlyingToken,
+  } = market;
 
   return (
     <Card
@@ -85,7 +93,7 @@ const ProjectFunding: React.FC = ({}) => {
       </div>
       <div className="flex w-full flex-col">
         <div className="flex gap-2">
-          <PositionValue {...{ upToken, downToken }} />
+          <PositionValue {...{ upToken, downToken, underlyingToken }} />
           {/* <OpenOrders /> */}
         </div>
         <Accordion
