@@ -114,8 +114,8 @@ const useTokenPositionValue = (
     formatEther(balance ?? 0n),
   );
 
-  const price = !isUndefined(priceRaw)
-    ? parseFloat(priceRaw) / projectsChosen
+  const price = !isUndefined(data)
+    ? parseFloat(data.price) / projectsChosen
     : 0;
 
   const normalizedBalance = useMemo(
