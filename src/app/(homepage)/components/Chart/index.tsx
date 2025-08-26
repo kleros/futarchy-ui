@@ -1,20 +1,15 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { useTheme } from "next-themes";
 
-import { Card } from "@kleros/ui-components-library";
-import clsx from "clsx";
-import { format } from "date-fns";
 import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+  createChart,
+  LineSeries,
+  LineStyle,
+  UTCTimestamp,
+} from "lightweight-charts";
 
 import { type IChartData } from "@/hooks/useChartData";
 
@@ -57,10 +52,21 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     });
   };
 
+  const accentColor = useMemo(() => {
+    if (theme === "light") return "#999";
+    else return "#BECCE5";
+  }, [theme]);
+
+  const gridLinesColor = useMemo(() => {
+    if (theme === "light") return "#e5e5e5";
+    else return "#392C74";
+  }, [theme]);
+
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [series, maxYDomain, marketsData] = useMemo(() => {
-    if (!data.length) return [[], 0];
-    let maxYAxis = 0;
+  const [series, marketsData] = useMemo(() => {
+    if (!data.length) return [[], {}];
     // Combine all market data
     const marketsData: MarketsData = {};
     data.forEach((marketData) => {
@@ -69,26 +75,26 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       });
     });
 
-    // Find the earliest timestamp across all markets
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const earliestTimestamp = Math.min(
-      ...Object.values(marketsData).map((market) =>
-        market.data.length > 0 ? market.data[0].timestamp : Infinity,
-      ),
-    );
-
     // Find the latest timestamp across all markets
     const latestTimestamp = Date.now() / 1000;
 
     // Generate common timestamps for all markets
     const timestamps = getTimestamps(1754407213, latestTimestamp);
 
-    // Process data for each market
-    const processedData = timestamps.map((timestamp) => {
-      const dataPoint: Record<string, number> = { timestamp };
+    const seriesData: Record<
+      string,
+      { info: IMarket; data: Array<{ time: UTCTimestamp; value: number }> }
+    > = {};
 
+    Object.entries(marketsData).forEach(([marketName, marketInfo]) => {
+      seriesData[marketName] = { info: marketInfo.market, data: [] };
+    });
+
+    // Process data for each market
+    timestamps.forEach((timestamp) => {
       Object.entries(marketsData).forEach(([marketName, marketInfo]) => {
         const { data, market } = marketInfo;
+
         const maxValue = market.maxValue;
 
         // Find valid start index (skip extreme values)
@@ -104,7 +110,10 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         const normalizedData = data.slice(validStartIndex);
 
         if (normalizedData.length === 0) {
-          dataPoint[marketName] = 0;
+          seriesData[marketName].data.push({
+            time: timestamp as UTCTimestamp,
+            value: 0,
+          });
           return;
         }
 
@@ -117,22 +126,80 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
             break;
           }
         }
-        if (closestDataPoint.value > maxYAxis)
-          maxYAxis = closestDataPoint.value;
-        dataPoint[marketName] = closestDataPoint.value;
-      });
 
-      return dataPoint;
+        seriesData[marketName].data.push({
+          time: timestamp as UTCTimestamp,
+          value: closestDataPoint.value,
+        });
+      });
     });
 
-    maxYAxis = Math.ceil(maxYAxis);
-    return [processedData, maxYAxis, marketsData];
+    return [seriesData, marketsData];
   }, [data]);
 
-  const accentColor = useMemo(() => {
-    if (theme === "light") return "#999";
-    else return "#BECCE5";
-  }, [theme]);
+  useEffect(() => {
+    if (!chartContainerRef.current) return;
+
+    const handleResize = () => {
+      chart.applyOptions({ width: chartContainerRef?.current?.clientWidth });
+    };
+
+    const chart = createChart(chartContainerRef?.current, {
+      layout: {
+        background: {
+          color: "transparent",
+        },
+        textColor: accentColor,
+      },
+      width: chartContainerRef?.current?.clientWidth,
+      height: 300,
+      autoSize: true,
+      rightPriceScale: {
+        borderVisible: false,
+        visible: true,
+      },
+      leftPriceScale: {
+        borderVisible: false,
+        visible: false,
+      },
+      timeScale: {
+        borderVisible: false,
+        timeVisible: true,
+        fixRightEdge: true,
+      },
+      grid: {
+        vertLines: {
+          color: gridLinesColor,
+          style: LineStyle.SparseDotted,
+        },
+        horzLines: {
+          color: gridLinesColor,
+          style: LineStyle.SparseDotted,
+        },
+      },
+    });
+    chart.timeScale().fitContent();
+
+    Object.entries(series).forEach(([, marketData]) => {
+      if (visibleMarkets.has(marketData.info.name)) {
+        const series = chart.addSeries(LineSeries, {
+          color: marketData.info.color,
+          lineWidth: 2,
+        });
+        series.setData(
+          marketData.data as Array<{ time: UTCTimestamp; value: number }>,
+        );
+      }
+    });
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+
+      chart.remove();
+    };
+  }, [series, accentColor, visibleMarkets, gridLinesColor]);
 
   return (
     <div className="mt-6 flex size-full flex-col">
@@ -144,102 +211,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       <h2 className="text-klerosUIComponentsPrimaryText mt-6 mb-4 text-base font-semibold">
         Market Estimate Scores
       </h2>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          data={series}
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-        >
-          {marketNames
-            .filter((marketName) => visibleMarkets.has(marketName))
-            .map((marketName) => (
-              <Line
-                key={marketName}
-                dataKey={marketName}
-                type="monotone"
-                stroke={marketsData?.[marketName].market.color ?? "#009AFF"}
-                // shown when tooltip is visible
-                activeDot={{ strokeWidth: 0 }}
-                dot={false}
-                strokeWidth={1.5}
-              />
-            ))}
-          <XAxis
-            dataKey="timestamp"
-            type="number"
-            scale="time"
-            tickFormatter={(timestamp) =>
-              format(new Date(timestamp * 1000), "dd LLL")
-            }
-            tick={{ fill: accentColor, fontSize: "12px" }}
-            domain={["dataMin", "dataMax"]}
-            axisLine={false}
-            tickSize={0}
-            tickMargin={16}
-          />
-          <YAxis
-            domain={["auto", "auto"]}
-            axisLine={false}
-            tickSize={0}
-            tickMargin={16}
-            width={40}
-            tick={{ fill: accentColor, fontSize: "12px" }}
-          />
-          <Tooltip
-            wrapperStyle={{ zIndex: 10 }}
-            cursor={{
-              stroke: accentColor,
-              strokeDasharray: "4",
-              strokeWidth: 1,
-              opacity: 0.5,
-            }}
-            content={({ active, payload: payloads, viewBox, label }) => {
-              const isVisible =
-                active && payloads && payloads?.length && viewBox?.height;
-
-              return isVisible ? (
-                <Card
-                  className={clsx(
-                    "h-fit w-fit p-2 px-3 shadow-md",
-                    "flex flex-col gap-4",
-                  )}
-                >
-                  <h3 className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-                    {new Date(Number(label) * 1000).toLocaleDateString(
-                      "en-US",
-                      {
-                        month: "short",
-                        day: "2-digit",
-                        hour: "numeric",
-                        minute: "numeric",
-                        timeZone: "GMT",
-                      },
-                    )}
-                  </h3>
-                  <ul className="flex flex-col gap-2">
-                    {payloads.map(({ color, value, name }, index) => (
-                      <li
-                        className="flex items-center gap-2"
-                        key={`${index}-${name}`}
-                      >
-                        <div
-                          className="size-2 rounded-full"
-                          style={{ backgroundColor: color }}
-                        />
-                        <p className="text-klerosUIComponentsPrimaryText flex-1 grow text-sm">
-                          {name}
-                        </p>
-                        <p className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-                          {Number(value).toFixed(2)}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              ) : null;
-            }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div ref={chartContainerRef} />
     </div>
   );
 };
