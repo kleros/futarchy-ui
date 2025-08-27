@@ -13,6 +13,8 @@ import {
 
 import { type IChartData } from "@/hooks/useChartData";
 
+import { shortenName } from "@/utils";
+
 import { IMarket } from "@/consts/markets";
 
 import Legend from "./Legend";
@@ -165,7 +167,6 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       timeScale: {
         borderVisible: false,
         timeVisible: true,
-        fixRightEdge: true,
       },
       grid: {
         vertLines: {
@@ -180,11 +181,12 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     });
     chart.timeScale().fitContent();
 
-    Object.entries(series).forEach(([, marketData]) => {
+    Object.entries(series).forEach(([marketName, marketData]) => {
       if (visibleMarkets.has(marketData.info.name)) {
         const series = chart.addSeries(LineSeries, {
           color: marketData.info.color,
           lineWidth: 2,
+          title: shortenName(marketName),
         });
         series.setData(
           marketData.data as Array<{ time: UTCTimestamp; value: number }>,

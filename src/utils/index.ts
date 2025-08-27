@@ -95,3 +95,6 @@ export function commify(value: string | number): string {
 
   return negative + formatted.join(",") + suffix;
 }
+
+export const shortenName = (name: string) =>
+  name.length > 16 ? `${name.slice(0, 12)}...` : name;
