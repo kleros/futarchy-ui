@@ -12,6 +12,7 @@ import Details from "./Details";
 import PositionValue from "./PositionValue";
 import PredictButton from "./PredictButton";
 import PredictionSlider from "./PredictionSlider";
+import RedeemButton from "./RedeemButton";
 
 const ProjectFunding: React.FC = ({}) => {
   const { setActiveCardId } = useCardInteraction();
@@ -22,6 +23,7 @@ const ProjectFunding: React.FC = ({}) => {
     setPrediction,
     showEstimateVariant,
     hasLiquidity,
+    isResolved,
   } = useMarketContext();
   const {
     name,
@@ -92,9 +94,10 @@ const ProjectFunding: React.FC = ({}) => {
         </div>
       </div>
       <div className="flex w-full flex-col">
-        <div className="flex gap-2">
+        <div className="flex w-full items-center justify-between gap-2">
           <PositionValue {...{ upToken, downToken, underlyingToken }} />
           {/* <OpenOrders /> */}
+          {isResolved ? <RedeemButton /> : null}
         </div>
         <Accordion
           aria-label="accordion"

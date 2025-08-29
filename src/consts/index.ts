@@ -1,6 +1,7 @@
 import { type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
+import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
 import { CowSwapAbi } from "@/abi/CowSwap";
 import { RouterAbi } from "@/abi/Router";
 import { sDAIAbi } from "@/abi/sDAI";
@@ -36,6 +37,11 @@ const contracts = {
     address: "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110",
     abi: CowSwapAbi,
     name: "cowSwap",
+  },
+  conditionalRouter: {
+    address: "0x774284d5cdfec3a0a0ebc7283ad4d5b33013c29c",
+    abi: CondtionalRouterAbi,
+    name: "conditionalRouter",
   },
 } satisfies Record<string, IContract>;
 

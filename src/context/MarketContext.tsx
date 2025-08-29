@@ -16,6 +16,7 @@ import { formatUnits } from "viem";
 import { useAlternateRoute } from "@/hooks/useAlternateRoute";
 import { useBalance } from "@/hooks/useBalance";
 import { IChartData } from "@/hooks/useChartData";
+import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
 
@@ -47,6 +48,7 @@ interface IMarketContext {
   showEstimateVariant: boolean;
   hasLiquidity: boolean | undefined;
   refetchQuotes: () => void;
+  isResolved: boolean;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -258,6 +260,15 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     isLoadingDownAlternateRoute ||
     isRefetching;
 
+  const { data: winningOutcomes } = useGetWinningOutcomes(market.conditionId);
+  const isResolved = useMemo(
+    () =>
+      isUndefined(winningOutcomes)
+        ? false
+        : winningOutcomes.some((val) => val === true),
+    [winningOutcomes],
+  );
+
   const value = useMemo(
     () => ({
       upPrice,
@@ -281,6 +292,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       showEstimateVariant,
       hasLiquidity,
       refetchQuotes,
+      isResolved,
     }),
     [
       upPrice,
@@ -304,6 +316,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       showEstimateVariant,
       hasLiquidity,
       refetchQuotes,
+      isResolved,
     ],
   );
 

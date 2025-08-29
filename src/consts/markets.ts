@@ -1,6 +1,8 @@
 import { Address } from "viem";
 
-export const projectsChosen = 5;
+export const projectsChosen = 2;
+
+export const marketsParentOutcome = 4n;
 
 export const parentMarket: Address =
   "0x582d1692198561a7594c5034e57340bc10621e86";
@@ -27,6 +29,7 @@ export interface IMarket {
   precision: number;
   marketId: Address;
   details: IDetails;
+  conditionId: `0x${string}`;
 }
 
 export const markets: Array<IMarket> = [
@@ -40,6 +43,8 @@ export const markets: Array<IMarket> = [
     maxValue: 10,
     precision: 1,
     marketId: "0x966A88Fb357FAc86004beB9618Fb76B39aaD146d",
+    conditionId:
+      "0x1998e68781b600d412d5e7dc5f5600a1fe061020cb08b793391faf08cd4551d3",
     details: {
       summary: "Meal prepared by chef Carl and Sharfy on Tuesday 28th of July.",
     },
@@ -54,6 +59,8 @@ export const markets: Array<IMarket> = [
     maxValue: 10,
     precision: 1,
     marketId: "0xbD77A9454f4dBB99a22eEa1FEbd4a0380f9Ff5B7",
+    conditionId:
+      "0xe164ff8c0eb2ce35e7577c834450b0f7c5a400384bbaac608614f0b6234b5d7f",
     details: {
       summary: "Meal prepared by chef Nidhi on Thursday 29th of July.",
     },
@@ -68,6 +75,8 @@ export const markets: Array<IMarket> = [
     maxValue: 10,
     precision: 1,
     marketId: "0xF681F411466bdBDA81384Da94C9FFD4D53e807e4",
+    conditionId:
+      "0xa656847808341964a1223418a18b519df76566b48ee32c65d0a30897284f41cf",
     details: {
       summary: "Meal prepared by chef Clément on Friday 30th of July.",
     },
@@ -82,6 +91,8 @@ export const markets: Array<IMarket> = [
     maxValue: 10,
     precision: 1,
     marketId: "0x93D5F295f714f4b425E3E74523eD6FDF75754B1a",
+    conditionId:
+      "0xeed90eb06cd31126b544abb589b320107b4aae29fc19562b01764ba6a056add2",
     details: {
       summary: "Takeout sandwiches on Monday 4th of August.",
     },
@@ -96,6 +107,8 @@ export const markets: Array<IMarket> = [
     maxValue: 10,
     precision: 1,
     marketId: "0xe93b7cE7911B16f5E72C2Bb347fBcE8f81BAc69F",
+    conditionId:
+      "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
     details: {
       summary: "Meal prepared by Nidhi/Carlos/David on Tuesday 5th of August.",
     },
