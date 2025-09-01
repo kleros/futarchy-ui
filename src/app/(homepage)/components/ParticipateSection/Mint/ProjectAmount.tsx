@@ -3,7 +3,7 @@ import React from "react";
 import { BigNumberField, Tooltip } from "@kleros/ui-components-library";
 import { formatUnits } from "viem";
 
-import { formatValue } from "@/utils";
+import { formatValue, shortenName } from "@/utils";
 
 interface IProjectAmount {
   amount: bigint;
@@ -11,9 +11,6 @@ interface IProjectAmount {
   name: string;
   color: string;
 }
-
-const shortenName = (name: string) =>
-  name.length > 16 ? `${name.slice(0, 12)}...` : name;
 
 const ProjectAmount: React.FC<IProjectAmount> = ({
   amount,
