@@ -7,6 +7,7 @@ import { getContractInfo } from "@/consts";
 const gnosisRouter = getContractInfo("gnosisRouter");
 const sDAI = getContractInfo("sDAI");
 const sDAIAdapter = getContractInfo("sDAIAdapter");
+const conditionalRouter = getContractInfo("conditionalRouter");
 
 export default defineConfig({
   out: "src/generated.ts",
@@ -14,6 +15,7 @@ export default defineConfig({
     { ...gnosisRouter },
     { ...sDAI },
     { ...sDAIAdapter },
+    { ...conditionalRouter },
     { name: "ERC20", abi: erc20Abi },
   ],
   plugins: [react()],
