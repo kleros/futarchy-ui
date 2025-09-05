@@ -4,6 +4,7 @@ import { Card, Button } from "@kleros/ui-components-library";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import clsx from "clsx";
 import { useToggle } from "react-use";
+import { formatUnits } from "viem";
 import { useConfig } from "wagmi";
 
 import {
@@ -29,6 +30,12 @@ const RedeemParentMarket: React.FC = () => {
     useReadGnosisRouterGetWinningOutcomes({
       args: [parentConditionId],
     });
+
+  const numberOutcomes = useMemo(
+    () =>
+      winningOutcomes?.reduce((acc, outcome) => (outcome ? acc + 1 : acc), 0),
+    [winningOutcomes],
+  );
 
   const winningTokens = useMemo(() => {
     if (!winningOutcomesLoading && !isUndefined(winningOutcomes)) {
@@ -58,6 +65,28 @@ const RedeemParentMarket: React.FC = () => {
         .filter(({ balance }) => balance > 0n),
     [balances, winningTokens],
   );
+
+  const totalValue = useMemo(() => {
+    const totalBalance = winningTokensWithBalance?.reduce(
+      (acc, { balance }) => acc + balance,
+      0n,
+    );
+
+    if (
+      !isUndefined(totalBalance) &&
+      !isUndefined(winningTokensWithBalance) &&
+      !isUndefined(numberOutcomes)
+    ) {
+      const formattedAmount = parseFloat(
+        formatUnits(totalBalance / BigInt(numberOutcomes), 18),
+      ).toFixed(2);
+      if (formattedAmount !== "0.00") {
+        return formattedAmount;
+      } else if (totalBalance > 0n) {
+        return "< 0.01";
+      }
+    }
+  }, [winningTokensWithBalance, numberOutcomes]);
 
   const { needsApproval, refetch: refetchNeedsApproval } = useNeedsApproval(
     winningTokensWithBalance?.map(({ address }) => address) ?? [],
@@ -98,8 +127,7 @@ const RedeemParentMarket: React.FC = () => {
       >
         <p className="text-klerosUIComponentsPrimaryText">
           <strong>
-            Tokens from the selected projects were not spent, you can redeem
-            them here.
+            {`Tokens from the selected projects were not spent, up to ${totalValue} sDAI to redeem.`}
           </strong>
         </p>
         <Button
