@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
+
 import { CardInteractionProvider } from "@/context/CardInteractionContext";
 import MarketContextProvider from "@/context/MarketContext";
 import { useChartData } from "@/hooks/useChartData";
@@ -11,7 +13,7 @@ import Loader from "@/components/Loader";
 
 import { isUndefined } from "@/utils";
 
-import { markets } from "@/consts/markets";
+import { markets, parentConditionId } from "@/consts/markets";
 
 import AdvancedSection from "./components/AdvancedSection";
 import Chart from "./components/Chart";
@@ -20,7 +22,12 @@ import ParticipateSection from "./components/ParticipateSection";
 import ProjectFunding from "./components/ProjectFunding";
 
 export default function Home() {
-  const { data: chartData } = useChartData(markets);
+  const { data: chartData, isLoading: isLoadingChartData } =
+    useChartData(markets);
+
+  const { data: winningOutcomes } = useReadGnosisRouterGetWinningOutcomes({
+    args: [parentConditionId],
+  });
 
   return (
     <div className="w-full px-4 py-12 md:px-8 lg:px-32">
@@ -45,6 +52,8 @@ export default function Home() {
                   <MarketContextProvider
                     key={market.marketId}
                     lastDataPoint={chartData?.[i][market.name].data.at(-1)}
+                    selected={winningOutcomes?.at(i)}
+                    isLoadingChartData={isLoadingChartData}
                     {...market}
                   >
                     <ProjectFunding key={market.marketId} />
