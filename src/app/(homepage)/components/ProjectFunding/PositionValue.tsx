@@ -6,11 +6,14 @@ import { useAccount } from "wagmi";
 
 import { useReadErc20BalanceOf } from "@/generated";
 
+import { useMarketContext } from "@/context/MarketContext";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 
 import { formatValue, isUndefined } from "@/utils";
 
 import { projectsChosen } from "@/consts/markets";
+
+import RedeemButton from "./RedeemButton";
 
 interface IPositionValue {
   upToken: Address;
@@ -24,81 +27,113 @@ const PositionValue: React.FC<IPositionValue> = ({
   underlyingToken,
 }) => {
   const { address } = useAccount();
+
+  const {
+    isLoadingMarketPrice,
+    isResolved,
+    isParentResolved,
+    selected,
+    marketPrice,
+  } = useMarketContext();
+
   const {
     value: upValue,
     balance: upBalance,
     price: upPrice,
-  } = useTokenPositionValue(upToken, underlyingToken, address ?? "0x");
+  } = useTokenPositionValue(upToken, underlyingToken, address ?? "0x", {
+    isUp: true,
+  });
   const {
     value: downValue,
     balance: downBalance,
     price: downPrice,
-  } = useTokenPositionValue(downToken, underlyingToken, address ?? "0x");
+  } = useTokenPositionValue(downToken, underlyingToken, address ?? "0x", {
+    isUp: false,
+  });
   const totalValue = upValue + downValue;
 
-  if (totalValue > 0) {
-    return (
-      <div className="flex flex-col gap-2">
-        <h3 className="text-klerosUIComponentsPrimaryText">
-          Current position value:
-        </h3>
-        <div
-          className={clsx(
-            "flex flex-col justify-start gap-4",
-            "flex-wrap md:flex-row md:justify-center",
-          )}
-        >
-          {!isUndefined(upBalance) && upBalance > 0 ? (
-            <>
-              <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
-                <span className="font-bold">
-                  {formatValue(upBalance ?? 0n, 18)} UP &nbsp;
-                </span>
-                ~{upValue.toFixed(5)} sDAI &nbsp;
-                <span className="text-klerosUIComponentsSecondaryText text-xs">
-                  ({upPrice.toFixed(5)} sDAI per UP)
-                </span>
-              </p>
-              <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
-                {" | "}
-              </span>
-            </>
-          ) : null}
+  const displayTotal = useMemo(() => {
+    if (totalValue > 0) {
+      if (totalValue < 0.01) {
+        return "< 0.01";
+      } else {
+        return totalValue;
+      }
+    }
+    return "0";
+  }, [totalValue]);
 
-          {!isUndefined(downBalance) && downBalance > 0 ? (
-            <>
-              <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
-                <span className="font-bold">
-                  {formatValue(downBalance ?? 0n, 18)} DOWN &nbsp;
-                </span>
-                ~{downValue.toFixed(5)} sDAI &nbsp;
-                <span className="text-klerosUIComponentsSecondaryText text-xs">
-                  ({downPrice.toFixed(5)} sDAI per DOWN)
-                </span>
-              </p>
-              <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
-                {" | "}
-              </span>
-            </>
-          ) : null}
-
-          <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
-            Total:
-            <span className="font-bold"> {totalValue.toFixed(5)} sDAI </span>
-          </p>
-        </div>
-      </div>
-    );
-  } else {
+  if (
+    displayTotal === "0" ||
+    (isParentResolved && !selected) ||
+    (isLoadingMarketPrice && marketPrice === 0)
+  ) {
     return null;
   }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <h3 className="text-klerosUIComponentsPrimaryText">
+        Current position value:
+      </h3>
+      <div
+        className={clsx(
+          "flex flex-col justify-start gap-4",
+          "flex-wrap md:flex-row md:items-center md:justify-center",
+        )}
+      >
+        {!isUndefined(upBalance) && upBalance > 0 ? (
+          <>
+            <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
+              <span className="font-bold">
+                {formatValue(upBalance ?? 0n, 18)} UP &nbsp;
+              </span>
+              ~{upValue.toFixed(2)} sDAI &nbsp;
+              <span className="text-klerosUIComponentsSecondaryText text-xs">
+                ({upPrice.toFixed(2)} sDAI per UP)
+              </span>
+            </p>
+            <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
+              {" | "}
+            </span>
+          </>
+        ) : null}
+
+        {!isUndefined(downBalance) && downBalance > 0 ? (
+          <>
+            <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
+              <span className="font-bold">
+                {formatValue(downBalance ?? 0n, 18)} DOWN &nbsp;
+              </span>
+              ~{downValue.toFixed(2)} sDAI &nbsp;
+              <span className="text-klerosUIComponentsSecondaryText text-xs">
+                ({downPrice.toFixed(2)} sDAI per DOWN)
+              </span>
+            </p>
+            <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
+              {" | "}
+            </span>
+          </>
+        ) : null}
+
+        <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
+          Total:
+          <span className="font-bold"> {totalValue.toFixed(2)} sDAI </span>
+        </p>
+        {isResolved ? <RedeemButton /> : null}
+      </div>
+    </div>
+  );
 };
 
 const useTokenPositionValue = (
   token: Address,
   underlyingToken: Address,
   address: Address,
+  config?: { isUp?: boolean },
 ) => {
+  const { hasLiquidity, marketPrice } = useMarketContext();
+
   const { data: balance } = useReadErc20BalanceOf({
     address: token,
     args: [address ?? "0x"],
@@ -114,9 +149,13 @@ const useTokenPositionValue = (
     formatEther(balance ?? 0n),
   );
 
-  const price = !isUndefined(data)
-    ? parseFloat(data.price) / projectsChosen
-    : 0;
+  const price = useMemo(() => {
+    if (hasLiquidity) {
+      return !isUndefined(data) ? parseFloat(data.price) / projectsChosen : 0;
+    } else {
+      return config?.isUp ? marketPrice : 1 - marketPrice;
+    }
+  }, [data, hasLiquidity, marketPrice, config]);
 
   const normalizedBalance = useMemo(
     () => parseFloat(formatUnits(balance ?? 0n, 18)),

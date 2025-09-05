@@ -1,6 +1,7 @@
 import { Card } from "@kleros/ui-components-library";
 
 import Mint from "./Mint";
+import RedeemParentMarket from "./RedeemParentMarket";
 
 const ParticipateSection: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const ParticipateSection: React.FC = () => {
           you want to predict.
         </p>
       </Card>
+      <RedeemParentMarket />
     </div>
   );
 };

@@ -22,7 +22,7 @@ import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { isUndefined } from "@/utils";
 
-import { IMarket } from "@/consts/markets";
+import { IMarket, parentConditionId } from "@/consts/markets";
 
 import { useCardInteraction } from "./CardInteractionContext";
 
@@ -49,6 +49,8 @@ interface IMarketContext {
   hasLiquidity: boolean | undefined;
   refetchQuotes: () => void;
   isResolved: boolean;
+  isParentResolved: boolean;
+  selected?: boolean;
 }
 
 const MarketContext = createContext<IMarketContext | undefined>(undefined);
@@ -56,11 +58,15 @@ const MarketContext = createContext<IMarketContext | undefined>(undefined);
 interface IMarketContextProvider extends IMarket {
   children: ReactNode;
   lastDataPoint: IChartData[string]["data"][number] | undefined;
+  isLoadingChartData: boolean;
+  selected?: boolean;
 }
 
 const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   children,
   lastDataPoint,
+  selected,
+  isLoadingChartData,
   ...market
 }) => {
   const { activeCardId } = useCardInteraction();
@@ -81,6 +87,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const { data: marketPriceRaw, isLoading: isLoadingMarketPrice } =
     useMarketPrice(upToken, underlyingToken);
+
   const {
     data: marketQuote,
     isLoading: isLoadingMarketQuote,
@@ -269,6 +276,16 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [winningOutcomes],
   );
 
+  const { data: parentWinningOutcomes } =
+    useGetWinningOutcomes(parentConditionId);
+  const isParentResolved = useMemo(
+    () =>
+      isUndefined(parentWinningOutcomes)
+        ? false
+        : parentWinningOutcomes.some((val) => val === true),
+    [parentWinningOutcomes],
+  );
+
   const value = useMemo(
     () => ({
       upPrice,
@@ -287,12 +304,16 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       setPrediction,
       market,
       isLoading,
-      isLoadingMarketPrice,
+      isLoadingMarketPrice: hasLiquidity
+        ? isLoadingMarketPrice
+        : isLoadingChartData,
       expectedFromDefaultRoute,
       showEstimateVariant,
       hasLiquidity,
       refetchQuotes,
       isResolved,
+      isParentResolved,
+      selected,
     }),
     [
       upPrice,
@@ -317,6 +338,9 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       hasLiquidity,
       refetchQuotes,
       isResolved,
+      isParentResolved,
+      selected,
+      isLoadingChartData,
     ],
   );
 
