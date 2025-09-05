@@ -127,7 +127,7 @@ const RedeemParentMarket: React.FC = () => {
       >
         <p className="text-klerosUIComponentsPrimaryText">
           <strong>
-            {`Tokens from the selected projects were not spent, up to ${totalValue} sDAI to redeem.`}
+            {`You have tokens from the selected projects that were not spent. You can redeem up to ${totalValue} sDAI.`}
           </strong>
         </p>
         <Button
