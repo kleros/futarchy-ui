@@ -74,7 +74,11 @@ const PositionValue: React.FC<IPositionValue> = ({
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-klerosUIComponentsPrimaryText">
-        Current position value:
+        {isResolved ? (
+          <strong>Position to redeem:</strong>
+        ) : (
+          "Current position value:"
+        )}
       </h3>
       <div
         className={clsx(
@@ -120,8 +124,8 @@ const PositionValue: React.FC<IPositionValue> = ({
           Total:
           <span className="font-bold"> {totalValue.toFixed(2)} sDAI </span>
         </p>
-        {isResolved ? <RedeemButton /> : null}
       </div>
+      {isResolved ? <RedeemButton /> : null}
     </div>
   );
 };
