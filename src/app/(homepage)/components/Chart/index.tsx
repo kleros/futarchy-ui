@@ -81,7 +81,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     const latestTimestamp = Date.now() / 1000;
 
     // Generate common timestamps for all markets
-    const timestamps = getTimestamps(1754407213, latestTimestamp);
+    const timestamps = getTimestamps(1751328000, latestTimestamp);
 
     const seriesData: Record<
       string,
