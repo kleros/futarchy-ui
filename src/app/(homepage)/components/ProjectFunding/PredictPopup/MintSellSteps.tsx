@@ -100,6 +100,7 @@ const MintSellSteps: React.FC<IMintSellSteps> = ({ close, toggleIsOpen }) => {
             quote={mintReBuyQuote}
             setNextStep={() => {
               refetchQuotes();
+              close();
               toggleIsOpen();
             }}
           />
