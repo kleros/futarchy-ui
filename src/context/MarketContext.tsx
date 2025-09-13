@@ -145,6 +145,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     if (
       isUndefined(prediction) &&
       !isUndefined(marketEstimate) &&
+      marketEstimate > 0 &&
       isFinite(marketEstimate)
     ) {
       setPrediction(
