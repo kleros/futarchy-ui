@@ -59,7 +59,7 @@ const PredictButton: React.FC = () => {
   );
 
   // if no previous position, carry with the default behaviour
-  if (!needsSelling)
+  if (!needsSelling || isPopUpOpen)
     return (
       <>
         {differenceBetweenRoutes > 0 ? (
