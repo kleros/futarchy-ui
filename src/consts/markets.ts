@@ -13,7 +13,7 @@ export const parentConditionId =
 export const invalidMarket: Address =
   "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
 
-export const endTime: number = 1753999199;
+export const endTime: number = 1760343107;
 
 export interface IDetails {
   imdbURL: string;
