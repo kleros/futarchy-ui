@@ -17,12 +17,13 @@ import { useAlternateRoute } from "@/hooks/useAlternateRoute";
 import { useBalance } from "@/hooks/useBalance";
 import { IChartData } from "@/hooks/useChartData";
 import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
+import { useIsParentResolved } from "@/hooks/useIsParentResolved";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 import { useMarketQuote } from "@/hooks/useMarketQuote";
 
 import { isUndefined } from "@/utils";
 
-import { IMarket, parentConditionId } from "@/consts/markets";
+import { IMarket } from "@/consts/markets";
 
 import { useCardInteraction } from "./CardInteractionContext";
 
@@ -276,15 +277,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [winningOutcomes],
   );
 
-  const { data: parentWinningOutcomes } =
-    useGetWinningOutcomes(parentConditionId);
-  const isParentResolved = useMemo(
-    () =>
-      isUndefined(parentWinningOutcomes)
-        ? false
-        : parentWinningOutcomes.some((val) => val === true),
-    [parentWinningOutcomes],
-  );
+  const isParentResolved = useIsParentResolved();
 
   const value = useMemo(
     () => ({
