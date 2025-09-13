@@ -27,6 +27,7 @@ const MintSellSteps: React.FC<IMintSellSteps> = ({ close, toggleIsOpen }) => {
     market,
     mintReBuyQuote,
     mintSellQuote,
+    refetchQuotes,
   } = useMarketContext();
   const { marketId, underlyingToken, downToken, upToken } = market;
 
@@ -98,6 +99,7 @@ const MintSellSteps: React.FC<IMintSellSteps> = ({ close, toggleIsOpen }) => {
             sellToken={underlyingToken}
             quote={mintReBuyQuote}
             setNextStep={() => {
+              refetchQuotes();
               toggleIsOpen();
             }}
           />

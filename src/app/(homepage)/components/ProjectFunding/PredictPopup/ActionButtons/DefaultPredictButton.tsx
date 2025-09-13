@@ -25,6 +25,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
     market,
     isLoading,
     hasLiquidity,
+    refetchQuotes,
   } = useMarketContext();
   const { underlyingToken } = market;
 
@@ -85,6 +86,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
       });
       await waitForTransactionReceipt(wagmiConfig, { hash, confirmations: 2 });
       refetchBalance();
+      refetchQuotes();
       toggleIsOpen?.();
     } catch (err) {
       console.log("handlePredict:", err);
@@ -96,6 +98,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
     wagmiConfig,
     isUpPredict,
     refetchBalance,
+    refetchQuotes,
     toggleIsOpen,
   ]);
   return (
