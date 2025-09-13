@@ -1,9 +1,12 @@
 import { Card } from "@kleros/ui-components-library";
 
+import { useIsParentResolved } from "@/hooks/useIsParentResolved";
+
 import Mint from "./Mint";
 import RedeemParentMarket from "./RedeemParentMarket";
 
 const ParticipateSection: React.FC = () => {
+  const isParentResolved = useIsParentResolved();
   return (
     <div className="mt-12 flex w-full flex-col gap-4">
       <h2 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
@@ -23,7 +26,7 @@ const ParticipateSection: React.FC = () => {
           you want to predict.
         </p>
       </Card>
-      <RedeemParentMarket />
+      {isParentResolved ? <RedeemParentMarket /> : null}
     </div>
   );
 };
