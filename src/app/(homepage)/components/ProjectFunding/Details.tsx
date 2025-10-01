@@ -109,6 +109,8 @@ const Details: React.FC<IDetails> = ({
       <Link
         href={marketplaceLink}
         className="text-klerosUIComponentsPrimaryBlue flex items-center gap-2"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         Marketplace Link <ExternalArrowIcon className="size-4" />
       </Link>

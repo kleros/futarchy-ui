@@ -47,7 +47,7 @@ export interface IMarket {
 
 export const markets: Array<IMarket> = [
   {
-    name: "Armenian lentil soup by chef Carl and Sharfy",
+    name: "23750 W 7 Mile",
     color: "#E6194B",
     upToken: "0x4d14D2c9cfa9Fbad1a2c37e861613B39811b5930",
     downToken: "0x1e28C4aA38b58075995303AB65f43351381F44e5",
@@ -79,7 +79,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Rests by chef Nidhi",
+    name: "18881 Mound",
     color: "#3CB44B",
     upToken: "0xAc0d139040CA273348b87fA7cE5a29313e71DdC3",
     downToken: "0x6f3d0aF35C1593659db3f53D51399D58B8729f43",
@@ -112,7 +112,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Crêpes by chef Clément",
+    name: "14631-14633 Plymouth",
     color: "#FFA500",
     upToken: "0xa12B6c17068BbeD4D67898FbC9630B5A32e02319",
     downToken: "0x34802E9d1C06b846d4B6b3e56FfA2Bde4259E582",
@@ -145,7 +145,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Takeout Sandwiches",
+    name: "11373 Prest",
     color: "#911EB4",
     upToken: "0x808000c9001BE6665F9Aa2Ac608C908830DFD0bC",
     downToken: "0xC418B2885925Dfe063BdAa0ad801104788a5105F",
@@ -178,7 +178,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    name: "16728-16730 Woodingham",
     color: "#46F0F0",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
@@ -211,7 +211,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    name: "9518 Franklin",
     color: "#46F0F0",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
@@ -244,7 +244,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    name: "8034 Faith",
     color: "#46F0F0",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
@@ -277,7 +277,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    name: "1769 Cheryl",
     color: "#46F0F0",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
@@ -310,7 +310,7 @@ export const markets: Array<IMarket> = [
     },
   },
   {
-    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    name: "9311 Bedford",
     color: "#46F0F0",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
