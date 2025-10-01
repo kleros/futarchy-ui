@@ -17,7 +17,7 @@ const Logo: React.FC = () => {
       <Link href={"/"}>
         <Image
           src={theme === "dark" ? _LogoDark : _Logo}
-          alt="RetroPGF experiment logo"
+          alt="RealT Distilled Judgement"
           className="size-14 max-h-14 hover:brightness-105 md:ml-6"
         />
       </Link>
