@@ -16,9 +16,19 @@ export const invalidMarket: Address =
 export const endTime: number = 1755561599;
 
 export interface IDetails {
-  imdbURL?: string;
-  posterURL?: string;
-  summary: string;
+  fullName: string;
+  shortName: string;
+  totalInvestment: string;
+  squareFeet: string;
+  propertyType: string;
+  grossRentYear: string;
+  netRentYear: string;
+  initialLaunchDate: string;
+  annualPercentageYield: string;
+  coordinate: string;
+  marketplaceLink: string;
+  images: Array<string>;
+  contract: string;
 }
 
 export interface IMarket {
@@ -49,7 +59,23 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x1998e68781b600d412d5e7dc5f5600a1fe061020cb08b793391faf08cd4551d3",
     details: {
-      summary: "Meal prepared by chef Carl and Sharfy on Tuesday 28th of July.",
+      fullName: "23750 W 7 Mile Rd, Detroit, MI 48219",
+      shortName: "23750 W 7 Mile",
+      totalInvestment: "944,537",
+      squareFeet: "11,944",
+      propertyType: "Multi Family",
+      grossRentYear: "159,360",
+      netRentYear: "85,986",
+      initialLaunchDate: "2024-12-13",
+      annualPercentageYield: "9.10%",
+      coordinate: "(42.429298, -83.274959)",
+      marketplaceLink:
+        "https://realt.co/product/23750-w-7-mile-rd-detroit-mi-48219/",
+      images: [
+        "https://realt.co/wp-content/uploads/2024/12/23750-W-7-Mile-front-side-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/23750-W-7-Mile-front-side-4.jpg",
+      ],
+      contract: "0x0f388d7e65a969dbcbfab21bc3ab6629af78f4cf",
     },
   },
   {
@@ -65,7 +91,24 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xe164ff8c0eb2ce35e7577c834450b0f7c5a400384bbaac608614f0b6234b5d7f",
     details: {
-      summary: "Meal prepared by chef Nidhi on Thursday 29th of July.",
+      fullName: "18881 Mound Rd, Detroit, MI 48234",
+      shortName: "18881 Mound",
+      totalInvestment: "336,340",
+      squareFeet: "3,732",
+      propertyType: "Multi Family",
+      grossRentYear: "66,600",
+      netRentYear: "30,660",
+      initialLaunchDate: "2024-12-13",
+      annualPercentageYield: "9.12%",
+      coordinate: "(42.432798, -83.044147)",
+      marketplaceLink:
+        "https://realt.co/product/18881-mound-rd-detroit-mi-48234/",
+      images: [
+        "https://realt.co/wp-content/uploads/2024/12/18881-Mound-front-side-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/18881-Mound-front-flat-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/18881-Mound-front-side-3.jpg",
+      ],
+      contract: "0x5c4e3fa9704d4212c6434190af6379cfbda47e13",
     },
   },
   {
@@ -81,7 +124,24 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xa656847808341964a1223418a18b519df76566b48ee32c65d0a30897284f41cf",
     details: {
-      summary: "Meal prepared by chef Clément on Friday 30th of July.",
+      fullName: "14631-14633 Plymouth Rd, Detroit, MI 48227",
+      shortName: "14631-14633 Plymouth",
+      totalInvestment: "1,389,025",
+      squareFeet: "15,292",
+      propertyType: "Multi Family",
+      grossRentYear: "249,600",
+      netRentYear: "126,840",
+      initialLaunchDate: "2024-12-13",
+      annualPercentageYield: "9.13%",
+      coordinate: "(42.372607, -83.188424)",
+      marketplaceLink:
+        "https://realt.co/product/14631-14633-plymouth-rd-detroit-mi-48227/",
+      images: [
+        "https://realt.co/wp-content/uploads/2024/12/14631-14633-Plymouth-front-flat-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/14631-14633-Plymouth-front-side-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/14631-14633-Plymouth-front-side-3.jpg",
+      ],
+      contract: "0x854a0cfa24012937d3d15682ecc3d5b474bfa97e",
     },
   },
   {
@@ -97,7 +157,24 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xeed90eb06cd31126b544abb589b320107b4aae29fc19562b01764ba6a056add2",
     details: {
-      summary: "Takeout sandwiches on Monday 4th of August.",
+      fullName: "11373 Prest St, Detroit, MI 48227",
+      shortName: "11373 Prest",
+      totalInvestment: "76,806",
+      squareFeet: "864",
+      propertyType: "Single Family",
+      grossRentYear: "12,120",
+      netRentYear: "6,948",
+      initialLaunchDate: "2024-12-06",
+      annualPercentageYield: "9.05%",
+      coordinate: "(42.371296, -83.196702)",
+      marketplaceLink:
+        "https://realt.co/product/11373-prest-st-detroit-mi-48227/",
+      images: [
+        "https://realt.co/wp-content/uploads/2024/12/11373-Prest-front-side-3.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/11373-Prest-front-flat-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/12/11373-Prest-front-side-1.jpg",
+      ],
+      contract: "0xd8b19f31186fc7350be018651aa1383175923bb3",
     },
   },
   {
@@ -113,7 +190,156 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
     details: {
-      summary: "Meal prepared by Nidhi/Carlos/David on Tuesday 5th of August.",
+      fullName: "16728-16730 Woodingham Dr, Detroit, MI 48221",
+      shortName: "16728-16730 Woodingham",
+      totalInvestment: "143,897",
+      squareFeet: "1,868",
+      propertyType: "Duplex",
+      grossRentYear: "22,200",
+      netRentYear: "14,460",
+      initialLaunchDate: "2023-12-09",
+      annualPercentageYield: "10.05%",
+      coordinate: "(42.415419, -83.149859)",
+      marketplaceLink:
+        "https://realt.co/product/16728-16730-woodingham-dr-detroit-mi-48221/",
+      images: [
+        "https://realt.co/wp-content/uploads/2023/12/16728-16730-Woodingham-front-hero-fix.jpg",
+        "https://realt.co/wp-content/uploads/2023/12/16728-16730-Woodingham-side-2-fix.jpg",
+        "https://realt.co/wp-content/uploads/2023/12/16728-16730-Woodingham-side-1-fix.jpg",
+      ],
+      contract: "0xc7697f5e86a102eaf4000719a2dc477d65beea7d",
+    },
+  },
+  {
+    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    color: "#46F0F0",
+    upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
+    downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
+    underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
+    minValue: 0,
+    maxValue: 10,
+    precision: 1,
+    marketId: "0xe93b7cE7911B16f5E72C2Bb347fBcE8f81BAc69F",
+    conditionId:
+      "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
+    details: {
+      fullName: "9518 Franklin Dr, Mont Belvieu, TX 77523",
+      shortName: "9518 Franklin",
+      totalInvestment: "461,643",
+      squareFeet: "3,358",
+      propertyType: "Single Family",
+      grossRentYear: "47,760",
+      netRentYear: "31,572",
+      initialLaunchDate: "2024-10-18",
+      annualPercentageYield: "6.84%",
+      coordinate: "(29.832396, -94.853589)",
+      marketplaceLink:
+        "https://realt.co/product/9518-franklin-dr-mont-belvieu-tx-77523/",
+      images: [
+        "https://realt.co/wp-content/uploads/2024/10/9518-franklin-front-side-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/10/9518-franklin-front-flat-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/10/9518-franklin-aereal-garage-1.jpg",
+      ],
+      contract: "0x4ae9d3343bbc6a894b7ee7f843c224c953f1661b",
+    },
+  },
+  {
+    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    color: "#46F0F0",
+    upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
+    downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
+    underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
+    minValue: 0,
+    maxValue: 10,
+    precision: 1,
+    marketId: "0xe93b7cE7911B16f5E72C2Bb347fBcE8f81BAc69F",
+    conditionId:
+      "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
+    details: {
+      fullName: "8034 Faith Ln, Montgomery, AL 36117",
+      shortName: "8034 Faith",
+      totalInvestment: "327,296",
+      squareFeet: "1,923",
+      propertyType: "Single Family",
+      grossRentYear: "30,600",
+      netRentYear: "23,856",
+      initialLaunchDate: "2023-08-25",
+      annualPercentageYield: "7.29%",
+      coordinate: "(32.352942, -86.135603)",
+      marketplaceLink:
+        "https://realt.co/product/8034-faith-ln-montgomery-al-36117/",
+      images: [
+        "https://realt.co/wp-content/uploads/2023/08/8034-Faith-Lane-front-hero.jpg",
+        "https://realt.co/wp-content/uploads/2023/08/8034-Faith-Lane-garden-1.jpg",
+        "https://realt.co/wp-content/uploads/2023/08/8034-Faith-Lane-garden-2.jpg",
+      ],
+      contract: "0x90d280b6456f8233e115e6aabb2ca89249dafd39",
+    },
+  },
+  {
+    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    color: "#46F0F0",
+    upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
+    downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
+    underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
+    minValue: 0,
+    maxValue: 10,
+    precision: 1,
+    marketId: "0xe93b7cE7911B16f5E72C2Bb347fBcE8f81BAc69F",
+    conditionId:
+      "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
+    details: {
+      fullName: "1769 Cheryl Ave, Griffin, GA 30224",
+      shortName: "1769 Cheryl",
+      totalInvestment: "307,272",
+      squareFeet: "1,680",
+      propertyType: "Single Family",
+      grossRentYear: "31,200",
+      netRentYear: "22,068",
+      initialLaunchDate: "2023-09-21",
+      annualPercentageYield: "7.18%",
+      coordinate: "(33.224176, -84.310708)",
+      marketplaceLink:
+        "https://realt.co/product/1769-cheryl-ave-griffin-ga-30224/",
+      images: [
+        "https://realt.co/wp-content/uploads/2023/09/1769-Cheryl-Ave-front-hero.jpg",
+        "https://realt.co/wp-content/uploads/2023/09/1769-Cheryl-Ave-side-2.jpg",
+        "https://realt.co/wp-content/uploads/2023/09/1769-Cheryl-Ave-side-1.jpg",
+      ],
+      contract: "0x19f824662ba9df78e368022f085b708fccc201c8",
+    },
+  },
+  {
+    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
+    color: "#46F0F0",
+    upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
+    downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
+    underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
+    minValue: 0,
+    maxValue: 10,
+    precision: 1,
+    marketId: "0xe93b7cE7911B16f5E72C2Bb347fBcE8f81BAc69F",
+    conditionId:
+      "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
+    details: {
+      fullName: "9311 Bedford St, Detroit, MI 48224",
+      shortName: "9311 Bedford",
+      totalInvestment: "90,270",
+      squareFeet: "1,170",
+      propertyType: "Single Family",
+      grossRentYear: "14,400",
+      netRentYear: "8,220",
+      initialLaunchDate: "2024-06-14",
+      annualPercentageYield: "9.11%",
+      coordinate: "(42.411886, -82.948675)",
+      marketplaceLink:
+        "https://realt.co/product/9311-bedford-st-detroit-mi-48224/",
+      images: [
+        "https://realt.co/wp-content/uploads/2024/06/9311-Bedford-front-flat-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/06/9311-Bedford-front-side-1.jpg",
+        "https://realt.co/wp-content/uploads/2024/06/9311-Bedford-side-1.jpg",
+      ],
+      contract: "0xa83cbd26964ea953f86c741871a1ab2a256cb82d",
     },
   },
 ];
