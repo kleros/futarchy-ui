@@ -9326,6 +9326,7 @@ __metadata:
     react-dom: "npm:^18"
     react-jdenticon: "npm:^1.4.0"
     react-use: "npm:^17.6.0"
+    swiper: "npm:^12.0.2"
     tailwindcss: "npm:^4.1.4"
     typescript: "npm:^5"
     viem: "npm:^2.31.4"
@@ -13749,6 +13750,13 @@ __metadata:
   bin:
     svgo: ./bin/svgo
   checksum: 10c0/a6badbd3d1d6dbb177f872787699ab34320b990d12e20798ecae915f0008796a0f3c69164f1485c9def399e0ce0a5683eb4a8045e51a5e1c364bb13a0d9f79e1
+  languageName: node
+  linkType: hard
+
+"swiper@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "swiper@npm:12.0.2"
+  checksum: 10c0/e7826eb5973828c622a30f321dc7740300a32666d26810b381e2498ad60f2f84e070058a1aa0ee32acce8a6d31f2d2919c388b2e5921db45690c59af41b1c7b8
   languageName: node
   linkType: hard
 
