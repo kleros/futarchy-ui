@@ -212,7 +212,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "9518 Franklin",
-    color: "#46F0F0",
+    color: "#008080",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
     underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
@@ -245,7 +245,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "8034 Faith",
-    color: "#46F0F0",
+    color: "#FFD700",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
     underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
@@ -278,7 +278,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "1769 Cheryl",
-    color: "#46F0F0",
+    color: "#0000FF",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
     underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
@@ -311,7 +311,7 @@ export const markets: Array<IMarket> = [
   },
   {
     name: "9311 Bedford",
-    color: "#46F0F0",
+    color: "#A52A2A",
     upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
     downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
     underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
