@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   return (
     <div className="flex flex-col items-start gap-4">
       <h1 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
-        RealT Distilled Judgement
+        RealT Properties Predictions
       </h1>
       <div className="flex flex-wrap gap-4">
         <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ const Header: React.FC = () => {
         <div className="flex size-full flex-wrap items-center gap-6 px-6 py-3.75">
           <SeerLogo />
           <p className="text-klerosUIComponentsPrimaryText text-base">
-            If rated, what valuation would the experts give to the property?
+            If evaluated, what is the current price of the property?
           </p>
         </div>
       </div>
