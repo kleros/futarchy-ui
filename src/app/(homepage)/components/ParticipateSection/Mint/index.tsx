@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 
-import { Card } from "@kleros/ui-components-library";
+import { Accordion, Card } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { useToggle } from "react-use";
 import { useAccount, useBalance } from "wagmi";
@@ -112,9 +112,7 @@ const Mint: React.FC = () => {
 
       <Card
         className={clsx(
-          "border-klerosUIComponentsSecondaryBlue relative grid h-auto w-full",
-          "px-4 pt-6 pb-12",
-          "grid w-full grid-cols-[repeat(auto-fit,minmax(200px,260px))] place-content-center gap-4",
+          "border-klerosUIComponentsSecondaryBlue relative h-auto w-full",
         )}
       >
         <div
@@ -132,25 +130,47 @@ const Mint: React.FC = () => {
             )}
           />
         </div>
-        {markets.map(({ name, color }, i) => (
-          <ProjectAmount
-            key={name}
-            {...{ name, color }}
-            balance={marketBalances?.data?.[i].result as bigint}
-            amount={((): bigint => {
-              if (!isSplit) {
-                if (minMarketBalance) {
-                  return minMarketBalance;
-                }
-              } else if (isSDaiSelected) {
-                return amount;
-              } else if (resultDeposit.data) {
-                return resultDeposit.data.result;
-              }
-              return 0n;
-            })()}
-          />
-        ))}
+        <Accordion
+          className={clsx(
+            "w-full border-none",
+            "[&_#expand-button]:h-12 [&_#expand-button]:border-none",
+            "[&>div]:my-0",
+          )}
+          items={[
+            {
+              title: "",
+              body: (
+                <div
+                  className={clsx(
+                    "grid w-full grid-cols-[repeat(auto-fit,minmax(200px,260px))] place-content-center gap-4",
+                    "px-4 pb-12",
+                  )}
+                >
+                  {markets.map(({ name, color }, i) => (
+                    <ProjectAmount
+                      key={name}
+                      {...{ name, color }}
+                      balance={marketBalances?.data?.[i].result as bigint}
+                      amount={((): bigint => {
+                        if (!isSplit) {
+                          if (minMarketBalance) {
+                            return minMarketBalance;
+                          }
+                        } else if (isSDaiSelected) {
+                          return amount;
+                        } else if (resultDeposit.data) {
+                          return resultDeposit.data.result;
+                        }
+                        return 0n;
+                      })()}
+                    />
+                  ))}
+                </div>
+              ),
+            },
+          ]}
+        />
+
         {isSplit ? (
           isSDaiSelected ? (
             <SDaiButton
