@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint --fix",
     "generate": "wagmi generate && yarn generate:gql",
-    "generate:gql": "graphql-codegen"
+    "generate:gql": "dotenv -e .env.local -- graphql-codegen"
   },
   "dependencies": {
     "@cowprotocol/cow-sdk": "^5.10.3",
