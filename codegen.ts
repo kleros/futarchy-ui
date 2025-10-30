@@ -6,7 +6,22 @@ const config: CodegenConfig = {
   documents: ["src/hooks/liquidity/swapr.graphql"],
   generates: {
     "./src/hooks/liquidity/gql/gql.ts": {
-      plugins: ["typescript", "typescript-graphql-request"],
+      // preset: "client",
+      plugins: [
+        "typescript",
+        "typescript-operations",
+        "typescript-graphql-request",
+      ],
+      config: {
+        strictScalars: true,
+        scalars: {
+          BigDecimal: "string",
+          BigInt: "string",
+          Int8: "string",
+          Bytes: "`0x${string}`",
+          Timestamp: "string",
+        },
+      },
     },
   },
 };

@@ -6,7 +6,7 @@ import {
   OrderDirection,
   Pool_OrderBy as SwaprPool_OrderBy,
   getSdk as getSwaprSdk,
-  Pool,
+  GetPoolsQuery,
 } from "./gql/gql";
 
 import { getSwaprClient } from "./utils";
@@ -50,7 +50,7 @@ async function getSwaprPools(
   });
 
   return await Promise.all(
-    pools.map(async (pool: Pool) => ({
+    pools.map(async (pool: GetPoolsQuery["pools"][number]) => ({
       id: pool.id as Address,
       dex: "Swapr",
       fee: Number(pool.fee),

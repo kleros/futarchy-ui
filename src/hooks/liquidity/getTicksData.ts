@@ -1,10 +1,10 @@
 import { Address } from "viem";
 
 import {
-  Tick,
   OrderDirection,
   Tick_OrderBy,
   getSdk as getSwaprSdk,
+  GetTicksQuery,
 } from "./gql/gql";
 
 import { PoolInfo, getPools } from "./useMarketPools";
@@ -17,7 +17,7 @@ async function getTicks(poolId: string) {
   }
 
   const graphQLSdk = getSwaprSdk;
-  let total: Tick[] = [];
+  let total: GetTicksQuery["ticks"] = [];
   let tickIdx = "";
   while (true) {
     const { ticks } = await graphQLSdk(graphQLClient).GetTicks({
