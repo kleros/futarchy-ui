@@ -32,6 +32,8 @@ const ProjectFunding: React.FC = ({}) => {
     details,
     marketId,
     underlyingToken,
+    minValue,
+    maxValue,
   } = market;
 
   return (
@@ -68,6 +70,8 @@ const ProjectFunding: React.FC = ({}) => {
               isDisabled={!hasLiquidity}
               aria-label="Prediction"
               className="w-auto [&_input]:border-none"
+              minValue={minValue}
+              maxValue={maxValue}
               value={
                 !isUndefined(prediction) ? prediction / precision : undefined
               }
