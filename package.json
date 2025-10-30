@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "yarn generate && next dev",
-    "build": "next build",
+    "build": "yarn generate && next build",
     "start": "next start",
     "lint": "next lint --fix",
     "generate": "wagmi generate && yarn generate:gql",
