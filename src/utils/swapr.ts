@@ -9,6 +9,7 @@ import {
 import { gnosis } from "viem/chains";
 
 import { getTradeArgs } from "./trade";
+import { getTradeExactOutArgs } from "./tradeExactOut";
 
 type GetQuoteArgs = {
   address?: Address;
@@ -39,6 +40,34 @@ export const getSwaprQuote = async ({
       quoteCurrency: args.currencyOut,
       recipient: address,
       tradeType: TradeType.EXACT_INPUT,
+      maximumSlippage: args.maximumSlippage,
+    },
+    undefined,
+    false,
+  );
+};
+
+export const getSwaprQuoteExactOut = async ({
+  address,
+  chain = gnosis.id,
+  outcomeToken,
+  collateralToken,
+  amount = "1",
+}: GetQuoteArgs) => {
+  const args = getTradeExactOutArgs(
+    chain,
+    amount,
+    outcomeToken,
+    collateralToken,
+    "buy",
+  );
+
+  return await SwaprV3Trade.getQuote(
+    {
+      amount: args.currencyAmountOut,
+      quoteCurrency: args.currencyIn,
+      recipient: address,
+      tradeType: TradeType.EXACT_OUTPUT,
       maximumSlippage: args.maximumSlippage,
     },
     undefined,

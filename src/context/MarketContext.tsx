@@ -15,6 +15,7 @@ import { formatUnits } from "viem";
 
 import { useAlternateRoute } from "@/hooks/useAlternateRoute";
 import { useBalance } from "@/hooks/useBalance";
+import useCappedBalance from "@/hooks/useCappedBalance";
 import { IChartData } from "@/hooks/useChartData";
 import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
@@ -31,6 +32,7 @@ interface IMarketContext {
   downPrice: number;
   marketPrice: number;
   marketEstimate: number;
+  cappedUnderlyingAmount: bigint | undefined;
   marketQuote: SwaprV3Trade | null | undefined;
   marketDownQuote: SwaprV3Trade | null | undefined;
   mintSellQuote: SwaprV3Trade | null | undefined;
@@ -88,22 +90,6 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const { data: marketPriceRaw, isLoading: isLoadingMarketPrice } =
     useMarketPrice(upToken, underlyingToken);
 
-  const {
-    data: marketQuote,
-    isLoading: isLoadingMarketQuote,
-    refetch: refetchMarktetUpQuote,
-  } = useMarketQuote(
-    upToken,
-    underlyingToken,
-    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-    shouldFetch,
-  );
-
-  const upPrice = useMemo(
-    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
-    [marketQuote],
-  );
-
   const hasLiquidity = useMemo(() => marketPriceRaw?.status, [marketPriceRaw]);
 
   const marketPrice = useMemo(() => {
@@ -116,28 +102,62 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     }
   }, [marketPriceRaw, hasLiquidity, lastDataPoint, maxValue]);
 
-  const {
-    data: marketDownQuote,
-    isLoading: isLoadingMarketDownQuote,
-    refetch: refetchMarktetDownQuote,
-  } = useMarketQuote(
-    downToken,
-    underlyingToken,
-    underlyingBalance ? formatUnits(underlyingBalance, 18) : "1",
-    shouldFetch,
-  );
-
-  const downPrice = useMemo(
-    () => 1 / parseFloat(marketDownQuote?.executionPrice.toFixed(4) ?? "0"),
-    [marketDownQuote],
-  );
-
   const marketEstimate = useMemo(
     () =>
       typeof marketPrice !== "undefined"
         ? +(marketPrice * maxValue * precision).toFixed(1)
         : 0,
     [marketPrice, maxValue, precision],
+  );
+  const isUpPredict = (prediction ?? 0) > marketEstimate;
+
+  // adjusts the price based on predicted direction, for DOWN predictedPrice = 1 - estimateMade
+  const predictedPrice = useMemo(() => {
+    if (typeof prediction === "undefined") return 0;
+
+    return isUpPredict
+      ? prediction / (maxValue * precision)
+      : 1 - prediction / (maxValue * precision);
+  }, [prediction, maxValue, precision, isUpPredict]);
+
+  const { cappedUnderlyingAmount, isLoading: isLoadingCappedAmount } =
+    useCappedBalance(
+      underlyingToken,
+      isUpPredict ? upToken : downToken,
+      predictedPrice,
+      shouldFetch,
+    );
+
+  const {
+    data: marketQuote,
+    isLoading: isLoadingMarketQuote,
+    refetch: refetchMarketUpQuote,
+  } = useMarketQuote(
+    upToken,
+    underlyingToken,
+    cappedUnderlyingAmount ? formatUnits(cappedUnderlyingAmount, 18) : "1",
+    shouldFetch,
+  );
+
+  const upPrice = useMemo(
+    () => 1 / parseFloat(marketQuote?.executionPrice.toFixed(4) ?? "0"),
+    [marketQuote],
+  );
+
+  const {
+    data: marketDownQuote,
+    isLoading: isLoadingMarketDownQuote,
+    refetch: refetchMarketDownQuote,
+  } = useMarketQuote(
+    downToken,
+    underlyingToken,
+    cappedUnderlyingAmount ? formatUnits(cappedUnderlyingAmount, 18) : "1",
+    shouldFetch,
+  );
+
+  const downPrice = useMemo(
+    () => 1 / parseFloat(marketDownQuote?.executionPrice.toFixed(4) ?? "0"),
+    [marketDownQuote],
   );
 
   useEffect(() => {
@@ -151,8 +171,6 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       );
     }
   }, [prediction, marketEstimate, market.precision]);
-
-  const isUpPredict = (prediction ?? 0) > marketEstimate;
 
   const showEstimateVariant = useMemo(() => {
     if (isUndefined(prediction) || !hasLiquidity) return false;
@@ -170,7 +188,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     upToken,
     downToken,
     underlyingToken,
-    formatUnits(underlyingBalance ?? 0n, 18),
+    formatUnits(cappedUnderlyingAmount ?? 0n, 18),
     shouldFetch,
   );
 
@@ -182,7 +200,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     downToken,
     upToken,
     underlyingToken,
-    formatUnits(underlyingBalance ?? 0n, 18),
+    formatUnits(cappedUnderlyingAmount ?? 0n, 18),
     shouldFetch,
   );
 
@@ -192,8 +210,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       await Promise.all([
         refetchUpAlternateRoute(),
         refetchDownAlternateRoute(),
-        refetchMarktetUpQuote(),
-        refetchMarktetDownQuote(),
+        refetchMarketUpQuote(),
+        refetchMarketDownQuote(),
       ]);
 
       setIsRefetching(false);
@@ -202,8 +220,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     refetchUnderlyingBalance,
     refetchDownAlternateRoute,
     refetchUpAlternateRoute,
-    refetchMarktetDownQuote,
-    refetchMarktetUpQuote,
+    refetchMarketDownQuote,
+    refetchMarketUpQuote,
   ]);
 
   const expectedFromMintRoute = useMemo(
@@ -261,6 +279,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   }, [expectedFromMintRoute, expectedFromDefaultRoute]);
 
   const isLoading =
+    isLoadingCappedAmount ||
     isLoadingMarketQuote ||
     isLoadingMarketDownQuote ||
     isLoadingUpAlternateRoute ||
@@ -314,6 +333,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isResolved,
       isParentResolved,
       selected,
+      cappedUnderlyingAmount,
     }),
     [
       upPrice,
@@ -341,6 +361,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       isParentResolved,
       selected,
       isLoadingChartData,
+      cappedUnderlyingAmount,
     ],
   );
 

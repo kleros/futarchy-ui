@@ -13,6 +13,7 @@ export const useTokenBalances = (tokens: Array<Address>) => {
     query: {
       staleTime: 5000,
       enabled: typeof address !== "undefined",
+      refetchInterval: 5000,
     },
   });
 };

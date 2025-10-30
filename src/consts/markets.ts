@@ -1,14 +1,14 @@
 import { Address } from "viem";
 
-export const projectsChosen = 2;
+export const projectsChosen = 1;
 
-export const marketsParentOutcome = 4n;
+export const marketsParentOutcome = 1n;
 
 export const parentMarket: Address =
-  "0x582d1692198561a7594c5034e57340bc10621e86";
+  "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
 
 export const parentConditionId =
-  "0x4fa791cbbddce9857e1331094273e3834a4a08df5ff4e947027ca3c5eb87751c";
+  "0x0d6c99d7eb9fa657236905b6cf464eaa938371ae5ce8cf153af450321377241d";
 
 export const invalidMarket: Address =
   "0xBF9696d9a921a9F79f3d6f07556Fb7E7052a0B1D";
@@ -37,83 +37,45 @@ export interface IMarket {
 
 export const markets: Array<IMarket> = [
   {
-    name: "Armenian lentil soup by chef Carl and Sharfy",
+    name: "Judge Dredd (1995)",
     color: "#E6194B",
-    upToken: "0x4d14D2c9cfa9Fbad1a2c37e861613B39811b5930",
-    downToken: "0x1e28C4aA38b58075995303AB65f43351381F44e5",
-    underlyingToken: "0xA208E85696Cd7723e7FFBf7394977929ecb848eE",
+    upToken: "0x0ee25eb2e22c01fa832dd5fea5637fba4cd5e870",
+    downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
+    underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
     minValue: 0,
-    maxValue: 10,
+    maxValue: 100,
     precision: 1,
-    marketId: "0x966A88Fb357FAc86004beB9618Fb76B39aaD146d",
+    marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
     conditionId:
-      "0x1998e68781b600d412d5e7dc5f5600a1fe061020cb08b793391faf08cd4551d3",
+      "0x3d963acd72df546f58bf4ea76fda6957c830e6e3f8965517c396fc76dc2c08a3",
     details: {
-      summary: "Meal prepared by chef Carl and Sharfy on Tuesday 28th of July.",
+      imdbURL:
+        "https://www.imdb.com/title/tt0113492/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_judge%2520dredd",
+      posterURL:
+        "https://resizing.flixster.com/BsX7kI5BwBsc9xSQPEt5ddA3PI4=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p16918_p_v8_ae.jpg",
+      summary:
+        "In a dystopian future, Joseph Dredd, the most famous Judge (a police officer with instant field judiciary powers), is convicted for a crime he did not commit and must face his murderous counterpart.",
     },
   },
   {
-    name: "Rests by chef Nidhi",
+    name: "Bacurau (2019)",
     color: "#3CB44B",
-    upToken: "0xAc0d139040CA273348b87fA7cE5a29313e71DdC3",
-    downToken: "0x6f3d0aF35C1593659db3f53D51399D58B8729f43",
-    underlyingToken: "0x9D92FD3E34b05110988F7e69ee1C8980016aA6C4",
+    upToken: "0x028ec9938471bbad5167c2e5281144a94d1acbe9",
+    downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
+    underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
     minValue: 0,
-    maxValue: 10,
+    maxValue: 100,
     precision: 1,
-    marketId: "0xbD77A9454f4dBB99a22eEa1FEbd4a0380f9Ff5B7",
+    marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
     conditionId:
-      "0xe164ff8c0eb2ce35e7577c834450b0f7c5a400384bbaac608614f0b6234b5d7f",
+      "0xa4cc97a4e4f6e02c546a5b3bb49e2c411dcb4c6dcd478cef9cd0c86605c59878",
     details: {
-      summary: "Meal prepared by chef Nidhi on Thursday 29th of July.",
-    },
-  },
-  {
-    name: "Crêpes by chef Clément",
-    color: "#FFA500",
-    upToken: "0xa12B6c17068BbeD4D67898FbC9630B5A32e02319",
-    downToken: "0x34802E9d1C06b846d4B6b3e56FfA2Bde4259E582",
-    underlyingToken: "0x73ADB9f2907839833A96721b41AEAE4Ba37BfC09",
-    minValue: 0,
-    maxValue: 10,
-    precision: 1,
-    marketId: "0xF681F411466bdBDA81384Da94C9FFD4D53e807e4",
-    conditionId:
-      "0xa656847808341964a1223418a18b519df76566b48ee32c65d0a30897284f41cf",
-    details: {
-      summary: "Meal prepared by chef Clément on Friday 30th of July.",
-    },
-  },
-  {
-    name: "Takeout Sandwiches",
-    color: "#911EB4",
-    upToken: "0x808000c9001BE6665F9Aa2Ac608C908830DFD0bC",
-    downToken: "0xC418B2885925Dfe063BdAa0ad801104788a5105F",
-    underlyingToken: "0x7cf8005B84ea5413f339Cdc711F918a834A52110",
-    minValue: 0,
-    maxValue: 10,
-    precision: 1,
-    marketId: "0x93D5F295f714f4b425E3E74523eD6FDF75754B1a",
-    conditionId:
-      "0xeed90eb06cd31126b544abb589b320107b4aae29fc19562b01764ba6a056add2",
-    details: {
-      summary: "Takeout sandwiches on Monday 4th of August.",
-    },
-  },
-  {
-    name: "Indian-Spanish fusion by Nidhi/Carlos/David.",
-    color: "#46F0F0",
-    upToken: "0x2D14505D0551F58236469c09945d9114aFF22bdc",
-    downToken: "0x4A82570C62f57C25228D694a1616C17B1e2fd894",
-    underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
-    minValue: 0,
-    maxValue: 10,
-    precision: 1,
-    marketId: "0xe93b7cE7911B16f5E72C2Bb347fBcE8f81BAc69F",
-    conditionId:
-      "0xaffd86c9d68bf40f00a54e97709f37d2cb937ae3e406553911be1779174fec71",
-    details: {
-      summary: "Meal prepared by Nidhi/Carlos/David on Tuesday 5th of August.",
+      imdbURL:
+        "https://www.imdb.com/title/tt2762506/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_bacura",
+      posterURL:
+        "https://resizing.flixster.com/MUNwK1o6mdxwkgj-2v86bWf6xXM=/206x305/v2/https://resizing.flixster.com/-cGVSNCtYaLQDwteIiI9LUMoqJ0=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2Y3NWE5YWNjLTRlNzktNGEzYi05NTg5LWNhOTBiYTJlODM1OC53ZWJw",
+      summary:
+        "After the death of her grandmother, Teresa comes home to her matriarchal village in a near-future Brazil to find a succession of sinister events that mobilizes all of its residents.",
     },
   },
 ];

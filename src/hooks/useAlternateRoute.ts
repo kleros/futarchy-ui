@@ -14,9 +14,7 @@ export const useAlternateRoute = (
   const { address } = useAccount();
   return useQuery({
     enabled: enabled && !isUndefined(amount) && !isUndefined(address),
-    queryKey: [
-      `market-alternate-route-${targetToken.toLowerCase()}-${oppositeToken.toLowerCase()}`,
-    ],
+    queryKey: [`market-alternate-route`, targetToken, oppositeToken, amount],
     // we only call this once while determining best route and use the quote from this query too
     staleTime: Infinity,
     retry: (failureCount) => failureCount < 3,

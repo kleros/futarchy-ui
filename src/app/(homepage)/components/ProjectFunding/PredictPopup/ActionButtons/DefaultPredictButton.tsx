@@ -25,6 +25,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
     market,
     isLoading,
     hasLiquidity,
+    cappedUnderlyingAmount,
   } = useMarketContext();
   const { underlyingToken } = market;
 
@@ -39,20 +40,20 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
 
   const isAllowance = useMemo(
     () =>
-      typeof allowance !== "undefined" &&
-      typeof underlyingBalance !== "undefined" &&
-      allowance < underlyingBalance,
-    [allowance, underlyingBalance],
+      !isUndefined(allowance) &&
+      !isUndefined(cappedUnderlyingAmount) &&
+      allowance < cappedUnderlyingAmount,
+    [allowance, cappedUnderlyingAmount],
   );
 
   const { writeContractAsync: increaseAllowance } = useWriteErc20Approve();
 
   const handleAllowance = useCallback(async () => {
     try {
-      if (!isUndefined(underlyingBalance)) {
+      if (!isUndefined(cappedUnderlyingAmount)) {
         const hash = await increaseAllowance({
           address: underlyingToken,
-          args: [SWAPR_CONTRACT, underlyingBalance],
+          args: [SWAPR_CONTRACT, cappedUnderlyingAmount],
         });
         await waitForTransactionReceipt(wagmiConfig, {
           hash,
@@ -67,7 +68,7 @@ const DefaultPredictButton: React.FC<{ toggleIsOpen?: () => void }> = ({
     wagmiConfig,
     increaseAllowance,
     refetchAllowance,
-    underlyingBalance,
+    cappedUnderlyingAmount,
     underlyingToken,
   ]);
 
