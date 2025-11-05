@@ -4,7 +4,7 @@ import { Card, Button } from "@kleros/ui-components-library";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import clsx from "clsx";
 import { useToggle } from "react-use";
-import { formatUnits } from "viem";
+import { Address, formatUnits } from "viem";
 import { useConfig } from "wagmi";
 
 import {
@@ -22,7 +22,13 @@ import { shortenName, isUndefined } from "@/utils";
 
 import { markets, parentConditionId, parentMarket } from "@/consts/markets";
 
-const RedeemParentMarket: React.FC = () => {
+interface IRedeemParentMarket {
+  tradeExecutor: Address;
+}
+
+const RedeemParentMarket: React.FC<IRedeemParentMarket> = ({
+  tradeExecutor,
+}) => {
   const [isLoading, setIsLoading] = useToggle(false);
   const wagmiConfig = useConfig();
 
@@ -52,6 +58,7 @@ const RedeemParentMarket: React.FC = () => {
     refetch: refetchBalances,
   } = useTokenBalances(
     winningTokens?.map(({ underlyingToken }) => underlyingToken) ?? [],
+    tradeExecutor,
   );
 
   const winningTokensWithBalance = useMemo(

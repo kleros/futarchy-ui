@@ -1,18 +1,20 @@
 import { Address, erc20Abi } from "viem";
 import { useAccount, useReadContracts } from "wagmi";
 
-export const useTokenBalances = (tokens: Array<Address>) => {
+import { isUndefined } from "@/utils";
+
+export const useTokenBalances = (tokens: Array<Address>, account?: Address) => {
   const { address } = useAccount();
   return useReadContracts({
     contracts: tokens.map((token) => ({
       address: token,
       abi: erc20Abi,
       functionName: "balanceOf",
-      args: [address],
+      args: [account ?? address],
     })),
     query: {
       staleTime: 5000,
-      enabled: typeof address !== "undefined",
+      enabled: !isUndefined(account ?? address),
       refetchInterval: 5000,
     },
   });

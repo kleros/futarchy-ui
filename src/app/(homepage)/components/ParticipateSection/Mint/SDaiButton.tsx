@@ -1,99 +1,32 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import { Button } from "@kleros/ui-components-library";
-import { waitForTransactionReceipt } from "@wagmi/core";
-import { useAccount, useConfig } from "wagmi";
+import { Address } from "viem";
 
-import {
-  useSimulateGnosisRouterSplitPosition,
-  useWriteGnosisRouterSplitPosition,
-  gnosisRouterAddress,
-  useReadSDaiAllowance,
-  sDaiAddress,
-  useWriteSDaiApprove,
-} from "@/generated";
-
-import { parentMarket } from "@/consts/markets";
+import { useTradeExecutorSplit } from "@/hooks/tradeWallet/useTradeExecutorSplit";
 
 interface ISDaiButton {
   amount: bigint;
-  isMinting: boolean;
-  toggleIsMinting: (value: boolean) => void;
-  refetchSDai: () => void;
-  refetchXDai: () => void;
-  refetchBalances: () => void;
+  tradeExecutor: Address;
 }
 
-const SDaiButton: React.FC<ISDaiButton> = ({
-  amount,
-  isMinting,
-  toggleIsMinting,
-  refetchXDai,
-  refetchSDai,
-  refetchBalances,
-}) => {
-  const { address } = useAccount();
+const SDaiButton: React.FC<ISDaiButton> = ({ amount, tradeExecutor }) => {
+  const tradeExecutorSplit = useTradeExecutorSplit();
 
-  const {
-    data: result,
-    isLoading,
-    isError,
-    refetch: refetchSimulation,
-  } = useSimulateGnosisRouterSplitPosition({
-    args: [sDaiAddress, parentMarket, amount],
-    query: {
-      enabled: typeof address !== "undefined" && amount > 0n,
-    },
-  });
-
-  const { writeContractAsync } = useWriteGnosisRouterSplitPosition();
-
-  const wagmiConfig = useConfig();
-
-  const { data: allowance, refetch: refetchAllowance } = useReadSDaiAllowance({
-    args: [address!, gnosisRouterAddress],
-  });
-
-  const isAllowance = useMemo(
-    () => amount > (allowance ?? 0n),
-    [amount, allowance],
-  );
-
-  const { writeContractAsync: increaseAllowance } = useWriteSDaiApprove();
+  const handleSplit = () => {
+    tradeExecutorSplit.mutate({
+      amount,
+      tradeExecutor,
+    });
+  };
 
   return (
     <Button
-      isLoading={isMinting}
-      isDisabled={
-        amount === 0n || isMinting || (!isAllowance && (isLoading || isError))
-      }
+      isLoading={tradeExecutorSplit.isPending}
+      isDisabled={tradeExecutorSplit.isPending || amount === 0n}
       className="absolute right-1/2 bottom-0 translate-1/2"
-      text={isAllowance ? "Allow sDAI" : "Convert to Movie Tokens"}
-      onPress={async () => {
-        toggleIsMinting(true);
-        try {
-          if (isAllowance) {
-            const hash = await increaseAllowance({
-              args: [gnosisRouterAddress, amount],
-            });
-            await waitForTransactionReceipt(wagmiConfig, {
-              hash,
-              confirmations: 2,
-            });
-            refetchAllowance();
-            refetchSimulation();
-          } else if (typeof result !== "undefined") {
-            const tx = await writeContractAsync(result.request);
-            await waitForTransactionReceipt(wagmiConfig, { hash: tx });
-            refetchSDai();
-            refetchXDai();
-            refetchAllowance();
-            refetchBalances();
-          }
-        } finally {
-          toggleIsMinting(false);
-        }
-      }}
+      text={"Convert to Movie Tokens"}
+      onPress={handleSplit}
     />
   );
 };

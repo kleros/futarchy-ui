@@ -1,6 +1,6 @@
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Address, formatUnits } from "viem";
+import { Address, formatUnits, type Hex } from "viem";
 import { type UseSimulateContractReturnType } from "wagmi";
 
 type ExtendedWagmiError = UseSimulateContractReturnType["error"] & {
@@ -98,3 +98,15 @@ export function commify(value: string | number): string {
 
 export const shortenName = (name: string) =>
   name.length > 16 ? `${name.slice(0, 12)}...` : name;
+
+export function formatBytecode(bytecode: string): Hex {
+  // Remove any whitespace
+  const cleaned = bytecode.trim();
+
+  // Add 0x prefix if not present
+  if (!cleaned.startsWith("0x")) {
+    return `0x${cleaned}` as Hex;
+  }
+
+  return cleaned as Hex;
+}

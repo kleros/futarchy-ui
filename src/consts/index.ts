@@ -1,6 +1,8 @@
 import { type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
+import { sDaiAddress } from "@/generated";
+
 import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
 import { CowSwapAbi } from "@/abi/CowSwap";
 import { RouterAbi } from "@/abi/Router";
@@ -54,3 +56,11 @@ export const cowSwapAppCode = "futarchy-test";
 export const DEFAULT_CHAIN = gnosis;
 
 export const SWAPR_CONTRACT = "0xffb643e73f280b97809a8b41f7232ab401a04ee1";
+
+// trade wallet specific
+export const GNOSIS_CREATE_CALL = "0xBE202e30F21083619F9e8e62440CDe71903b94C4";
+export const SALT_KEY = "TradeExecutorV1";
+export const collateral = {
+  address: sDaiAddress,
+  decimals: 18,
+};

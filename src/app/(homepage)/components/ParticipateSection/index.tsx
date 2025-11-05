@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 
 import { Card } from "@kleros/ui-components-library";
+import { useAccount } from "wagmi";
 
+import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
 import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
 
 import { isUndefined } from "@/utils";
@@ -12,6 +14,12 @@ import Mint from "./Mint";
 import RedeemParentMarket from "./RedeemParentMarket";
 
 const ParticipateSection: React.FC = () => {
+  const { address } = useAccount();
+  const { data: checkTradeExecutorData } =
+    useCheckTradeExecutorCreated(address);
+
+  const tradeExecutor = checkTradeExecutorData?.predictedAddress;
+
   const { data: parentWinningOutcomes } =
     useGetWinningOutcomes(parentConditionId);
 
@@ -24,12 +32,12 @@ const ParticipateSection: React.FC = () => {
   );
 
   return (
-    <div className="mt-12 flex w-full flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       <h2 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
         Participate
       </h2>
 
-      <Mint />
+      {tradeExecutor ? <Mint {...{ tradeExecutor }} /> : null}
       <Card
         round
         className="border-gradient-purple-blue h-auto w-full border-none px-4 py-6 md:px-8"
@@ -42,7 +50,9 @@ const ParticipateSection: React.FC = () => {
           you want to predict.
         </p>
       </Card>
-      {isParentResolved ? <RedeemParentMarket /> : null}
+      {isParentResolved && tradeExecutor ? (
+        <RedeemParentMarket {...{ tradeExecutor }} />
+      ) : null}
     </div>
   );
 };

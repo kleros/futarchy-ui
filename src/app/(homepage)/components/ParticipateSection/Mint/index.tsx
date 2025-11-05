@@ -3,52 +3,38 @@ import React, { useState, useMemo } from "react";
 import { Accordion, Card } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { useToggle } from "react-use";
-import { useAccount, useBalance } from "wagmi";
+import { type Address } from "viem";
 
-import {
-  useSimulateSDaiAdapterDepositXdai,
-  useReadSDaiBalanceOf,
-} from "@/generated";
-
+import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
 
 import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
+import { collateral } from "@/consts";
 import { markets } from "@/consts/markets";
 
-import AmountInput, { TokenType } from "./AmountInput";
+import AmountInput from "./AmountInput";
 import MergeButton from "./MergeButton";
 import ProjectAmount from "./ProjectAmount";
 import SDaiButton from "./SDaiButton";
 import TopLeftInfo from "./TopLeftInfo";
-import XDaiButton from "./XDaiButton";
 
-const Mint: React.FC = () => {
-  const { address } = useAccount();
-  const { data: balanceXDai, refetch: refetchXDai } = useBalance({
-    address,
-  });
-  const { data: balanceSDai, refetch: refetchSDai } = useReadSDaiBalanceOf({
-    args: [address!],
+interface IMint {
+  tradeExecutor: Address;
+}
+const Mint: React.FC<IMint> = ({ tradeExecutor }) => {
+  const { data: balanceSDaiData } = useTokenBalance({
+    address: tradeExecutor,
+    token: collateral.address,
   });
 
   const [amount, setAmount] = useState<bigint>(0n);
-  const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
 
-  const [isMinting, toggleIsMinting] = useToggle(false);
   const [isSplit, toggleIsSplit] = useToggle(true);
-
-  const resultDeposit = useSimulateSDaiAdapterDepositXdai({
-    args: [address!],
-    value: amount,
-    query: {
-      enabled: typeof address !== "undefined" && amount > 0,
-      retry: false,
-    },
-  });
 
   const marketBalances = useTokenBalances(
     markets.map(({ underlyingToken }) => underlyingToken),
+    tradeExecutor,
   );
 
   const minMarketBalance = useMemo<bigint>(() => {
@@ -64,22 +50,6 @@ const Mint: React.FC = () => {
     return 0n;
   }, [marketBalances]);
 
-  const isSDaiSelected = useMemo(
-    () => selectedToken === TokenType.sDAI,
-    [selectedToken],
-  );
-
-  const notEnoughBalance = useMemo(() => {
-    if (
-      typeof amount === "undefined" ||
-      typeof balanceXDai === "undefined" ||
-      typeof balanceSDai === "undefined"
-    )
-      return false;
-    else if (isSDaiSelected) return amount > balanceSDai;
-    else return amount > balanceXDai.value;
-  }, [balanceXDai, balanceSDai, amount, isSDaiSelected]);
-
   return (
     <Card
       round
@@ -89,23 +59,21 @@ const Mint: React.FC = () => {
       )}
     >
       <div className="flex flex-wrap gap-x-25.25 gap-y-4">
-        <TopLeftInfo
-          balance={
-            isSDaiSelected ? (balanceSDai ?? 0n) : (balanceXDai?.value ?? 0n)
-          }
-          {...{ isSDaiSelected }}
-        />
+        <TopLeftInfo balance={balanceSDaiData?.value ?? 0n} />
         {isSplit ? (
           <AmountInput
             key="split"
             defaultValue={amount === 0n ? undefined : amount}
-            {...{ setAmount, setSelectedToken, notEnoughBalance }}
+            balance={balanceSDaiData?.value}
+            value={amount}
+            {...{ setAmount }}
           />
         ) : (
           <AmountInput
             key="merge"
             value={minMarketBalance}
-            {...{ setAmount, setSelectedToken, notEnoughBalance }}
+            balance={minMarketBalance}
+            {...{ setAmount }}
           />
         )}
       </div>
@@ -156,10 +124,8 @@ const Mint: React.FC = () => {
                           if (minMarketBalance) {
                             return minMarketBalance;
                           }
-                        } else if (isSDaiSelected) {
+                        } else {
                           return amount;
-                        } else if (resultDeposit.data) {
-                          return resultDeposit.data.result;
                         }
                         return 0n;
                       })()}
@@ -172,41 +138,14 @@ const Mint: React.FC = () => {
         />
 
         {isSplit ? (
-          isSDaiSelected ? (
-            <SDaiButton
-              refetchBalances={marketBalances.refetch}
-              {...{
-                amount,
-                setAmount,
-                refetchSDai,
-                refetchXDai,
-                isMinting,
-                toggleIsMinting,
-              }}
-            />
-          ) : (
-            <XDaiButton
-              refetchBalances={marketBalances.refetch}
-              {...{
-                amount,
-                setAmount,
-                refetchSDai,
-                refetchXDai,
-                isMinting,
-                toggleIsMinting,
-              }}
-            />
-          )
-        ) : (
-          <MergeButton
-            amount={minMarketBalance}
-            refetchBalances={marketBalances.refetch}
+          <SDaiButton
             {...{
-              refetchSDai,
-              isMinting,
-              toggleIsMinting,
+              amount,
+              tradeExecutor,
             }}
           />
+        ) : (
+          <MergeButton amount={minMarketBalance} {...{ tradeExecutor }} />
         )}
       </Card>
     </Card>
