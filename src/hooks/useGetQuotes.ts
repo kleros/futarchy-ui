@@ -19,8 +19,6 @@ export const useGetQuotes = (quoteProps: GetQuoteProps, enabled: boolean) => {
       ),
     ],
     queryFn: () => {
-      console.log("fetchin");
-
       return getQuotes({ account, processedMarkets });
     },
   });

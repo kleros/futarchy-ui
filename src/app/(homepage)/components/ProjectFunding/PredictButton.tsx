@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Button } from "@kleros/ui-components-library";
 import { useQueryClient } from "@tanstack/react-query";
@@ -12,11 +12,17 @@ import { useGetQuotes } from "@/hooks/useGetQuotes";
 import { useProcessMarkets } from "@/hooks/useProcessMarkets";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 
+import { formatError } from "@/utils/formatError";
+
 interface IPredictButton {
   tradeExecutor: Address;
+  setErrorMessage: (message: string | undefined) => void;
 }
 
-const PredictButton: React.FC<IPredictButton> = ({ tradeExecutor }) => {
+const PredictButton: React.FC<IPredictButton> = ({
+  tradeExecutor,
+  setErrorMessage,
+}) => {
   const queryClient = useQueryClient();
   const { activeCardId } = useCardInteraction();
   const { market } = useMarketContext();
@@ -29,7 +35,11 @@ const PredictButton: React.FC<IPredictButton> = ({ tradeExecutor }) => {
     enabled: shouldFetch,
   });
 
-  const { data: getQuotesResult, isLoading: isLoadingQuotes } = useGetQuotes(
+  const {
+    data: getQuotesResult,
+    isLoading: isLoadingQuotes,
+    error: getQuotesError,
+  } = useGetQuotes(
     {
       account: tradeExecutor,
       processedMarkets: processedMarkets!,
@@ -48,6 +58,16 @@ const PredictButton: React.FC<IPredictButton> = ({ tradeExecutor }) => {
       queryKey: ["useTicksData", underlyingToken],
     });
   });
+
+  useEffect(() => {
+    if (getQuotesError) {
+      setErrorMessage(formatError(getQuotesError));
+    } else if (tradeExecutorPredict.error) {
+      setErrorMessage(formatError(tradeExecutorPredict.error));
+    } else {
+      setErrorMessage(undefined);
+    }
+  }, [getQuotesError, tradeExecutorPredict.error, setErrorMessage]);
 
   const handlePredict = () => {
     if (!getQuotesResult || !tradeExecutor || !underlyingTokenBalanceData)
