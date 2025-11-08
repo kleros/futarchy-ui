@@ -131,7 +131,11 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
           <Button
             type="submit"
             text="Withdraw"
-            isDisabled={withdrawFromTradeExecutor.isPending || isBalanceLoading}
+            isDisabled={
+              withdrawFromTradeExecutor.isPending ||
+              isBalanceLoading ||
+              balanceData?.value === 0n
+            }
             isLoading={withdrawFromTradeExecutor.isPending}
           />
         </Form>

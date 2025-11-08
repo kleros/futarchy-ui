@@ -110,3 +110,15 @@ export function formatBytecode(bytecode: string): Hex {
 
   return cleaned as Hex;
 }
+
+export function minBigIntArray(values: bigint[]): bigint {
+  if (values.length === 0) {
+    throw new Error("Cannot compute min of empty array");
+  }
+  return values.reduce((min, v) => (v < min ? v : min));
+}
+
+export function clamp(value: number, min: number, max: number): number {
+  if (Number.isNaN(value)) return min;
+  return Math.min(Math.max(value, min), max);
+}

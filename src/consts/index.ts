@@ -64,3 +64,5 @@ export const collateral = {
   address: sDaiAddress,
   decimals: 18,
 };
+export const DECIMALS = 18;
+export const VOLUME_MIN = 0.01;

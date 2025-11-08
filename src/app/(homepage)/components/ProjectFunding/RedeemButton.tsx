@@ -1,143 +1,51 @@
-import { useMemo, useState } from "react";
-
 import { Button } from "@kleros/ui-components-library";
-import { useQueryClient } from "@tanstack/react-query";
-import { waitForTransactionReceipt } from "@wagmi/core";
-import { useConfig } from "wagmi";
-
-import {
-  conditionalRouterAddress,
-  sDaiAddress,
-  useSimulateConditionalRouterRedeemConditionalToCollateral,
-  useWriteConditionalRouterRedeemConditionalToCollateral,
-} from "@/generated";
+import { Address } from "viem";
 
 import { useMarketContext } from "@/context/MarketContext";
-import { useAllowance } from "@/hooks/useAllowance";
-import { useBalance } from "@/hooks/useBalance";
-
-import ApproveButton from "@/components/ApproveButton";
+import { useRedeemToTradeExecutor } from "@/hooks/tradeWallet/useRedeemToTradeExecutor";
+import { useTokenBalance } from "@/hooks/useTokenBalance";
 
 import { isUndefined } from "@/utils";
 
-import { marketsParentOutcome } from "@/consts/markets";
+interface IRedeemButton {
+  tradeExecutor: Address;
+}
 
-const RedeemButton: React.FC = () => {
-  const wagmiConfig = useConfig();
-  const queryClient = useQueryClient();
-
-  const [isSending, setIsSending] = useState(false);
+const RedeemButton: React.FC<IRedeemButton> = ({ tradeExecutor }) => {
   const { market } = useMarketContext();
-  const { upToken, downToken, marketId } = market;
+  const { upToken, downToken, marketId, parentMarketOutcome } = market;
 
-  const { data: upBalance } = useBalance(upToken);
-  const { data: downBalance } = useBalance(downToken);
+  const { data: upBalanceData, isLoading: isLoadingUpBalance } =
+    useTokenBalance({ token: upToken, address: tradeExecutor });
+  const { data: downBalanceData, isLoading: isLoadingDownBalance } =
+    useTokenBalance({ token: downToken, address: tradeExecutor });
 
-  const { data: upAllowance } = useAllowance(upToken, conditionalRouterAddress);
-  const { data: downAllowance } = useAllowance(
-    downToken,
-    conditionalRouterAddress,
-  );
-
-  // we only redeem one direction, the app works so as the user only has stake in one direction.
-  // if a user happens to have both UP and DOWN tokens somehow, from Seer, they can claim twice.
-  const { outcomeIndex, amount, approvalConfig } = useMemo(() => {
-    if (
-      isUndefined(upBalance) ||
-      isUndefined(downBalance) ||
-      isUndefined(upAllowance) ||
-      isUndefined(downAllowance)
-    )
-      return {
-        outcomeIndex: undefined,
-        amount: undefined,
-        approvalConfig: undefined,
-      };
-
-    if (upBalance > 0) {
-      // 1 index is UP
-      return {
-        outcomeIndex: BigInt(1),
-        amount: upBalance,
-        approvalConfig:
-          upBalance > upAllowance
-            ? { token: upToken, name: "UP", amount: upBalance - upAllowance }
-            : undefined,
-      };
-    }
-    if (downBalance > 0) {
-      // 0 index is DOWN
-      return {
-        outcomeIndex: BigInt(0),
-        amount: downBalance,
-        approvalConfig:
-          downBalance > downAllowance
-            ? {
-                token: downToken,
-                name: "DOWN",
-                amount: downBalance - downAllowance,
-              }
-            : undefined,
-      };
-    }
-    return {
-      outcomeIndex: undefined,
-      amount: undefined,
-      approvalConfig: undefined,
-    };
-  }, [upBalance, upAllowance, downBalance, downAllowance, upToken, downToken]);
-
-  const {
-    data: redeemPositionConfig,
-    isLoading,
-    isError,
-  } = useSimulateConditionalRouterRedeemConditionalToCollateral({
-    query: {
-      enabled:
-        !isUndefined(outcomeIndex) &&
-        !isUndefined(amount) &&
-        isUndefined(approvalConfig),
-    },
-    args: [
-      sDaiAddress,
-      marketId,
-      [outcomeIndex ?? 0n],
-      [marketsParentOutcome],
-      [amount ?? 0n],
-    ],
-  });
-
-  const { writeContractAsync: redeemPosition } =
-    useWriteConditionalRouterRedeemConditionalToCollateral();
-
+  const redeemToTradeExecutor = useRedeemToTradeExecutor();
   const handleRedeem = async () => {
-    if (isUndefined(redeemPositionConfig)) return;
-    setIsSending(true);
+    if (
+      isUndefined(upBalanceData?.value) ||
+      isUndefined(downBalanceData?.value)
+    )
+      return;
 
-    const hash = await redeemPosition(redeemPositionConfig.request);
-    await waitForTransactionReceipt(wagmiConfig, {
-      hash,
-      confirmations: 2,
+    redeemToTradeExecutor.mutate({
+      tradeExecutor,
+      tokens: [upToken, downToken],
+      amounts: [upBalanceData.value, downBalanceData.value],
+      outcomeIndexes: [1n, 0n],
+      parentMarketOutcome: BigInt(parentMarketOutcome),
+      marketId,
     });
-    setIsSending(false);
   };
 
-  if (upBalance === 0n && downBalance === 0n) return null;
+  if (isLoadingUpBalance || isLoadingDownBalance) return null;
 
-  return approvalConfig ? (
-    <ApproveButton
-      {...approvalConfig}
-      spender={conditionalRouterAddress}
-      callback={() => {
-        queryClient.invalidateQueries();
-      }}
-    />
-  ) : (
+  return (
     <Button
       text="Claim"
       onPress={handleRedeem}
-      isLoading={isLoading || isSending}
-      isDisabled={isLoading || isError || isSending}
+      isLoading={redeemToTradeExecutor.isPending}
+      isDisabled={redeemToTradeExecutor.isPending}
     />
   );
 };

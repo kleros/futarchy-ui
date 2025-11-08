@@ -23,8 +23,7 @@ import ProjectFunding from "./components/ProjectFunding";
 import { TradeWallet } from "./components/TradeWallet";
 
 export default function Home() {
-  const { data: chartData, isLoading: isLoadingChartData } =
-    useChartData(markets);
+  const { data: chartData } = useChartData(markets);
 
   const { data: winningOutcomes } = useReadGnosisRouterGetWinningOutcomes({
     args: [parentConditionId],
@@ -53,9 +52,7 @@ export default function Home() {
                 {markets.map((market, i) => (
                   <MarketContextProvider
                     key={market.marketId}
-                    lastDataPoint={chartData?.[i][market.name].data.at(-1)}
                     selected={winningOutcomes?.at(i)}
-                    isLoadingChartData={isLoadingChartData}
                     {...market}
                   >
                     <ProjectFunding key={market.marketId} />

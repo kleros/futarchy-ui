@@ -6,9 +6,11 @@ import { useToggle } from "react-use";
 import { type Address } from "viem";
 
 import { useTokenBalance } from "@/hooks/useTokenBalance";
-import { useTokenBalances } from "@/hooks/useTokenBalances";
+import { useTokensBalances } from "@/hooks/useTokenBalances";
 
 import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
+
+import { isUndefined } from "@/utils";
 
 import { collateral } from "@/consts";
 import { markets } from "@/consts/markets";
@@ -32,17 +34,16 @@ const Mint: React.FC<IMint> = ({ tradeExecutor }) => {
 
   const [isSplit, toggleIsSplit] = useToggle(true);
 
-  const marketBalances = useTokenBalances(
-    markets.map(({ underlyingToken }) => underlyingToken),
+  const { data: marketBalances } = useTokensBalances(
     tradeExecutor,
+    markets.map(({ underlyingToken }) => underlyingToken),
   );
 
   const minMarketBalance = useMemo<bigint>(() => {
-    if (typeof marketBalances.data !== "undefined") {
-      if (marketBalances.data.some(({ result }) => typeof result !== "bigint"))
+    if (!isUndefined(marketBalances)) {
+      if (marketBalances.some((result) => typeof result !== "bigint"))
         return 0n;
-      const flatResults = marketBalances.data.map(({ result }) => result);
-      const minResult = flatResults.reduce((acc, curr) =>
+      const minResult = marketBalances.reduce((acc, curr) =>
         curr! < acc! ? curr : acc,
       );
       return minResult as bigint;
@@ -118,7 +119,7 @@ const Mint: React.FC<IMint> = ({ tradeExecutor }) => {
                     <ProjectAmount
                       key={name}
                       {...{ name, color }}
-                      balance={marketBalances?.data?.[i].result as bigint}
+                      balance={marketBalances?.[i]}
                       amount={((): bigint => {
                         if (!isSplit) {
                           if (minMarketBalance) {

@@ -27,10 +27,12 @@ export interface IMarket {
   upToken: Address;
   downToken: Address;
   underlyingToken: Address;
+  invalidToken: Address;
   minValue: number;
   maxValue: number;
   precision: number;
   marketId: Address;
+  parentMarketOutcome: number;
   details: IDetails;
   conditionId: `0x${string}`;
 }
@@ -42,10 +44,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x0ee25eb2e22c01fa832dd5fea5637fba4cd5e870",
     downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
     underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
+    invalidToken: "0x11463F43181eB643bA8a584756CCB27a9B8f7B98",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
+    parentMarketOutcome: 0,
     conditionId:
       "0x3d963acd72df546f58bf4ea76fda6957c830e6e3f8965517c396fc76dc2c08a3",
     details: {
@@ -63,10 +67,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x028ec9938471bbad5167c2e5281144a94d1acbe9",
     downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
     underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
+    invalidToken: "0x971bd2446cc32dFa26410Cc46978AA0c371Bc48e",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
+    parentMarketOutcome: 1,
     conditionId:
       "0xa4cc97a4e4f6e02c546a5b3bb49e2c411dcb4c6dcd478cef9cd0c86605c59878",
     details: {
@@ -84,10 +90,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xad2248b8eaa3e3a405c1ba79dd436947f8b427df",
     downToken: "0xdd510abc6a848662371c3455717949035cc24019",
     underlyingToken: "0xfb06c25e59302d8a0318d6df41a2f29deeea1c8a",
+    invalidToken: "0x43D6E82de1E64531b5E47891b186227edA566344",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0xfdd8af90af2722d5fe39adf1002fbd069b8a76c0",
+    parentMarketOutcome: 2,
     conditionId:
       "0xe97f19928d4143377d3cb97043c90408ccb9c51788447f42d2df9d65694c8171",
     details: {
@@ -104,10 +112,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xfa020fcd05e0b91dae83a2a08c5b5533edf8c851",
     downToken: "0x372d0798ffe8c3aa982a15258c0fea22c6a768df",
     underlyingToken: "0xe85d556d1aaae2f6027336e468e9c981251a4bef",
+    invalidToken: "0x3Aa738505C22e670a074e60566bD7264e7D682B1",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x1f2e76d66047e7f8e0deea373a0c04ffecab31df",
+    parentMarketOutcome: 3,
     conditionId:
       "0xdc8f8277da182ee2d5293c754a1cfb8d3761720259cf17a65df61b7cb6983721",
     details: {
@@ -124,10 +134,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x7ee3806d16dc6a76bef2b11880b70cc70f74fa1a",
     downToken: "0x34f8572eab463606a014c37ff68b78ac9361cacc",
     underlyingToken: "0xb3933fd994af5db7ae985a0d62ed2dda918a839b",
+    invalidToken: "0x12c91f543a48F58e3E54c398f19BEc4b62aFD617",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x2338ca7d59b7e15bd03dd81cf5f5bb59b6c6c6d4",
+    parentMarketOutcome: 4,
     conditionId:
       "0xf857ab39ef39d99f00d38ab07a5676406dfd5382f6d2177c44642e147d8dd0ad",
     details: {
@@ -145,10 +157,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x37e70bae5e87327feece73a7c227446571f92137",
     downToken: "0x31e3d82a613e5aeea7c3a65c3d657cacaaaf2674",
     underlyingToken: "0x6d0407b5ae419fdd92ffdc64abf04c5f28950e02",
+    invalidToken: "0xe54422171C40aA14B0fc935DEA7AFb85BE15357d",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x9a274ea86665d872fc58c8f26fd97a18b844c6ac",
+    parentMarketOutcome: 5,
     conditionId:
       "0x8054990ae8221c8a08581381a0d2e3e5f23144a4d18a2398858be52dd94cc8c9",
     details: {
@@ -166,10 +180,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x53a9011c5570bfb8148954c4f49a6625dc44077b",
     downToken: "0x64974d3bf944fafec6fa19a900f3679a716b3a86",
     underlyingToken: "0x20025021e440edd39d486f3c6a1d7adb9c269faf",
+    invalidToken: "0x406B8Ee2DF07c644414E852542dAB98BdDf39234",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0xc25af7d4a5cb36bb3ce9faf652a5f7f989a1d57a",
+    parentMarketOutcome: 6,
     conditionId:
       "0xe35db6fb9992ab689e21751f036ccc9a8548b71dec3089874cf4a19a13cd34bb",
     details: {
@@ -187,10 +203,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xaed0fad91e7149ec84bb4d0a2a77be819169275f",
     downToken: "0x044e1b6d8aacbda5699423578bd200484f7473c3",
     underlyingToken: "0x67d0f938ea12e7e30b8ccc24dd031d656cc3927d",
+    invalidToken: "0xA9099Baa3b74c1d602aCe8CeaC5933a16A0456C5",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0xd31d05158722f64b6a49e25bccc47d3203eecbe9",
+    parentMarketOutcome: 7,
     conditionId:
       "0x3c102db4f274983b648bd27a4092866e1b81dbc08b8738a5c694a8d8c3948a81",
     details: {
@@ -208,10 +226,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x9d64a3e7e55880f3c8f9c584ed32397bb6f0b9f6",
     downToken: "0xe9d025d3cbd783d6a92626b650a32f7cbaca0e7d",
     underlyingToken: "0x58ce7a53abeca1db90cec0e6b7dcbe3a36d986c4",
+    invalidToken: "0xcA4c82fd178aaf4b72ECe35774ce04B7Aa2E5361",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x13d48a73811c01f574e1bfa4c58b7d95d2f590e4",
+    parentMarketOutcome: 8,
     conditionId:
       "0x2dcf754f36437ea0c298e5d27a0f3904dc2335a6e239b15a104f3ca7787c5926",
     details: {
@@ -229,10 +249,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x0c569fbc021119b778ea160efd718a5d592ef46c",
     downToken: "0xd8d2dfe1912239451b5a4a0462006e95393f2151",
     underlyingToken: "0x72ec9aade867b5b41705c6a83f66bc56485669b5",
+    invalidToken: "0xFa2e53b2E33309CEE9255b440f143308F92BbA83",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x878a332b5efc0a4bf983036beece050352baa73d",
+    parentMarketOutcome: 9,
     conditionId:
       "0xb223aad8405c321b761e3cba872e556c1de3a8b552a38249d626bc5aff7c6ba2",
     details: {
@@ -250,10 +272,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xf3c17e909bd1f9367ecdc786d137465d7ee96b6a",
     downToken: "0xf99be182b6b0e6d994509ecdced281b94100435f",
     underlyingToken: "0x2b3a8ac53ba42da13f542a867d2859642fb1db44",
+    invalidToken: "0x94b6580034e1FFf008Ac8370dF69E180740469b0",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0xee4a77447069f32f555f3d75aaba18a4acb54ac4",
+    parentMarketOutcome: 10,
     conditionId:
       "0x715f9e8ccc373f85e2f9ec02bba8d23c5f87090b729750ca8adac5b0f969213e",
     details: {
@@ -271,10 +295,12 @@ export const markets: Array<IMarket> = [
     upToken: "0x850d2ffa4475296cfbbd76247894a773e3b1be6c",
     downToken: "0xb28c716f63b0dd272f62e25765a914baeebab8c2",
     underlyingToken: "0x71c3df5edcab48cfb6a1a99255eff063f33b6265",
+    invalidToken: "0xb3cE80d6b30DcC4d605B290f4dC1Fc3B8C2bcC3b",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x38a2923cc391b9cd926e5a2d07462dc7d189c407",
+    parentMarketOutcome: 11,
     conditionId:
       "0x27f341cdecacbd7ff0e4bb7b28add74ddaa388ff9f16bc749e2828a71fe6a5f6",
     details: {
@@ -292,10 +318,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xe9427a7a32daad2d29db2aad809b2a44060d8fc8",
     downToken: "0x75b5cd86828f7c9009e30619a83b1b2da67f1342",
     underlyingToken: "0xf52e0e144b73a0d5748bc53667efe3ba62fe5695",
+    invalidToken: "0x69641B6664a493ecF467D4D9aAB595A8b9Cc4a66",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0xc0dab34c6c2008391bdc742cec0bd0afb60d4d59",
+    parentMarketOutcome: 12,
     conditionId:
       "0x2d2ee6e67d4ffa2c2a14898a29d0afe3d3cdd8ad362811aad64770a90553cb3a",
     details: {
@@ -313,10 +341,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xe080c03ad6bc9f8fd5b45b5d3bf14ebcfa1ec0b5",
     downToken: "0x76cce8491785789c2c5542f043ec6c35b12cd909",
     underlyingToken: "0x1086a95c224dd586809a7f4d875b4f09d2ac9290",
+    invalidToken: "0x4F2b7EC3aAC8Bb0Ffb272a4B27B758D2FFC31bc6",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0xa7cf69c4c93d2f6811a394e92320979c3cf86b37",
+    parentMarketOutcome: 13,
     conditionId:
       "0x6bc6c6fd532a02ec128e7c8dfe3e496295f677c861405a88b7da503f1882eef8",
     details: {
@@ -334,10 +364,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xfa82984fc8ddeb71fdb2e6e471f30995178ad5f0",
     downToken: "0x5d528dbec7e37927d8af41bfb1b54e7641dd3ccb",
     underlyingToken: "0x11ed86c399f455819f495cda1256e9b52afd0971",
+    invalidToken: "0x756de0795875f925AC95ba37472D26bC4375c6a4",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x96638d67ac5bc5f8223f9e2d60e92f4d8dcf3147",
+    parentMarketOutcome: 14,
     conditionId:
       "0x6e5b27306498d2917cdde6a3ea4791cd5a6fe8d8bf33d491c97524c431eda325",
     details: {
@@ -355,10 +387,12 @@ export const markets: Array<IMarket> = [
     upToken: "0xf8313845248f2392a39bdcd50be0781c7cf497c1",
     downToken: "0x3befdfbd7c2a7139acafc3005369d30ff2cd8f9a",
     underlyingToken: "0x78c2edb5639af0ed4351f001c728c9026820887e",
+    invalidToken: "0x8eB59F4590fF6a0037a159ea1601D9d309aEa598",
     minValue: 0,
     maxValue: 100,
     precision: 1,
     marketId: "0x002c70343ddef063d0ad8da91104934318800d30",
+    parentMarketOutcome: 15,
     conditionId:
       "0x2b9e73d1da8dc051ffe4972114f59e61ad1bfd65fda93d88bcfb6644ffb07f4b",
     details: {

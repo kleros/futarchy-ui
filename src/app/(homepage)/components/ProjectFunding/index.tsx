@@ -2,9 +2,11 @@ import React from "react";
 
 import { Card, Accordion, NumberField } from "@kleros/ui-components-library";
 import clsx from "clsx";
+import { useAccount } from "wagmi";
 
 import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
+import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
 
 import { isUndefined } from "@/utils";
 
@@ -13,7 +15,7 @@ import PositionValue from "./PositionValue";
 import PredictButton from "./PredictButton";
 import PredictionSlider from "./PredictionSlider";
 
-const ProjectFunding: React.FC = ({}) => {
+const ProjectFunding: React.FC = () => {
   const { setActiveCardId } = useCardInteraction();
   const {
     isUpPredict,
@@ -35,6 +37,12 @@ const ProjectFunding: React.FC = ({}) => {
     minValue,
     maxValue,
   } = market;
+
+  const { address } = useAccount();
+  const { data: checkTradeExecutorData } =
+    useCheckTradeExecutorCreated(address);
+
+  const tradeExecutor = checkTradeExecutorData?.predictedAddress;
 
   return (
     <Card
@@ -77,7 +85,7 @@ const ProjectFunding: React.FC = ({}) => {
               }
               onChange={(e) => setPrediction(e * precision)}
             />
-            <PredictButton />
+            <PredictButton tradeExecutor={tradeExecutor!} />
           </div>
           <label
             className={clsx(
@@ -97,7 +105,10 @@ const ProjectFunding: React.FC = ({}) => {
       </div>
       <div className="flex w-full flex-col">
         <div className="flex w-full items-center justify-between gap-2">
-          <PositionValue {...{ upToken, downToken, underlyingToken }} />
+          <PositionValue
+            {...{ upToken, downToken, underlyingToken }}
+            tradeExecutor={tradeExecutor!}
+          />
           {/* <OpenOrders /> */}
         </div>
         <Accordion

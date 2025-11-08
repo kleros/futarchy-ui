@@ -1,128 +1,68 @@
+"use client";
 import React from "react";
-import { useMemo } from "react";
 
-import { Button, Modal } from "@kleros/ui-components-library";
-import { useToggle } from "react-use";
-import { formatUnits } from "viem";
+import { Button } from "@kleros/ui-components-library";
+import { useQueryClient } from "@tanstack/react-query";
+import { Address } from "viem";
 
-import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
-import { useBalance } from "@/hooks/useBalance";
-import { useMarketQuote } from "@/hooks/useMarketQuote";
+import { useTradeExecutorPredict } from "@/hooks/tradeWallet/useTradeExecutorPredict";
+import { useGetQuotes } from "@/hooks/useGetQuotes";
+import { useProcessMarkets } from "@/hooks/useProcessMarkets";
+import { useTokenBalance } from "@/hooks/useTokenBalance";
 
-import LightButton from "@/components/LightButton";
+interface IPredictButton {
+  tradeExecutor: Address;
+}
 
-import CloseIcon from "@/assets/svg/close-icon.svg";
+const PredictButton: React.FC<IPredictButton> = ({ tradeExecutor }) => {
+  const queryClient = useQueryClient();
 
-import { isUndefined } from "@/utils";
+  const { market } = useMarketContext();
 
-import DefaultPredictButton from "./PredictPopup/ActionButtons/DefaultPredictButton";
-import TradeButton from "./PredictPopup/ActionButtons/TradeButton";
+  const { underlyingToken } = market;
 
-import PredictPopup from "./PredictPopup";
+  const processedMarkets = useProcessMarkets({ tradeExecutor });
 
-const PredictButton: React.FC = () => {
-  const [isOpen, toggleIsOpen] = useToggle(false);
-  const [isPopUpOpen, toggleIsPopUpOpen] = useToggle(false);
+  const { data: getQuotesResult, isLoading: isLoadingQuotes } = useGetQuotes({
+    account: tradeExecutor!,
+    processedMarkets: processedMarkets!,
+  });
 
-  const { setActiveCardId } = useCardInteraction();
+  const { data: underlyingTokenBalanceData, isLoading: isLoadingBalance } =
+    useTokenBalance({
+      address: tradeExecutor,
+      token: underlyingToken,
+    });
 
-  const {
-    market,
-    isUpPredict,
-    differenceBetweenRoutes,
-    isLoading: isLoadingComplexRoute,
-    hasLiquidity,
-    refetchQuotes,
-  } = useMarketContext();
+  const tradeExecutorPredict = useTradeExecutorPredict(() => {
+    queryClient.refetchQueries({
+      queryKey: ["useTicksData", underlyingToken],
+    });
+  });
 
-  const { upToken, downToken, underlyingToken, marketId } = market;
-
-  const { data: underlyingBalance } = useBalance(underlyingToken);
-  const { data: upBalance } = useBalance(upToken);
-  const { data: downBalance } = useBalance(downToken);
-
-  const needsSelling = useMemo(
-    () =>
-      isUpPredict
-        ? !isUndefined(downBalance) && downBalance > 0
-        : !isUndefined(upBalance) && upBalance > 0,
-    [isUpPredict, downBalance, upBalance],
-  );
-
-  const sellToken = isUpPredict ? downToken : upToken;
-  const sellTokenBalance = isUpPredict ? downBalance : upBalance;
-  const { data: sellQuote } = useMarketQuote(
-    underlyingToken,
-    sellToken,
-    sellTokenBalance ? formatUnits(sellTokenBalance, 18) : "1",
-  );
-
-  // if no previous position, carry with the default behaviour
-  if (!needsSelling)
-    return (
-      <>
-        {differenceBetweenRoutes > 0 ? (
-          <Button
-            text={"Predict"}
-            aria-label="Predict Button"
-            isDisabled={
-              !hasLiquidity ||
-              isUndefined(underlyingBalance) ||
-              underlyingBalance === 0n ||
-              isLoadingComplexRoute
-            }
-            isLoading={isLoadingComplexRoute}
-            onPress={async () => {
-              setActiveCardId(marketId);
-              toggleIsPopUpOpen();
-            }}
-          />
-        ) : (
-          <DefaultPredictButton />
-        )}
-        <PredictPopup isOpen={isPopUpOpen} toggleIsOpen={toggleIsPopUpOpen} />
-      </>
-    );
-
-  // if previous prediction present, liquidate that to set a new prediction
+  const handlePredict = () => {
+    if (!getQuotesResult || !tradeExecutor || !underlyingTokenBalanceData)
+      return;
+    tradeExecutorPredict.mutate({
+      market,
+      amount: underlyingTokenBalanceData?.value ?? 0n,
+      tradeExecutor,
+      getQuotesResult,
+    });
+  };
   return (
-    <>
-      <Button
-        text="Predict"
-        onPress={toggleIsOpen}
-        isDisabled={!hasLiquidity}
-      />
-      <Modal
-        className="relative h-fit w-max overflow-x-hidden p-6 py-8"
-        onOpenChange={toggleIsOpen}
-        {...{ isOpen }}
-      >
-        <LightButton
-          className="absolute top-4 right-4 p-1"
-          text=""
-          icon={
-            <CloseIcon className="[&_path]:stroke-klerosUIComponentsSecondaryText size-4" />
-          }
-          onPress={toggleIsOpen}
-        />
-        <div className="flex size-full flex-col items-center justify-center gap-4 pt-2">
-          <p className="text-klerosUIComponentsPrimaryText text-center">
-            You have a previous prediction with {isUpPredict ? "DOWN" : "UP"}{" "}
-            tokens, <br />
-            Sell those tokens to make a new prediction.
-          </p>
-          <TradeButton
-            quote={sellQuote}
-            sellToken={sellToken}
-            setNextStep={() => {
-              toggleIsOpen();
-              refetchQuotes();
-            }}
-          />
-        </div>
-      </Modal>
-    </>
+    <Button
+      text={"Predict"}
+      aria-label="Predict Button"
+      isDisabled={
+        isLoadingBalance || isLoadingQuotes || tradeExecutorPredict.isPending
+      }
+      isLoading={
+        isLoadingBalance || isLoadingQuotes || tradeExecutorPredict.isPending
+      }
+      onPress={handlePredict}
+    />
   );
 };
 export default PredictButton;

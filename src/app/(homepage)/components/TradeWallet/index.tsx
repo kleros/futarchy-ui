@@ -12,11 +12,13 @@ import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { collateral } from "@/consts";
 
 import { DepositInterface } from "./DepositInterface";
+import { RedeemParentsInterface } from "./RedeemInterface";
 import { WithdrawInterface } from "./WithdrawInterface";
 
 export const TradeWallet = () => {
   const [isDepositOpen, toggleIsDepositOpen] = useToggle(false);
   const [isWithdrawOpen, toggleIsWithdrawOpen] = useToggle(false);
+  const [isRedeemOpen, toggleIsRedeemOpen] = useToggle(false);
 
   const { address: account, chain } = useAccount();
   const { data: checkTradeExecutorResult } =
@@ -96,7 +98,7 @@ export const TradeWallet = () => {
                 />
 
                 <Button
-                  // onClick={() => setIsDepositDialogOpen(true)}
+                  onClick={() => toggleIsRedeemOpen()}
                   variant="secondary"
                   small
                   text="Redeem outcome tokens"
@@ -132,6 +134,14 @@ export const TradeWallet = () => {
         {...{
           isOpen: isWithdrawOpen,
           toggleIsOpen: toggleIsWithdrawOpen,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+          tradeExecutor: checkTradeExecutorResult?.predictedAddress!,
+        }}
+      />
+      <RedeemParentsInterface
+        {...{
+          isOpen: isRedeemOpen,
+          toggleIsOpen: toggleIsRedeemOpen,
           // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           tradeExecutor: checkTradeExecutorResult?.predictedAddress!,
         }}
