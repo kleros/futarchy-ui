@@ -1,16 +1,11 @@
 import { Card } from "@kleros/ui-components-library";
-import { useAccount } from "wagmi";
 
-import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
+import { useTradeWallet } from "@/context/TradeWalletContext";
 
 import Mint from "./Mint";
 
 const ParticipateSection: React.FC = () => {
-  const { address } = useAccount();
-  const { data: checkTradeExecutorData } =
-    useCheckTradeExecutorCreated(address);
-
-  const tradeExecutor = checkTradeExecutorData?.predictedAddress;
+  const { tradeExecutor } = useTradeWallet();
 
   return (
     <div className="flex w-full flex-col gap-4">

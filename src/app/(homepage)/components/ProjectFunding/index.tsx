@@ -2,11 +2,10 @@ import React from "react";
 
 import { Card, Accordion, NumberField } from "@kleros/ui-components-library";
 import clsx from "clsx";
-import { useAccount } from "wagmi";
 
 import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
-import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
+import { useTradeWallet } from "@/context/TradeWalletContext";
 
 import { isUndefined } from "@/utils";
 
@@ -38,11 +37,7 @@ const ProjectFunding: React.FC = () => {
     maxValue,
   } = market;
 
-  const { address } = useAccount();
-  const { data: checkTradeExecutorData } =
-    useCheckTradeExecutorCreated(address);
-
-  const tradeExecutor = checkTradeExecutorData?.predictedAddress;
+  const { tradeExecutor } = useTradeWallet();
 
   return (
     <Card

@@ -6,6 +6,7 @@ import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 
 import { CardInteractionProvider } from "@/context/CardInteractionContext";
 import MarketContextProvider from "@/context/MarketContext";
+import { TradeWalletProvider } from "@/context/TradeWalletContext";
 import { useChartData } from "@/hooks/useChartData";
 
 import EnsureChain from "@/components/EnsureChain";
@@ -46,20 +47,24 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           <EnsureChain>
             <TradeWallet />
-            <ParticipateSection />
-            <CardInteractionProvider>
-              <div className="mt-8 flex flex-col gap-4">
-                {markets.map((market, i) => (
-                  <MarketContextProvider
-                    key={market.marketId}
-                    selected={winningOutcomes?.at(i)}
-                    {...market}
-                  >
-                    <ProjectFunding key={market.marketId} />
-                  </MarketContextProvider>
-                ))}
-              </div>
-            </CardInteractionProvider>
+
+            <TradeWalletProvider>
+              <ParticipateSection />
+
+              <CardInteractionProvider>
+                <div className="mt-8 flex flex-col gap-4">
+                  {markets.map((market, i) => (
+                    <MarketContextProvider
+                      key={market.marketId}
+                      selected={winningOutcomes?.at(i)}
+                      {...market}
+                    >
+                      <ProjectFunding key={market.marketId} />
+                    </MarketContextProvider>
+                  ))}
+                </div>
+              </CardInteractionProvider>
+            </TradeWalletProvider>
           </EnsureChain>
 
           <AdvancedSection />

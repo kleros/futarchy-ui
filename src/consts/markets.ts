@@ -1,8 +1,7 @@
 import { Address } from "viem";
 
-export const projectsChosen = 1;
-
-export const marketsParentOutcome = 1n;
+// TODO: update to latest
+export const projectsChosen = 6;
 
 export const parentMarket: Address =
   "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";

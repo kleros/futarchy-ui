@@ -31,7 +31,7 @@ const AdvancedSection: React.FC = () => {
             rel="noreferrer noopener"
             className="text-klerosUIComponentsPrimaryBlue items-center text-sm"
           >
-            Check it out <ExternalArrow className="mml-2 inline size-4" />
+            Check it out <ExternalArrow className="ml-2 inline size-4" />
           </Link>
         </p>
       </div>

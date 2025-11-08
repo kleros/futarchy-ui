@@ -33,6 +33,7 @@ interface IMarketContext {
   hasLiquidity: boolean | undefined;
   isResolved: boolean;
   isParentResolved: boolean;
+  // if this market was selected
   selected?: boolean;
   predictedPrice: number;
 }
