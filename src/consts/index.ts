@@ -1,4 +1,4 @@
-import { type Abi } from "viem";
+import { Address, type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
 import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
@@ -60,7 +60,7 @@ export const GNOSIS_CREATE_CALL = "0xBE202e30F21083619F9e8e62440CDe71903b94C4";
 export const SALT_KEY = "TradeExecutorV1";
 export const collateral = {
   // sDAI
-  address: "0xaf204776c7245bF4147c2612BF6e5972Ee483701",
+  address: "0xaf204776c7245bF4147c2612BF6e5972Ee483701" as Address,
   decimals: 18,
 };
 export const DECIMALS = 18;
