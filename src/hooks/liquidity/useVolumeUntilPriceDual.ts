@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { TickMath, encodeSqrtRatioX96 } from "@uniswap/v3-sdk";
 import { Address, formatUnits } from "viem";
 
@@ -158,36 +159,47 @@ export function getVolumeUntilPriceDual(
  * @returns "{collateral, outcome}" - Gives the amount of collateral and outcome volume/token
  *                                  you would need to reach the target price, whether it's buy or sell
  */
+
 export function useVolumeUntilPriceDual(
   underlying: Address,
   outcome: Address,
   swapType: "buy" | "sell",
   targetPrice: number | undefined,
+  enabled = true,
 ) {
   const { data: ticksByPool } = useTicksData(underlying, outcome);
-  if (
-    !ticksByPool ||
-    isUndefined(targetPrice) ||
-    targetPrice > 1 ||
-    targetPrice < 0
-  ) {
-    return;
-  }
 
-  const { ticks, poolInfo } = Object.values(ticksByPool)[0];
-  const currentPrice = Number(
-    tickToPrice(poolInfo.tick)[
-      isTwoStringsEqual(poolInfo.token0, outcome) ? 0 : 1
+  return useQuery({
+    queryKey: [
+      "volumeUntilPriceDual",
+      underlying,
+      outcome,
+      swapType,
+      targetPrice,
     ],
-  );
-  if (currentPrice === targetPrice) {
-    return;
-  }
-  return getVolumeUntilPriceDual(
-    poolInfo,
-    ticks,
-    targetPrice,
-    outcome,
-    swapType,
-  );
+    enabled:
+      !!ticksByPool &&
+      !isUndefined(targetPrice) &&
+      targetPrice >= 0 &&
+      targetPrice <= 1 &&
+      enabled,
+    queryFn: async () => {
+      const { ticks, poolInfo } = Object.values(ticksByPool!)[0];
+      const currentPrice = Number(
+        tickToPrice(poolInfo.tick)[
+          isTwoStringsEqual(poolInfo.token0, outcome) ? 0 : 1
+        ],
+      );
+      if (currentPrice === targetPrice)
+        return { outcomeVolume: 0, collateralVolume: 0 };
+
+      return getVolumeUntilPriceDual(
+        poolInfo,
+        ticks,
+        targetPrice!,
+        outcome,
+        swapType,
+      );
+    },
+  });
 }

@@ -5,6 +5,7 @@ import { Button } from "@kleros/ui-components-library";
 import { useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 
+import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
 import { useTradeExecutorPredict } from "@/hooks/tradeWallet/useTradeExecutorPredict";
 import { useGetQuotes } from "@/hooks/useGetQuotes";
@@ -17,17 +18,24 @@ interface IPredictButton {
 
 const PredictButton: React.FC<IPredictButton> = ({ tradeExecutor }) => {
   const queryClient = useQueryClient();
-
+  const { activeCardId } = useCardInteraction();
   const { market } = useMarketContext();
 
-  const { underlyingToken } = market;
+  const { underlyingToken, marketId } = market;
+  const shouldFetch = activeCardId === marketId;
 
-  const processedMarkets = useProcessMarkets({ tradeExecutor });
-
-  const { data: getQuotesResult, isLoading: isLoadingQuotes } = useGetQuotes({
-    account: tradeExecutor!,
-    processedMarkets: processedMarkets!,
+  const processedMarkets = useProcessMarkets({
+    tradeExecutor,
+    enabled: shouldFetch,
   });
+
+  const { data: getQuotesResult, isLoading: isLoadingQuotes } = useGetQuotes(
+    {
+      account: tradeExecutor,
+      processedMarkets: processedMarkets!,
+    },
+    shouldFetch,
+  );
 
   const { data: underlyingTokenBalanceData, isLoading: isLoadingBalance } =
     useTokenBalance({

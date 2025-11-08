@@ -25,10 +25,12 @@ export type ProcessedMarket = {
 
 interface IProcessMarkets {
   tradeExecutor?: Address;
+  enabled?: boolean;
 }
 
 export const useProcessMarkets = ({
   tradeExecutor,
+  enabled = true,
 }: IProcessMarkets): ProcessedMarket[] | undefined => {
   const { predictedPrice, market, upPrice, downPrice } = useMarketContext();
   const { underlyingToken, upToken, downToken } = market;
@@ -50,18 +52,20 @@ export const useProcessMarkets = ({
   const downDirection = 1 - predictedPrice > downPrice ? "buy" : "sell";
 
   // gives us the amount of collateral
-  const upMarketVolumeData = useVolumeUntilPriceDual(
+  const { data: upMarketVolumeData } = useVolumeUntilPriceDual(
     underlyingToken,
     upToken,
     upDirection,
     predictedPrice,
+    enabled,
   );
 
-  const downMarketVolumeData = useVolumeUntilPriceDual(
+  const { data: downMarketVolumeData } = useVolumeUntilPriceDual(
     underlyingToken,
     downToken,
     downDirection,
     1 - predictedPrice,
+    enabled,
   );
 
   const isReady =
