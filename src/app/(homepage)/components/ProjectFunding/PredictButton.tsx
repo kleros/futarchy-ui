@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button } from "@kleros/ui-components-library";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,6 +26,8 @@ const PredictButton: React.FC<IPredictButton> = ({
   const queryClient = useQueryClient();
   const { activeCardId } = useCardInteraction();
   const { market } = useMarketContext();
+
+  const [pendingPrediction, setPendingPrediction] = useState(false);
 
   const { underlyingToken, marketId } = market;
   const shouldFetch = activeCardId === marketId;
@@ -54,6 +56,7 @@ const PredictButton: React.FC<IPredictButton> = ({
     });
 
   const tradeExecutorPredict = useTradeExecutorPredict(() => {
+    setErrorMessage(undefined);
     queryClient.refetchQueries({
       queryKey: ["useTicksData", underlyingToken],
     });
@@ -69,26 +72,42 @@ const PredictButton: React.FC<IPredictButton> = ({
     }
   }, [getQuotesError, tradeExecutorPredict.error, setErrorMessage]);
 
+  // send the transaction once the loading is done and user had clicked on predict
+  useEffect(() => {
+    if (pendingPrediction && getQuotesResult && underlyingTokenBalanceData) {
+      tradeExecutorPredict.mutate({
+        market,
+        amount: underlyingTokenBalanceData.value ?? 0n,
+        tradeExecutor,
+        getQuotesResult,
+      });
+      setPendingPrediction(false);
+    }
+  }, [pendingPrediction, getQuotesResult, underlyingTokenBalanceData]);
+
   const handlePredict = () => {
-    if (!getQuotesResult || !tradeExecutor || !underlyingTokenBalanceData)
-      return;
-    tradeExecutorPredict.mutate({
-      market,
-      amount: underlyingTokenBalanceData?.value ?? 0n,
-      tradeExecutor,
-      getQuotesResult,
-    });
+    if (!tradeExecutor || !underlyingTokenBalanceData) return;
+
+    if (getQuotesResult) {
+      // Quotes are already available, go straight to txn
+      tradeExecutorPredict.mutate({
+        market,
+        amount: underlyingTokenBalanceData.value ?? 0n,
+        tradeExecutor,
+        getQuotesResult,
+      });
+    } else {
+      // Quotes still loading, wait until available
+      setPendingPrediction(true);
+    }
   };
+
   return (
     <Button
       text={"Predict"}
       aria-label="Predict Button"
-      isDisabled={
-        isLoadingBalance || isLoadingQuotes || tradeExecutorPredict.isPending
-      }
-      isLoading={
-        isLoadingBalance || isLoadingQuotes || tradeExecutorPredict.isPending
-      }
+      isDisabled={tradeExecutorPredict.isPending || pendingPrediction}
+      isLoading={tradeExecutorPredict.isPending || pendingPrediction}
       onPress={handlePredict}
     />
   );
