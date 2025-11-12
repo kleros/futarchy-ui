@@ -110,13 +110,14 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     if (
       isUndefined(prediction) &&
       !isUndefined(marketEstimate) &&
-      isFinite(marketEstimate)
+      isFinite(marketEstimate) &&
+      !isUndefined(currentPrices)
     ) {
       setPrediction(
         Math.round(marketEstimate * market.precision) / market.precision,
       );
     }
-  }, [prediction, marketEstimate, market.precision]);
+  }, [prediction, marketEstimate, market.precision, currentPrices]);
 
   const showEstimateVariant = useMemo(() => {
     if (isUndefined(prediction) || !hasLiquidity) return false;
