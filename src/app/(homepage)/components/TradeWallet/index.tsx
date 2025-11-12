@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { Button, Card } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import Link from "next/link";
@@ -7,13 +9,17 @@ import { useAccount } from "wagmi";
 
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
+import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 
 import WithHelpTooltip from "@/components/WithHelpTooltip";
 
 import ExternalArrow from "@/assets/svg/external-arrow.svg";
 
+import { isUndefined } from "@/utils";
+
 import { collateral } from "@/consts";
+import { parentConditionId } from "@/consts/markets";
 
 import { DepositInterface } from "./DepositInterface";
 import { RedeemParentsInterface } from "./RedeemInterface";
@@ -39,6 +45,16 @@ export const TradeWallet = () => {
     : 0;
 
   const blockExplorerUrl = chain?.blockExplorers?.default?.url;
+
+  const { data: parentWinningOutcomes } =
+    useGetWinningOutcomes(parentConditionId);
+  const isParentResolved = useMemo(
+    () =>
+      isUndefined(parentWinningOutcomes)
+        ? false
+        : parentWinningOutcomes.some((val) => val === true),
+    [parentWinningOutcomes],
+  );
 
   return (
     <>
@@ -111,12 +127,14 @@ export const TradeWallet = () => {
                 onPress={toggleIsWithdrawOpen}
               />
 
-              <Button
-                onClick={() => toggleIsRedeemOpen()}
-                variant="secondary"
-                small
-                text="Redeem outcome tokens"
-              />
+              {isParentResolved ? (
+                <Button
+                  onClick={() => toggleIsRedeemOpen()}
+                  variant="secondary"
+                  small
+                  text="Redeem outcome tokens"
+                />
+              ) : null}
             </div>
           </div>
 
