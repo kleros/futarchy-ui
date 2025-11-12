@@ -37,11 +37,7 @@ const PredictButton: React.FC<IPredictButton> = ({
     enabled: shouldFetch,
   });
 
-  const {
-    data: getQuotesResult,
-    isLoading: isLoadingQuotes,
-    error: getQuotesError,
-  } = useGetQuotes(
+  const { data: getQuotesResult, error: getQuotesError } = useGetQuotes(
     {
       account: tradeExecutor,
       processedMarkets: processedMarkets!,
@@ -49,11 +45,10 @@ const PredictButton: React.FC<IPredictButton> = ({
     shouldFetch,
   );
 
-  const { data: underlyingTokenBalanceData, isLoading: isLoadingBalance } =
-    useTokenBalance({
-      address: tradeExecutor,
-      token: underlyingToken,
-    });
+  const { data: underlyingTokenBalanceData } = useTokenBalance({
+    address: tradeExecutor,
+    token: underlyingToken,
+  });
 
   const tradeExecutorPredict = useTradeExecutorPredict(() => {
     setErrorMessage(undefined);
