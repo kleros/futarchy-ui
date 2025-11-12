@@ -100,14 +100,14 @@ export const TradeWallet = () => {
               <Button
                 variant="secondary"
                 small
-                text="Deposit sDAI"
+                text="Deposit DAI"
                 onPress={toggleIsDepositOpen}
               />
 
               <Button
                 variant="secondary"
                 small
-                text="Withdraw sDAI"
+                text="Withdraw DAI"
                 onPress={toggleIsWithdrawOpen}
               />
 
