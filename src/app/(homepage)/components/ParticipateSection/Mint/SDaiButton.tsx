@@ -7,11 +7,18 @@ import { useTradeExecutorSplit } from "@/hooks/tradeWallet/useTradeExecutorSplit
 
 interface ISDaiButton {
   amount: bigint;
+  setAmount: (amount: bigint) => void;
   tradeExecutor: Address;
 }
 
-const SDaiButton: React.FC<ISDaiButton> = ({ amount, tradeExecutor }) => {
-  const tradeExecutorSplit = useTradeExecutorSplit();
+const SDaiButton: React.FC<ISDaiButton> = ({
+  amount,
+  tradeExecutor,
+  setAmount,
+}) => {
+  const tradeExecutorSplit = useTradeExecutorSplit(() => {
+    setAmount(0n);
+  });
 
   const handleSplit = () => {
     tradeExecutorSplit.mutate({

@@ -44,6 +44,7 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
     balanceData && formatUnits(balanceData.value, balanceData.decimals);
 
   const withdrawFromTradeExecutor = useWithdrawFromTradeExecutor(() => {
+    setAmount(undefined);
     toggleIsOpen();
   });
 

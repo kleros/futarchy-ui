@@ -43,6 +43,7 @@ export const DepositInterface: React.FC<DepositInterfaceProps> = ({
 
   const depositToTradeExecutor = useDepositToTradeExecutor(() => {
     toggleIsOpen();
+    setAmount(undefined);
     refetchXDai();
   });
 

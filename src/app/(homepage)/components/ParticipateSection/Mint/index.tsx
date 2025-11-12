@@ -143,6 +143,7 @@ const Mint: React.FC<IMint> = ({ tradeExecutor }) => {
             {...{
               amount,
               tradeExecutor,
+              setAmount,
             }}
           />
         ) : (
