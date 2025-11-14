@@ -48,12 +48,12 @@ const AmountInput: React.FC<IAmountInput> = ({
   };
 
   return (
-    <div className={cn("relative mb-8 md:min-w-lg", className)}>
+    <div className={cn("relative mb-8 w-full md:min-w-lg", className)}>
       <div className="border-klerosUIComponentsStroke rounded-base flex h-fit flex-row border">
         <BigNumberField
           isRequired
           className={clsx(
-            "inline-block flex-1",
+            "inline-block flex-1 max-md:w-max",
             "[&_input]:rounded-r-none [&_input]:border-none [&_input]:focus:shadow-none",
           )}
           onChange={(e) => {

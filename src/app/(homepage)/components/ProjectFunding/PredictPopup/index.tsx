@@ -334,7 +334,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
 
   return (
     <Modal
-      className="relative h-fit w-max overflow-x-hidden p-6 pb-8"
+      className="max-md:max-h-2xl relative h-fit w-max overflow-x-hidden overflow-y-scroll p-6 pb-8 max-md:max-w-sm"
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
     >

@@ -66,7 +66,7 @@ export const TradeWallet = () => {
             "flex flex-col gap-4",
           )}
         >
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col max-md:gap-4 md:flex-row md:items-center md:justify-between">
             {/* Left side: title + buttons */}
             <div className="flex flex-1 flex-col gap-4">
               <div className="flex flex-col items-start gap-1.5">
@@ -137,7 +137,12 @@ export const TradeWallet = () => {
             </div>
 
             {/* Right side: balance */}
-            <div className="flex h-full flex-col items-start border-t border-white p-6 md:border-t-0 md:border-l">
+            <div
+              className={clsx(
+                "flex h-full flex-col items-start p-6 max-md:pl-0",
+                "border-klerosUIComponentsStroke border-t md:border-t-0 md:border-l",
+              )}
+            >
               <h3 className="text-klerosUIComponentsSecondaryText text-sm">
                 sDai Balance
               </h3>
