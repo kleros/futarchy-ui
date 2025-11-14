@@ -16,7 +16,9 @@ interface SplitProps {
   amount: bigint;
 }
 
-async function splitFromTradeExecutor({ tradeExecutor, amount }: SplitProps) {
+export const getSplitFromTradeExecutorCalls = ({
+  amount,
+}: Pick<SplitProps, "amount">) => {
   const approveCall = {
     to: collateral.address,
     data: encodeFunctionData({
@@ -34,7 +36,10 @@ async function splitFromTradeExecutor({ tradeExecutor, amount }: SplitProps) {
     }),
   };
   const calls = [approveCall, splitCall];
-
+  return calls;
+};
+async function splitFromTradeExecutor({ tradeExecutor, amount }: SplitProps) {
+  const calls = getSplitFromTradeExecutorCalls({ amount });
   const writePromise = writeContract(config, {
     address: tradeExecutor,
     abi: TradeExecutorAbi,

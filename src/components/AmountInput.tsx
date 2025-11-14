@@ -6,7 +6,7 @@ import { parseUnits, formatUnits } from "viem";
 
 import DAIIcon from "@/assets/svg/dai.svg";
 
-import { formatValue, isUndefined } from "@/utils";
+import { cn, formatValue, isUndefined } from "@/utils";
 
 import LightButton from "./LightButton";
 
@@ -21,6 +21,8 @@ interface IAmountInput {
   value?: bigint;
   balance?: bigint;
   selectedToken: TokenType;
+  className?: string;
+  inputProps?: React.ComponentProps<typeof BigNumberField>;
 }
 
 const AmountInput: React.FC<IAmountInput> = ({
@@ -30,6 +32,8 @@ const AmountInput: React.FC<IAmountInput> = ({
   defaultValue,
   value,
   balance,
+  className,
+  inputProps,
 }) => {
   const notEnoughBalance = useMemo(() => {
     if (!isUndefined(value) && !isUndefined(balance) && value > balance)
@@ -44,7 +48,7 @@ const AmountInput: React.FC<IAmountInput> = ({
   };
 
   return (
-    <div className="relative mb-8 md:min-w-lg">
+    <div className={cn("relative mb-8 md:min-w-lg", className)}>
       <div className="border-klerosUIComponentsStroke rounded-base flex h-fit flex-row border">
         <BigNumberField
           isRequired
@@ -65,6 +69,7 @@ const AmountInput: React.FC<IAmountInput> = ({
           value={
             typeof value !== "undefined" ? formatUnits(value, 18) : undefined
           }
+          {...inputProps}
         />
         <DropdownSelect
           className={clsx(
@@ -90,6 +95,7 @@ const AmountInput: React.FC<IAmountInput> = ({
               icon: <DAIIcon className="mr-2 size-6" />,
             },
           ]}
+          isDisabled={inputProps?.isReadOnly}
         />
       </div>
       <LightButton
@@ -98,17 +104,18 @@ const AmountInput: React.FC<IAmountInput> = ({
         onPress={handleMaxClick}
         className={clsx(
           "absolute -right-1 px-1 py-0.5",
-          "[&_.button-text]:text-klerosUIComponentsSecondaryText [&_.button-text]:text-sm",
+          "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-sm",
         )}
+        isDisabled={inputProps?.isReadOnly}
       />
       {!notEnoughBalance && (
-        <span className="text-klerosUIComponentsSecondaryText absolute text-sm">
+        <span className="text-klerosUIComponentsPrimaryText absolute mt-1 text-xs">
           {!isUndefined(balance)
-            ? `Available: ${formatValue(balance)}`
+            ? `Available: ${formatValue(balance)} ${selectedToken === TokenType.xDAI ? "xDAI" : "sDAI"}`
             : "Loading..."}
         </span>
       )}
-      <span className="text-light-mode-red-2 absolute text-sm">
+      <span className="text-red-2 absolute text-xs">
         {notEnoughBalance ? "Not enough balance." : undefined}
       </span>
     </div>

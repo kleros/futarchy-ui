@@ -3,31 +3,22 @@ import React from "react";
 import { BigNumberField, Tooltip } from "@kleros/ui-components-library";
 import { formatUnits } from "viem";
 
-import { formatValue, shortenName } from "@/utils";
+import { shortenName } from "@/utils";
 
 interface IProjectAmount {
-  amount: bigint;
   balance?: bigint;
   name: string;
   color: string;
 }
 
-const ProjectAmount: React.FC<IProjectAmount> = ({
-  amount,
-  balance,
-  name,
-  color,
-}) => {
+const ProjectAmount: React.FC<IProjectAmount> = ({ balance, name, color }) => {
   return (
     <div>
-      <span className="text-klerosUIComponentsSecondaryText text-xs">
-        {`Balance: ${formatValue(balance ?? 0n)}`}
-      </span>
       <div className="bg-klerosUIComponentsMediumBlue flex h-min items-center">
         <BigNumberField
           className="mr-4 w-24 [&_input]:rounded-r-none [&_input]:border-r-0"
           inputProps={{ className: "text-klerosUIComponentsSecondaryText" }}
-          value={formatUnits(amount, 18)}
+          value={formatUnits(balance ?? 0n, 18)}
           isDisabled
         />
         <span

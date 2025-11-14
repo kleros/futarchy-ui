@@ -104,19 +104,20 @@ async function checkAndDeployWithFactory({
     return { predictedAddress };
   }
 
-  try {
-    await waitForTransaction(() =>
-      writeContract(config, {
-        address: factoryAddress,
-        abi: CreateCallAbi,
-        functionName: "performCreate2",
-        args: [0n, deploymentData, salt],
-        chainId: DEFAULT_CHAIN.id,
-      }),
-    );
-  } catch (err: unknown) {
-    console.log("Trade executor deployment error:", err);
+  const result = await waitForTransaction(() =>
+    writeContract(config, {
+      address: factoryAddress,
+      abi: CreateCallAbi,
+      functionName: "performCreate2",
+      args: [0n, deploymentData, salt],
+      chainId: DEFAULT_CHAIN.id,
+    }),
+  );
+
+  if (!result.status) {
+    throw result.error;
   }
+
   return { predictedAddress };
 }
 

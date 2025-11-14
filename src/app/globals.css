@@ -7,8 +7,8 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-light-mode-red-2: #f75c7b;
-  --color-light-mode-green-2: #3fec65;
+  --color-red-2: var(--red-2);
+  --color-green-2: var(--green-2);
   --color-footer-background: #1d6aaa;
   --color-whiteLowOpacityStrong: #ffffff26;
 
@@ -44,6 +44,20 @@
   }
 
   --animate-slide-in-right: slideInRight 0.5s ease-out;
+
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  --animate-spinner: spinner 2s ease-in-out infinite normal;
 }
 
 /*
@@ -62,23 +76,18 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
-}
-
-@utility text-balance {
-  text-wrap: balance;
-}
-
-@layer utilities {
   :root {
     --background: #ffffff;
     --foreground: #171717;
+    --red-2: #f75c7b;
+    --green-2: #3fec65;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0a0a0a;
-      --foreground: #ededed;
-    }
+  :root.dark {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --red-2: #ffd2db;
+    --green-2: #d2ffdc;
   }
 
   body {
@@ -86,7 +95,13 @@
     background: var(--background);
     font-family: Arial, Helvetica, sans-serif;
   }
+}
 
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@layer utilities {
   .border-gradient-purple-blue {
     position: relative;
     border-radius: 12px;

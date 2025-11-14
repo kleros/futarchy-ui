@@ -8,7 +8,7 @@ const TradeWalletSkeleton: React.FC = () => {
     <Card
       round
       className={clsx(
-        "border-gradient-purple-blue mt-12 h-auto w-full border-none px-4 py-6 md:px-8",
+        "border-gradient-purple-blue h-auto w-full border-none px-4 py-6 md:px-8",
       )}
     >
       <Skeleton className="mb-3 h-7 w-24" />

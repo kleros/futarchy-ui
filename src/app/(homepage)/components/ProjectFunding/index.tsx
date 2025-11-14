@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Card, Accordion, NumberField } from "@kleros/ui-components-library";
 import clsx from "clsx";
@@ -38,7 +38,6 @@ const ProjectFunding: React.FC = () => {
   } = market;
 
   const { tradeExecutor } = useTradeWallet();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
   return (
     <Card
@@ -81,41 +80,34 @@ const ProjectFunding: React.FC = () => {
               }
               onChange={(e) => setPrediction(e * precision)}
             />
-            <PredictButton
-              tradeExecutor={tradeExecutor!}
-              setErrorMessage={setErrorMessage}
-            />
+            <PredictButton />
           </div>
-          {errorMessage ? (
-            <label className={clsx("text-klerosUIComponentsError")}>
-              {errorMessage}
-            </label>
-          ) : (
-            <label
-              className={clsx(
-                !hasLiquidity
-                  ? "text-klerosUIComponentsWarning"
-                  : isUpPredict
-                    ? "text-light-mode-green-2"
-                    : "text-light-mode-red-2",
-                showEstimateVariant || !hasLiquidity ? "visible" : "invisible",
-              )}
-            >
-              {!hasLiquidity
-                ? "There isn't enough liquidity"
-                : `${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
-            </label>
-          )}
+
+          <label
+            className={clsx(
+              !hasLiquidity
+                ? "text-klerosUIComponentsWarning"
+                : isUpPredict
+                  ? "text-green-2"
+                  : "text-red-2",
+              showEstimateVariant || !hasLiquidity ? "visible" : "invisible",
+            )}
+          >
+            {!hasLiquidity
+              ? "There isn't enough liquidity"
+              : `${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
+          </label>
         </div>
       </div>
       <div className="flex w-full flex-col">
-        <div className="flex w-full items-center justify-between gap-2">
-          <PositionValue
-            {...{ upToken, downToken, underlyingToken }}
-            tradeExecutor={tradeExecutor!}
-          />
-          {/* <OpenOrders /> */}
-        </div>
+        {tradeExecutor ? (
+          <div className="flex w-full items-center justify-between gap-2">
+            <PositionValue
+              {...{ upToken, downToken, underlyingToken, tradeExecutor }}
+            />
+            {/* <OpenOrders /> */}
+          </div>
+        ) : null}
         <Accordion
           aria-label="accordion"
           className={clsx(

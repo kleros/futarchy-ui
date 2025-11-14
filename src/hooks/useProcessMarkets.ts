@@ -25,11 +25,13 @@ export type ProcessedMarket = {
 
 interface IProcessMarkets {
   tradeExecutor?: Address;
+  mintAmount?: bigint;
   enabled?: boolean;
 }
 
 export const useProcessMarkets = ({
   tradeExecutor,
+  mintAmount,
   enabled = true,
 }: IProcessMarkets): ProcessedMarket[] | undefined => {
   const { predictedPrice, market, upPrice, downPrice } = useMarketContext();
@@ -82,7 +84,7 @@ export const useProcessMarkets = ({
     return [
       {
         action: upDirection,
-        underlyingBalance: underlyingBalanceData.value,
+        underlyingBalance: underlyingBalanceData.value + (mintAmount ?? 0n),
         balance: upBalanceData.value,
         volumeUntilPrice: upMarketVolumeData,
         underlyingToken,
@@ -91,7 +93,7 @@ export const useProcessMarkets = ({
       },
       {
         action: downDirection,
-        underlyingBalance: underlyingBalanceData.value,
+        underlyingBalance: underlyingBalanceData.value + (mintAmount ?? 0n),
         balance: downBalanceData.value,
         volumeUntilPrice: downMarketVolumeData,
         underlyingToken,
@@ -114,5 +116,6 @@ export const useProcessMarkets = ({
     upPrice,
     downPrice,
     predictedPrice,
+    mintAmount,
   ]);
 };

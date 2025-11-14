@@ -6,7 +6,7 @@ import { config } from "@/wagmiConfig";
 
 import { DEFAULT_CHAIN } from "@/consts";
 
-const fetchTokenBalance = async (account: Address, token: Address) => {
+export const fetchTokenBalance = async (account: Address, token: Address) => {
   return await getBalance(config, {
     address: account,
     token,

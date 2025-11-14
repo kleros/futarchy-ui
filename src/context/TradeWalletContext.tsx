@@ -1,14 +1,13 @@
 import { createContext, useContext, useMemo } from "react";
 
-import { Address, zeroAddress } from "viem";
+import { Address } from "viem";
 import { useAccount } from "wagmi";
 
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
 
-import { isUndefined } from "@/utils";
-
 interface ITradeWalletContext {
-  tradeExecutor: Address;
+  tradeExecutor?: Address;
+  isLoadingTradeWallet: boolean;
 }
 const TradeWalletContext = createContext<ITradeWalletContext | undefined>(
   undefined,
@@ -27,13 +26,16 @@ export const TradeWalletProvider = ({
   children: React.ReactNode;
 }) => {
   const { address } = useAccount();
-  const { data: checkTradeWalletResult } =
+  const { data: checkTradeWalletResult, isLoading: isLoadingTradeWallet } =
     useCheckTradeExecutorCreated(address);
 
-  const tradeExecutor = checkTradeWalletResult?.predictedAddress ?? zeroAddress;
+  const tradeExecutor = checkTradeWalletResult?.predictedAddress;
   //   const isCreated = checkTradeWalletResult?.isCreated;
 
-  const value = useMemo(() => ({ tradeExecutor }), [tradeExecutor]);
+  const value = useMemo(
+    () => ({ tradeExecutor, isLoadingTradeWallet }),
+    [tradeExecutor, isLoadingTradeWallet],
+  );
   return (
     <TradeWalletContext.Provider {...{ value }}>
       {/* {isLoading ? (
@@ -48,9 +50,7 @@ export const TradeWalletProvider = ({
         </p>
       ) : null} */}
 
-      {!isUndefined(tradeExecutor) && tradeExecutor !== zeroAddress
-        ? children
-        : null}
+      {children}
     </TradeWalletContext.Provider>
   );
 };

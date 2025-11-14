@@ -6,17 +6,27 @@ import { TradeExecutorAbi } from "@/contracts/abis/TradeExecutorAbi";
 import { gnosisRouterAbi, gnosisRouterAddress } from "@/generated";
 import { config } from "@/wagmiConfig";
 
+import { isUndefined } from "@/utils";
 import { GetQuotesResult } from "@/utils/getQuotes";
 import { waitForTransaction } from "@/utils/waitForTransaction";
 
 import { collateral, DECIMALS, DEFAULT_CHAIN } from "@/consts";
 import { IMarket } from "@/consts/markets";
 
+import { getSplitFromTradeExecutorCalls } from "./useTradeExecutorSplit";
+
 interface PredictProps {
   tradeExecutor: Address;
+  // notice: amount here is not the actual balance of the trade wallet,
+  // instead the amount of underlying tokens the wallet will have, in case of a split from collateral
+  // example: if user provided collateral to mint/ split tokens in parent market, then we add that mintAmount in here,
+  // since the txns will include a split txn that will end up giving this mintAmount to the Wallet as underlying token
+  // This value is handled in utils/processMarket
   amount: bigint;
   market: IMarket;
   getQuotesResult: GetQuotesResult;
+  // defined if collateral needs to minted to Parent Market
+  mintAmount?: bigint;
 }
 
 function splitFromRouter(marketId: Address, amount: bigint) {
@@ -136,6 +146,7 @@ async function getTradeExecutorCalls({
   market,
   amount,
   getQuotesResult,
+  mintAmount,
 }: PredictProps) {
   const { quotes, mergeAmount } = getQuotesResult;
   const { sellQuotes, buyQuotes } = quotes;
@@ -151,6 +162,12 @@ async function getTradeExecutorCalls({
     market,
     getQuotesResult,
   });
+
+  // Adds a split call if the user entered an amount to mint parent market tokens
+  if (!isUndefined(mintAmount) && mintAmount > 0n) {
+    const mintCalls = getSplitFromTradeExecutorCalls({ amount: mintAmount });
+    calls.push(...mintCalls);
+  }
 
   if (amount > 0n) {
     calls.push(...splitApproveCall);
@@ -192,12 +209,14 @@ async function predictFromTradeExecutor({
   amount,
   market,
   getQuotesResult,
+  mintAmount,
 }: PredictProps) {
   const calls = await getTradeExecutorCalls({
     tradeExecutor,
     amount,
     market,
     getQuotesResult,
+    mintAmount,
   });
 
   const writePromise = writeContract(config, {
