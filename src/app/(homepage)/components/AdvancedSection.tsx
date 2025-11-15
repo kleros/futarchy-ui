@@ -25,7 +25,7 @@ const AdvancedSection: React.FC = () => {
           tokens in Seer.&nbsp;
           <Link
             href={
-              "https://app.seer.pm/markets/100/ierr-which-day-will-be-evaluated-by-the-gourmet-committee/?outcome=Tuesday+28+July"
+              "https://app.seer.pm/markets/100/which-movies-will-clement-watch-as-part-of-the-distilled-clements-judgement-expe-2"
             }
             target="_blank"
             rel="noreferrer noopener"
