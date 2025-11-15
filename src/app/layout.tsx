@@ -45,6 +45,21 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  themeColor: "#fff",
+  icons: {
+    icon: [
+      {
+        url: "/web-app-manifest-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/web-app-manifest-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
