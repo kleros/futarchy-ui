@@ -1,7 +1,6 @@
 import { Card } from "@kleros/ui-components-library";
 
-import Mint from "./Mint";
-import RedeemParentMarket from "./RedeemParentMarket";
+import { TradeWallet } from "./TradeWallet";
 
 const ParticipateSection: React.FC = () => {
   return (
@@ -10,7 +9,7 @@ const ParticipateSection: React.FC = () => {
         Participate
       </h2>
 
-      <Mint />
+      <TradeWallet />
       <Card
         round
         className="border-gradient-purple-blue h-auto w-full border-none px-4 py-6 md:px-8"
@@ -23,7 +22,6 @@ const ParticipateSection: React.FC = () => {
           you want to predict.
         </p>
       </Card>
-      <RedeemParentMarket />
     </div>
   );
 };

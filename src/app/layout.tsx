@@ -56,6 +56,9 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="box-border size-full" suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Futarchy | Kleros" />
+      </head>
       <body
         className={clsx(
           `${geistSans.variable} ${geistMono.variable} bg-klerosUIComponentsLightBackground antialiased`,

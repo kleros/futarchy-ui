@@ -37,3 +37,6 @@ next-env.d.ts
 
 # wagmi generated
 /src/generated.ts
+
+# gql
+/src/hooks/liquidity/gql

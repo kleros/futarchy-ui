@@ -2,12 +2,10 @@ import React, { useMemo } from "react";
 
 import clsx from "clsx";
 import { formatUnits, Address, formatEther } from "viem";
-import { useAccount } from "wagmi";
-
-import { useReadErc20BalanceOf } from "@/generated";
 
 import { useMarketContext } from "@/context/MarketContext";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
+import { useTokenBalance } from "@/hooks/useTokenBalance";
 
 import { formatValue, isUndefined } from "@/utils";
 
@@ -19,15 +17,15 @@ interface IPositionValue {
   upToken: Address;
   downToken: Address;
   underlyingToken: Address;
+  tradeExecutor: Address;
 }
 
 const PositionValue: React.FC<IPositionValue> = ({
   upToken,
   downToken,
   underlyingToken,
+  tradeExecutor,
 }) => {
-  const { address } = useAccount();
-
   const {
     isLoadingMarketPrice,
     isResolved,
@@ -40,14 +38,14 @@ const PositionValue: React.FC<IPositionValue> = ({
     value: upValue,
     balance: upBalance,
     price: upPrice,
-  } = useTokenPositionValue(upToken, underlyingToken, address ?? "0x", {
+  } = useTokenPositionValue(upToken, underlyingToken, tradeExecutor ?? "0x", {
     isUp: true,
   });
   const {
     value: downValue,
     balance: downBalance,
     price: downPrice,
-  } = useTokenPositionValue(downToken, underlyingToken, address ?? "0x", {
+  } = useTokenPositionValue(downToken, underlyingToken, tradeExecutor ?? "0x", {
     isUp: false,
   });
   const totalValue = upValue + downValue;
@@ -125,7 +123,7 @@ const PositionValue: React.FC<IPositionValue> = ({
           <span className="font-bold"> {totalValue.toFixed(2)} sDAI </span>
         </p>
       </div>
-      {isResolved ? <RedeemButton /> : null}
+      {isResolved ? <RedeemButton tradeExecutor={tradeExecutor!} /> : null}
     </div>
   );
 };
@@ -138,14 +136,11 @@ const useTokenPositionValue = (
 ) => {
   const { hasLiquidity, marketPrice } = useMarketContext();
 
-  const { data: balance } = useReadErc20BalanceOf({
-    address: token,
-    args: [address ?? "0x"],
-    query: {
-      staleTime: 5000,
-      enabled: typeof address !== "undefined",
-    },
+  const { data: balanceData } = useTokenBalance({
+    token: token,
+    address: address,
   });
+  const balance = balanceData?.value;
 
   const { data } = useMarketPrice(
     token,

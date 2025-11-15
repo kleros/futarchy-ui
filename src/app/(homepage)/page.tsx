@@ -6,6 +6,7 @@ import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 
 import { CardInteractionProvider } from "@/context/CardInteractionContext";
 import MarketContextProvider from "@/context/MarketContext";
+import { TradeWalletProvider } from "@/context/TradeWalletContext";
 import { useChartData } from "@/hooks/useChartData";
 
 import EnsureChain from "@/components/EnsureChain";
@@ -22,8 +23,7 @@ import ParticipateSection from "./components/ParticipateSection";
 import ProjectFunding from "./components/ProjectFunding";
 
 export default function Home() {
-  const { data: chartData, isLoading: isLoadingChartData } =
-    useChartData(markets);
+  const { data: chartData } = useChartData(markets);
 
   const { data: winningOutcomes } = useReadGnosisRouterGetWinningOutcomes({
     args: [parentConditionId],
@@ -45,22 +45,23 @@ export default function Home() {
 
         <div className="flex flex-col gap-4">
           <EnsureChain>
-            <ParticipateSection />
-            <CardInteractionProvider>
-              <div className="mt-8 flex flex-col gap-4">
-                {markets.map((market, i) => (
-                  <MarketContextProvider
-                    key={market.marketId}
-                    lastDataPoint={chartData?.[i][market.name].data.at(-1)}
-                    selected={winningOutcomes?.at(i)}
-                    isLoadingChartData={isLoadingChartData}
-                    {...market}
-                  >
-                    <ProjectFunding key={market.marketId} />
-                  </MarketContextProvider>
-                ))}
-              </div>
-            </CardInteractionProvider>
+            <TradeWalletProvider>
+              <ParticipateSection />
+
+              <CardInteractionProvider>
+                <div className="mt-8 flex flex-col gap-4">
+                  {markets.map((market, i) => (
+                    <MarketContextProvider
+                      key={market.marketId}
+                      selected={winningOutcomes?.at(i)}
+                      {...market}
+                    >
+                      <ProjectFunding key={market.marketId} />
+                    </MarketContextProvider>
+                  ))}
+                </div>
+              </CardInteractionProvider>
+            </TradeWalletProvider>
           </EnsureChain>
 
           <AdvancedSection />

@@ -5,6 +5,7 @@ import clsx from "clsx";
 
 import { useCardInteraction } from "@/context/CardInteractionContext";
 import { useMarketContext } from "@/context/MarketContext";
+import { useTradeWallet } from "@/context/TradeWalletContext";
 
 import { isUndefined } from "@/utils";
 
@@ -13,7 +14,7 @@ import PositionValue from "./PositionValue";
 import PredictButton from "./PredictButton";
 import PredictionSlider from "./PredictionSlider";
 
-const ProjectFunding: React.FC = ({}) => {
+const ProjectFunding: React.FC = () => {
   const { setActiveCardId } = useCardInteraction();
   const {
     isUpPredict,
@@ -32,7 +33,11 @@ const ProjectFunding: React.FC = ({}) => {
     details,
     marketId,
     underlyingToken,
+    minValue,
+    maxValue,
   } = market;
+
+  const { tradeExecutor } = useTradeWallet();
 
   return (
     <Card
@@ -68,6 +73,8 @@ const ProjectFunding: React.FC = ({}) => {
               isDisabled={!hasLiquidity}
               aria-label="Prediction"
               className="w-auto [&_input]:border-none"
+              minValue={minValue}
+              maxValue={maxValue}
               value={
                 !isUndefined(prediction) ? prediction / precision : undefined
               }
@@ -75,13 +82,14 @@ const ProjectFunding: React.FC = ({}) => {
             />
             <PredictButton />
           </div>
+
           <label
             className={clsx(
               !hasLiquidity
                 ? "text-klerosUIComponentsWarning"
                 : isUpPredict
-                  ? "text-light-mode-green-2"
-                  : "text-light-mode-red-2",
+                  ? "text-green-2"
+                  : "text-red-2",
               showEstimateVariant || !hasLiquidity ? "visible" : "invisible",
             )}
           >
@@ -92,10 +100,14 @@ const ProjectFunding: React.FC = ({}) => {
         </div>
       </div>
       <div className="flex w-full flex-col">
-        <div className="flex w-full items-center justify-between gap-2">
-          <PositionValue {...{ upToken, downToken, underlyingToken }} />
-          {/* <OpenOrders /> */}
-        </div>
+        {tradeExecutor ? (
+          <div className="flex w-full items-center justify-between gap-2">
+            <PositionValue
+              {...{ upToken, downToken, underlyingToken, tradeExecutor }}
+            />
+            {/* <OpenOrders /> */}
+          </div>
+        ) : null}
         <Accordion
           aria-label="accordion"
           className={clsx(
