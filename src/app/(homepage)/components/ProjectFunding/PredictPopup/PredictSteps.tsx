@@ -80,8 +80,7 @@ const PredictSteps: React.FC<IPredictSteps> = ({
       title: "Add Collateral to wallet",
       party: isAddingCollateral ? <Spinner /> : "",
       subtitle: `Adding ${formatValue(toBeAdded)} sDAI`,
-      Icon:
-        isCollateralAdded || toBeAdded === 0n ? CheckOutline : CircleOutline,
+      Icon: isCollateralAdded ? CheckOutline : CircleOutline,
       state: isAddingCollateral
         ? "loading"
         : error || toBeAdded === 0n
@@ -132,11 +131,12 @@ const PredictSteps: React.FC<IPredictSteps> = ({
   ]);
 
   return (
-    <div className="mt-8 mb-9 flex flex-col items-center">
+    <div className="mt-8 flex flex-col items-center">
       <CustomTimeline
         items={items}
         className={clsx(
-          "[&_li>div:nth-child(2)]:ml-2",
+          "[&_li>div:nth-child(1)]:min-h-14",
+          "[&_li>div:nth-child(2)]:ml-2 [&_li>div:nth-child(2)]:pt-0.5",
           "[&_li>div:nth-child(1)>div]:border-l-klerosUIComponentsPrimaryBlue [&_li>div:nth-child(1)>div]:my-2",
         )}
       />
