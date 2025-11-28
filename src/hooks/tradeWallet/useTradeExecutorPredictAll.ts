@@ -3,61 +3,46 @@ import { writeContract } from "@wagmi/core";
 import { Address, encodeFunctionData, erc20Abi, parseUnits } from "viem";
 
 import { TradeExecutorAbi } from "@/contracts/abis/TradeExecutorAbi";
-import { gnosisRouterAbi, gnosisRouterAddress } from "@/generated";
+import { gnosisRouterAddress } from "@/generated";
 import { config } from "@/wagmiConfig";
 
 import { isUndefined } from "@/utils";
 import { GetQuotesResult } from "@/utils/getQuotes";
 import { waitForTransaction } from "@/utils/waitForTransaction";
 
-import { collateral, DECIMALS, DEFAULT_CHAIN } from "@/consts";
+import { DECIMALS, DEFAULT_CHAIN } from "@/consts";
 import { IMarket } from "@/consts/markets";
 
+import { mergeFromRouter, splitFromRouter } from "./useTradeExecutorPredict";
 import { getSplitFromTradeExecutorCalls } from "./useTradeExecutorSplit";
 
-interface PredictProps {
-  tradeExecutor: Address;
+interface MarketsData {
+  marketInfo: IMarket;
+  getQuotesResult: GetQuotesResult;
   // notice: amount here is not the actual balance of the trade wallet,
   // instead the amount of underlying tokens the wallet will have, in case of a split from collateral
   // example: if user provided collateral to mint/ split tokens in parent market, then we add that mintAmount in here,
   // since the txns will include a split txn that will end up giving this mintAmount to the Wallet as underlying token
   // This value is handled in utils/processMarket
   amount: bigint;
-  market: IMarket;
-  getQuotesResult: GetQuotesResult;
+}
+
+interface PredictAllProps {
+  tradeExecutor: Address;
+  marketsData: MarketsData[];
   // defined if collateral needs to minted to Parent Market
   mintAmount?: bigint;
-}
-
-export function splitFromRouter(marketId: Address, amount: bigint) {
-  return {
-    to: gnosisRouterAddress,
-    value: 0n,
-    data: encodeFunctionData({
-      abi: gnosisRouterAbi,
-      functionName: "splitPosition",
-      args: [collateral.address, marketId, amount],
-    }),
-  };
-}
-
-export function mergeFromRouter(marketId: Address, amount: bigint) {
-  return {
-    to: gnosisRouterAddress,
-    value: 0n,
-    data: encodeFunctionData({
-      abi: gnosisRouterAbi,
-      functionName: "mergePositions",
-      args: [collateral.address, marketId, amount],
-    }),
-  };
 }
 
 const getApproveCalls = async ({
   amount,
   market,
   getQuotesResult,
-}: Omit<PredictProps, "tradeExecutor">) => {
+}: {
+  amount: bigint;
+  market: IMarket;
+  getQuotesResult: GetQuotesResult;
+}) => {
   const { quotes, mergeAmount } = getQuotesResult;
   const { sellQuotes, buyQuotes } = quotes;
 
@@ -143,25 +128,10 @@ const getApproveCalls = async ({
 
 async function getTradeExecutorCalls({
   tradeExecutor,
-  market,
-  amount,
-  getQuotesResult,
+  marketsData,
   mintAmount,
-}: PredictProps) {
-  const { quotes, mergeAmount } = getQuotesResult;
-  const { sellQuotes, buyQuotes } = quotes;
+}: PredictAllProps) {
   const calls = [];
-
-  const {
-    splitApproveCall,
-    sellApproveCalls,
-    mergeApproveCalls,
-    buyApproveCalls,
-  } = await getApproveCalls({
-    amount,
-    market,
-    getQuotesResult,
-  });
 
   // Adds a split call if the user entered an amount to mint parent market tokens
   if (!isUndefined(mintAmount) && mintAmount > 0n) {
@@ -169,53 +139,66 @@ async function getTradeExecutorCalls({
     calls.push(...mintCalls);
   }
 
-  if (amount > 0n) {
-    calls.push(...splitApproveCall);
-    calls.push(splitFromRouter(market.marketId, amount));
+  for (const market of marketsData) {
+    const { marketInfo, getQuotesResult, amount } = market;
+    const { quotes, mergeAmount } = getQuotesResult;
+    const { sellQuotes, buyQuotes } = quotes;
+
+    const {
+      splitApproveCall,
+      sellApproveCalls,
+      mergeApproveCalls,
+      buyApproveCalls,
+    } = await getApproveCalls({
+      amount,
+      market: marketInfo,
+      getQuotesResult,
+    });
+
+    if (amount > 0n) {
+      calls.push(...splitApproveCall);
+      calls.push(splitFromRouter(marketInfo.marketId, amount));
+    }
+
+    const sellSwapTransactions = (
+      await Promise.all(
+        sellQuotes.map((quote) =>
+          quote.swapTransaction({ recipient: tradeExecutor }),
+        ),
+      )
+    ).map((txn) => ({ to: txn.to!, data: txn.data! }));
+
+    calls.push(...sellApproveCalls);
+    calls.push(...sellSwapTransactions);
+
+    if (mergeAmount > 0n) {
+      calls.push(...mergeApproveCalls);
+      calls.push(mergeFromRouter(marketInfo.marketId, mergeAmount));
+    }
+
+    const buySwapTransactions = (
+      await Promise.all(
+        buyQuotes.map((quote) =>
+          quote.swapTransaction({ recipient: tradeExecutor }),
+        ),
+      )
+    ).map((txn) => ({ to: txn.to!, data: txn.data! }));
+
+    calls.push(...buyApproveCalls);
+    calls.push(...buySwapTransactions);
   }
-
-  const sellSwapTransactions = (
-    await Promise.all(
-      sellQuotes.map((quote) =>
-        quote.swapTransaction({ recipient: tradeExecutor }),
-      ),
-    )
-  ).map((txn) => ({ to: txn.to!, data: txn.data! }));
-
-  calls.push(...sellApproveCalls);
-  calls.push(...sellSwapTransactions);
-
-  if (mergeAmount > 0n) {
-    calls.push(...mergeApproveCalls);
-    calls.push(mergeFromRouter(market.marketId, mergeAmount));
-  }
-
-  const buySwapTransactions = (
-    await Promise.all(
-      buyQuotes.map((quote) =>
-        quote.swapTransaction({ recipient: tradeExecutor }),
-      ),
-    )
-  ).map((txn) => ({ to: txn.to!, data: txn.data! }));
-
-  calls.push(...buyApproveCalls);
-  calls.push(...buySwapTransactions);
 
   return calls;
 }
 
-async function predictFromTradeExecutor({
+async function predictAllFromTradeExecutor({
   tradeExecutor,
-  amount,
-  market,
-  getQuotesResult,
+  marketsData,
   mintAmount,
-}: PredictProps) {
+}: PredictAllProps) {
   const calls = await getTradeExecutorCalls({
     tradeExecutor,
-    amount,
-    market,
-    getQuotesResult,
+    marketsData,
     mintAmount,
   });
 
@@ -235,10 +218,10 @@ async function predictFromTradeExecutor({
   return result;
 }
 
-export const useTradeExecutorPredict = (onSuccess?: () => unknown) => {
+export const useTradeExecutorPredictAll = (onSuccess?: () => unknown) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (props: PredictProps) => predictFromTradeExecutor(props),
+    mutationFn: (props: PredictAllProps) => predictAllFromTradeExecutor(props),
     onSuccess() {
       onSuccess?.();
       setTimeout(() => {

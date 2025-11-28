@@ -11,6 +11,8 @@ import React, {
 
 import { useDebounce } from "react-use";
 
+import { useMarketsStore } from "@/store/markets";
+
 import { useCurrentMarketPrices } from "@/hooks/liquidity/useCurrentMarketPrices";
 import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
@@ -51,26 +53,46 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   ...market
 }) => {
   // const { activeCardId } = useCardInteraction();
+  // globale store
+  const prediction = useMarketsStore(
+    (state) => state.markets[market.marketId]?.prediction,
+  );
+  const predictedPrice = useMarketsStore(
+    (s) => s.markets[market.marketId]?.predictedPrice ?? 0,
+  );
+
+  const setMarket = useMarketsStore((state) => state.setMarket);
+  const setPrediction = useMarketsStore((state) => state.setPrediction);
+
+  const setMarketEstimate = useMarketsStore((state) => state.setMarketEstimate);
 
   const { underlyingToken, upToken, downToken, maxValue, precision } = market;
 
-  const [prediction, setPrediction] = useState<number | undefined>(undefined);
-  const [debouncedPrediction, setDebouncedPrediction] = useState<number>();
+  const [localPrediction, setLocalPrediction] = useState<number | undefined>(
+    undefined,
+  );
 
   useDebounce(
     () => {
-      setDebouncedPrediction(prediction);
+      if (!isUndefined(localPrediction)) {
+        setPrediction(market.marketId, localPrediction);
+      }
     },
     500,
-    [prediction],
+    [localPrediction],
   );
 
-  // const { data: underlyingBalance } = useBalance(underlyingToken);
+  // initialize market
+  useEffect(() => {
+    setMarket(market);
+  }, []);
 
-  // const shouldFetch =
-  //   marketId === activeCardId &&
-  //   !isUndefined(underlyingBalance) &&
-  //   underlyingBalance !== 0n;
+  //sync global prediction to local (ui)
+  useEffect(() => {
+    if (!isUndefined(prediction) && prediction !== localPrediction) {
+      setLocalPrediction(prediction);
+    }
+  }, [prediction]);
 
   const { data: marketPriceRaw } = useMarketPrice(upToken, underlyingToken);
 
@@ -97,35 +119,30 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [marketPrice, maxValue, precision],
   );
 
-  const isUpPredict = (prediction ?? 0) > marketEstimate;
+  useEffect(() => {
+    setMarketEstimate(market.marketId, marketEstimate);
+  }, [marketEstimate]);
 
-  // adjusts the price based on predicted direction, for DOWN predictedPrice = 1 - estimateMade
-  const predictedPrice = useMemo(() => {
-    if (typeof debouncedPrediction === "undefined") return 0;
-
-    return debouncedPrediction / (maxValue * precision);
-  }, [debouncedPrediction, maxValue, precision]);
+  const isUpPredict = (localPrediction ?? 0) > marketEstimate;
 
   useEffect(() => {
     if (
-      isUndefined(prediction) &&
+      isUndefined(localPrediction) &&
       !isUndefined(marketEstimate) &&
       isFinite(marketEstimate) &&
       !isUndefined(currentPrices)
     ) {
-      setPrediction(
-        Math.round(marketEstimate * market.precision) / market.precision,
-      );
+      setLocalPrediction(marketEstimate);
     }
-  }, [prediction, marketEstimate, market.precision, currentPrices]);
+  }, [localPrediction, marketEstimate, market.precision, currentPrices]);
 
   const showEstimateVariant = useMemo(() => {
-    if (isUndefined(prediction) || !hasLiquidity) return false;
+    if (isUndefined(localPrediction) || !hasLiquidity) return false;
     return (
-      Math.abs(prediction - marketEstimate) >
+      Math.abs(localPrediction - marketEstimate) >
       market.maxValue / market.precision / 100
     );
-  }, [prediction, market, marketEstimate, hasLiquidity]);
+  }, [localPrediction, market, marketEstimate, hasLiquidity]);
 
   const { data: winningOutcomes } = useGetWinningOutcomes(market.conditionId);
   const isResolved = useMemo(
@@ -153,8 +170,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       marketPrice,
       marketEstimate,
       isUpPredict,
-      prediction,
-      setPrediction,
+      prediction: localPrediction,
+      setPrediction: setLocalPrediction,
       market,
       isLoadingMarketPrice,
       showEstimateVariant,
@@ -170,8 +187,8 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       marketPrice,
       marketEstimate,
       isUpPredict,
-      prediction,
-      setPrediction,
+      localPrediction,
+      setLocalPrediction,
       market,
       isLoadingMarketPrice,
       showEstimateVariant,

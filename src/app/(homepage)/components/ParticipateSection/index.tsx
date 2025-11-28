@@ -1,5 +1,6 @@
 import { Card } from "@kleros/ui-components-library";
 
+import CsvUpload from "./CsvUpload";
 import { TradeWallet } from "./TradeWallet";
 
 const ParticipateSection: React.FC = () => {
@@ -22,6 +23,7 @@ const ParticipateSection: React.FC = () => {
           you want to predict.
         </p>
       </Card>
+      <CsvUpload />
     </div>
   );
 };
