@@ -34,7 +34,8 @@
     "react-jdenticon": "^1.4.0",
     "react-use": "^17.6.0",
     "viem": "^2.31.4",
-    "wagmi": "^2.15.6"
+    "wagmi": "^2.15.6",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",

@@ -10,13 +10,15 @@ import {
   useReadSDaiPreviewDeposit,
   useReadSDaiPreviewRedeem,
 } from "@/generated";
+import { useMarketsStore } from "@/store/markets";
 
-import { useMarketContext } from "@/context/MarketContext";
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
 import { useDepositToTradeExecutor } from "@/hooks/tradeWallet/useDepositToTradeExecutor";
-import { useTradeExecutorPredict } from "@/hooks/tradeWallet/useTradeExecutorPredict";
+import { useTradeExecutorPredictAll } from "@/hooks/tradeWallet/useTradeExecutorPredictAll";
+import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 import { fetchTokenBalance, useTokenBalance } from "@/hooks/useTokenBalance";
+import { useTokensBalances } from "@/hooks/useTokenBalances";
 
 import AmountInput, { TokenType } from "@/components/AmountInput";
 
@@ -33,12 +35,12 @@ import AmountDisplay from "./AmountDisplay";
 import Header from "./Header";
 import PredictSteps from "./PredictSteps";
 
-interface IPredictPopup {
+interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
 }
 
-export const PredictPopup: React.FC<IPredictPopup> = ({
+export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   isOpen,
   toggleIsOpen,
 }) => {
@@ -54,6 +56,11 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     useState<boolean>(false);
   const [error, setError] = useState<string>();
   //==========================
+
+  const markets = usePredictionMarkets();
+  const resetPredictionMarkets = useMarketsStore(
+    (state) => state.resetPredictionMarkets,
+  );
 
   const [isSending, setIsSending] = useState(false);
   const [amount, setAmount] = useState<bigint>();
@@ -73,7 +80,6 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     setError(undefined);
   };
 
-  const { market, predictedPrice } = useMarketContext();
   const queryClient = useQueryClient();
 
   // checking to see if user alrd has trade wallet
@@ -95,15 +101,15 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     address: tradeExecutor,
     token: collateral.address,
   });
-  const { data: walletUPBalanceData } = useTokenBalance({
-    address: tradeExecutor,
-    token: market.upToken,
-  });
 
-  const { data: walletDOWNBalanceData } = useTokenBalance({
-    address: tradeExecutor,
-    token: market.downToken,
-  });
+  const { data: tokensBalances } = useTokensBalances(
+    tradeExecutor,
+    markets.flatMap((market) => [market.upToken, market.downToken]),
+  );
+  const { data: underlyingTokensBalances } = useTokensBalances(
+    tradeExecutor,
+    markets.map((market) => market.underlyingToken),
+  );
 
   // wallet only holds sDAI, this gives the equivalent amount in xDAI
   // to inform user how much equivalent xDAI they have
@@ -116,11 +122,6 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
         isXDai,
       retry: false,
     },
-  });
-
-  const { data: walletUnderlyingBalanceData } = useTokenBalance({
-    address: tradeExecutor,
-    token: market.underlyingToken,
   });
 
   // tells us the resulting sDAI
@@ -176,15 +177,15 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
   const depositToTradeExecutor = useDepositToTradeExecutor(() => {});
 
   // handle trade (mint movie tokens + predict)
-  const tradeExecutorPredict = useTradeExecutorPredict(() => {
+  const tradeExecutorPredictAll = useTradeExecutorPredictAll(() => {
     setIsPredictionSuccessful(true);
     setTimeout(() => {
       toggleIsOpen();
       resetStates();
     }, 3000);
-
+    resetPredictionMarkets();
     queryClient.refetchQueries({
-      queryKey: ["useTicksData", market.underlyingToken],
+      queryKey: ["useTicksData"],
     });
   });
 
@@ -201,14 +202,12 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     // if trade wallet is empty, or if trade wallet isn't created and no collateral provided to deposit
     const hasWalletCollateral =
       checkTradeExecutorResult.isCreated &&
-      !isUndefined(walletUnderlyingBalanceData) &&
-      walletUnderlyingBalanceData?.value > 0n;
+      !isUndefined(underlyingTokensBalances) &&
+      underlyingTokensBalances.every((value) => value > 0n);
 
     const hasDepositCollateral = (snapshot.initialSDAIDeposit ?? 0n) > 0n;
 
-    const hasPosition =
-      (walletUPBalanceData?.value ?? 0n) > 0n ||
-      (walletDOWNBalanceData?.value ?? 0n) > 0n;
+    const hasPosition = tokensBalances?.some((val) => val > 0n);
 
     if (!hasWalletCollateral && !hasDepositCollateral && !hasPosition) {
       setError("Require collateral to trade");
@@ -268,40 +267,59 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
 
       // process UP and DOWN markets
       setIsProcessingMarkets(true);
-      const processedMarkets = await Promise.all([
-        processMarket({
-          underlying: market.underlyingToken,
-          outcome: market.upToken,
-          tradeExecutor: tradeWallet!,
-          mintAmount: snapshot.initialSDAIDeposit,
-          targetPrice: predictedPrice,
+      const processedMarkets = await Promise.all(
+        markets.map(async (market) => {
+          const upProcessed = await processMarket({
+            underlying: market.underlyingToken,
+            outcome: market.upToken,
+            tradeExecutor: tradeWallet!,
+            mintAmount: snapshot.initialSDAIDeposit,
+            targetPrice: market?.predictedPrice ?? 0,
+          });
+
+          const downProcessed = await processMarket({
+            underlying: market.underlyingToken,
+            outcome: market.downToken,
+            tradeExecutor: tradeWallet!,
+            mintAmount: snapshot.initialSDAIDeposit,
+            targetPrice: 1 - (market?.predictedPrice ?? 0),
+          });
+
+          return {
+            marketInfo: market,
+            processed: [upProcessed, downProcessed],
+          };
         }),
-        processMarket({
-          underlying: market.underlyingToken,
-          outcome: market.downToken,
-          tradeExecutor: tradeWallet!,
-          mintAmount: snapshot.initialSDAIDeposit,
-          targetPrice: 1 - predictedPrice,
-        }),
-      ]);
+      );
+
       setIsProcessingMarkets(false);
       console.log("Processed markets:", processedMarkets);
 
       // get quotes
       setIsLoadingQuotes(true);
-      const getQuotesResult = await getQuotes({
-        account: tradeWallet!,
-        processedMarkets,
-      });
+      const quotesPerMarket = await Promise.all(
+        processedMarkets.map(({ marketInfo, processed }) =>
+          getQuotes({
+            account: tradeWallet!,
+            processedMarkets: processed, // only UP + DOWN for this market
+          })
+            .then((res) => ({
+              marketInfo,
+              getQuotesResult: res,
+              amount: processed[0].underlyingBalance,
+            }))
+            .catch((err) => {
+              setIsLoadingQuotes(false);
+              throw err;
+            }),
+        ),
+      );
       setIsLoadingQuotes(false);
-      console.log("Quotes result:", getQuotesResult);
-
+      console.log("Quotes result:", quotesPerMarket);
       // send the tradeExecution
-      await tradeExecutorPredict.mutateAsync({
-        market,
-        amount: processedMarkets[0].underlyingBalance,
+      await tradeExecutorPredictAll.mutateAsync({
+        marketsData: quotesPerMarket,
         tradeExecutor: tradeWallet!,
-        getQuotesResult,
         mintAmount: snapshot.initialSDAIDeposit,
       });
     } catch (e) {
@@ -321,7 +339,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     const error =
       createTradeExecutor.error ??
       depositToTradeExecutor.error ??
-      tradeExecutorPredict.error;
+      tradeExecutorPredictAll.error;
 
     if (error) {
       setError(formatError(error));
@@ -329,7 +347,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
   }, [
     createTradeExecutor.error,
     depositToTradeExecutor.error,
-    tradeExecutorPredict.error,
+    tradeExecutorPredictAll.error,
   ]);
 
   return (
@@ -380,10 +398,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
               )}
             />
           </div>
-          <AmountDisplay
-            value={sDAIDepositAmount}
-            underlyingBalance={walletUnderlyingBalanceData?.value}
-          />
+          <AmountDisplay value={sDAIDepositAmount} />
         </div>
         <PredictSteps
           {...{
@@ -395,7 +410,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
             isLoadingQuotes,
             isProcessingMarkets,
             isPredictionSuccessful,
-            isMakingPrediction: tradeExecutorPredict.isPending,
+            isMakingPrediction: tradeExecutorPredictAll.isPending,
             error,
           }}
         />
