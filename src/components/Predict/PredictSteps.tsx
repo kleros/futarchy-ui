@@ -10,7 +10,7 @@ import CloseOutline from "@/assets/svg/close-circle.svg";
 
 import { formatValue, isUndefined, shortenAddress } from "@/utils";
 
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
 
 type TimelineItem = React.ComponentProps<
   typeof CustomTimeline
@@ -69,7 +69,7 @@ const PredictSteps: React.FC<IPredictSteps> = ({
     } else {
       steps.push({
         title: "Create a Trade Wallet",
-        party: isCreatingWallet ? <Spinner /> : "",
+        party: isCreatingWallet ? <Spinner className="mb-1" /> : "",
         subtitle: "",
         state: isCreatingWallet ? "loading" : undefined,
         Icon: CircleOutline,
@@ -78,7 +78,7 @@ const PredictSteps: React.FC<IPredictSteps> = ({
 
     steps.push({
       title: "Add Collateral to wallet",
-      party: isAddingCollateral ? <Spinner /> : "",
+      party: isAddingCollateral ? <Spinner className="mb-1" /> : "",
       subtitle: `Adding ${formatValue(toBeAdded)} sDAI`,
       Icon: isCollateralAdded ? CheckOutline : CircleOutline,
       state: isAddingCollateral
@@ -92,7 +92,7 @@ const PredictSteps: React.FC<IPredictSteps> = ({
       title: "Make Prediction",
       party:
         isMakingPrediction || isLoadingQuotes || isProcessingMarkets ? (
-          <Spinner />
+          <Spinner className="mb-1" />
         ) : (
           ""
         ),

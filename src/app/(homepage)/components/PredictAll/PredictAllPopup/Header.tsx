@@ -11,7 +11,6 @@ import { isUndefined } from "@/utils";
 
 const Header: React.FC = () => {
   const markets = usePredictionMarkets();
-  console.log({ markets });
 
   return (
     <div className="mb-4 flex w-full flex-col items-center gap-4">
