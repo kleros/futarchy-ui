@@ -8,10 +8,11 @@ import {
   useReadSDaiPreviewRedeem,
 } from "@/generated";
 
-import { useMarketContext } from "@/context/MarketContext";
-import { usePredictFlow } from "@/hooks/predict/usePredictFlow";
+import { usePredictAllFlow } from "@/hooks/predict/usePredictAllFlow";
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
+import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
+import { useTokensBalances } from "@/hooks/useTokenBalances";
 
 import { TokenType } from "@/components/AmountInput";
 import { PredictAmountSection } from "@/components/Predict/PredictAmountSection";
@@ -22,22 +23,22 @@ import { isUndefined } from "@/utils";
 import { collateral } from "@/consts";
 
 import Header from "./Header";
-
-interface IPredictPopup {
+interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
 }
 
-export const PredictPopup: React.FC<IPredictPopup> = ({
+export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   isOpen,
   toggleIsOpen,
 }) => {
+  const markets = usePredictionMarkets();
+
   const [amount, setAmount] = useState<bigint>();
   const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
 
   const isXDai = selectedToken === TokenType.xDAI;
 
-  const { market, predictedPrice } = useMarketContext();
   const resetUI = () => {
     setAmount(undefined);
     setSelectedToken(TokenType.sDAI);
@@ -62,15 +63,15 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     address: tradeExecutor,
     token: collateral.address,
   });
-  const { data: walletUPBalanceData } = useTokenBalance({
-    address: tradeExecutor,
-    token: market.upToken,
-  });
 
-  const { data: walletDOWNBalanceData } = useTokenBalance({
-    address: tradeExecutor,
-    token: market.downToken,
-  });
+  const { data: tokensBalances } = useTokensBalances(
+    tradeExecutor,
+    markets.flatMap((market) => [market.upToken, market.downToken]),
+  );
+  const { data: underlyingTokensBalances } = useTokensBalances(
+    tradeExecutor,
+    markets.map((market) => market.underlyingToken),
+  );
 
   // wallet only holds sDAI, this gives the equivalent amount in xDAI
   // to inform user how much equivalent xDAI they have
@@ -83,11 +84,6 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
         isXDai,
       retry: false,
     },
-  });
-
-  const { data: walletUnderlyingBalanceData } = useTokenBalance({
-    address: tradeExecutor,
-    token: market.underlyingToken,
   });
 
   // tells us the resulting sDAI
@@ -122,7 +118,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     },
   });
 
-  // combined balance (user + wallet)
+  // can be either xDAI or sDAI
   const availableBalance = useMemo(() => {
     return selectedToken === TokenType.sDAI
       ? (userSDaiBalanceData?.value ?? 0n) +
@@ -147,10 +143,8 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     isPredictionSuccessful,
     isSending,
     error,
-    tradeExecutorPredict,
-  } = usePredictFlow({
-    market,
-    predictedPrice,
+    tradeExecutorPredictAll,
+  } = usePredictAllFlow({
     account,
     tradeExecutor,
     checkTradeExecutorResult,
@@ -158,9 +152,8 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
     sDAIDepositAmount,
     toBeAdded,
     toBeAddedXDai,
-    walletUnderlyingBalance: walletUnderlyingBalanceData?.value,
-    walletUPBalance: walletUPBalanceData?.value,
-    walletDOWNBalance: walletDOWNBalanceData?.value,
+    walletUnderlyingBalances: underlyingTokensBalances,
+    walletTokensBalances: tokensBalances,
     onDone: () => {
       toggleIsOpen();
       resetUI();
@@ -189,7 +182,6 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
             isSending,
             walletXDaiBalance,
             walletSDaiBalanceData,
-            walletUnderlyingBalanceData,
             sDAIDepositAmount,
             toBeAdded,
             toBeAddedXDai,
@@ -207,7 +199,7 @@ export const PredictPopup: React.FC<IPredictPopup> = ({
             isLoadingQuotes,
             isProcessingMarkets,
             isPredictionSuccessful,
-            isMakingPrediction: tradeExecutorPredict.isPending,
+            isMakingPrediction: tradeExecutorPredictAll.isPending,
             error,
           }}
         />
