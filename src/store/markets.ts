@@ -16,6 +16,7 @@ interface MarketsStore {
   setPrediction: (marketId: string, prediction: number) => void;
   setMarketEstimate: (marketId: string, estimate: number) => void;
   resetPredictionMarkets: () => void;
+  removeMarket: (marketId: string) => void;
 }
 
 export const useMarketsStore = create<MarketsStore>((set) => ({
@@ -73,5 +74,20 @@ export const useMarketsStore = create<MarketsStore>((set) => ({
       );
 
       return { markets: updatedMarkets };
+    }),
+
+  removeMarket: (marketId) =>
+    set((state) => {
+      const market = state.markets[marketId];
+      if (isUndefined(market)) return state;
+
+      return {
+        markets: {
+          ...state.markets,
+          // Setting the prediction to marketEstimate,
+          // removes it from the predicable markets (@/hooks/usePredictionMarkets)
+          [marketId]: { ...market, prediction: market?.marketEstimate },
+        },
+      };
     }),
 }));
