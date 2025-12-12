@@ -4,6 +4,8 @@ import { useToggle } from "react-use";
 
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
+import EnsureChain from "@/components/EnsureChain";
+
 import { PredictAllPopup } from "./PredictAllPopup";
 
 const PredictAll: React.FC = () => {
@@ -22,12 +24,14 @@ const PredictAll: React.FC = () => {
       <h3 className="text-klerosUIComponentsPrimaryText text-base font-semibold">
         Predict all the estimates above
       </h3>
-      <Button
-        text="Predict All"
-        onPress={toggleIsOpen}
-        isDisabled={markets.length === 0}
-      />
-      <PredictAllPopup {...{ isOpen, toggleIsOpen }} />
+      <EnsureChain>
+        <Button
+          text="Predict All"
+          onPress={toggleIsOpen}
+          isDisabled={markets.length === 0}
+        />
+        <PredictAllPopup {...{ isOpen, toggleIsOpen }} />
+      </EnsureChain>
     </Card>
   );
 };

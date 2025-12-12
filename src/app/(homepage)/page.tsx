@@ -4,12 +4,10 @@ import React from "react";
 
 import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 
-import { CardInteractionProvider } from "@/context/CardInteractionContext";
 import MarketContextProvider from "@/context/MarketContext";
 import { TradeWalletProvider } from "@/context/TradeWalletContext";
 import { useChartData } from "@/hooks/useChartData";
 
-import EnsureChain from "@/components/EnsureChain";
 import Loader from "@/components/Loader";
 
 import { isUndefined } from "@/utils";
@@ -45,25 +43,21 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <EnsureChain>
-            <TradeWalletProvider>
-              <ParticipateSection />
-              <CardInteractionProvider>
-                <div className="flex flex-col gap-4">
-                  {markets.map((market, i) => (
-                    <MarketContextProvider
-                      key={market.marketId}
-                      selected={winningOutcomes?.at(i)}
-                      {...market}
-                    >
-                      <ProjectFunding key={market.marketId} />
-                    </MarketContextProvider>
-                  ))}
-                </div>
-              </CardInteractionProvider>
-              <PredictAll />
-            </TradeWalletProvider>
-          </EnsureChain>
+          <TradeWalletProvider>
+            <ParticipateSection />
+            <div className="flex flex-col gap-4">
+              {markets.map((market, i) => (
+                <MarketContextProvider
+                  key={market.marketId}
+                  selected={winningOutcomes?.at(i)}
+                  {...market}
+                >
+                  <ProjectFunding key={market.marketId} />
+                </MarketContextProvider>
+              ))}
+            </div>
+            <PredictAll />
+          </TradeWalletProvider>
 
           <AdvancedSection />
         </div>
