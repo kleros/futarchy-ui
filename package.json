@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@cowprotocol/cow-sdk": "^5.10.3",
-    "@kleros/ui-components-library": "^3.6.0",
+    "@kleros/ui-components-library": "^3.7.0",
     "@reown/appkit": "^1.7.11",
     "@reown/appkit-adapter-wagmi": "^1.7.11",
     "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#6dea7e63f7e05c84a4374717ee1ad5baca86f7de",

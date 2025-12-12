@@ -21,7 +21,7 @@ const ProjectBalances: React.FC = () => {
   );
   return (
     <CustomAccordion
-      className="w-full [&_#body-wrapper]:px-0 [&_#expand-button]:px-4!"
+      className="w-full max-w-full [&_#body-wrapper]:px-0 [&_#expand-button]:px-4!"
       items={[
         {
           title: (
