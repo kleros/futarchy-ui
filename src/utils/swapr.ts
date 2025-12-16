@@ -4,12 +4,14 @@ import {
   encodeAbiParameters,
   getCreate2Address,
   keccak256,
+  parseUnits,
   type Address,
 } from "viem";
 import { gnosis } from "viem/chains";
 
 import { getTradeArgs } from "./trade";
 import { getTradeExactOutArgs } from "./tradeExactOut";
+import { DECIMALS } from "@/consts";
 
 type GetQuoteArgs = {
   address?: Address;
@@ -17,6 +19,10 @@ type GetQuoteArgs = {
   amount?: string;
   outcomeToken: string;
   collateralToken: string;
+};
+
+export const getMinimumAmountOut = async (quote: SwaprV3Trade) => {
+  return parseUnits(quote.minimumAmountOut().toExact(), DECIMALS);
 };
 
 export const getSwaprQuote = async ({

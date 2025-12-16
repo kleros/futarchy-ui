@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Checkbox } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
 import AmountInput, { TokenType } from "@/components/AmountInput";
@@ -7,6 +8,8 @@ import AmountInput, { TokenType } from "@/components/AmountInput";
 import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
 import { formatValue } from "@/utils";
+
+import { MIN_SEER_CREDITS_USAGE } from "@/consts";
 
 import AmountDisplay from "./AmountDisplay";
 
@@ -22,6 +25,7 @@ interface IPredictAmountSection {
 
   walletXDaiBalance?: bigint;
   walletSDaiBalanceData?: { value: bigint };
+  seerCreditsBalance: bigint;
   walletUnderlyingBalanceData?: { value: bigint };
 
   sDAIDepositAmount?: bigint;
@@ -30,6 +34,8 @@ interface IPredictAmountSection {
 
   isXDai: boolean;
   isWalletCreated: boolean;
+  isUsingSeerCredits: boolean;
+  toggleIsUsingCredits: (value?: boolean) => void;
 }
 
 export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
@@ -41,17 +47,20 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
   isSending,
   walletXDaiBalance,
   walletSDaiBalanceData,
+  seerCreditsBalance,
   walletUnderlyingBalanceData,
   sDAIDepositAmount,
   toBeAdded,
   toBeAddedXDai,
   isXDai,
   isWalletCreated,
+  isUsingSeerCredits,
+  toggleIsUsingCredits,
 }) => {
   return (
     <div className="flex flex-col items-center gap-1.5">
       {/* Amount input */}
-      <div className="flex flex-col">
+      <div className="mb-2 flex flex-col">
         <span className="text-klerosUIComponentsSecondaryText mb-1 text-sm">
           You pay
         </span>
@@ -79,6 +88,16 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
               &nbsp;{isXDai ? "xDAI" : `sDAI`}
             </span>
           </>
+        ) : null}
+        {/* Seer credits checkbox */}
+        {seerCreditsBalance > MIN_SEER_CREDITS_USAGE ? (
+          <Checkbox
+            small
+            label={`Use Seer credits. Available: ${formatValue(seerCreditsBalance)}`}
+            onChange={toggleIsUsingCredits}
+            defaultSelected={isUsingSeerCredits}
+            className="mt-1 pl-4 text-xs [&_div]:top-0.5 [&_div]:size-3 [&_svg]:size-3"
+          />
         ) : null}
       </div>
       <div className="rounded-base bg-klerosUIComponentsPrimaryBlue flex w-23.25 items-center justify-center py-3">

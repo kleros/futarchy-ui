@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 
+import { seerCreditsAddress } from "@/generated";
 import { useMarketsStore } from "@/store/markets";
 
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
@@ -11,7 +12,7 @@ import { fetchTokenBalance } from "@/hooks/useTokenBalance";
 
 import { isUndefined } from "@/utils";
 import { formatError } from "@/utils/formatError";
-import { getQuotes } from "@/utils/getQuotes";
+import { getQuotes, getSDaiToWXdaiData } from "@/utils/getQuotes";
 import { processMarket } from "@/utils/processMarket";
 
 import { collateral } from "@/consts";
@@ -35,6 +36,7 @@ interface UsePredictAllFlowArgs {
   sDAIDepositAmount?: bigint;
   toBeAdded: bigint;
   toBeAddedXDai?: bigint;
+  toBeAddedSeerCredits?: bigint;
 
   walletUnderlyingBalances?: bigint[];
   walletTokensBalances?: bigint[];
@@ -50,6 +52,7 @@ export function usePredictAllFlow({
   sDAIDepositAmount,
   toBeAdded,
   toBeAddedXDai,
+  toBeAddedSeerCredits,
   walletUnderlyingBalances,
   walletTokensBalances,
   onDone,
@@ -94,8 +97,8 @@ export function usePredictAllFlow({
   }, [checkTradeExecutorResult?.isCreated, walletUnderlyingBalances]);
 
   const hasDepositCollateral = useMemo(() => {
-    return (sDAIDepositAmount ?? 0n) > 0n;
-  }, [sDAIDepositAmount]);
+    return (sDAIDepositAmount ?? 0n) + (toBeAddedSeerCredits ?? 0n) > 0n;
+  }, [sDAIDepositAmount, toBeAddedSeerCredits]);
 
   const hasPosition = useMemo(() => {
     return walletTokensBalances?.some((v) => v > 0n);
@@ -108,11 +111,15 @@ export function usePredictAllFlow({
       initialSDAIDeposit?: bigint;
       initialToBeAdded?: bigint;
       initialToBeAddedXDai?: bigint;
+      initialToBeAddedSeerCredits?: bigint;
     } = {
       initialSDAIDeposit: sDAIDepositAmount,
       initialToBeAdded: toBeAdded,
       initialToBeAddedXDai: toBeAddedXDai,
+      initialToBeAddedSeerCredits: toBeAddedSeerCredits,
     };
+    setFlag("frozenToBeAdded", toBeAdded);
+    setFlag("frozenToBeAddedSeerCredits", toBeAddedSeerCredits);
 
     if (!hasWalletCollateral && !hasDepositCollateral && !hasPosition) {
       setFlag("error", "Require collateral to trade");
@@ -148,7 +155,25 @@ export function usePredictAllFlow({
         setFlag("createdTradeWallet", tradeWallet);
       }
 
-      // deposit if needed
+      // deposit SeerCredits if needed
+      if (
+        !isUndefined(snapshot.initialToBeAddedSeerCredits) &&
+        snapshot.initialToBeAddedSeerCredits > 0n
+      ) {
+        setFlag("isAddingSeerCredits", true);
+
+        await depositToTradeExecutor.mutateAsync({
+          token: seerCreditsAddress,
+          amount: snapshot.initialToBeAddedSeerCredits,
+          tradeExecutor: tradeWallet,
+          isXDai: false,
+        });
+
+        setFlag("isAddingSeerCredits", false);
+        setFlag("isSeerCreditsAdded", true);
+      }
+
+      // deposit sDAI/xDAI if needed
       if (
         !isUndefined(snapshot.initialToBeAdded) &&
         snapshot.initialToBeAdded > 0n
@@ -177,15 +202,32 @@ export function usePredictAllFlow({
         setFlag("isCollateralAdded", true);
       }
 
-      // process markets (UP & DOWN)
       setFlag("isProcessingMarkets", true);
+
+      const sDaiToWXDaiData = await getSDaiToWXdaiData(
+        tradeWallet!,
+        toBeAddedSeerCredits,
+      );
+
+      // the expected/equivalent sDAI received by using SeerCredits can be less than initially calculated
+      // so adjusting
+      if (
+        sDaiToWXDaiData &&
+        sDaiToWXDaiData.slippage > 0n &&
+        snapshot.initialSDAIDeposit
+      ) {
+        snapshot.initialSDAIDeposit =
+          snapshot.initialSDAIDeposit - sDaiToWXDaiData.slippage;
+      }
+
+      // process markets (UP & DOWN)
       const processedMarkets = await Promise.all(
         markets.map(async (market) => {
           const upProcessed = await processMarket({
             underlying: market.underlyingToken,
             outcome: market.upToken,
             tradeExecutor: tradeWallet!,
-            mintAmount: snapshot.initialSDAIDeposit,
+            mintAmount: snapshot.initialSDAIDeposit ?? 0n,
             targetPrice: market?.predictedPrice ?? 0,
           });
 
@@ -193,7 +235,7 @@ export function usePredictAllFlow({
             underlying: market.underlyingToken,
             outcome: market.downToken,
             tradeExecutor: tradeWallet!,
-            mintAmount: snapshot.initialSDAIDeposit,
+            mintAmount: snapshot.initialSDAIDeposit ?? 0n,
             targetPrice: 1 - (market?.predictedPrice ?? 0),
           });
 
@@ -231,7 +273,10 @@ export function usePredictAllFlow({
       await tradeExecutorPredictAll.mutateAsync({
         marketsData: quotesPerMarket,
         tradeExecutor: tradeWallet!,
-        mintAmount: snapshot.initialSDAIDeposit,
+        mintAmount:
+          (snapshot.initialSDAIDeposit ?? 0n) -
+          (sDaiToWXDaiData?.minSDaiReceived ?? 0n),
+        seerCreditsSwapQuote: sDaiToWXDaiData?.quote,
       });
       setFlag("isPredictionSuccessful", true);
 

@@ -19,9 +19,12 @@ type TimelineItem = React.ComponentProps<
 interface IPredictSteps {
   tradeExecutor?: Address;
   toBeAdded: bigint;
+  toBeAddedSeerCredits?: bigint;
   isCreatingWallet: boolean;
   isAddingCollateral: boolean;
   isCollateralAdded: boolean;
+  isAddingSeerCredits: boolean;
+  isSeerCreditsAdded: boolean;
   isProcessingMarkets: boolean;
   isLoadingQuotes: boolean;
   isMakingPrediction: boolean;
@@ -32,9 +35,12 @@ interface IPredictSteps {
 const PredictSteps: React.FC<IPredictSteps> = ({
   tradeExecutor,
   toBeAdded,
+  toBeAddedSeerCredits,
   isCreatingWallet,
   isAddingCollateral,
   isCollateralAdded,
+  isAddingSeerCredits,
+  isSeerCreditsAdded,
   isProcessingMarkets,
   isLoadingQuotes,
   isMakingPrediction,
@@ -76,6 +82,19 @@ const PredictSteps: React.FC<IPredictSteps> = ({
       });
     }
 
+    if (toBeAddedSeerCredits && toBeAddedSeerCredits > 0n) {
+      steps.push({
+        title: "Add Seer Credits to wallet",
+        party: isAddingSeerCredits ? <Spinner className="mb-1" /> : "",
+        subtitle: `Adding ${formatValue(toBeAddedSeerCredits)} Seer Credits`,
+        Icon: isSeerCreditsAdded ? CheckOutline : CircleOutline,
+        state: isAddingSeerCredits
+          ? "loading"
+          : error || toBeAddedSeerCredits === 0n
+            ? "disabled"
+            : undefined,
+      });
+    }
     steps.push({
       title: "Add Collateral to wallet",
       party: isAddingCollateral ? <Spinner className="mb-1" /> : "",
@@ -121,7 +140,10 @@ const PredictSteps: React.FC<IPredictSteps> = ({
     isCreatingWallet,
     isAddingCollateral,
     isCollateralAdded,
+    isAddingSeerCredits,
+    isSeerCreditsAdded,
     toBeAdded,
+    toBeAddedSeerCredits,
     isMakingPrediction,
     isPredictionSuccessful,
     predictionProgressText,
