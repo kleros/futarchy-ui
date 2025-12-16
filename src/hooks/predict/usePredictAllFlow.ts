@@ -284,10 +284,13 @@ export function usePredictAllFlow({
       setTimeout(() => {
         onDone();
         reset();
-        resetPredictionMarkets();
-        queryClient.refetchQueries({
-          queryKey: ["useTicksData"],
-        });
+        queryClient
+          .refetchQueries({
+            queryKey: ["useTicksData"],
+          })
+          .then(() => {
+            resetPredictionMarkets();
+          });
       }, 3000);
     } catch (e) {
       if (e instanceof Error) {
