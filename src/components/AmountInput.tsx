@@ -7,7 +7,7 @@ import { parseUnits, formatUnits } from "viem";
 import { cn, formatValue, isUndefined } from "@/utils";
 
 import LightButton from "./LightButton";
-import { Tokens, TokenType } from "@/consts";
+import { Tokens, TokenType } from "@/consts/tokens";
 
 interface IAmountInput {
   setAmount: (amount: bigint) => void;

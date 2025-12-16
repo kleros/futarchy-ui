@@ -9,9 +9,10 @@ import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
 import { formatValue } from "@/utils";
 
-import { MIN_SEER_CREDITS_USAGE, TokenType } from "@/consts";
+import { MIN_SEER_CREDITS_USAGE } from "@/consts";
 
 import AmountDisplay from "./AmountDisplay";
+import { TokenType } from "@/consts/tokens";
 
 interface IPredictAmountSection {
   amount: bigint | undefined;

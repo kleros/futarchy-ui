@@ -21,9 +21,10 @@ import PredictSteps from "@/components/Predict/PredictSteps";
 
 import { isUndefined } from "@/utils";
 
-import { collateral, TokenType } from "@/consts";
+import { collateral } from "@/consts";
 
 import Header from "./Header";
+import { TokenType } from "@/consts/tokens";
 interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;

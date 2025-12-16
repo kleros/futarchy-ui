@@ -14,7 +14,8 @@ import CloseIcon from "@/assets/svg/close-icon.svg";
 
 import { isUndefined } from "@/utils";
 
-import { collateral, TokenType } from "@/consts";
+import { collateral } from "@/consts";
+import { TokenType } from "@/consts/tokens";
 
 interface DepositInterfaceProps {
   isOpen: boolean;

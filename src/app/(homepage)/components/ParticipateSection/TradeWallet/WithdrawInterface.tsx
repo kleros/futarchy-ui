@@ -11,8 +11,8 @@ import LightButton from "@/components/LightButton";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 
-import { Tokens, TokenType } from "@/consts";
 import AmountInput from "@/components/AmountInput";
+import { Tokens, TokenType } from "@/consts/tokens";
 
 interface WithdrawInterfaceProps {
   isOpen: boolean;

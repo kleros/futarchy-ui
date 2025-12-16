@@ -1,10 +1,9 @@
 import { SwaprV3Trade } from "@swapr/sdk";
 import { Address, formatUnits, parseUnits } from "viem";
 
-import { sDaiAddress, seerCreditsAddress, wxdaiAddress } from "@/generated";
+import { sDaiAddress, wxdaiAddress } from "@/generated";
 
 import { ProcessedMarket } from "@/hooks/useProcessMarkets";
-import { fetchTokenBalance } from "@/hooks/useTokenBalance";
 
 import { DECIMALS, DEFAULT_CHAIN, VOLUME_MIN } from "@/consts";
 
