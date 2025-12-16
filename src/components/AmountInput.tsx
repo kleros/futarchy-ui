@@ -4,16 +4,11 @@ import { BigNumberField, DropdownSelect } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { parseUnits, formatUnits } from "viem";
 
-import DAIIcon from "@/assets/svg/dai.svg";
-
 import { cn, formatValue, isUndefined } from "@/utils";
 
 import LightButton from "./LightButton";
+import { Tokens, TokenType } from "@/consts";
 
-export enum TokenType {
-  sDAI,
-  xDAI,
-}
 interface IAmountInput {
   setAmount: (amount: bigint) => void;
   setSelectedToken: (token: TokenType) => void;
@@ -23,6 +18,7 @@ interface IAmountInput {
   selectedToken: TokenType;
   className?: string;
   inputProps?: React.ComponentProps<typeof BigNumberField>;
+  isWithdraw?: boolean;
 }
 
 const AmountInput: React.FC<IAmountInput> = ({
@@ -34,6 +30,7 @@ const AmountInput: React.FC<IAmountInput> = ({
   balance,
   className,
   inputProps,
+  isWithdraw,
 }) => {
   const notEnoughBalance = useMemo(() => {
     if (!isUndefined(value) && !isUndefined(balance) && value > balance)
@@ -46,6 +43,44 @@ const AmountInput: React.FC<IAmountInput> = ({
       setAmount(balance);
     }
   };
+
+  const items = useMemo(() => {
+    const SDAIIcon = Tokens[TokenType.sDAI].Icon;
+    const SeerCreditsIcon = Tokens[TokenType.SeerCredits].Icon;
+    const tokens = [
+      {
+        text: "sDAI",
+        itemValue: TokenType.sDAI,
+        id: TokenType.sDAI,
+        icon: <SDAIIcon className="mr-2 size-6" />,
+      },
+      {
+        text: "xDAI",
+        itemValue: TokenType.xDAI,
+        id: TokenType.xDAI,
+        icon: <SDAIIcon className="mr-2 size-6" />,
+      },
+    ];
+    if (isWithdraw) {
+      tokens.push(
+        ...[
+          {
+            text: "wxDAI",
+            itemValue: TokenType.WXDAI,
+            id: TokenType.WXDAI,
+            icon: <SDAIIcon className="mr-2 size-6" />,
+          },
+          {
+            text: "Seer Credits",
+            itemValue: TokenType.SeerCredits,
+            id: TokenType.SeerCredits,
+            icon: <SeerCreditsIcon className="mr-2 size-6" />,
+          },
+        ],
+      );
+    }
+    return tokens;
+  }, [isWithdraw]);
 
   return (
     <div className={cn("relative mb-8 w-full md:min-w-lg", className)}>
@@ -81,20 +116,7 @@ const AmountInput: React.FC<IAmountInput> = ({
             setSelectedToken(item.itemValue);
           }}
           defaultSelectedKey={selectedToken}
-          items={[
-            {
-              text: "sDAI",
-              itemValue: TokenType.sDAI,
-              id: TokenType.sDAI,
-              icon: <DAIIcon className="mr-2 size-6" />,
-            },
-            {
-              text: "xDAI",
-              itemValue: TokenType.xDAI,
-              id: TokenType.xDAI,
-              icon: <DAIIcon className="mr-2 size-6" />,
-            },
-          ]}
+          items={items}
           isDisabled={inputProps?.isReadOnly}
         />
       </div>
@@ -111,7 +133,7 @@ const AmountInput: React.FC<IAmountInput> = ({
       {!notEnoughBalance && (
         <span className="text-klerosUIComponentsPrimaryText absolute mt-1 text-xs">
           {!isUndefined(balance)
-            ? `Available: ${formatValue(balance)} ${selectedToken === TokenType.xDAI ? "xDAI" : "sDAI"}`
+            ? `Available: ${formatValue(balance)}`
             : "Loading..."}
         </span>
       )}

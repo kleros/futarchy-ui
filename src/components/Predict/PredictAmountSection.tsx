@@ -3,13 +3,13 @@ import React from "react";
 import { Checkbox } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
-import AmountInput, { TokenType } from "@/components/AmountInput";
+import AmountInput from "@/components/AmountInput";
 
 import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
 import { formatValue } from "@/utils";
 
-import { MIN_SEER_CREDITS_USAGE } from "@/consts";
+import { MIN_SEER_CREDITS_USAGE, TokenType } from "@/consts";
 
 import AmountDisplay from "./AmountDisplay";
 

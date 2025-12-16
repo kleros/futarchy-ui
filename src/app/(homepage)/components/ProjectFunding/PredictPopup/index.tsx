@@ -13,13 +13,12 @@ import { usePredictFlow } from "@/hooks/predict/usePredictFlow";
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 
-import { TokenType } from "@/components/AmountInput";
 import { PredictAmountSection } from "@/components/Predict/PredictAmountSection";
 import PredictSteps from "@/components/Predict/PredictSteps";
 
 import { isUndefined } from "@/utils";
 
-import { collateral } from "@/consts";
+import { collateral, TokenType } from "@/consts";
 
 import Header from "./Header";
 

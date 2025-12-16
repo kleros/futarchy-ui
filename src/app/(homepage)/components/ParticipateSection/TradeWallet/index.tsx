@@ -100,14 +100,14 @@ export const TradeWallet = () => {
                 <Button
                   variant="secondary"
                   small
-                  text="Deposit DAI"
+                  text="Deposit"
                   onPress={toggleIsDepositOpen}
                 />
 
                 <Button
                   variant="secondary"
                   small
-                  text="Withdraw DAI"
+                  text="Withdraw"
                   onPress={toggleIsWithdrawOpen}
                 />
 
@@ -166,46 +166,56 @@ export const TradeWallet = () => {
           <ProjectBalances />
         </Card>
       )}
-      <DepositInterface
-        {...{
-          isOpen: isDepositOpen,
-          toggleIsOpen: toggleIsDepositOpen,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          tradeExecutor: tradeExecutor!,
-        }}
-      />
-      <WithdrawInterface
-        {...{
-          isOpen: isWithdrawOpen,
-          toggleIsOpen: toggleIsWithdrawOpen,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          tradeExecutor: tradeExecutor!,
-        }}
-      />
-      <RedeemParentsInterface
-        {...{
-          isOpen: isRedeemOpen,
-          toggleIsOpen: toggleIsRedeemOpen,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          tradeExecutor: tradeExecutor!,
-        }}
-      />
-      <MintInterface
-        {...{
-          isOpen: isMintOpen,
-          toggleIsOpen: toggleIsMintOpen,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          tradeExecutor: tradeExecutor!,
-        }}
-      />
-      <MergeInterface
-        {...{
-          isOpen: isMergeOpen,
-          toggleIsOpen: toggleIsMergeOpen,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          tradeExecutor: tradeExecutor!,
-        }}
-      />
+      {isDepositOpen ? (
+        <DepositInterface
+          {...{
+            isOpen: isDepositOpen,
+            toggleIsOpen: toggleIsDepositOpen,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            tradeExecutor: tradeExecutor!,
+          }}
+        />
+      ) : null}
+      {isWithdrawOpen ? (
+        <WithdrawInterface
+          {...{
+            isOpen: isWithdrawOpen,
+            toggleIsOpen: toggleIsWithdrawOpen,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            tradeExecutor: tradeExecutor!,
+          }}
+        />
+      ) : null}
+      {isRedeemOpen ? (
+        <RedeemParentsInterface
+          {...{
+            isOpen: isRedeemOpen,
+            toggleIsOpen: toggleIsRedeemOpen,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            tradeExecutor: tradeExecutor!,
+          }}
+        />
+      ) : null}
+      {isMintOpen ? (
+        <MintInterface
+          {...{
+            isOpen: isMintOpen,
+            toggleIsOpen: toggleIsMintOpen,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            tradeExecutor: tradeExecutor!,
+          }}
+        />
+      ) : null}
+      {isMergeOpen ? (
+        <MergeInterface
+          {...{
+            isOpen: isMergeOpen,
+            toggleIsOpen: toggleIsMergeOpen,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            tradeExecutor: tradeExecutor!,
+          }}
+        />
+      ) : null}
     </>
   );
 };

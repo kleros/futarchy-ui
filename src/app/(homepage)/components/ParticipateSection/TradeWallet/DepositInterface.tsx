@@ -7,14 +7,14 @@ import { useAccount, useBalance } from "wagmi";
 import { useDepositToTradeExecutor } from "@/hooks/tradeWallet/useDepositToTradeExecutor";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 
-import AmountInput, { TokenType } from "@/components/AmountInput";
+import AmountInput from "@/components/AmountInput";
 import LightButton from "@/components/LightButton";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 
 import { isUndefined } from "@/utils";
 
-import { collateral } from "@/consts";
+import { collateral, TokenType } from "@/consts";
 
 interface DepositInterfaceProps {
   isOpen: boolean;

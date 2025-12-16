@@ -14,6 +14,7 @@ interface WithdrawProps {
   tradeExecutor: Address;
   tokens: Address[];
   amounts: bigint[];
+  isXDai?: boolean;
 }
 
 async function withdrawFromTradeExecutor({
@@ -21,21 +22,30 @@ async function withdrawFromTradeExecutor({
   tradeExecutor,
   tokens,
   amounts,
+  isXDai = false,
 }: WithdrawProps) {
-  const calls = tokens.map((token, index) => {
-    return {
-      to: token,
-      data: encodeFunctionData({
-        abi: erc20Abi,
-        functionName: "transfer",
-        args: [account, amounts[index]],
-      }),
-    };
-  });
+  const calls = isXDai
+    ? [
+        {
+          to: account,
+          data: "0x",
+          value: amounts[0],
+        },
+      ]
+    : tokens.map((token, index) => {
+        return {
+          to: token,
+          data: encodeFunctionData({
+            abi: erc20Abi,
+            functionName: "transfer",
+            args: [account, amounts[index]],
+          }),
+        };
+      });
   const writePromise = writeContract(config, {
     address: tradeExecutor,
     abi: TradeExecutorAbi,
-    functionName: "batchExecute",
+    functionName: isXDai ? "batchValueExecute" : "batchExecute",
     args: [calls],
     value: 0n,
     chainId: DEFAULT_CHAIN.id,

@@ -8,6 +8,8 @@ import { RouterAbi } from "@/abi/Router";
 import { sDAIAbi } from "@/abi/sDAI";
 import { sDAIAdapterAbi } from "@/abi/sDAIAdapter";
 import { wrappedXDAIAbi } from "@/abi/wrappedXDAI";
+import DAIIcon from "@/assets/svg/dai.svg";
+import SeerCreditsIcon from "@/assets/svg/seer-credits.svg";
 
 export const reownProjectId = process.env.NEXT_PUBLIC_REOWN_PROJECTID;
 
@@ -61,6 +63,35 @@ const contracts = {
     name: "WXDAI",
   },
 } satisfies Record<string, IContract>;
+
+export enum TokenType {
+  sDAI = "sDAI",
+  xDAI = "xDAI",
+  WXDAI = "WXDAI",
+  SeerCredits = "SEER_CREDITS",
+}
+
+export const Tokens: Record<
+  TokenType,
+  { address: Address; Icon: React.FC<React.SVGProps<SVGElement>> }
+> = {
+  [TokenType.sDAI]: {
+    address: contracts["sDAI"].address,
+    Icon: DAIIcon,
+  },
+  [TokenType.xDAI]: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    Icon: DAIIcon,
+  },
+  [TokenType.WXDAI]: {
+    address: contracts["wrappedXDai"].address,
+    Icon: DAIIcon,
+  },
+  [TokenType.SeerCredits]: {
+    address: contracts["seerCredits"].address,
+    Icon: SeerCreditsIcon,
+  },
+};
 
 export const getContractInfo = (
   contractName: keyof typeof contracts,
