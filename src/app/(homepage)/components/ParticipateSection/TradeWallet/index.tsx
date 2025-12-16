@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Button, Card } from "@kleros/ui-components-library";
+import { Button, Card, DropdownSelect } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import Link from "next/link";
 import { useToggle } from "react-use";
@@ -96,7 +96,7 @@ export const TradeWallet = () => {
                 </Link>
               </div>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <Button
                   variant="secondary"
                   small
@@ -119,19 +119,27 @@ export const TradeWallet = () => {
                     text="Redeem outcome tokens"
                   />
                 ) : null}
-
-                <Button
-                  variant="secondary"
-                  small
-                  text="Mint"
-                  onPress={toggleIsMintOpen}
-                />
-
-                <Button
-                  variant="secondary"
-                  small
-                  text="Merge"
-                  onPress={toggleIsMergeOpen}
+                <DropdownSelect
+                  simpleButton
+                  placeholder="Advanced Options"
+                  smallButton
+                  selectedKey={0}
+                  className="focus:shadow-none!"
+                  items={[
+                    { id: 1, text: "Mint", itemValue: 1 },
+                    { id: 2, text: "Merge", itemValue: 2 },
+                  ]}
+                  callback={(selected) => {
+                    switch (selected.id) {
+                      case 1:
+                        toggleIsMintOpen();
+                        break;
+                      case 2:
+                      default:
+                        toggleIsMergeOpen();
+                        break;
+                    }
+                  }}
                 />
               </div>
             </div>
