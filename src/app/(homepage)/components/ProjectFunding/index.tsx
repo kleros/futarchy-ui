@@ -2,7 +2,6 @@ import React from "react";
 
 import { Accordion, CustomAccordion } from "@kleros/ui-components-library";
 import clsx from "clsx";
-import { motion } from "framer-motion";
 
 import { useMarketsStore } from "@/store/markets";
 
@@ -78,29 +77,6 @@ const ProjectFunding: React.FC = () => {
                 items={[{ title: "Details", body: <Details {...details} /> }]}
               />
             </div>
-          ),
-          expandButton: ({ expanded, toggle }) => (
-            // hydration error, because of button in button, workaround
-            <motion.div
-              role="button"
-              tabIndex={0}
-              onClick={toggle}
-              onKeyDown={(e) => e.key === "Enter" && toggle()}
-              className={clsx(
-                "cursor-pointer",
-                "rounded-base inline-flex items-center px-6 py-1.5",
-                "text-sm font-semibold",
-                expanded
-                  ? [
-                      "bg-klerosUIComponentsWhiteBackground text-klerosUIComponentsPrimaryBlue",
-                      "border-klerosUIComponentsPrimaryBlue border",
-                    ]
-                  : "bg-klerosUIComponentsPrimaryBlue text-klerosUIComponentsWhiteBackground",
-              )}
-              whileTap={{ scale: 0.9, y: 1 }}
-            >
-              {expanded ? "Close" : "Predict"}
-            </motion.div>
           ),
         },
       ]}
