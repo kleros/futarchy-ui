@@ -38,7 +38,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
 
   const [amount, setAmount] = useState<bigint>();
   const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
-  const [isUsingSeerCredits, toggleIsUsingCredits] = useToggle(false);
+  const [isUsingSeerCredits, toggleIsUsingCredits] = useToggle(true);
 
   const isXDai = selectedToken === TokenType.xDAI;
 
