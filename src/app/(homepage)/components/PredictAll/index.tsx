@@ -6,6 +6,8 @@ import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import EnsureChain from "@/components/EnsureChain";
 
+import CheckOutline from "@/assets/svg/check-outline-button.svg";
+
 import { PredictAllPopup } from "./PredictAllPopup";
 
 const PredictAll: React.FC = () => {
@@ -26,7 +28,17 @@ const PredictAll: React.FC = () => {
       </h3>
       <EnsureChain>
         <Button
-          text="Predict All"
+          icon={
+            <CheckOutline
+              className={clsx(
+                "mr-2 size-4",
+                markets.length === 0
+                  ? ["[&_path]:fill-klerosUIComponentsStroke"]
+                  : ["[&_path]:fill-klerosUIComponentsWhiteBackground"],
+              )}
+            />
+          }
+          text="Predict Selected"
           onPress={toggleIsOpen}
           isDisabled={markets.length === 0}
         />

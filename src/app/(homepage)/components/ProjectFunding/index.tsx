@@ -4,8 +4,13 @@ import { Accordion, CustomAccordion } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 
+import { useMarketsStore } from "@/store/markets";
+
 import { useMarketContext } from "@/context/MarketContext";
 import { useTradeWallet } from "@/context/TradeWalletContext";
+
+import CheckOutline from "@/assets/svg/check-outline-button.svg";
+import MinusOutline from "@/assets/svg/minus-outline.svg";
 
 import Details from "./Details";
 import PositionValue from "./PositionValue";
@@ -14,7 +19,10 @@ import PredictionSlider from "./PredictionSlider";
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
   const { name, color, upToken, downToken, details, underlyingToken } = market;
-
+  const isSelected = useMarketsStore((s) => {
+    const m = s.markets[market.marketId];
+    return !!m?.prediction && m.prediction !== m.marketEstimate;
+  });
   const { tradeExecutor } = useTradeWallet();
 
   return (
@@ -22,13 +30,13 @@ const ProjectFunding: React.FC = () => {
       aria-label="card"
       className={clsx(
         "bg-klerosUIComponentsLightBackground flex h-auto w-full max-w-full flex-col gap-4",
-        "hover:shadow-md",
+        "hover:shadow-md [&>div]:my-0",
       )}
       items={[
         {
           title: (
             <>
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-1 flex-wrap items-center justify-between gap-4">
                 <div className="flex max-w-full grow basis-[70%] flex-col gap-8 md:min-w-[300px]">
                   <div className="flex items-center gap-2">
                     <span
@@ -40,6 +48,11 @@ const ProjectFunding: React.FC = () => {
                     </h3>
                   </div>
                 </div>
+                {isSelected ? (
+                  <CheckOutline className="[&_path]:fill-klerosUIComponentsSuccess animate-fade-in size-4" />
+                ) : (
+                  <MinusOutline className="size-4" />
+                )}
               </div>
             </>
           ),
@@ -74,9 +87,15 @@ const ProjectFunding: React.FC = () => {
               onClick={toggle}
               onKeyDown={(e) => e.key === "Enter" && toggle()}
               className={clsx(
-                "bg-klerosUIComponentsPrimaryBlue cursor-pointer",
+                "cursor-pointer",
                 "rounded-base inline-flex items-center px-6 py-1.5",
-                "text-klerosUIComponentsWhiteBackground text-sm font-semibold",
+                "text-sm font-semibold",
+                expanded
+                  ? [
+                      "bg-klerosUIComponentsWhiteBackground text-klerosUIComponentsPrimaryBlue",
+                      "border-klerosUIComponentsPrimaryBlue border",
+                    ]
+                  : "bg-klerosUIComponentsPrimaryBlue text-klerosUIComponentsWhiteBackground",
               )}
               whileTap={{ scale: 0.9, y: 1 }}
             >
