@@ -49,7 +49,7 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
     >
       <div className="flex size-full flex-col justify-center gap-6">
         <h2 className="w-full. text-klerosUIComponentsPrimaryText text-center text-2xl font-semibold">
-          Merge Project tokens
+          Upload CSV Predictions
         </h2>
         <div
           className={clsx(
