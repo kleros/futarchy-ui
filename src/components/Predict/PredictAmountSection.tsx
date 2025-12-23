@@ -1,17 +1,12 @@
 import React from "react";
 
 import { Checkbox } from "@kleros/ui-components-library";
-import clsx from "clsx";
 
 import AmountInput from "@/components/AmountInput";
-
-import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
 
 import { formatValue } from "@/utils";
 
 import { MIN_SEER_CREDITS_USAGE } from "@/consts";
-
-import AmountDisplay from "./AmountDisplay";
 import { TokenType } from "@/consts/tokens";
 
 interface IPredictAmountSection {
@@ -27,9 +22,7 @@ interface IPredictAmountSection {
   walletXDaiBalance?: bigint;
   walletSDaiBalanceData?: { value: bigint };
   seerCreditsBalance: bigint;
-  walletUnderlyingBalanceData?: { value: bigint };
 
-  sDAIDepositAmount?: bigint;
   toBeAdded: bigint;
   toBeAddedXDai?: bigint;
 
@@ -49,8 +42,6 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
   walletXDaiBalance,
   walletSDaiBalanceData,
   seerCreditsBalance,
-  walletUnderlyingBalanceData,
-  sDAIDepositAmount,
   toBeAdded,
   toBeAddedXDai,
   isXDai,
@@ -101,17 +92,6 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
           />
         ) : null}
       </div>
-      <div className="rounded-base bg-klerosUIComponentsPrimaryBlue flex w-23.25 items-center justify-center py-3">
-        <ArrowDownIcon
-          className={clsx(
-            "[&_path]:fill-klerosUIComponentsWhiteBackground size-3.5",
-          )}
-        />
-      </div>
-      <AmountDisplay
-        value={sDAIDepositAmount}
-        underlyingBalance={walletUnderlyingBalanceData?.value}
-      />
     </div>
   );
 };

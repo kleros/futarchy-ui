@@ -22,9 +22,9 @@ import PredictSteps from "@/components/Predict/PredictSteps";
 import { isUndefined } from "@/utils";
 
 import { collateral } from "@/consts";
+import { TokenType } from "@/consts/tokens";
 
 import Header from "./Header";
-import { TokenType } from "@/consts/tokens";
 interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
@@ -240,7 +240,6 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
             isSending,
             walletXDaiBalance,
             walletSDaiBalanceData,
-            sDAIDepositAmount,
             toBeAdded,
             toBeAddedXDai,
             isXDai,
