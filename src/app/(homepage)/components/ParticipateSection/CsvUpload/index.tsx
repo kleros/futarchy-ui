@@ -86,7 +86,7 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
         </div>
         <CsvDownload />
         <FileUploader
-          className="w-full"
+          className="w-full [&_small]:top-0 [&_small]:text-sm"
           callback={(file) => {
             setParseError(undefined);
             setFile(file);
