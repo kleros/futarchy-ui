@@ -17,10 +17,9 @@ const ParticipateSection: React.FC = () => {
       >
         <p className="text-klerosUIComponentsSecondaryText text-sm">
           <strong className="text-klerosUIComponentsPrimaryText text-base">
-            2nd
+            Set estimates for the projects below.
           </strong>{" "}
-          Set estimates for the projects below. You can choose how many projects
-          you want to predict.
+          You can choose how many projects you want to predict.
         </p>
       </Card>
       <CsvUpload />
