@@ -17,7 +17,7 @@ const Header: React.FC = () => {
         {metadata.name}
       </h1>
       <div className="flex flex-wrap gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ChartBar className="size-3.5" />
           <span className="text-klerosUIComponentsSecondaryText text-sm">
             Trading Period:
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
             {metadata.question}
           </p>
         </div>
-        <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre">
+        <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
           {metadata.questionDescription}
         </p>
       </div>

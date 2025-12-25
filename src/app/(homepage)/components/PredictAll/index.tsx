@@ -19,7 +19,7 @@ const PredictAll: React.FC = () => {
       round
       className={clsx(
         "border-gradient-purple-blue h-auto w-full border-none p-4 md:px-8",
-        "flex items-start justify-center gap-x-8 gap-y-4",
+        "flex flex-wrap items-start justify-center gap-x-8 gap-y-4",
         "md:flex-row md:items-center md:justify-between",
       )}
     >
