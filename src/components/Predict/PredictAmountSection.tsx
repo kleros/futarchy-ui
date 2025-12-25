@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Checkbox } from "@kleros/ui-components-library";
 
-import AmountInput from "@/components/AmountInput";
-
-import { formatValue } from "@/utils";
+import { formatValue, isUndefined } from "@/utils";
 
 import { MIN_SEER_CREDITS_USAGE } from "@/consts";
 import { TokenType } from "@/consts/tokens";
+
+import AmountInput from "./AmountInput";
 
 interface IPredictAmountSection {
   amount: bigint | undefined;
@@ -19,14 +19,12 @@ interface IPredictAmountSection {
   availableBalance: bigint;
   isSending: boolean;
 
-  walletXDaiBalance?: bigint;
-  walletSDaiBalanceData?: { value: bigint };
   seerCreditsBalance: bigint;
 
   toBeAdded: bigint;
-  toBeAddedXDai?: bigint;
+  toBeAddedSeerCredits?: bigint;
+  sDAIDepositAmount?: bigint;
 
-  isXDai: boolean;
   isWalletCreated: boolean;
   isUsingSeerCredits: boolean;
   toggleIsUsingCredits: (value?: boolean) => void;
@@ -39,57 +37,72 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
   setSelectedToken,
   availableBalance,
   isSending,
-  walletXDaiBalance,
-  walletSDaiBalanceData,
   seerCreditsBalance,
   toBeAdded,
-  toBeAddedXDai,
-  isXDai,
+  toBeAddedSeerCredits,
+  sDAIDepositAmount,
   isWalletCreated,
   isUsingSeerCredits,
   toggleIsUsingCredits,
 }) => {
+  const tradeWalletSDaiUsage = useMemo(() => {
+    if (isUndefined(sDAIDepositAmount) || !isWalletCreated) return 0n;
+    return (
+      sDAIDepositAmount -
+      toBeAdded -
+      (isUsingSeerCredits ? (toBeAddedSeerCredits ?? 0n) : 0n)
+    );
+  }, [
+    sDAIDepositAmount,
+    toBeAdded,
+    isUsingSeerCredits,
+    toBeAddedSeerCredits,
+    isWalletCreated,
+  ]);
+
   return (
     <div className="flex flex-col items-center gap-1.5">
       {/* Amount input */}
       <div className="mb-2 flex flex-col">
-        <span className="text-klerosUIComponentsSecondaryText mb-1 text-sm">
-          You pay
-        </span>
         <AmountInput
           {...{ setAmount, selectedToken, setSelectedToken }}
           balance={availableBalance}
+          equivalentSDAI={sDAIDepositAmount}
           value={amount}
           className="mb-5"
           inputProps={{ isReadOnly: isSending }}
         />
-        {isWalletCreated ? (
-          <>
-            <span className="text-klerosUIComponentsPrimaryText text-xs">
-              Trade Wallet:&nbsp;
-              {isXDai
-                ? formatValue(walletXDaiBalance ?? 0n)
-                : formatValue(walletSDaiBalanceData?.value ?? 0n)}
-              &nbsp; {isXDai ? "xDAI" : `sDAI`}
-            </span>
-            <span className="text-klerosUIComponentsPrimaryText text-xs">
-              To be added:&nbsp;
-              {isXDai
-                ? formatValue(toBeAddedXDai ?? 0n)
-                : formatValue(toBeAdded)}
-              &nbsp;{isXDai ? "xDAI" : `sDAI`}
-            </span>
-          </>
-        ) : null}
         {/* Seer credits checkbox */}
         {seerCreditsBalance > MIN_SEER_CREDITS_USAGE ? (
           <Checkbox
             small
-            label={`Use Seer credits. Available: ${formatValue(seerCreditsBalance)}`}
+            label={`Use your Seer credits. Available: ${formatValue(seerCreditsBalance)}`}
             onChange={toggleIsUsingCredits}
             defaultSelected={isUsingSeerCredits}
-            className="mt-1 pl-4 text-xs [&_div]:top-0.5 [&_div]:size-3 [&_svg]:size-3"
+            className="mt-1 pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
           />
+        ) : null}
+        {!isUndefined(amount) && amount > 0n ? (
+          <div className="mt-2 flex flex-row flex-wrap items-center">
+            <p className="text-klerosUIComponentsPrimaryText text-xs font-semibold">
+              Total: {formatValue(sDAIDepositAmount ?? 0n)} sDAI =
+            </p>
+            <p className="text-klerosUIComponentsSecondaryText text-xs">
+              {isUsingSeerCredits && toBeAddedSeerCredits ? (
+                <span>
+                  &nbsp;{formatValue(toBeAddedSeerCredits)} (Seer Credits)
+                </span>
+              ) : null}
+              {tradeWalletSDaiUsage > 0n ? (
+                <span>
+                  &nbsp;+ {formatValue(tradeWalletSDaiUsage)} (Trade Wallet)
+                </span>
+              ) : null}
+              {toBeAdded > 0n ? (
+                <span>&nbsp;+ {formatValue(toBeAdded)} (Your Wallet)</span>
+              ) : null}
+            </p>
+          </div>
         ) : null}
       </div>
     </div>

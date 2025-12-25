@@ -8,30 +8,30 @@ import { cn, formatValue, isUndefined } from "@/utils";
 
 import { Tokens, TokenType } from "@/consts/tokens";
 
-import LightButton from "./LightButton";
+import LightButton from "../LightButton";
 
-interface IAmountInput {
+interface IPredictAmountInput {
   setAmount: (amount: bigint) => void;
   setSelectedToken: (token: TokenType) => void;
   defaultValue?: bigint;
   value?: bigint;
   balance?: bigint;
+  equivalentSDAI?: bigint;
   selectedToken: TokenType;
   className?: string;
   inputProps?: React.ComponentProps<typeof BigNumberField>;
-  isWithdraw?: boolean;
 }
 
-const AmountInput: React.FC<IAmountInput> = ({
+const PredictAmountInput: React.FC<IPredictAmountInput> = ({
   setAmount,
   selectedToken,
   setSelectedToken,
   defaultValue,
   value,
   balance,
+  equivalentSDAI,
   className,
   inputProps,
-  isWithdraw,
 }) => {
   const notEnoughBalance = useMemo(() => {
     if (!isUndefined(value) && !isUndefined(balance) && value > balance)
@@ -44,52 +44,47 @@ const AmountInput: React.FC<IAmountInput> = ({
       setAmount(balance);
     }
   };
+  const SDAIIcon = Tokens[TokenType.sDAI].Icon;
+  const items = [
+    {
+      text: "sDAI",
+      itemValue: TokenType.sDAI,
+      id: TokenType.sDAI,
+      icon: <SDAIIcon className="mr-2 size-6" />,
+    },
+    {
+      text: "xDAI",
+      itemValue: TokenType.xDAI,
+      id: TokenType.xDAI,
+      icon: <SDAIIcon className="mr-2 size-6" />,
+    },
+  ];
 
-  const items = useMemo(() => {
-    const SDAIIcon = Tokens[TokenType.sDAI].Icon;
-    const SeerCreditsIcon = Tokens[TokenType.SeerCredits].Icon;
-    const tokens = [
-      {
-        text: "sDAI",
-        itemValue: TokenType.sDAI,
-        id: TokenType.sDAI,
-        icon: <SDAIIcon className="mr-2 size-6" />,
-      },
-      {
-        text: "xDAI",
-        itemValue: TokenType.xDAI,
-        id: TokenType.xDAI,
-        icon: <SDAIIcon className="mr-2 size-6" />,
-      },
-    ];
-    if (isWithdraw) {
-      tokens.push(
-        ...[
-          {
-            text: "wxDAI",
-            itemValue: TokenType.WXDAI,
-            id: TokenType.WXDAI,
-            icon: <SDAIIcon className="mr-2 size-6" />,
-          },
-          {
-            text: "Seer Credits",
-            itemValue: TokenType.SeerCredits,
-            id: TokenType.SeerCredits,
-            icon: <SeerCreditsIcon className="mr-2 size-6" />,
-          },
-        ],
-      );
-    }
-    return tokens;
-  }, [isWithdraw]);
+  const isXDai = selectedToken === TokenType.xDAI;
 
   return (
     <div className={cn("relative mb-8 w-full md:min-w-lg", className)}>
+      <div className="flex items-center justify-between">
+        <span className="text-klerosUIComponentsSecondaryText mb-1 text-sm">
+          You pay
+        </span>
+        <LightButton
+          small
+          text="Max"
+          onPress={handleMaxClick}
+          className={clsx(
+            "absolute -right-1 px-1 py-0.5",
+            "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-sm",
+          )}
+          isDisabled={inputProps?.isReadOnly}
+        />
+      </div>
+
       <div className="border-klerosUIComponentsStroke rounded-base flex h-fit flex-row border">
         <BigNumberField
           isRequired
           className={clsx(
-            "inline-block flex-1 max-md:w-max",
+            "inline-block flex-1 max-md:w-fit",
             "[&_input]:rounded-r-none [&_input]:border-none [&_input]:focus:shadow-none",
           )}
           onChange={(e) => {
@@ -105,6 +100,12 @@ const AmountInput: React.FC<IAmountInput> = ({
           value={
             typeof value !== "undefined" ? formatUnits(value, 18) : undefined
           }
+          formatOptions={{
+            suffix:
+              isXDai && equivalentSDAI
+                ? `~ ${formatValue(equivalentSDAI)} sDAI`
+                : "",
+          }}
           {...inputProps}
         />
         <DropdownSelect
@@ -112,7 +113,7 @@ const AmountInput: React.FC<IAmountInput> = ({
             "[&>button]:bg-klerosUIComponentsMediumBlue [&>button]:h-11.25 [&>button]:w-fit",
             "[&>button]:border-none [&>button]:focus:shadow-none",
             "[&>button]:rounded-l-none",
-            "[&>svg]:fill-klerosUIComponentsSecondaryText [&>svg]:size-3",
+            "[&>button>svg]:fill-klerosUIComponentsSecondaryText [&>button>svg]:size-3",
           )}
           callback={(item) => {
             setSelectedToken(item.itemValue);
@@ -122,27 +123,18 @@ const AmountInput: React.FC<IAmountInput> = ({
           isDisabled={inputProps?.isReadOnly}
         />
       </div>
-      <LightButton
-        small
-        text="Max"
-        onPress={handleMaxClick}
-        className={clsx(
-          "absolute -right-1 px-1 py-0.5",
-          "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-sm",
-        )}
-        isDisabled={inputProps?.isReadOnly}
-      />
-      {!notEnoughBalance && (
+
+      {!notEnoughBalance && isXDai ? (
         <span className="text-klerosUIComponentsPrimaryText absolute mt-1 text-xs">
-          {!isUndefined(balance)
-            ? `Available: ${formatValue(balance)}`
+          {!isUndefined(equivalentSDAI)
+            ? `Equivalent sDAI ~${formatValue(equivalentSDAI)}`
             : "Loading..."}
         </span>
-      )}
+      ) : null}
       <span className="text-red-2 absolute text-xs">
         {notEnoughBalance ? "Not enough balance." : undefined}
       </span>
     </div>
   );
 };
-export default AmountInput;
+export default PredictAmountInput;

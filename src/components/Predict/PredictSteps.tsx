@@ -70,7 +70,7 @@ const PredictSteps: React.FC<IPredictSteps> = ({
         party: "",
         subtitle: shortenAddress(tradeExecutor),
         Icon: CheckOutline,
-        state: error ? "disabled" : undefined,
+        state: "disabled",
       });
     } else {
       steps.push({
@@ -153,7 +153,7 @@ const PredictSteps: React.FC<IPredictSteps> = ({
   ]);
 
   return (
-    <div className="mt-8 flex flex-col items-center">
+    <div className="mt-10 flex flex-col items-center">
       <CustomTimeline
         items={items}
         className={clsx(

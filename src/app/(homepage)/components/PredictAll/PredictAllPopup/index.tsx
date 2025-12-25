@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 
 import { Button, Modal } from "@kleros/ui-components-library";
+import clsx from "clsx";
 import { useToggle } from "react-use";
 import { useAccount, useBalance } from "wagmi";
 
@@ -223,7 +224,10 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
 
   return (
     <Modal
-      className="max-md:max-h-2xl relative h-fit w-max overflow-x-hidden overflow-y-scroll p-6 pb-8 max-md:max-w-sm"
+      className={clsx(
+        "max-md:max-h-2xl h-fit w-max max-md:w-full max-md:max-w-sm",
+        "relative overflow-x-hidden overflow-y-scroll p-4 md:px-10 md:py-8",
+      )}
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
     >
@@ -238,14 +242,12 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
             setSelectedToken,
             availableBalance,
             isSending,
-            walletXDaiBalance,
-            walletSDaiBalanceData,
             toBeAdded,
-            toBeAddedXDai,
-            isXDai,
+            toBeAddedSeerCredits,
             toggleIsUsingCredits,
             isUsingSeerCredits,
             seerCreditsBalance,
+            sDAIDepositAmount,
           }}
           isWalletCreated={checkTradeExecutorResult?.isCreated ?? false}
         />
