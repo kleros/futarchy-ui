@@ -25,6 +25,7 @@ const CsvDownload: React.FC = () => {
       className={clsx(
         "flex-row-reverse p-0",
         "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-sm [&_.button-text]:font-normal",
+        "hover:bg-klerosUIComponentsWhiteBackground",
       )}
       icon={
         <DownloadIcon className="[&_path]:fill-klerosUIComponentsPrimaryBlue! ml-2" />

@@ -124,8 +124,8 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
         />
       </div>
 
-      {!notEnoughBalance && isXDai ? (
-        <span className="text-klerosUIComponentsPrimaryText absolute mt-1 text-xs">
+      {!notEnoughBalance && isXDai && value && value > 0n ? (
+        <span className="text-klerosUIComponentsPrimaryText absolute text-xs">
           {!isUndefined(equivalentSDAI)
             ? `Equivalent sDAI ~${formatValue(equivalentSDAI)}`
             : "Loading..."}
