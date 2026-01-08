@@ -28,7 +28,7 @@ const ProjectBalances: React.FC = () => {
             <div className="flex items-center gap-2">
               <MovieIcon className="size-6" />
               <label className="text-klerosUIComponentsPrimaryText text-sm">
-                Movie tokens
+                Property tokens
               </label>
             </div>
           ),

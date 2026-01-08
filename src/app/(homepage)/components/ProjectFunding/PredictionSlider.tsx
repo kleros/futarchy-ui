@@ -63,7 +63,7 @@ const PredictionSliderContent: React.FC = () => {
           rightLabel=""
           aria-label="Slider"
           callback={setPrediction}
-          formatter={(value) => `${formatWithPrecision(value, precision)}`}
+          formatter={(value) => `$${formatWithPrecision(value, precision)}M`}
           // @ts-expect-error other values not needed
           theme={
             showEstimateVariant
@@ -92,7 +92,7 @@ const PredictionSliderContent: React.FC = () => {
             style={{ backgroundColor: color }}
           >
             {/* TODO: updates for individual experiments */}
-            {`${formatWithPrecision(marketEstimate, precision)}%`}
+            {`$${formatWithPrecision(marketEstimate, precision)}M TVS`}
           </div>
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>
