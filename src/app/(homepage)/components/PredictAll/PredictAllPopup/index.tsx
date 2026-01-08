@@ -273,7 +273,10 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
           <Button
             text="Cancel"
             variant="secondary"
-            onPress={toggleIsOpen}
+            onPress={() => {
+              toggleIsOpen();
+              resetUI();
+            }}
             isDisabled={isSending}
           />
           <Button
