@@ -122,3 +122,12 @@ export function clamp(value: number, min: number, max: number): number {
   if (Number.isNaN(value)) return min;
   return Math.min(Math.max(value, min), max);
 }
+
+/**
+ * @description Converts the Market's score from integer to human readable with precision.
+ * @param value Market's score in integer representation
+ * @param precision MArket's precision value
+ * @returns formatted value with precision
+ */
+export const formatWithPrecision = (value: number, precision: number) =>
+  (value / precision).toFixed(Math.log10(precision));
