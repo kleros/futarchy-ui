@@ -58,8 +58,8 @@ const Header: React.FC = () => {
                 </span>
                 <span className="text-klerosUIComponentsPrimaryText text-base font-semibold">
                   {market.prediction
-                    ? `$${formatWithPrecision(market.prediction, market.precision)}M TVS`
-                    : "$0M TVS"}
+                    ? `$${formatWithPrecision(market.prediction, market.precision)}M`
+                    : "$0M"}
                 </span>
               </div>
               {!isUndefined(market?.prediction) &&

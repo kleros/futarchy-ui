@@ -92,7 +92,7 @@ const PredictionSliderContent: React.FC = () => {
             style={{ backgroundColor: color }}
           >
             {/* TODO: updates for individual experiments */}
-            {`$${formatWithPrecision(marketEstimate, precision)}M TVS`}
+            {`$${formatWithPrecision(marketEstimate, precision)}M`}
           </div>
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>

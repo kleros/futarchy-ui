@@ -6,8 +6,8 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 
-import _LogoDark from "@/assets/png/movies-logo-dark.png";
-import _Logo from "@/assets/png/movies-logo.png";
+import _LogoDark from "@/assets/png/realt-logo-dark.png";
+import _Logo from "@/assets/png/realt-logo.png";
 
 const Logo: React.FC = () => {
   const { resolvedTheme } = useTheme();
@@ -23,8 +23,8 @@ const Logo: React.FC = () => {
         <Link href={"/"}>
           <Image
             src={_Logo}
-            alt="Movies experiment logo"
-            className="size-12 max-h-12 hover:brightness-105 md:ml-6"
+            alt="RealT Distilled Judgement"
+            className="max-h-14 w-27 hover:brightness-105 md:ml-6"
           />
         </Link>
       </div>
@@ -37,7 +37,7 @@ const Logo: React.FC = () => {
         <Image
           src={resolvedTheme === "dark" ? _LogoDark : _Logo}
           alt="RealT Distilled Judgement"
-          className="size-14 max-h-14 hover:brightness-105 md:ml-6"
+          className="max-h-14 w-27 hover:brightness-105 md:ml-6"
         />
       </Link>
     </div>
