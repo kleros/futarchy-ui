@@ -1,7 +1,7 @@
 import { Card } from "@kleros/ui-components-library";
 
-import Mint from "./Mint";
-import RedeemParentMarket from "./RedeemParentMarket";
+import CsvUpload from "./CsvUpload";
+import { TradeWallet } from "./TradeWallet";
 
 const ParticipateSection: React.FC = () => {
   return (
@@ -10,20 +10,19 @@ const ParticipateSection: React.FC = () => {
         Participate
       </h2>
 
-      <Mint />
+      <TradeWallet />
       <Card
         round
         className="border-gradient-purple-blue h-auto w-full border-none px-4 py-6 md:px-8"
       >
         <p className="text-klerosUIComponentsSecondaryText text-sm">
           <strong className="text-klerosUIComponentsPrimaryText text-base">
-            2nd
+            Set estimates for the projects below.
           </strong>{" "}
-          Set estimates for the projects below. You can choose how many projects
-          you want to predict.
+          You can choose how many projects you want to predict.
         </p>
       </Card>
-      <RedeemParentMarket />
+      <CsvUpload />
     </div>
   );
 };

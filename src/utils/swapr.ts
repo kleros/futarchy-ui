@@ -4,11 +4,14 @@ import {
   encodeAbiParameters,
   getCreate2Address,
   keccak256,
+  parseUnits,
   type Address,
 } from "viem";
 import { gnosis } from "viem/chains";
 
 import { getTradeArgs } from "./trade";
+import { getTradeExactOutArgs } from "./tradeExactOut";
+import { DECIMALS } from "@/consts";
 
 type GetQuoteArgs = {
   address?: Address;
@@ -16,6 +19,10 @@ type GetQuoteArgs = {
   amount?: string;
   outcomeToken: string;
   collateralToken: string;
+};
+
+export const getMinimumAmountOut = async (quote: SwaprV3Trade) => {
+  return parseUnits(quote.minimumAmountOut().toExact(), DECIMALS);
 };
 
 export const getSwaprQuote = async ({
@@ -39,6 +46,34 @@ export const getSwaprQuote = async ({
       quoteCurrency: args.currencyOut,
       recipient: address,
       tradeType: TradeType.EXACT_INPUT,
+      maximumSlippage: args.maximumSlippage,
+    },
+    undefined,
+    false,
+  );
+};
+
+export const getSwaprQuoteExactOut = async ({
+  address,
+  chain = gnosis.id,
+  outcomeToken,
+  collateralToken,
+  amount = "1",
+}: GetQuoteArgs) => {
+  const args = getTradeExactOutArgs(
+    chain,
+    amount,
+    outcomeToken,
+    collateralToken,
+    "buy",
+  );
+
+  return await SwaprV3Trade.getQuote(
+    {
+      amount: args.currencyAmountOut,
+      quoteCurrency: args.currencyIn,
+      recipient: address,
+      tradeType: TradeType.EXACT_OUTPUT,
       maximumSlippage: args.maximumSlippage,
     },
     undefined,

@@ -2,7 +2,7 @@ import { gnosis, mainnet } from "@reown/appkit/networks";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { cookieStorage, createStorage, fallback, http } from "wagmi";
 
-import { reownProjectId } from "@/consts";
+import { GNOSIS_RPC, reownProjectId } from "@/consts";
 
 if (!reownProjectId) {
   throw new Error("Project ID is not defined");
@@ -19,6 +19,7 @@ export const wagmiAdapter = new WagmiAdapter({
   networks,
   transports: {
     [gnosis.id]: fallback([
+      http(GNOSIS_RPC, { batch: true }),
       http("https://rpc.gnosis.gateway.fm", { batch: true }),
     ]),
     [mainnet.id]: fallback([

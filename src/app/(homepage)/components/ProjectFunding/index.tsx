@@ -1,111 +1,86 @@
 import React from "react";
 
-import { Card, Accordion, NumberField } from "@kleros/ui-components-library";
+import { Accordion, CustomAccordion } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
-import { useCardInteraction } from "@/context/CardInteractionContext";
-import { useMarketContext } from "@/context/MarketContext";
+import { useMarketsStore } from "@/store/markets";
 
-import { isUndefined } from "@/utils";
+import { useMarketContext } from "@/context/MarketContext";
+import { useTradeWallet } from "@/context/TradeWalletContext";
+
+import CheckOutline from "@/assets/svg/check-outline-button.svg";
+import MinusOutline from "@/assets/svg/minus-outline.svg";
 
 import Details from "./Details";
 import PositionValue from "./PositionValue";
-import PredictButton from "./PredictButton";
 import PredictionSlider from "./PredictionSlider";
 
-const ProjectFunding: React.FC = ({}) => {
-  const { setActiveCardId } = useCardInteraction();
-  const {
-    isUpPredict,
-    market,
-    prediction,
-    setPrediction,
-    showEstimateVariant,
-    hasLiquidity,
-  } = useMarketContext();
-  const {
-    name,
-    color,
-    upToken,
-    downToken,
-    precision,
-    details,
-    marketId,
-    underlyingToken,
-  } = market;
+const ProjectFunding: React.FC = () => {
+  const { market } = useMarketContext();
+  const { name, color, upToken, downToken, details, underlyingToken } = market;
+  const isSelected = useMarketsStore((s) => {
+    const m = s.markets[market.marketId];
+    return !!m?.prediction && m.prediction !== m.marketEstimate;
+  });
+  const { tradeExecutor } = useTradeWallet();
 
   return (
-    <Card
+    <CustomAccordion
       aria-label="card"
       className={clsx(
-        "bg-klerosUIComponentsLightBackground flex h-auto w-full flex-col gap-4 px-4 py-6 md:px-8",
-        "hover:shadow-md",
+        "bg-klerosUIComponentsLightBackground flex h-auto w-full max-w-full flex-col gap-4",
+        "hover:shadow-md [&>div]:my-0",
       )}
-      onClick={() => setActiveCardId(marketId)}
-    >
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex max-w-full min-w-[300px] grow basis-[70%] flex-col gap-8">
-          <div className="flex items-center gap-2">
-            <span
-              className="size-2 rounded-full"
-              style={{ backgroundColor: color }}
-            />
-            <h3 className="text-klerosUIComponentsPrimaryText font-semibold">
-              {name}
-            </h3>
-          </div>
-          <div className="px-4">
-            <PredictionSlider />
-          </div>
-        </div>
-
-        <div className="bg max-w-[284px] min-w-[264px] shrink-0 grow basis-[25%]">
-          <label className="text-klerosUIComponentsSecondaryText text-sm">
-            My Estimate (Score)
-          </label>
-          <div className="border-klerosUIComponentsStroke rounded-base flex flex-nowrap border">
-            <NumberField
-              isDisabled={!hasLiquidity}
-              aria-label="Prediction"
-              className="w-auto [&_input]:border-none"
-              value={
-                !isUndefined(prediction) ? prediction / precision : undefined
-              }
-              onChange={(e) => setPrediction(e * precision)}
-            />
-            <PredictButton />
-          </div>
-          <label
-            className={clsx(
-              !hasLiquidity
-                ? "text-klerosUIComponentsWarning"
-                : isUpPredict
-                  ? "text-light-mode-green-2"
-                  : "text-light-mode-red-2",
-              showEstimateVariant || !hasLiquidity ? "visible" : "invisible",
-            )}
-          >
-            {!hasLiquidity
-              ? "There isn't enough liquidity"
-              : `${isUpPredict ? "↑ Higher" : "↓ Lower"} than the market`}
-          </label>
-        </div>
-      </div>
-      <div className="flex w-full flex-col">
-        <div className="flex w-full items-center justify-between gap-2">
-          <PositionValue {...{ upToken, downToken, underlyingToken }} />
-          {/* <OpenOrders /> */}
-        </div>
-        <Accordion
-          aria-label="accordion"
-          className={clsx(
-            "w-full",
-            "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
-          )}
-          items={[{ title: "Details", body: <Details {...details} /> }]}
-        />
-      </div>
-    </Card>
+      items={[
+        {
+          title: (
+            <>
+              <div className="flex flex-1 flex-wrap items-center justify-between gap-4">
+                <div className="flex max-w-full grow basis-[70%] flex-col gap-8 md:min-w-[300px]">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="size-2 rounded-full"
+                      style={{ backgroundColor: color }}
+                    />
+                    <h3 className="text-klerosUIComponentsPrimaryText font-semibold">
+                      {name}
+                    </h3>
+                  </div>
+                </div>
+                {isSelected ? (
+                  <CheckOutline className="[&_path]:fill-klerosUIComponentsSuccess animate-fade-in size-4" />
+                ) : (
+                  <MinusOutline className="size-4" />
+                )}
+              </div>
+            </>
+          ),
+          body: (
+            <div className="flex w-full flex-col">
+              <div className="pt-8 pb-4">
+                <PredictionSlider />
+              </div>
+              {tradeExecutor ? (
+                <div className="flex w-full items-center justify-between gap-2">
+                  <PositionValue
+                    {...{ upToken, downToken, underlyingToken, tradeExecutor }}
+                  />
+                  {/* <OpenOrders /> */}
+                </div>
+              ) : null}
+              <Accordion
+                aria-label="accordion"
+                className={clsx(
+                  "w-full max-w-full",
+                  "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
+                )}
+                items={[{ title: "Details", body: <Details {...details} /> }]}
+              />
+            </div>
+          ),
+        },
+      ]}
+    />
   );
 };
 

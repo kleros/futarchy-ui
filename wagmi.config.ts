@@ -8,6 +8,9 @@ const gnosisRouter = getContractInfo("gnosisRouter");
 const sDAI = getContractInfo("sDAI");
 const sDAIAdapter = getContractInfo("sDAIAdapter");
 const conditionalRouter = getContractInfo("conditionalRouter");
+const creditsManager = getContractInfo("seerCreditsManager");
+const seerCredits = getContractInfo("seerCredits");
+const WXDAI = getContractInfo("wrappedXDai");
 
 export default defineConfig({
   out: "src/generated.ts",
@@ -16,6 +19,9 @@ export default defineConfig({
     { ...sDAI },
     { ...sDAIAdapter },
     { ...conditionalRouter },
+    { ...creditsManager },
+    { ...seerCredits },
+    { ...WXDAI },
     { name: "ERC20", abi: erc20Abi },
   ],
   plugins: [react()],

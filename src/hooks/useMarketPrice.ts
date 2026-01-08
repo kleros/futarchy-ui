@@ -19,11 +19,11 @@ import { SwaprQuoter } from "@/abi/SwaprQuoter";
 export const useMarketPrice = (
   targetToken: Address,
   baseToken: Address,
-  amount = "1",
+  amount = "0.001",
 ) => {
   const publicClient = usePublicClient();
   return useQuery<{ price: string; status: boolean }>({
-    queryKey: ["market-price", baseToken, targetToken, amount],
+    queryKey: ["useMarketPrice", baseToken, targetToken, amount],
     refetchInterval: 10_000,
     enabled: amount !== "0",
     queryFn: async () => {

@@ -1,6 +1,6 @@
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Address, formatUnits } from "viem";
+import { Address, formatUnits, type Hex } from "viem";
 import { type UseSimulateContractReturnType } from "wagmi";
 
 type ExtendedWagmiError = UseSimulateContractReturnType["error"] & {
@@ -21,7 +21,7 @@ export const formatValue = (value: bigint, decimals = 18) => {
     return "0";
   } else {
     const parsedValue = parseFloat(formattedValue);
-    return parsedValue > 0.01 ? commify(parsedValue.toFixed(2)) : "<0.01";
+    return parsedValue >= 0.01 ? commify(parsedValue.toFixed(2)) : "<0.01";
   }
 };
 
@@ -98,3 +98,27 @@ export function commify(value: string | number): string {
 
 export const shortenName = (name: string) =>
   name.length > 16 ? `${name.slice(0, 12)}...` : name;
+
+export function formatBytecode(bytecode: string): Hex {
+  // Remove any whitespace
+  const cleaned = bytecode.trim();
+
+  // Add 0x prefix if not present
+  if (!cleaned.startsWith("0x")) {
+    return `0x${cleaned}` as Hex;
+  }
+
+  return cleaned as Hex;
+}
+
+export function minBigIntArray(values: bigint[]): bigint {
+  if (values.length === 0) {
+    throw new Error("Cannot compute min of empty array");
+  }
+  return values.reduce((min, v) => (v < min ? v : min));
+}
+
+export function clamp(value: number, min: number, max: number): number {
+  if (Number.isNaN(value)) return min;
+  return Math.min(Math.max(value, min), max);
+}
