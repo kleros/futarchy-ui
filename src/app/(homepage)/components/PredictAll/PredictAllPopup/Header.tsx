@@ -13,7 +13,7 @@ import CloseIcon from "@/assets/svg/close-icon.svg";
 import ArrowDown from "@/assets/svg/long-arrow-down.svg";
 import ArrowUp from "@/assets/svg/long-arrow-up.svg";
 
-import { isUndefined } from "@/utils";
+import { formatWithPrecision, isUndefined } from "@/utils";
 
 const Header: React.FC = () => {
   const markets = usePredictionMarkets();
@@ -53,10 +53,13 @@ const Header: React.FC = () => {
                   {market.name}
                 </span>
                 <span className="text-klerosUIComponentsPrimaryText text-base">
+                  {/* TODO: Changes per experiment */}
                   Score
                 </span>
                 <span className="text-klerosUIComponentsPrimaryText text-base font-semibold">
-                  {market.prediction}
+                  {market.prediction
+                    ? `${formatWithPrecision(market.prediction, market.precision)}%`
+                    : "0%"}
                 </span>
               </div>
               {!isUndefined(market?.prediction) &&
