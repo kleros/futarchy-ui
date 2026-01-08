@@ -36,6 +36,13 @@ export interface IMarket {
   conditionId: `0x${string}`;
 }
 
+export const metadata = {
+  name: "Session 1 - Movies Experiment",
+  question: "If watched, what score will Clément give to the movie?",
+  questionDescription:
+    "Which movies will Clément watch as part of the “Distilled Clément’s Judgement experiment”? \nAnd for each movie, what rating will he give to that movie?",
+};
+
 export const markets: Array<IMarket> = [
   {
     name: "Judge Dredd (1995)",

@@ -1,11 +1,13 @@
 import { SwaprV3Trade } from "@swapr/sdk";
 import { Address, formatUnits, parseUnits } from "viem";
 
+import { sDaiAddress, wxdaiAddress } from "@/generated";
+
 import { ProcessedMarket } from "@/hooks/useProcessMarkets";
 
 import { DECIMALS, DEFAULT_CHAIN, VOLUME_MIN } from "@/consts";
 
-import { getSwaprQuote } from "./swapr";
+import { getMinimumAmountOut, getSwaprQuote } from "./swapr";
 
 import { minBigIntArray } from ".";
 
@@ -177,5 +179,43 @@ export const getQuotes = async ({
   return {
     quotes: { sellQuotes, buyQuotes },
     mergeAmount: collateralFromMerge,
+  };
+};
+
+export const getSDaiToWXdaiData = async (account: Address, amount?: bigint) => {
+  if (!amount) return;
+  const quoteSDaiToWXDai = await getSwaprQuote({
+    address: account,
+    chain: DEFAULT_CHAIN.id,
+    outcomeToken: wxdaiAddress,
+    collateralToken: sDaiAddress,
+    amount: formatUnits(amount, DECIMALS),
+  }).catch((e) => {
+    throw e;
+  });
+
+  if (!quoteSDaiToWXDai) {
+    throw new Error("No route found for sDAI <> WXDAI");
+  }
+
+  const minWXDaiReceived = await getMinimumAmountOut(quoteSDaiToWXDai);
+  const quoteWXDaiToSDai = await getSwaprQuote({
+    address: account,
+    chain: DEFAULT_CHAIN.id,
+    outcomeToken: sDaiAddress,
+    collateralToken: wxdaiAddress,
+    amount: formatUnits(minWXDaiReceived, DECIMALS),
+  }).catch((e) => {
+    throw e;
+  });
+  if (!quoteWXDaiToSDai) {
+    throw new Error("No route found for WXDAI <> sDAI");
+  }
+  const minSDaiReceived = await getMinimumAmountOut(quoteWXDaiToSDai);
+
+  return {
+    quote: quoteSDaiToWXDai,
+    minSDaiReceived,
+    slippage: amount - minSDaiReceived,
   };
 };

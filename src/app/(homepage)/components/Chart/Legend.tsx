@@ -37,7 +37,7 @@ const Legend: React.FC<ILegend> = ({
                     active={isVisible}
                     onClick={() => onToggleMarket(name)}
                     className={clsx(
-                      "h-6 cursor-pointer [&_p]:text-xs",
+                      "h-6 cursor-pointer max-md:h-fit [&_p]:text-xs",
                       isVisible
                         ? "bg-klerosUIComponentsMediumBlue"
                         : "[&_p]:text-klerosUIComponentsSecondaryText bg-transparent",

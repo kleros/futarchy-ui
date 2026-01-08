@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 
-import clsx from "clsx";
+import { Checkbox } from "@kleros/ui-components-library";
 
-import AmountInput, { TokenType } from "@/components/AmountInput";
+import { formatValue, isUndefined } from "@/utils";
 
-import ArrowDownIcon from "@/assets/svg/arrow-down.svg";
+import { MIN_SEER_CREDITS_USAGE } from "@/consts";
+import { TokenType } from "@/consts/tokens";
 
-import { formatValue } from "@/utils";
-
-import AmountDisplay from "./AmountDisplay";
+import AmountInput from "./AmountInput";
 
 interface IPredictAmountSection {
   amount: bigint | undefined;
@@ -20,16 +19,15 @@ interface IPredictAmountSection {
   availableBalance: bigint;
   isSending: boolean;
 
-  walletXDaiBalance?: bigint;
-  walletSDaiBalanceData?: { value: bigint };
-  walletUnderlyingBalanceData?: { value: bigint };
+  seerCreditsBalance: bigint;
 
-  sDAIDepositAmount?: bigint;
   toBeAdded: bigint;
-  toBeAddedXDai?: bigint;
+  toBeAddedSeerCredits?: bigint;
+  sDAIDepositAmount?: bigint;
 
-  isXDai: boolean;
   isWalletCreated: boolean;
+  isUsingSeerCredits: boolean;
+  toggleIsUsingCredits: (value?: boolean) => void;
 }
 
 export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
@@ -39,59 +37,74 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
   setSelectedToken,
   availableBalance,
   isSending,
-  walletXDaiBalance,
-  walletSDaiBalanceData,
-  walletUnderlyingBalanceData,
-  sDAIDepositAmount,
+  seerCreditsBalance,
   toBeAdded,
-  toBeAddedXDai,
-  isXDai,
+  toBeAddedSeerCredits,
+  sDAIDepositAmount,
   isWalletCreated,
+  isUsingSeerCredits,
+  toggleIsUsingCredits,
 }) => {
+  const tradeWalletSDaiUsage = useMemo(() => {
+    if (isUndefined(sDAIDepositAmount) || !isWalletCreated) return 0n;
+    return (
+      sDAIDepositAmount -
+      toBeAdded -
+      (isUsingSeerCredits ? (toBeAddedSeerCredits ?? 0n) : 0n)
+    );
+  }, [
+    sDAIDepositAmount,
+    toBeAdded,
+    isUsingSeerCredits,
+    toBeAddedSeerCredits,
+    isWalletCreated,
+  ]);
+
   return (
     <div className="flex flex-col items-center gap-1.5">
       {/* Amount input */}
-      <div className="flex flex-col">
-        <span className="text-klerosUIComponentsSecondaryText mb-1 text-sm">
-          You pay
-        </span>
+      <div className="mb-2 flex flex-col">
         <AmountInput
           {...{ setAmount, selectedToken, setSelectedToken }}
           balance={availableBalance}
+          equivalentSDAI={sDAIDepositAmount}
           value={amount}
           className="mb-5"
           inputProps={{ isReadOnly: isSending }}
         />
-        {isWalletCreated ? (
-          <>
-            <span className="text-klerosUIComponentsPrimaryText text-xs">
-              Trade Wallet:&nbsp;
-              {isXDai
-                ? formatValue(walletXDaiBalance ?? 0n)
-                : formatValue(walletSDaiBalanceData?.value ?? 0n)}
-              &nbsp; {isXDai ? "xDAI" : `sDAI`}
-            </span>
-            <span className="text-klerosUIComponentsPrimaryText text-xs">
-              To be added:&nbsp;
-              {isXDai
-                ? formatValue(toBeAddedXDai ?? 0n)
-                : formatValue(toBeAdded)}
-              &nbsp;{isXDai ? "xDAI" : `sDAI`}
-            </span>
-          </>
+        {/* Seer credits checkbox */}
+        {seerCreditsBalance > MIN_SEER_CREDITS_USAGE ? (
+          <Checkbox
+            small
+            label={`Use your Seer credits. Available: ${formatValue(seerCreditsBalance)}`}
+            onChange={toggleIsUsingCredits}
+            defaultSelected={isUsingSeerCredits}
+            className="mt-1 pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
+          />
+        ) : null}
+        {!isUndefined(amount) && amount > 0n ? (
+          <div className="mt-2 flex flex-row flex-wrap items-center">
+            <p className="text-klerosUIComponentsPrimaryText text-xs font-semibold">
+              Total: {formatValue(sDAIDepositAmount ?? 0n)} sDAI =
+            </p>
+            <p className="text-klerosUIComponentsSecondaryText text-xs">
+              {isUsingSeerCredits && toBeAddedSeerCredits ? (
+                <span>
+                  &nbsp;{formatValue(toBeAddedSeerCredits)} (Seer Credits)
+                </span>
+              ) : null}
+              {tradeWalletSDaiUsage > 0n ? (
+                <span>
+                  &nbsp;+ {formatValue(tradeWalletSDaiUsage)} (Trade Wallet)
+                </span>
+              ) : null}
+              {toBeAdded > 0n ? (
+                <span>&nbsp;+ {formatValue(toBeAdded)} (Your Wallet)</span>
+              ) : null}
+            </p>
+          </div>
         ) : null}
       </div>
-      <div className="rounded-base bg-klerosUIComponentsPrimaryBlue flex w-23.25 items-center justify-center py-3">
-        <ArrowDownIcon
-          className={clsx(
-            "[&_path]:fill-klerosUIComponentsWhiteBackground size-3.5",
-          )}
-        />
-      </div>
-      <AmountDisplay
-        value={sDAIDepositAmount}
-        underlyingBalance={walletUnderlyingBalanceData?.value}
-      />
     </div>
   );
 };

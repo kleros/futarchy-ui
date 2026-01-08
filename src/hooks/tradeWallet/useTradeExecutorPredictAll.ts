@@ -1,9 +1,19 @@
+import { SwaprV3Trade } from "@swapr/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { writeContract } from "@wagmi/core";
+import { type BytesLike } from "ethers";
 import { Address, encodeFunctionData, erc20Abi, parseUnits } from "viem";
 
 import { TradeExecutorAbi } from "@/contracts/abis/TradeExecutorAbi";
-import { gnosisRouterAddress } from "@/generated";
+import {
+  creditsManagerAbi,
+  creditsManagerAddress,
+  gnosisRouterAbi,
+  gnosisRouterAddress,
+  sDaiAddress,
+  wxdaiAbi,
+  wxdaiAddress,
+} from "@/generated";
 import { config } from "@/wagmiConfig";
 
 import { isUndefined } from "@/utils";
@@ -11,10 +21,11 @@ import { GetQuotesResult } from "@/utils/getQuotes";
 import { waitForTransaction } from "@/utils/waitForTransaction";
 
 import { DECIMALS, DEFAULT_CHAIN } from "@/consts";
-import { IMarket } from "@/consts/markets";
+import { IMarket, parentMarket } from "@/consts/markets";
 
 import { mergeFromRouter, splitFromRouter } from "./useTradeExecutorPredict";
 import { getSplitFromTradeExecutorCalls } from "./useTradeExecutorSplit";
+import { getMinimumAmountOut } from "@/utils/swapr";
 
 interface MarketsData {
   marketInfo: IMarket;
@@ -23,6 +34,7 @@ interface MarketsData {
   // instead the amount of underlying tokens the wallet will have, in case of a split from collateral
   // example: if user provided collateral to mint/ split tokens in parent market, then we add that mintAmount in here,
   // since the txns will include a split txn that will end up giving this mintAmount to the Wallet as underlying token
+  // also factors in underlyingTokens from minting using SeerCredits
   // This value is handled in utils/processMarket
   amount: bigint;
 }
@@ -32,6 +44,76 @@ interface PredictAllProps {
   marketsData: MarketsData[];
   // defined if collateral needs to minted to Parent Market
   mintAmount?: bigint;
+  seerCreditsSwapQuote?: SwaprV3Trade;
+}
+
+interface Call {
+  to: Address | string;
+  data: string | BytesLike;
+  value?: bigint;
+}
+
+// Use the available SeerCredits in TradeWallet to Mint Parent market tokens
+// swap sDAI to Wxdai => Convert Wxdai to xdai (wxdai.withdraw()) => mint tokens with xdai
+async function getMintFromSeerCreditsCalls(
+  tradeExecutor: Address,
+  seerCreditSwapQuote: SwaprV3Trade,
+): Promise<Call[]> {
+  const quote = seerCreditSwapQuote;
+
+  const approveCall = {
+    to: sDaiAddress,
+    data: encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [
+        quote.approveAddress as Address,
+        parseUnits(quote.maximumAmountIn().toExact(), DECIMALS),
+      ],
+    }),
+  };
+
+  const swapTxn = await quote.swapTransaction({ recipient: tradeExecutor });
+  const executeCall = {
+    to: creditsManagerAddress,
+    data: encodeFunctionData({
+      abi: creditsManagerAbi,
+      functionName: "execute",
+      args: [
+        swapTxn.to! as `0x${string}`,
+        swapTxn.data! as `0x${string}`,
+        parseUnits(quote.maximumAmountIn().toExact(), DECIMALS),
+        wxdaiAddress,
+      ],
+    }),
+  };
+
+  const availableWxdai = await getMinimumAmountOut(quote);
+  if (!availableWxdai) {
+    throw new Error("Unable to fetch Wrapped xDAI balance.");
+  }
+
+  const withdrawCall = {
+    to: wxdaiAddress,
+    data: encodeFunctionData({
+      abi: wxdaiAbi,
+      functionName: "withdraw",
+      args: [availableWxdai],
+    }),
+  };
+
+  // splitPosition with xDAI
+  const splitCall = {
+    to: gnosisRouterAddress,
+    data: encodeFunctionData({
+      abi: gnosisRouterAbi,
+      functionName: "splitFromBase",
+      args: [parentMarket],
+    }),
+    value: availableWxdai,
+  };
+
+  return [approveCall, executeCall, withdrawCall, splitCall];
 }
 
 const getApproveCalls = async ({
@@ -130,8 +212,20 @@ async function getTradeExecutorCalls({
   tradeExecutor,
   marketsData,
   mintAmount,
+  seerCreditsSwapQuote,
 }: PredictAllProps) {
-  const calls = [];
+  const calls: Call[] = [];
+
+  // Note that mintAmount will be already be offset taking into account the available SeerCredits
+  // so if the collateral amount is 10, then 7 can be SeerCredits and then mintAmount will be 3.
+  if (seerCreditsSwapQuote) {
+    const mintFromSeerCreditsCalls = await getMintFromSeerCreditsCalls(
+      tradeExecutor,
+      seerCreditsSwapQuote,
+    );
+
+    calls.push(...mintFromSeerCreditsCalls);
+  }
 
   // Adds a split call if the user entered an amount to mint parent market tokens
   if (!isUndefined(mintAmount) && mintAmount > 0n) {
@@ -195,18 +289,20 @@ async function predictAllFromTradeExecutor({
   tradeExecutor,
   marketsData,
   mintAmount,
+  seerCreditsSwapQuote,
 }: PredictAllProps) {
   const calls = await getTradeExecutorCalls({
     tradeExecutor,
     marketsData,
     mintAmount,
+    seerCreditsSwapQuote,
   });
 
   const writePromise = writeContract(config, {
     address: tradeExecutor,
     abi: TradeExecutorAbi,
-    functionName: "batchExecute",
-    args: [calls],
+    functionName: "batchValueExecute",
+    args: [calls.map((call) => ({ ...call, value: call?.value ?? 0n }))],
     value: 0n,
     chainId: DEFAULT_CHAIN.id,
   });

@@ -21,7 +21,7 @@ export const formatValue = (value: bigint, decimals = 18) => {
     return "0";
   } else {
     const parsedValue = parseFloat(formattedValue);
-    return parsedValue > 0.01 ? commify(parsedValue.toFixed(2)) : "<0.01";
+    return parsedValue >= 0.01 ? commify(parsedValue.toFixed(2)) : "<0.01";
   }
 };
 

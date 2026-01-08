@@ -1,11 +1,13 @@
-import { Address, type Abi } from "viem";
+import { Address, erc20Abi, type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
 import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
 import { CowSwapAbi } from "@/abi/CowSwap";
+import { CreditsManagerAbi } from "@/abi/CreditsManager";
 import { RouterAbi } from "@/abi/Router";
 import { sDAIAbi } from "@/abi/sDAI";
 import { sDAIAdapterAbi } from "@/abi/sDAIAdapter";
+import { wrappedXDAIAbi } from "@/abi/wrappedXDAI";
 
 export const reownProjectId = process.env.NEXT_PUBLIC_REOWN_PROJECTID;
 
@@ -43,6 +45,21 @@ const contracts = {
     abi: CondtionalRouterAbi,
     name: "conditionalRouter",
   },
+  seerCreditsManager: {
+    address: "0xB29D0C9875D93483891c0645fdC13D665a4d2D70",
+    abi: CreditsManagerAbi,
+    name: "CreditsManager",
+  },
+  seerCredits: {
+    address: "0xEDd48e43EBd4E2b31238a5CBA8FD548fC051aCAF",
+    abi: erc20Abi,
+    name: "SeerCredits",
+  },
+  wrappedXDai: {
+    address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d",
+    abi: wrappedXDAIAbi,
+    name: "WXDAI",
+  },
 } satisfies Record<string, IContract>;
 
 export const getContractInfo = (
@@ -65,3 +82,4 @@ export const collateral = {
 };
 export const DECIMALS = 18;
 export const VOLUME_MIN = 0.01;
+export const MIN_SEER_CREDITS_USAGE = 0.01;

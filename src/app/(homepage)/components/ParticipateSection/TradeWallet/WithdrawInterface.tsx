@@ -1,14 +1,8 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useMemo, useState } from "react";
 
-import {
-  BigNumberField,
-  Button,
-  Form,
-  Modal,
-} from "@kleros/ui-components-library";
-import clsx from "clsx";
-import { Address, formatUnits, parseUnits } from "viem";
-import { useAccount } from "wagmi";
+import { Button, Form, Modal } from "@kleros/ui-components-library";
+import { Address } from "viem";
+import { useAccount, useBalance } from "wagmi";
 
 import { useWithdrawFromTradeExecutor } from "@/hooks/tradeWallet/useWithdrawFromTradeExecutor";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
@@ -17,9 +11,8 @@ import LightButton from "@/components/LightButton";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 
-import { formatValue } from "@/utils";
-
-import { collateral } from "@/consts";
+import AmountInput from "@/components/AmountInput";
+import { Tokens, TokenType } from "@/consts/tokens";
 
 interface WithdrawInterfaceProps {
   isOpen: boolean;
@@ -32,16 +25,25 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
   isOpen,
   toggleIsOpen,
 }) => {
-  const [amount, setAmount] = useState<string>();
+  const [amount, setAmount] = useState<bigint>();
+  const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
 
   const { address: account } = useAccount();
 
-  const { data: balanceData, isLoading: isBalanceLoading } = useTokenBalance({
+  const { data: balanceData } = useTokenBalance({
     address: tradeExecutor,
-    token: collateral.address,
+    token: Tokens[selectedToken].address,
   });
-  const balance =
-    balanceData && formatUnits(balanceData.value, balanceData.decimals);
+  const { data: balanceXDai } = useBalance({
+    address: tradeExecutor,
+  });
+
+  const balance = useMemo(() => {
+    if (selectedToken === TokenType.xDAI) {
+      return balanceXDai?.value ?? 0n;
+    }
+    return balanceData?.value ?? 0n;
+  }, [balanceXDai, balanceData, selectedToken]);
 
   const withdrawFromTradeExecutor = useWithdrawFromTradeExecutor(() => {
     setAmount(undefined);
@@ -50,23 +52,15 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
-    const depositAmount = data["amount"];
-
-    if (!account) return;
+    if (!account || !amount) return;
 
     withdrawFromTradeExecutor.mutate({
       account,
-      tokens: [collateral.address],
-      amounts: [parseUnits(depositAmount as string, collateral.decimals)],
+      tokens: [Tokens[selectedToken].address],
+      amounts: [amount],
+      isXDai: selectedToken === TokenType.xDAI,
       tradeExecutor,
     });
-  };
-
-  const handleMaxClick = () => {
-    if (balance) {
-      setAmount(balance);
-    }
   };
 
   return (
@@ -87,7 +81,7 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
       <div className="flex size-full flex-col gap-6">
         <div className="flex w-full flex-col items-center gap-2">
           <h2 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
-            Withdraw sDAI
+            Withdraw
           </h2>
           <p className="text-klerosUIComponentsPrimaryText text-sm">
             Withdraw from trade wallet to your account
@@ -95,37 +89,12 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
         </div>
         <Form className="flex flex-col items-center gap-4" onSubmit={onSubmit}>
           <div className="relative w-full">
-            <BigNumberField
-              isRequired
-              name="amount"
+            <AmountInput
+              {...{ setSelectedToken, setAmount, selectedToken }}
               value={amount}
-              minValue={"0"}
-              defaultValue={"0"}
-              showFieldError
-              validate={(curr) => {
-                if (!curr) return null;
-                return parseUnits(curr.toString() ?? "0", 18) >
-                  (balanceData?.value ?? 0n)
-                  ? "Not enough balance"
-                  : undefined;
-              }}
-              message={
-                isBalanceLoading
-                  ? "Loading..."
-                  : `Available: ${formatValue(balanceData?.value ?? 0n)} sDAI`
-              }
-              isReadOnly={withdrawFromTradeExecutor.isPending}
-              className="md:min-w-xl"
-            />
-            <LightButton
-              small
-              text="Max"
-              onPress={handleMaxClick}
-              isDisabled={withdrawFromTradeExecutor.isPending}
-              className={clsx(
-                "absolute -right-1 -bottom-1 px-1 py-0.5",
-                "[&_.button-text]:text-klerosUIComponentsSecondaryText [&_.button-text]:text-sm",
-              )}
+              isWithdraw
+              balance={balance}
+              inputProps={{ isReadOnly: withdrawFromTradeExecutor.isPending }}
             />
           </div>
 
@@ -134,8 +103,10 @@ export const WithdrawInterface: React.FC<WithdrawInterfaceProps> = ({
             text="Withdraw"
             isDisabled={
               withdrawFromTradeExecutor.isPending ||
-              isBalanceLoading ||
-              balanceData?.value === 0n
+              (selectedToken === TokenType.xDAI
+                ? !balanceXDai
+                : !balanceData) ||
+              balance === 0n
             }
             isLoading={withdrawFromTradeExecutor.isPending}
           />

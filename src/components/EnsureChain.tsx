@@ -8,9 +8,7 @@ const EnsureChain: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { address } = useAccount();
 
   return isUndefined(address) ? (
-    <div className="mt-28 w-full">
-      <ConnectWallet text="Connect To Participate" className="mx-auto" />
-    </div>
+    <ConnectWallet text="Connect To Predict" />
   ) : (
     children
   );

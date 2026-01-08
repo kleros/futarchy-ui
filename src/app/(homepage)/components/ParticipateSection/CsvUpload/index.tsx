@@ -7,7 +7,9 @@ import { useToggle } from "react-use";
 import { useMarketsStore } from "@/store/markets";
 
 import { isUndefined } from "@/utils";
-import { parseMarketCSV } from "@/utils/parseCsvFile";
+import { parseMarketCSV } from "@/utils/csv";
+
+import CsvDownload from "./CsvDownload";
 
 interface ICsvUploadPopup {
   isOpen: boolean;
@@ -47,7 +49,7 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
     >
       <div className="flex size-full flex-col justify-center gap-6">
         <h2 className="w-full. text-klerosUIComponentsPrimaryText text-center text-2xl font-semibold">
-          Merge Project tokens
+          Upload CSV Predictions
         </h2>
         <div
           className={clsx(
@@ -65,13 +67,13 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
             )}
           >
             <span className="text-klerosUIComponentsSecondaryText text-sm">
-              marketId,score
+              marketName,score
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              0x105d957043ee12f7705efa072af11e718f8c5b83,49.45
+              Judge Dredd (1995),49.45
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              0x68af0afe82dda5c9c26e6a458a143caad35708d6,53.52
+              Bacurau (2019),53.52
             </span>
             <span className="text-klerosUIComponentsSecondaryText text-sm">
               ...
@@ -82,8 +84,9 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
             Gnosis ecosystem.
           </span>
         </div>
+        <CsvDownload />
         <FileUploader
-          className="w-full"
+          className="w-full [&_small]:top-0 [&_small]:text-sm"
           callback={(file) => {
             setParseError(undefined);
             setFile(file);

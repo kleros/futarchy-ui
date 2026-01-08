@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@cowprotocol/cow-sdk": "^5.10.3",
-    "@kleros/ui-components-library": "^3.6.0",
+    "@kleros/ui-components-library": "^3.7.0",
     "@reown/appkit": "^1.7.11",
     "@reown/appkit-adapter-wagmi": "^1.7.11",
     "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#6dea7e63f7e05c84a4374717ee1ad5baca86f7de",
@@ -21,6 +21,7 @@
     "@yornaath/batshit": "^0.11.1",
     "clsx": "^2.1.1",
     "ethers": "5.8.0",
+    "framer-motion": "^12.23.26",
     "graphql-request": "^7.3.1",
     "graphql-tag": "^2.12.6",
     "lightweight-charts": "^5.0.8",

@@ -7,9 +7,13 @@ export interface PredictState {
   isCreatingWallet: boolean;
   isAddingCollateral: boolean;
   isCollateralAdded: boolean;
+  isAddingSeerCredits: boolean;
+  isSeerCreditsAdded: boolean;
   isProcessingMarkets: boolean;
   isLoadingQuotes: boolean;
   isPredictionSuccessful: boolean;
+  frozenToBeAdded?: bigint;
+  frozenToBeAddedSeerCredits?: bigint;
   error?: string;
   isSending: boolean;
 }
@@ -18,10 +22,14 @@ const initialState: PredictState = {
   isCreatingWallet: false,
   isAddingCollateral: false,
   isCollateralAdded: false,
+  isAddingSeerCredits: false,
+  isSeerCreditsAdded: false,
   isProcessingMarkets: false,
   isLoadingQuotes: false,
   isPredictionSuccessful: false,
   isSending: false,
+  frozenToBeAdded: undefined,
+  frozenToBeAddedSeerCredits: undefined,
   createdTradeWallet: undefined,
   error: undefined,
 };
