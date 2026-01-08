@@ -13,7 +13,7 @@ import { useMarketContext } from "@/context/MarketContext";
 
 import { Skeleton } from "@/components/Skeleton";
 
-import { isUndefined } from "@/utils";
+import { formatWithPrecision, isUndefined } from "@/utils";
 
 const LoadingSkeleton: React.FC = () => (
   <div className="relative w-full">
@@ -63,7 +63,7 @@ const PredictionSliderContent: React.FC = () => {
           rightLabel=""
           aria-label="Slider"
           callback={setPrediction}
-          formatter={(value) => `${(value / precision).toFixed(0)}`}
+          formatter={(value) => `${formatWithPrecision(value, precision)}`}
           // @ts-expect-error other values not needed
           theme={
             showEstimateVariant
@@ -91,7 +91,8 @@ const PredictionSliderContent: React.FC = () => {
             )}
             style={{ backgroundColor: color }}
           >
-            {`${(marketEstimate / precision).toFixed(2)}`}
+            {/* TODO: updates for individual experiments */}
+            {`${formatWithPrecision(marketEstimate, precision)}%`}
           </div>
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>

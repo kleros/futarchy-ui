@@ -100,12 +100,6 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
           value={
             typeof value !== "undefined" ? formatUnits(value, 18) : undefined
           }
-          formatOptions={{
-            suffix:
-              isXDai && equivalentSDAI
-                ? `~ ${formatValue(equivalentSDAI)} sDAI`
-                : "",
-          }}
           {...inputProps}
         />
         <DropdownSelect

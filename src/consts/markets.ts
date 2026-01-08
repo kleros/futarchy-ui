@@ -63,7 +63,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x11463F43181eB643bA8a584756CCB27a9B8f7B98",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
     parentMarketOutcome: 0,
     conditionId:
@@ -97,7 +97,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x971bd2446cc32dFa26410Cc46978AA0c371Bc48e",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
     parentMarketOutcome: 1,
     conditionId:
@@ -120,7 +120,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x43D6E82de1E64531b5E47891b186227edA566344",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0xfdd8af90af2722d5fe39adf1002fbd069b8a76c0",
     parentMarketOutcome: 2,
     conditionId:
@@ -142,7 +142,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x3Aa738505C22e670a074e60566bD7264e7D682B1",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x1f2e76d66047e7f8e0deea373a0c04ffecab31df",
     parentMarketOutcome: 3,
     conditionId:
@@ -164,7 +164,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x12c91f543a48F58e3E54c398f19BEc4b62aFD617",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x2338ca7d59b7e15bd03dd81cf5f5bb59b6c6c6d4",
     parentMarketOutcome: 4,
     conditionId:
@@ -187,7 +187,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0xe54422171C40aA14B0fc935DEA7AFb85BE15357d",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x9a274ea86665d872fc58c8f26fd97a18b844c6ac",
     parentMarketOutcome: 5,
     conditionId:
@@ -210,7 +210,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x406B8Ee2DF07c644414E852542dAB98BdDf39234",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0xc25af7d4a5cb36bb3ce9faf652a5f7f989a1d57a",
     parentMarketOutcome: 6,
     conditionId:
@@ -233,7 +233,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0xA9099Baa3b74c1d602aCe8CeaC5933a16A0456C5",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0xd31d05158722f64b6a49e25bccc47d3203eecbe9",
     parentMarketOutcome: 7,
     conditionId:
@@ -256,7 +256,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0xcA4c82fd178aaf4b72ECe35774ce04B7Aa2E5361",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x13d48a73811c01f574e1bfa4c58b7d95d2f590e4",
     parentMarketOutcome: 8,
     conditionId:
@@ -279,7 +279,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0xFa2e53b2E33309CEE9255b440f143308F92BbA83",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x878a332b5efc0a4bf983036beece050352baa73d",
     parentMarketOutcome: 9,
     conditionId:
@@ -302,7 +302,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x94b6580034e1FFf008Ac8370dF69E180740469b0",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0xee4a77447069f32f555f3d75aaba18a4acb54ac4",
     parentMarketOutcome: 10,
     conditionId:
@@ -325,7 +325,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0xb3cE80d6b30DcC4d605B290f4dC1Fc3B8C2bcC3b",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x38a2923cc391b9cd926e5a2d07462dc7d189c407",
     parentMarketOutcome: 11,
     conditionId:
@@ -348,7 +348,7 @@ export const markets: Array<IMarket> = [
     invalidToken: "0x69641B6664a493ecF467D4D9aAB595A8b9Cc4a66",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0xc0dab34c6c2008391bdc742cec0bd0afb60d4d59",
     parentMarketOutcome: 12,
     conditionId:
@@ -382,7 +382,7 @@ export const markets: Array<IMarket> = [
     underlyingToken: "0x73ADB9f2907839833A96721b41AEAE4Ba37BfC09",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0xa7cf69c4c93d2f6811a394e92320979c3cf86b37",
     parentMarketOutcome: 13,
     conditionId:
@@ -416,7 +416,7 @@ export const markets: Array<IMarket> = [
     underlyingToken: "0x7cf8005B84ea5413f339Cdc711F918a834A52110",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x96638d67ac5bc5f8223f9e2d60e92f4d8dcf3147",
     parentMarketOutcome: 14,
     conditionId:
@@ -450,7 +450,7 @@ export const markets: Array<IMarket> = [
     underlyingToken: "0x81b1d03fD5Ca06A801ECa2259446D2c9b2237d1C",
     minValue: 0,
     maxValue: 100,
-    precision: 1,
+    precision: 100,
     marketId: "0x002c70343ddef063d0ad8da91104934318800d30",
     parentMarketOutcome: 15,
     conditionId:

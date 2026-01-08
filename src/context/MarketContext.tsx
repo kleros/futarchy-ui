@@ -114,7 +114,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const marketEstimate = useMemo(
     () =>
       typeof marketPrice !== "undefined"
-        ? +(marketPrice * maxValue * precision).toFixed(1)
+        ? Math.round(marketPrice * maxValue * precision)
         : 0,
     [marketPrice, maxValue, precision],
   );

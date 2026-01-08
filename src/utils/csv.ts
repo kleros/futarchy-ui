@@ -2,7 +2,7 @@ import { PredictionMarket } from "@/store/markets";
 
 import marketFromName from "./marketIdFromName";
 
-import { isUndefined } from ".";
+import { formatWithPrecision, isUndefined } from ".";
 
 export const parseMarketCSV = (csvText: string): Record<string, number> => {
   const lines = csvText.trim().split("\n");
@@ -63,7 +63,16 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
       throw new Error(`Row ${i + 1}: Score cannot be negative`);
     }
 
-    result[marketId] = score;
+    const maxScore = formatWithPrecision(market.maxValue, market.precision);
+    if (score > +maxScore) {
+      throw new Error(
+        `Row ${
+          i + 1
+        }: Score cannot be greater than the max value of ${maxScore}`,
+      );
+    }
+
+    result[marketId] = Math.round(score * market.precision);
   }
 
   if (Object.values(result).length === 0) {
@@ -76,10 +85,15 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
 export function generateMarketCsv(markets: Record<string, PredictionMarket>) {
   const header = ["marketName", "score"];
 
-  const rows = Object.values(markets).map((market) => [
-    `"${market.name}"`,
-    market.prediction ?? market?.marketEstimate,
-  ]);
+  const rows = Object.values(markets).map((market) => {
+    return [
+      `"${market.name}"`,
+      formatWithPrecision(
+        market.prediction ?? market.marketEstimate ?? 0,
+        market.precision,
+      ),
+    ];
+  });
 
   const csvContent = [header, ...rows]
     .map((row) => row.map((v) => `${v}`).join(","))
