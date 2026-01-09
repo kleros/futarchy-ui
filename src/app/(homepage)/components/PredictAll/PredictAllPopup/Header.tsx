@@ -27,7 +27,8 @@ const Header: React.FC = () => {
       <div
         className={clsx(
           "rounded-base flex w-full flex-col gap-0.25",
-          "scroll-shadows max-h-58 overflow-hidden overflow-y-scroll",
+          "max-h-58 overflow-hidden overflow-y-scroll",
+          "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         )}
       >
         <AnimatePresence>
