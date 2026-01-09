@@ -11120,6 +11120,7 @@ __metadata:
     react-dom: "npm:^18"
     react-jdenticon: "npm:^1.4.0"
     react-use: "npm:^17.6.0"
+    swiper: "npm:^12.0.2"
     tailwindcss: "npm:^4.1.4"
     typescript: "npm:^5"
     viem: "npm:^2.31.4"
@@ -16233,6 +16234,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.3"
   checksum: 10c0/6a47c1926e06395ead750905e103be388aeec8c9697f20b14bc3e1e86fcb4fc78e5033197afe6cc8bbed80f0a4ee1f184b0fa22eec7f4a767bdfd278683d52eb
+  languageName: node
+  linkType: hard
+
+"swiper@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "swiper@npm:12.0.2"
+  checksum: 10c0/e7826eb5973828c622a30f321dc7740300a32666d26810b381e2498ad60f2f84e070058a1aa0ee32acce8a6d31f2d2919c388b2e5921db45690c59af41b1c7b8
   languageName: node
   linkType: hard
 
