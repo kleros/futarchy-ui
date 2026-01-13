@@ -20,7 +20,7 @@ const DesktopNavbar: React.FC<IDesktopNavbar> = ({ toggleIsHelpOpen }) => {
       <Logo />
 
       <div className="ml-2 flex items-center gap-1 md:gap-2">
-        <div className="mr-13.75 flex items-center gap-8">
+        <div className="mr-8.75 flex items-center gap-4">
           {/* TODO: update links */}
           <Link
             href="/"
