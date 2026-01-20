@@ -8,6 +8,7 @@ import { MIN_SEER_CREDITS_USAGE } from "@/consts";
 import { TokenType } from "@/consts/tokens";
 
 import AmountInput from "./AmountInput";
+import AmountSlider from "./AmountSlider";
 
 interface IPredictAmountSection {
   amount: bigint | undefined;
@@ -72,6 +73,11 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
           className="mb-5"
           inputProps={{ isReadOnly: isSending }}
         />
+        <AmountSlider
+          value={amount ?? 0n}
+          balance={availableBalance}
+          setValue={setAmount}
+        />
         {/* Seer credits checkbox */}
         {seerCreditsBalance > MIN_SEER_CREDITS_USAGE ? (
           <Checkbox
@@ -79,7 +85,7 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
             label={`Use your Seer credits. Available: ${formatValue(seerCreditsBalance)}`}
             onChange={toggleIsUsingCredits}
             defaultSelected={isUsingSeerCredits}
-            className="mt-1 pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
+            className="mt-4 w-fit pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
           />
         ) : null}
         {!isUndefined(amount) && amount > 0n ? (

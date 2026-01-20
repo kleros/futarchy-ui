@@ -68,16 +68,22 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
         <span className="text-klerosUIComponentsSecondaryText mb-1 text-sm">
           You pay
         </span>
-        <LightButton
-          small
-          text="Max"
-          onPress={handleMaxClick}
-          className={clsx(
-            "absolute -right-1 px-1 py-0.5",
-            "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-sm",
-          )}
-          isDisabled={inputProps?.isReadOnly}
-        />
+        <div className="flex items-center gap-2">
+          <span className="text-klerosUIComponentsSecondaryText text-xs">
+            Balance: {formatValue(balance ?? 0n)} &nbsp;
+            {selectedToken === TokenType.sDAI ? "sDAI" : "xDAI"}
+          </span>
+          <LightButton
+            small
+            text="Max"
+            onPress={handleMaxClick}
+            className={clsx(
+              "p-0 hover:bg-transparent!",
+              "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-xs [&_.button-text]:font-semibold",
+            )}
+            isDisabled={inputProps?.isReadOnly}
+          />
+        </div>
       </div>
 
       <div className="border-klerosUIComponentsStroke rounded-base flex h-fit flex-row border">
