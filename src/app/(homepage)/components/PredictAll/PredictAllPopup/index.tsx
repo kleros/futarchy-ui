@@ -225,8 +225,9 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   return (
     <Modal
       className={clsx(
-        "max-md:max-h-2xl h-fit w-max max-md:w-full max-md:max-w-sm",
-        "relative overflow-x-hidden overflow-y-scroll p-4 md:px-10 md:py-8",
+        "fixed top-[10vh] left-1/2 -translate-x-1/2 transform",
+        "max-md:max-h-2xl h-fit max-h-[80vh] w-max max-md:w-full max-md:max-w-sm",
+        "overflow-x-hidden overflow-y-scroll p-4 md:px-10 md:py-8",
       )}
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
