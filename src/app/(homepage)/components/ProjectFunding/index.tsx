@@ -72,7 +72,7 @@ const ProjectFunding: React.FC = () => {
                         Position:
                         <span className="font-bold">
                           {" "}
-                          {totalValue.toFixed(2)} sDAI{" "}
+                          {totalValue.toFixed(2)}${" "}
                         </span>
                       </p>
                     </div>
