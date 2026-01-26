@@ -9,8 +9,12 @@ import { isUndefined } from "@/utils";
 import { projectsChosen } from "@/consts/markets";
 
 import { useMarketPrice } from "./useMarketPrice";
+import { useSDaiPrice } from "./useSDaiPrice";
 import { useTokenBalance } from "./useTokenBalance";
 
+/**
+ * @returns price of token in xDai/ dollar
+ */
 export const useTokenPositionValue = (
   token: Address,
   underlyingToken: Address,
@@ -31,13 +35,17 @@ export const useTokenPositionValue = (
     formatEther(balance ?? 0n),
   );
 
+  const { price: sDaiPrice } = useSDaiPrice();
+
   const price = useMemo(() => {
+    let price = 0;
     if (hasLiquidity) {
-      return !isUndefined(data) ? parseFloat(data.price) / projectsChosen : 0;
+      price = !isUndefined(data) ? parseFloat(data.price) : 0;
     } else {
-      return config?.isUp ? marketPrice : 1 - marketPrice;
+      price = config?.isUp ? marketPrice : 1 - marketPrice;
     }
-  }, [data, hasLiquidity, marketPrice, config]);
+    return (price * sDaiPrice) / projectsChosen;
+  }, [data, hasLiquidity, marketPrice, config, sDaiPrice]);
 
   const normalizedBalance = useMemo(
     () => parseFloat(formatUnits(balance ?? 0n, 18)),
@@ -45,7 +53,7 @@ export const useTokenPositionValue = (
   );
 
   const value = useMemo(
-    () => normalizedBalance * (price ?? 0),
+    () => normalizedBalance * price,
     [normalizedBalance, price],
   );
 

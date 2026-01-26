@@ -87,9 +87,9 @@ const PositionValue: React.FC<IPositionValue> = ({
               <span className="font-bold">
                 {formatValue(upBalance ?? 0n, 18)} UP &nbsp;
               </span>
-              ~{upValue.toFixed(2)} sDAI &nbsp;
+              ~{upValue.toFixed(2)}$ &nbsp;
               <span className="text-klerosUIComponentsSecondaryText text-xs">
-                ({upPrice.toFixed(2)} sDAI per UP)
+                ({upPrice.toFixed(2)}$ per UP)
               </span>
             </p>
             <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
@@ -104,9 +104,9 @@ const PositionValue: React.FC<IPositionValue> = ({
               <span className="font-bold">
                 {formatValue(downBalance ?? 0n, 18)} DOWN &nbsp;
               </span>
-              ~{downValue.toFixed(2)} sDAI &nbsp;
+              ~{downValue.toFixed(2)}$ &nbsp;
               <span className="text-klerosUIComponentsSecondaryText text-xs">
-                ({downPrice.toFixed(2)} sDAI per DOWN)
+                ({downPrice.toFixed(2)}$ per DOWN)
               </span>
             </p>
             <span className="text-klerosUIComponentsPrimaryText justify-center text-sm max-md:hidden">
@@ -117,7 +117,7 @@ const PositionValue: React.FC<IPositionValue> = ({
 
         <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
           Total:
-          <span className="font-bold"> {totalValue.toFixed(2)} sDAI </span>
+          <span className="font-bold"> {totalValue.toFixed(2)}$ </span>
         </p>
       </div>
       {isResolved ? <RedeemButton tradeExecutor={tradeExecutor!} /> : null}
