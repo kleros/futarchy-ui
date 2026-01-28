@@ -1,7 +1,15 @@
 import { Address } from "viem";
 
+export const positionExplainerLink =
+  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
+
+export const appGuideLink =
+  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0";
+
+export const faqLink =
+  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.3ti6nmmbwr6";
 // TODO: update to latest
-export const projectsChosen = 6;
+export const projectsChosen = 5;
 
 export const parentMarket: Address =
   "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
@@ -12,8 +20,8 @@ export const parentConditionId =
 export const invalidMarket: Address =
   "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
 
-export const endTime: number = 1757776813;
-
+export const endTime: number = 1772303400;
+export const endDate: string = "Saturday 28th 23:59 UTC";
 export interface IDetails {
   imdbURL?: string;
   posterURL?: string;
