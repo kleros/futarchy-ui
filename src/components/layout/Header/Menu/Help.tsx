@@ -11,6 +11,8 @@ import Feedback from "@/assets/menu-icons/feedback.svg";
 import Faq from "@/assets/menu-icons/help.svg";
 import Telegram from "@/assets/menu-icons/telegram.svg";
 
+import { appGuideLink, faqLink } from "@/consts/markets";
+
 // TODO : update links
 const ITEMS = [
   {
@@ -31,7 +33,7 @@ const ITEMS = [
   {
     text: "App Guide",
     Icon: Guide,
-    url: "/",
+    url: appGuideLink,
   },
   {
     text: "Crypto Beginner's Guide",
@@ -41,7 +43,7 @@ const ITEMS = [
   {
     text: "FAQ",
     Icon: Faq,
-    url: "https://docs.kleros.io/kleros-faq",
+    url: faqLink,
   },
 ];
 
