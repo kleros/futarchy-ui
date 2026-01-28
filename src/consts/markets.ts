@@ -1,5 +1,8 @@
 import { Address } from "viem";
 
+export const positionExplainerLink =
+  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
+
 // TODO: update to latest
 export const projectsChosen = 6;
 
