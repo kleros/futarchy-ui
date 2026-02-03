@@ -8,6 +8,12 @@ export const appGuideLink =
 
 export const faqLink =
   "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.3ti6nmmbwr6";
+
+export const beginnerUserGuide =
+  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0";
+
+export const advancedUserGuide =
+  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
 // TODO: update to latest
 export const projectsChosen = 5;
 

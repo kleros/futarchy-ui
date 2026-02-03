@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 import { Button, Modal } from "@kleros/ui-components-library";
 import clsx from "clsx";
@@ -13,6 +13,7 @@ import {
 
 import { usePredictAllFlow } from "@/hooks/predict/usePredictAllFlow";
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
+import { useFirstPredictionStatus } from "@/hooks/useFirstPredictionStatus";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { useTokensBalances } from "@/hooks/useTokenBalances";
@@ -29,17 +30,21 @@ import Header from "./Header";
 interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
+  toggleGuide: (val: boolean) => void;
 }
 
 export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   isOpen,
   toggleIsOpen,
+  toggleGuide,
 }) => {
   const markets = usePredictionMarkets();
 
   const [amount, setAmount] = useState<bigint>();
   const [selectedToken, setSelectedToken] = useState<TokenType>(TokenType.sDAI);
   const [isUsingSeerCredits, toggleIsUsingCredits] = useToggle(true);
+
+  const firstPredictionRef = useRef<boolean | null>(null);
 
   const isXDai = selectedToken === TokenType.xDAI;
 
@@ -87,13 +92,20 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
 
   const { data: tokensBalances } = useTokensBalances(
     tradeExecutor,
-    markets.flatMap((market) => [market.upToken, market.downToken]),
+    markets.flatMap((market) => [
+      market.upToken,
+      market.downToken,
+      market.invalidToken,
+    ]),
   );
   const { data: underlyingTokensBalances } = useTokensBalances(
     tradeExecutor,
     markets.map((market) => market.underlyingToken),
   );
 
+  const { isFirstPrediction, setStoredHasPredicted } = useFirstPredictionStatus(
+    { tradeExecutor, outcomeTokenBalances: tokensBalances },
+  );
   // wallet only holds sDAI, this gives the equivalent amount in xDAI
   // to inform user how much equivalent xDAI they have
   const { data: walletXDaiBalance } = useReadSDaiPreviewRedeem({
@@ -216,6 +228,12 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     onDone: () => {
       toggleIsOpen();
       resetUI();
+
+      //show advanced user guide if it was the first prediction from user
+      if (firstPredictionRef.current) {
+        toggleGuide(true);
+        setStoredHasPredicted(true);
+      }
     },
   });
 
@@ -282,7 +300,10 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
           />
           <Button
             text="Predict"
-            onPress={handlePredict}
+            onPress={() => {
+              firstPredictionRef.current = isFirstPrediction;
+              handlePredict();
+            }}
             isDisabled={disabled}
             isLoading={isSending}
           />
