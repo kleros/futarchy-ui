@@ -20,6 +20,7 @@ interface IPredictAmountInput {
   selectedToken: TokenType;
   className?: string;
   inputProps?: React.ComponentProps<typeof BigNumberField>;
+  isFirstPrediction: boolean;
 }
 
 const PredictAmountInput: React.FC<IPredictAmountInput> = ({
@@ -32,6 +33,7 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
   equivalentSDAI,
   className,
   inputProps,
+  isFirstPrediction,
 }) => {
   const notEnoughBalance = useMemo(() => {
     if (!isUndefined(value) && !isUndefined(balance) && value > balance)
@@ -66,7 +68,7 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
     <div className={cn("relative mb-8 w-full md:min-w-lg", className)}>
       <div className="flex items-center justify-between">
         <span className="text-klerosUIComponentsSecondaryText mb-1 text-sm">
-          You pay
+          {isFirstPrediction ? "You pay" : "Extra collateral"}
         </span>
         <div className="flex items-center gap-2">
           <span className="text-klerosUIComponentsSecondaryText text-xs">
