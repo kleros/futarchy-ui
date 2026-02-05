@@ -77,7 +77,7 @@ export const getQuotes = async ({
 
   // means there were sell markets but no route was found
   if (!sellPromises.length && sellMarkets.length > 0) {
-    throw new Error("Quote Info: No sell route found");
+    throw new Error("Quote Info: No sell route found.\nTry higher amount.");
   }
 
   const sellTokenMapping: { [key: string]: bigint } = {};
@@ -113,7 +113,9 @@ export const getQuotes = async ({
   const totalCollateral = collateralFromSell + collateralFromMerge;
 
   if (!totalCollateral) {
-    throw new Error(`Quote Error: Cannot sell to Underlying token`);
+    throw new Error(
+      `Quote Error: Cannot sell to Underlying token.\nNot enough collateral.`,
+    );
   }
 
   // get buy quotes
@@ -162,7 +164,7 @@ export const getQuotes = async ({
   );
 
   if (!buyPromises.length && buyMarkets.length > 0) {
-    throw new Error("Quote Error: Amount too small or No Buy Route found");
+    throw new Error("Quote Error: No Buy Route found.\nTry higher amount.");
   }
 
   const buyQuoteResult = await Promise.allSettled(buyPromises);
@@ -174,7 +176,9 @@ export const getQuotes = async ({
   }, [] as SwaprV3Trade[]);
 
   if (!buyQuotes) {
-    throw new Error(`Quote Error: Cannot buy from Underlying token`);
+    throw new Error(
+      `Quote Error: Cannot buy from Underlying token.\nNo route found.`,
+    );
   }
   return {
     quotes: { sellQuotes, buyQuotes },
