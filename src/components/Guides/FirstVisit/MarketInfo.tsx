@@ -1,15 +1,17 @@
 import React from "react";
 
 export const Title: React.FC = () => {
-  return <>Open the Market to Predict with the Slider</>;
+  return <>Predict and Trade Property Markets</>;
 };
 
 export const SubTitle: React.FC = () => {
   return (
     <p className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
-      View up-to-date market estimates, open the market and use the slider to
-      set your predictions. Then, click on the &apos;Predict Selected&apos;
-      button below to confirm your choice.
+      Use the available data for each property — click Details to view more
+      information — and try to predict the final price that the professional
+      evaluator will assign. When you&apos;re ready, select the property you
+      want to predict and click the Predict Selected button below to confirm
+      your choice.
     </p>
   );
 };

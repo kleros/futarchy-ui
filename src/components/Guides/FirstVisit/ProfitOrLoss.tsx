@@ -1,24 +1,16 @@
 import React from "react";
 
 export const Title: React.FC = () => {
-  return (
-    <>
-      Profit or Loss if you have predicted the Property evaluated by the Expert
-    </>
-  );
+  return <>Profit or Loss - Your Prediction on the Expert-Evaluated Property</>;
 };
 
 export const SubTitle: React.FC = () => {
   return (
-    <ul className="list-disc pl-4">
-      <li className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
-        You make a profit if your prediction moves the market closer to the
-        Final Evaluation Price.
-      </li>
-      <li className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
-        You incur a loss if your prediction moves the market further away from
-        the Final Evaluation Price.
-      </li>
-    </ul>
+    <p className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
+      ✅ You earn a profit if your prediction helps move the market price closer
+      to the final expert evaluation price.
+      <br /> ❌ You incur a loss if your prediction moves the market price
+      further away from the final expert evaluation price.
+    </p>
   );
 };

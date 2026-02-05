@@ -1,6 +1,6 @@
-import MarketInfoSvg from "@/assets/miniguides/first-visit/market-info.svg";
-import ProcessOrTimelineSvg from "@/assets/miniguides/first-visit/process-or-timeline.svg";
+import ProcessAndTimelineSvg from "@/assets/miniguides/first-visit/process-and-timeline.svg";
 import ProfitOrLossSvg from "@/assets/miniguides/first-visit/profit-loss.svg";
+import SliderSvg from "@/assets/miniguides/first-visit/slider.svg";
 import WelcomeSvg from "@/assets/miniguides/first-visit/welcome.svg";
 
 import GuideStructure, { IGuide } from "../GuideStructure";
@@ -23,22 +23,22 @@ const content = [
   {
     title: <WelcomeTitle />,
     subtitle: <WelcomeSubtitle />,
-    svg: <WelcomeSvg className="max-h-38 max-w-226" />,
-  },
-  {
-    title: <MarketInfoTitle />,
-    subtitle: <MarketInfoSubtitle />,
-    svg: <MarketInfoSvg className="max-h-105 max-w-215" />,
+    svg: <WelcomeSvg className="max-h-110 max-w-215" />,
   },
   {
     title: <ProcessAndTimelineTitle />,
     subtitle: <ProcessAndTimelineSubtitle />,
-    svg: <ProcessOrTimelineSvg className="max-h-101 max-w-150" />,
+    svg: <ProcessAndTimelineSvg className="max-h-110 max-w-215" />,
+  },
+  {
+    title: <MarketInfoTitle />,
+    subtitle: <MarketInfoSubtitle />,
+    svg: <SliderSvg className="max-h-110 max-w-149.75" />,
   },
   {
     title: <ProfitOrLossTitle />,
     subtitle: <ProfitOrLossSubtitle />,
-    svg: <ProfitOrLossSvg className="max-h-98 max-w-247" />,
+    svg: <ProfitOrLossSvg className="max-h-110 max-w-247.25" />,
   },
 ];
 

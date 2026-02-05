@@ -5,5 +5,13 @@ export const Title: React.FC = () => {
 };
 
 export const SubTitle: React.FC = () => {
-  return null;
+  return (
+    <p className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
+      Nine properties have been selected for this experiment. Only one of them
+      will be evaluated by a professional expert. The trading period will last
+      approximately one month.
+      <br /> At the end of this period, the market closes and the Final Price of
+      the single professionally evaluated property is publicly revealed
+    </p>
+  );
 };
