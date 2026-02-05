@@ -253,7 +253,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     >
       <div className="flex flex-col items-center">
         <Header />
-        <ScrollFade className="w-full">
+        <ScrollFade className="min-h-32 w-full">
           <PredictAmountSection
             {...{
               amount,

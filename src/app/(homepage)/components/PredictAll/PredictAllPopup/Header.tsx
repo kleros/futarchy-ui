@@ -23,7 +23,7 @@ const Header: React.FC = () => {
   return (
     <div
       className={clsx(
-        "mb-4 min-h-32 w-full shrink grow-0",
+        "mb-4 min-h-28 w-full shrink grow-0",
         "flex flex-col items-center gap-4",
       )}
     >
