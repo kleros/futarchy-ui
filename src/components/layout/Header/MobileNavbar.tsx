@@ -1,6 +1,5 @@
 import { Button, Modal } from "@kleros/ui-components-library";
 import clsx from "clsx";
-import Link from "next/link";
 import { useToggle } from "react-use";
 import { useAccount, useDisconnect } from "wagmi";
 

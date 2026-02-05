@@ -1,6 +1,3 @@
-import clsx from "clsx";
-import Link from "next/link";
-
 import ConnectWallet from "@/components/ConnectWallet";
 import LightButton from "@/components/LightButton";
 import ThemeToggle from "@/components/ThemeToggle";
