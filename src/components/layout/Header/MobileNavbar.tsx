@@ -1,6 +1,5 @@
 import { Button, Modal } from "@kleros/ui-components-library";
 import clsx from "clsx";
-import Link from "next/link";
 import { useToggle } from "react-use";
 import { useAccount, useDisconnect } from "wagmi";
 
@@ -48,27 +47,6 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
         onOpenChange={toggleIsMenuOpen}
         isDismissable
       >
-        <div className="flex flex-col items-start gap-4">
-          {/* TODO: update links */}
-          <Link
-            href="/"
-            className={clsx(
-              "text-klerosUIComponentsPrimaryText text-base",
-              "transition-transform duration-200 hover:scale-102",
-            )}
-          >
-            Home
-          </Link>
-          <Link
-            href="/"
-            className={clsx(
-              "text-klerosUIComponentsPrimaryText text-base",
-              "transition-transform duration-200 hover:scale-102",
-            )}
-          >
-            Policy
-          </Link>
-        </div>
         <hr className="border-klerosUIComponentsStroke w-full" />
         <div className="flex flex-wrap items-center justify-between gap-4">
           {isConnected ? (

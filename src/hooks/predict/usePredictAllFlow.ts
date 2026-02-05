@@ -280,7 +280,7 @@ export function usePredictAllFlow({
       });
       setFlag("isPredictionSuccessful", true);
 
-      // after 3 seconds: close + reset
+      // close + reset
       setTimeout(() => {
         onDone();
         reset();
@@ -291,7 +291,7 @@ export function usePredictAllFlow({
           .then(() => {
             resetPredictionMarkets();
           });
-      }, 3000);
+      }, 1000);
     } catch (e) {
       if (e instanceof Error) {
         setFlag("error", formatError(e));

@@ -33,7 +33,7 @@ const Legend: React.FC<ILegend> = ({
                 return (
                   <Tag
                     key={`item-${index}`}
-                    text={`${name} ${data.at(-1)?.value.toFixed(2)}`}
+                    text={`${name} ${data.at(-1)?.value.toFixed(2)}%`}
                     active={isVisible}
                     onClick={() => onToggleMarket(name)}
                     className={clsx(

@@ -160,6 +160,9 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         borderVisible: false,
         visible: true,
       },
+      localization: {
+        priceFormatter: (val: number) => `${val.toFixed(2)}%`,
+      },
       leftPriceScale: {
         borderVisible: false,
         visible: false,

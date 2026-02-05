@@ -5,6 +5,7 @@ import { useToggle } from "react-use";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import EnsureChain from "@/components/EnsureChain";
+import AdvancedGuide from "@/components/Guides/AdvancedGuide";
 
 import CheckOutline from "@/assets/svg/check-outline-button.svg";
 
@@ -13,6 +14,7 @@ import { PredictAllPopup } from "./PredictAllPopup";
 const PredictAll: React.FC = () => {
   const [isOpen, toggleIsOpen] = useToggle(false);
   const markets = usePredictionMarkets();
+  const [isGuideOpen, toggleGuide] = useToggle(false);
 
   return (
     <Card
@@ -42,7 +44,15 @@ const PredictAll: React.FC = () => {
           onPress={toggleIsOpen}
           isDisabled={markets.length === 0}
         />
-        <PredictAllPopup {...{ isOpen, toggleIsOpen }} />
+        {isOpen ? (
+          <PredictAllPopup {...{ isOpen, toggleIsOpen, toggleGuide }} />
+        ) : null}
+        <AdvancedGuide
+          isVisible={isGuideOpen}
+          closeGuide={() => {
+            toggleGuide(false);
+          }}
+        />
       </EnsureChain>
     </Card>
   );
