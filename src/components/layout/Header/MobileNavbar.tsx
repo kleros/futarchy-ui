@@ -48,27 +48,6 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
         onOpenChange={toggleIsMenuOpen}
         isDismissable
       >
-        <div className="flex flex-col items-start gap-4">
-          {/* TODO: update links */}
-          <Link
-            href="/"
-            className={clsx(
-              "text-klerosUIComponentsPrimaryText text-base",
-              "transition-transform duration-200 hover:scale-102",
-            )}
-          >
-            Home
-          </Link>
-          <Link
-            href="/"
-            className={clsx(
-              "text-klerosUIComponentsPrimaryText text-base",
-              "transition-transform duration-200 hover:scale-102",
-            )}
-          >
-            Policy
-          </Link>
-        </div>
         <hr className="border-klerosUIComponentsStroke w-full" />
         <div className="flex flex-wrap items-center justify-between gap-4">
           {isConnected ? (
