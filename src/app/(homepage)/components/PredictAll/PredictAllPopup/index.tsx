@@ -27,6 +27,7 @@ import { collateral } from "@/consts";
 import { TokenType } from "@/consts/tokens";
 
 import Header from "./Header";
+import { ScrollFade } from "@/components/ScrollFade";
 interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
@@ -243,70 +244,75 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   return (
     <Modal
       className={clsx(
-        "fixed top-[10vh] left-1/2 -translate-x-1/2 transform",
-        "max-md:max-h-2xl h-fit max-h-[80vh] w-max max-md:w-full max-md:max-w-sm",
-        "overflow-x-hidden overflow-y-scroll p-4 md:px-10 md:py-8",
+        "fixed top-[5vh] left-1/2 -translate-x-1/2 transform",
+        "h-auto max-h-[90vh] w-max max-md:w-full max-md:max-w-sm",
+        "flex p-4 pb-0! md:px-10 md:py-8",
       )}
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
     >
-      <div className="flex size-full flex-col items-center">
+      <div className="flex flex-col items-center">
         <Header />
+        <ScrollFade className="w-full">
+          <PredictAmountSection
+            {...{
+              amount,
+              setAmount,
+              selectedToken,
+              setSelectedToken,
+              availableBalance,
+              isSending,
+              toBeAdded,
+              toBeAddedSeerCredits,
+              toggleIsUsingCredits,
+              isUsingSeerCredits,
+              seerCreditsBalance,
+              sDAIDepositAmount,
+              isFirstPrediction,
+            }}
+            isWalletCreated={checkTradeExecutorResult?.isCreated ?? false}
+          />
+          <PredictSteps
+            {...{
+              tradeExecutor: tradeExecutor ?? createdTradeWallet,
+              toBeAdded: frozenToBeAdded ?? toBeAdded,
+              toBeAddedSeerCredits:
+                frozenToBeAddedSeerCredits ?? toBeAddedSeerCredits,
+              isAddingCollateral,
+              isCreatingWallet,
+              isCollateralAdded,
+              isAddingSeerCredits,
+              isSeerCreditsAdded,
+              isLoadingQuotes,
+              isProcessingMarkets,
+              isPredictionSuccessful,
+              isMakingPrediction: tradeExecutorPredictAll.isPending,
+              error,
+            }}
+          />
+        </ScrollFade>
 
-        <PredictAmountSection
-          {...{
-            amount,
-            setAmount,
-            selectedToken,
-            setSelectedToken,
-            availableBalance,
-            isSending,
-            toBeAdded,
-            toBeAddedSeerCredits,
-            toggleIsUsingCredits,
-            isUsingSeerCredits,
-            seerCreditsBalance,
-            sDAIDepositAmount,
-          }}
-          isWalletCreated={checkTradeExecutorResult?.isCreated ?? false}
-        />
-        <PredictSteps
-          {...{
-            tradeExecutor: tradeExecutor ?? createdTradeWallet,
-            toBeAdded: frozenToBeAdded ?? toBeAdded,
-            toBeAddedSeerCredits:
-              frozenToBeAddedSeerCredits ?? toBeAddedSeerCredits,
-            isAddingCollateral,
-            isCreatingWallet,
-            isCollateralAdded,
-            isAddingSeerCredits,
-            isSeerCreditsAdded,
-            isLoadingQuotes,
-            isProcessingMarkets,
-            isPredictionSuccessful,
-            isMakingPrediction: tradeExecutorPredictAll.isPending,
-            error,
-          }}
-        />
-        <div className="flex flex-wrap gap-3.5">
-          <Button
-            text="Cancel"
-            variant="secondary"
-            onPress={() => {
-              toggleIsOpen();
-              resetUI();
-            }}
-            isDisabled={isSending}
-          />
-          <Button
-            text="Predict"
-            onPress={() => {
-              firstPredictionRef.current = isFirstPrediction;
-              handlePredict();
-            }}
-            isDisabled={disabled}
-            isLoading={isSending}
-          />
+        <div className="bg-klerosUIComponentsWhiteBackground sticky bottom-0 py-4">
+          <div className="flex flex-wrap gap-3.5">
+            <Button
+              text="Cancel"
+              variant="secondary"
+              onPress={() => {
+                toggleIsOpen();
+                resetUI();
+              }}
+              isDisabled={isSending}
+            />
+            <Button
+              text="Predict"
+              onPress={() => {
+                firstPredictionRef.current = isFirstPrediction;
+                handlePredict();
+              }}
+              isDisabled={disabled}
+              isLoading={isSending}
+            />
+          </div>
         </div>
       </div>
     </Modal>
