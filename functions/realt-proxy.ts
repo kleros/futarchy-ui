@@ -18,7 +18,7 @@ const REALT_UUIDS = [
   "0x90d280b6456f8233e115e6aabb2ca89249dafd39",
   "0x19f824662ba9df78e368022f085b708fccc201c8",
   "0xa83cbd26964ea953f86c741871a1ab2a256cb82d",
-] as const;
+];
 
 /**
  * Edge route that proxies a rate-limited upstream API
@@ -31,12 +31,10 @@ const REALT_UUIDS = [
 export default async function handler(): Promise<Response> {
   const store = getStore("realt-api-cache");
   const now = Date.now();
-
   type CachedResponse = {
-    data: unknown;
+    data: Record<string, unknown>;
     fetchedAt: number;
   };
-
   const apiUrl = process.env.REALT_API_URL;
   const apiKey = process.env.REALT_API_KEY;
 
@@ -59,7 +57,7 @@ export default async function handler(): Promise<Response> {
     console.log("[realt-proxy] Serving from cache");
     return Response.json(cached.data, {
       headers: {
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "public, max-age=300",
       },
     });
   }
@@ -68,34 +66,53 @@ export default async function handler(): Promise<Response> {
     // Call realT API (should happen ~once per day)
     console.log("[realt-proxy] Calling RealT API");
 
-    const results = await Promise.all(
-      REALT_UUIDS.map(async (uuid) => {
-        const res = await fetch(`${apiUrl}/${uuid}`, {
-          headers: {
-            "X-AUTH-REALT-TOKEN": apiKey,
-          },
-        });
+    const res = await fetch(apiUrl, {
+      headers: {
+        "X-AUTH-REALT-TOKEN": apiKey,
+      },
+    });
 
-        if (!res.ok) {
-          throw new Error(`RealT API failed for ${uuid}: ${res.status}`);
-        }
+    if (!res.ok) {
+      throw new Error(`RealT API failed with status ${res.status}`);
+    }
 
-        const data = await res.json();
-        return [uuid, data] as const;
-      }),
+    const allProperties = (await res.json()) as Array<{
+      uuid: string;
+      [key: string]: unknown;
+    }>;
+
+    /**
+     * Filter only the UUIDs we need
+     */
+    const uuidSet = new Set(REALT_UUIDS.map((uuid) => uuid.toLowerCase()));
+
+    const filtered = allProperties.filter(
+      (item) =>
+        typeof item.uuid === "string" && uuidSet.has(item.uuid.toLowerCase()),
     );
 
-    // Merge into a single object keyed by UUID
-    const mergedData = Object.fromEntries(results);
+    const normalized = filtered.map((item) => ({
+      ...item,
+      uuid: item.uuid.toLowerCase(),
+    }));
+
+    const byUuid = Object.fromEntries(
+      normalized.map((item) => [item.uuid, item]),
+    );
+
+    console.log(
+      `[realt-proxy] Filtered ${filtered.length} / ${allProperties.length} properties`,
+    );
+
     // Persist fresh response
     await store.setJSON("response", {
-      data: mergedData,
+      data: byUuid,
       fetchedAt: now,
     } satisfies CachedResponse);
 
-    return Response.json(mergedData, {
+    return Response.json(byUuid, {
       headers: {
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "public, max-age=300",
       },
     });
   } catch (error) {
