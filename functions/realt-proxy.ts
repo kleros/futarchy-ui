@@ -13,7 +13,7 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
  *
  * @returns RealT properties data
  */
-export async function GET(): Promise<Response> {
+export default async function handler(): Promise<Response> {
   const store = getStore("realt-api-cache");
   const now = Date.now();
 
