@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+
+import { useLocalStorage, useToggle } from "react-use";
 
 import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 
@@ -8,6 +10,7 @@ import MarketContextProvider from "@/context/MarketContext";
 import { TradeWalletProvider } from "@/context/TradeWalletContext";
 import { useChartData } from "@/hooks/useChartData";
 
+import FirstVisitGuide from "@/components/Guides/FirstVisit";
 import Loader from "@/components/Loader";
 
 import { isUndefined } from "@/utils";
@@ -27,6 +30,18 @@ export default function Home() {
   const { data: winningOutcomes } = useReadGnosisRouterGetWinningOutcomes({
     args: [parentConditionId],
   });
+
+  const [isOpen, toggleGuide] = useToggle(false);
+  const [isOnboardingDone, setOnboardingDone] = useLocalStorage<boolean>(
+    "onboarding-done",
+    false,
+  );
+
+  useEffect(() => {
+    if (!isOnboardingDone || isUndefined(isOnboardingDone)) {
+      toggleGuide(true);
+    }
+  }, [isOnboardingDone, toggleGuide]);
 
   return (
     <div className="w-full px-4 py-12 md:px-8 lg:px-32">
@@ -61,6 +76,14 @@ export default function Home() {
 
           <AdvancedSection />
         </div>
+
+        <FirstVisitGuide
+          isVisible={isOpen}
+          closeGuide={() => {
+            setOnboardingDone(true);
+            toggleGuide(false);
+          }}
+        />
       </div>
     </div>
   );

@@ -1,12 +1,13 @@
 import clsx from "clsx";
 import Image from "next/image";
 
+import ExternalLink from "@/components/ExternalLink";
 import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
 import ChartBar from "@/assets/svg/chart-bar.svg";
 
-import { metadata } from "@/consts/markets";
+import { endDate, metadata } from "@/consts/markets";
 
 import Countdown from "./Countdown";
 
@@ -23,7 +24,7 @@ const Header: React.FC = () => {
             Trading Period:
           </span>
           <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-            Until Monday 18th 23:59 UTC
+            Until {endDate}
           </span>
         </div>
         <Countdown />
@@ -48,7 +49,14 @@ const Header: React.FC = () => {
           </p>
         </div>
         <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
-          {metadata.questionDescription}
+          You can look at{" "}
+          <ExternalLink
+            text="previous assessments"
+            url="https://www.criticker.com/profile/clesaege/"
+            showIcon={false}
+            className="text-xs"
+          />
+          , to get an idea of what he would like/dislike.
         </p>
       </div>
     </div>

@@ -108,6 +108,34 @@
     color: var(--foreground);
     background: var(--background);
     font-family: Arial, Helvetica, sans-serif;
+
+    /* ================================
+   Custom scrollbar styles
+   ================================ */
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #fff;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-klerosUIComponentsSecondaryBlue);
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-klerosUIComponentsSecondaryBlue);
+    }
+
+    /* Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-klerosUIComponentsSecondaryBlue) #fff;
+    }
   }
 }
 

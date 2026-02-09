@@ -1,7 +1,12 @@
 import React from "react";
 
-import { Accordion, CustomAccordion } from "@kleros/ui-components-library";
+import {
+  Accordion,
+  CustomAccordion,
+  Tooltip,
+} from "@kleros/ui-components-library";
 import clsx from "clsx";
+import Link from "next/link";
 
 import { useMarketsStore } from "@/store/markets";
 
@@ -10,12 +15,14 @@ import { useTradeWallet } from "@/context/TradeWalletContext";
 import { useTokenPositionValue } from "@/hooks/useTokenPositionValue";
 
 import CheckOutline from "@/assets/svg/check-outline-button.svg";
+import InfoIcon from "@/assets/svg/info.svg";
 import MinusOutline from "@/assets/svg/minus-outline.svg";
+
+import { positionExplainerLink } from "@/consts/markets";
 
 import Details from "./Details";
 import PositionValue from "./PositionValue";
 import PredictionSlider from "./PredictionSlider";
-
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
   const { name, color, upToken, downToken, details, underlyingToken } = market;
@@ -68,13 +75,32 @@ const ProjectFunding: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <div className="border-klerosUIComponentsPrimaryText h-4 w-0 border-[0.5px] max-md:hidden" />
 
-                      <p className="text-klerosUIComponentsPrimaryText justify-center text-sm">
-                        Position:
-                        <span className="font-bold">
-                          {" "}
-                          {totalValue.toFixed(2)}${" "}
-                        </span>
-                      </p>
+                      <p className="text-klerosUIComponentsPrimaryText justify-center text-sm"></p>
+                      <Tooltip
+                        text="Click here to understand your Position"
+                        small
+                        delay={0}
+                        closeDelay={300}
+                        className="px-2 py-2 [&_small]:text-xs"
+                      >
+                        <Link
+                          href={positionExplainerLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={clsx(
+                            "flex items-center gap-1",
+                            "text-klerosUIComponentsPrimaryText justify-center text-sm",
+                            "hover:text-klerosUIComponentsPrimaryBlue cursor-pointer transition-colors",
+                          )}
+                        >
+                          Position:
+                          <span className="font-bold">
+                            {" "}
+                            {totalValue.toFixed(2)}${" "}
+                          </span>
+                          <InfoIcon className="mb-0.25 inline size-3" />
+                        </Link>
+                      </Tooltip>
                     </div>
                   ) : null}
                 </div>
