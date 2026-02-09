@@ -20,6 +20,7 @@ import { useTokensBalances } from "@/hooks/useTokenBalances";
 
 import { PredictAmountSection } from "@/components/Predict/PredictAmountSection";
 import PredictSteps from "@/components/Predict/PredictSteps";
+import { ScrollFade } from "@/components/ScrollFade";
 
 import { isUndefined } from "@/utils";
 
@@ -27,7 +28,6 @@ import { collateral } from "@/consts";
 import { TokenType } from "@/consts/tokens";
 
 import Header from "./Header";
-import { ScrollFade } from "@/components/ScrollFade";
 interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
@@ -104,9 +104,8 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     markets.map((market) => market.underlyingToken),
   );
 
-  const { isFirstPrediction, setStoredHasPredicted } = useFirstPredictionStatus(
-    { tradeExecutor, outcomeTokenBalances: tokensBalances },
-  );
+  const { isFirstPrediction, setStoredHasPredicted } =
+    useFirstPredictionStatus(tradeExecutor);
   // wallet only holds sDAI, this gives the equivalent amount in xDAI
   // to inform user how much equivalent xDAI they have
   const { data: walletXDaiBalance } = useReadSDaiPreviewRedeem({

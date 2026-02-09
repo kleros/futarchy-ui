@@ -3,12 +3,9 @@ import { useEffect, useMemo } from "react";
 import { useLocalStorage } from "react-use";
 import type { Address } from "viem";
 
-const STORAGE_KEY = "hasPredictedBefore";
+import { markets } from "@/consts/markets";
 
-interface UseFirstPredictionStatusArgs {
-  tradeExecutor?: Address;
-  outcomeTokenBalances?: bigint[];
-}
+import { useTokensBalances } from "./useTokenBalances";
 
 /**
  * This hook checks if the user had already predicted before.
@@ -18,13 +15,29 @@ interface UseFirstPredictionStatusArgs {
  * @returns If user has already predicted before
  * @remarks Persists the status in localStorage
  */
-export const useFirstPredictionStatus = ({
-  tradeExecutor,
-  outcomeTokenBalances,
-}: UseFirstPredictionStatusArgs) => {
+export const useFirstPredictionStatus = (tradeExecutor?: Address) => {
+  const storageKey = useMemo(
+    () =>
+      tradeExecutor
+        ? `hasPredictedBefore:${tradeExecutor.toLowerCase()}`
+        : "__noop__",
+    [tradeExecutor],
+  );
+
   const [storedHasPredicted, setStoredHasPredicted] = useLocalStorage<boolean>(
-    STORAGE_KEY,
+    storageKey,
     false,
+  );
+
+  const tokens = markets.flatMap((market) => [
+    market.upToken,
+    market.downToken,
+    market.invalidToken,
+  ]);
+
+  const { data: outcomeTokenBalances } = useTokensBalances(
+    tradeExecutor,
+    tokens,
   );
 
   const hasOnChainPrediction = useMemo(() => {
