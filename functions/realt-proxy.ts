@@ -41,6 +41,7 @@ export default async function handler(): Promise<Response> {
 
   // Serve cached response if still valid
   if (cached && now - cached.fetchedAt < CACHE_TTL_MS) {
+    console.log("[realt-proxy] Serving from cache");
     return Response.json(cached.data, {
       headers: {
         "Cache-Control": "public, max-age=86400",
