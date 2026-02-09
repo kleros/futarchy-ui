@@ -72,7 +72,7 @@ export default async function handler(): Promise<Response> {
       REALT_UUIDS.map(async (uuid) => {
         const res = await fetch(`${apiUrl}/${uuid}`, {
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            "X-AUTH-REALT-TOKEN": apiKey,
           },
         });
 
