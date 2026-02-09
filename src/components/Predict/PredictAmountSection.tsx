@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 
-import { Checkbox } from "@kleros/ui-components-library";
+import { AlertMessage, Checkbox } from "@kleros/ui-components-library";
+import clsx from "clsx";
 
 import { formatValue, isUndefined } from "@/utils";
 
@@ -29,6 +30,7 @@ interface IPredictAmountSection {
   isWalletCreated: boolean;
   isUsingSeerCredits: boolean;
   toggleIsUsingCredits: (value?: boolean) => void;
+  isFirstPrediction: boolean;
 }
 
 export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
@@ -45,6 +47,7 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
   isWalletCreated,
   isUsingSeerCredits,
   toggleIsUsingCredits,
+  isFirstPrediction,
 }) => {
   const tradeWalletSDaiUsage = useMemo(() => {
     if (isUndefined(sDAIDepositAmount) || !isWalletCreated) return 0n;
@@ -65,8 +68,21 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
     <div className="flex flex-col items-center gap-1.5">
       {/* Amount input */}
       <div className="mb-2 flex flex-col">
+        {isFirstPrediction ? null : (
+          <AlertMessage
+            title="Note"
+            variant="info"
+            msg={
+              "Since you've already made a prediction, you can change it even without adding extra capital."
+            }
+            className={clsx(
+              "[&_small]:text-klerosUIComponentsSecondaryText mb-3 p-2 py-3 [&_small]:text-xs",
+              "bg-klerosUIComponentsMediumBlue border-none",
+            )}
+          />
+        )}
         <AmountInput
-          {...{ setAmount, selectedToken, setSelectedToken }}
+          {...{ setAmount, selectedToken, setSelectedToken, isFirstPrediction }}
           balance={availableBalance}
           equivalentSDAI={sDAIDepositAmount}
           value={amount}

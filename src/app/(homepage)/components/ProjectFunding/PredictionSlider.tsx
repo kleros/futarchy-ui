@@ -14,6 +14,7 @@ import { useMarketContext } from "@/context/MarketContext";
 import { Skeleton } from "@/components/Skeleton";
 
 import { formatWithPrecision, isUndefined } from "@/utils";
+import { getReadableTextColor } from "@/utils/getReadableTextColor";
 
 const LoadingSkeleton: React.FC = () => (
   <div className="relative w-full">
@@ -86,10 +87,13 @@ const PredictionSliderContent: React.FC = () => {
           </label>
           <div
             className={clsx(
-              "rounded-base text-klerosUIComponentsLightBackground px-2 py-0.75 text-center text-xs",
+              "rounded-base px-2 py-0.75 text-center text-xs",
               isLoadingMarketPrice && "animate-pulse",
             )}
-            style={{ backgroundColor: color }}
+            style={{
+              backgroundColor: color,
+              color: getReadableTextColor(color),
+            }}
           >
             {/* TODO: updates for individual experiments */}
             {`${formatWithPrecision(marketEstimate, precision)}%`}
