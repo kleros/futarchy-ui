@@ -34,7 +34,12 @@ const GuideStructure: React.FC<IGuideStructure> = ({
       className="h-fit w-full max-w-[calc(100vw-32px)] sm:w-294.5"
     >
       {/* top content */}
-      <div className="bg-klerosUIComponentsLightBlue flex min-h-80 w-full flex-col p-4 sm:min-h-129.5 sm:p-8">
+      <div
+        className={clsx(
+          "bg-klerosUIComponentsLightBlue rounded-base min-h-80 w-full sm:min-h-129.5",
+          "flex flex-col p-4 sm:p-8",
+        )}
+      >
         <div className="flex w-full justify-between">
           <div className="flex items-center gap-2">
             <BookIcon />
@@ -82,7 +87,10 @@ const GuideStructure: React.FC<IGuideStructure> = ({
               callback={(page) => {
                 setCurrentPage(page);
               }}
-              onCloseOnLastPage={closeGuide}
+              onCloseOnLastPage={() => {
+                closeGuide();
+                setCurrentPage(1);
+              }}
             />
           </div>
         ) : null}

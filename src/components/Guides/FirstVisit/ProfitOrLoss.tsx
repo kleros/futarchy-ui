@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Title: React.FC = () => {
-  return <>Profit or Loss - Your Prediction on the Expert-Evaluated Property</>;
+  return <>Profit or Loss - Your Prediction on the Evaluated Movie</>;
 };
 
 export const SubTitle: React.FC = () => {
