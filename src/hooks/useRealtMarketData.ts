@@ -166,15 +166,26 @@ export interface RealtMarketData {
   [key: string]: unknown;
 }
 
+async function fetchAllRealtData(): Promise<Record<string, RealtMarketData>> {
+  const response = await fetch("/.netlify/functions/realt-proxy");
+  if (!response.ok) {
+    throw new Error("Failed to fetch RealT market data");
+  }
+  return response.json();
+}
+
+export function useAllRealtMarketData() {
+  return useQuery<Record<string, RealtMarketData>, Error>({
+    queryKey: ["realtAllMarketData"],
+    queryFn: fetchAllRealtData,
+  });
+}
+
 export function useRealtMarketData(contractAddress: string) {
-  return useQuery<RealtMarketData, Error>({
-    queryKey: ["realtMarketData", contractAddress],
-    queryFn: async () => {
-      const response = await fetch("/.netlify/functions/realt-proxy");
-      if (!response.ok) {
-        throw new Error("Failed to fetch RealT market data");
-      }
-      const allData: Record<string, RealtMarketData> = await response.json();
+  return useQuery<Record<string, RealtMarketData>, Error, RealtMarketData>({
+    queryKey: ["realtAllMarketData"],
+    queryFn: fetchAllRealtData,
+    select: (allData) => {
       const data = allData[contractAddress.toLowerCase()];
       if (!data) {
         throw new Error(
