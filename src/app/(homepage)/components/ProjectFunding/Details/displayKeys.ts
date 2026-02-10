@@ -7,7 +7,6 @@ export const DISPLAYED_KEYS = new Set([
   "propertyType",
   "propertyTypeName",
   "grossRentYear",
-  "grossRentMonth",
   "netRentYear",
   "netRentMonth",
   "netRentDay",
