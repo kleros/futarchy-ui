@@ -23,22 +23,22 @@ const content = [
   {
     title: <WelcomeTitle />,
     subtitle: <WelcomeSubtitle />,
-    svg: <WelcomeSvg className="max-h-110 max-w-215" />,
+    svg: <WelcomeSvg className="max-h-110" />,
   },
   {
     title: <ProcessAndTimelineTitle />,
     subtitle: <ProcessAndTimelineSubtitle />,
-    svg: <ProcessAndTimelineSvg className="max-h-110 max-w-215" />,
+    svg: <ProcessAndTimelineSvg className="max-h-110" />,
   },
   {
     title: <MarketInfoTitle />,
     subtitle: <MarketInfoSubtitle />,
-    svg: <SliderSvg className="max-h-110 max-w-149.75" />,
+    svg: <SliderSvg className="max-h-110" />,
   },
   {
     title: <ProfitOrLossTitle />,
     subtitle: <ProfitOrLossSubtitle />,
-    svg: <ProfitOrLossSvg className="max-h-110 max-w-247.25" />,
+    svg: <ProfitOrLossSvg className="max-h-110" />,
   },
 ];
 
