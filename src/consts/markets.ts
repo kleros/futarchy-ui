@@ -26,8 +26,8 @@ export const parentConditionId =
 export const invalidMarket: Address =
   "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
 
-export const endTime: number = 1772303400;
-export const endDate: string = "Saturday 28th 23:59 UTC";
+export const endTime: number = 1773772199;
+export const endDate: string = "Tuesday 17th March 23:59 UTC";
 export interface IDetails {
   imdbURL?: string;
   posterURL?: string;
