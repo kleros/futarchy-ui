@@ -23,6 +23,7 @@ import { positionExplainerLink } from "@/consts/markets";
 import Details from "./Details";
 import PositionValue from "./PositionValue";
 import PredictionSlider from "./PredictionSlider";
+
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
   const { name, color, upToken, downToken, details, underlyingToken } = market;
@@ -118,7 +119,7 @@ const ProjectFunding: React.FC = () => {
                 <PredictionSlider />
               </div>
               {tradeExecutor ? (
-                <div className="flex w-full items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2">
                   <PositionValue
                     {...{ upToken, downToken, underlyingToken, tradeExecutor }}
                   />
@@ -130,6 +131,7 @@ const ProjectFunding: React.FC = () => {
                 className={clsx(
                   "w-full max-w-full",
                   "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
+                  "[&_#body-wrapper]:max-sm:px-0",
                 )}
                 items={[{ title: "Details", body: <Details {...details} /> }]}
               />

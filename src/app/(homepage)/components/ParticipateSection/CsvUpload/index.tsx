@@ -70,17 +70,17 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
               marketName,score
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              Judge Dredd (1995),49.45
+              23750 W 7 Mile,4.45
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              Bacurau (2019),53.52
+              18881 Mound,5.52
             </span>
             <span className="text-klerosUIComponentsSecondaryText text-sm">
               ...
             </span>
           </div>
           <span className="text-klerosUIComponentsPrimaryText text-sm">
-            Each row represents a prediction for a movie&apos;s score in the
+            Each row represents a prediction for a property&apos;s price in the
             Gnosis ecosystem.
           </span>
         </div>

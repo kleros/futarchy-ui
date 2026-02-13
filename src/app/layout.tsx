@@ -26,12 +26,12 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Futarchy | Kleros",
   description: "Prediction markets for distilled human judgement",
-  metadataBase: new URL("https://futarchy.kleros.builders"),
+  metadataBase: new URL("https://realt.futarchy.kleros.builders"),
   twitter: {
     card: "summary_large_image",
     title: "Futarchy | Kleros",
     description: "Prediction markets for distilled human judgement",
-    site: "futarchy.kleros.builders",
+    site: "realt.futarchy.kleros.builders",
     creator: "@kleros_io",
     creatorId: "1467726470533754880",
     images: ["futarchy_kleros.png"],
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Futarchy | Kleros",
     description: "Prediction markets for distilled human judgement",
-    url: "https://futarchy.kleros.builders/",
-    siteName: "futarchy.kleros.builders",
+    url: "https://realt.futarchy.kleros.builders/",
+    siteName: "realt.futarchy.kleros.builders",
     images: ["futarchy_kleros.png"],
     locale: "en_US",
     type: "website",

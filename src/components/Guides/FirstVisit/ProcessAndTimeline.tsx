@@ -7,10 +7,11 @@ export const Title: React.FC = () => {
 export const SubTitle: React.FC = () => {
   return (
     <p className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
-      Sixteen movies have been selected for this experiment. Only five of them
-      will be evaluated by Clément. The trading period will last approximately
-      one month. At the end of this period, the market closes and the Final
-      Ratings for the 5 movies chosen are publicly revealed.
+      Nine properties have been selected for this experiment. Only one of them
+      will be evaluated by a professional expert. The trading period will last
+      approximately one month.
+      <br /> At the end of this period, the market closes and the Final Price of
+      the single professionally evaluated property is publicly revealed.
     </p>
   );
 };

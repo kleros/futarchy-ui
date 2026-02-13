@@ -49,14 +49,7 @@ const Header: React.FC = () => {
           </p>
         </div>
         <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
-          You can look at{" "}
-          <ExternalLink
-            text="previous assessments"
-            url="https://www.criticker.com/profile/clesaege/"
-            showIcon={false}
-            className="text-xs"
-          />
-          , to get an idea of what he would like/dislike.
+          {metadata.questionDescription}
         </p>
       </div>
     </div>
