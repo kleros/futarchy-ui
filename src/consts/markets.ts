@@ -14,6 +14,9 @@ export const beginnerUserGuide =
 
 export const advancedUserGuide =
   "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
+
+export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
+
 // TODO: update to latest
 export const projectsChosen = 1;
 
@@ -26,8 +29,8 @@ export const parentConditionId =
 export const invalidMarket: Address =
   "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
 
-export const endTime: number = 1772303400;
-export const endDate: string = "Saturday 28th 23:59 UTC";
+export const endTime: number = 1773772199;
+export const endDate: string = "Tuesday 17th March 23:59 UTC";
 export interface IDetails {
   fullName: string;
   shortName: string;

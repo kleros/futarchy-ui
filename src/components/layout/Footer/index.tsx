@@ -10,11 +10,13 @@ import TelegramLogo from "@/assets/socialmedia/telegram.svg";
 import XLogo from "@/assets/socialmedia/x.svg";
 import SecuredByKlerosLogo from "@/assets/svg/secured-by-kleros.svg";
 
+import { tgLink } from "@/consts/markets";
+
 // TODO: update links
 const socialmedia = {
   telegram: {
     icon: TelegramLogo,
-    url: "https://t.me/kleros",
+    url: tgLink,
   },
   x: {
     icon: XLogo,
@@ -22,7 +24,7 @@ const socialmedia = {
   },
   github: {
     icon: GithubLogo,
-    url: "https://github.com/kleros",
+    url: "https://github.com/kleros/futarchy-ui",
   },
 };
 
