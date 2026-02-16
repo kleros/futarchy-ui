@@ -14,6 +14,9 @@ export const beginnerUserGuide =
 
 export const advancedUserGuide =
   "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
+
+export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
+
 // TODO: update to latest
 export const projectsChosen = 5;
 

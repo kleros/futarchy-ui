@@ -11,14 +11,14 @@ import Feedback from "@/assets/menu-icons/feedback.svg";
 import Faq from "@/assets/menu-icons/help.svg";
 import Telegram from "@/assets/menu-icons/telegram.svg";
 
-import { appGuideLink, faqLink } from "@/consts/markets";
+import { appGuideLink, faqLink, tgLink } from "@/consts/markets";
 
 // TODO : update links
 const ITEMS = [
   {
     text: "Get Help",
     Icon: Telegram,
-    url: "https://t.me/kleros",
+    url: tgLink,
   },
   {
     text: "Report a Bug",
@@ -28,7 +28,7 @@ const ITEMS = [
   {
     text: "Give Feedback",
     Icon: Feedback,
-    url: "/",
+    url: tgLink,
   },
   {
     text: "App Guide",
