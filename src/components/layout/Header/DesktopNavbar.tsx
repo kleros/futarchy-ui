@@ -1,5 +1,6 @@
 import ConnectWallet from "@/components/ConnectWallet";
 import LightButton from "@/components/LightButton";
+import QuickGuideButton from "@/components/QuickGuideButton";
 import ThemeToggle from "@/components/ThemeToggle";
 
 import HelpIcon from "@/assets/menu-icons/help.svg";
@@ -17,7 +18,8 @@ const DesktopNavbar: React.FC<IDesktopNavbar> = ({ toggleIsHelpOpen }) => {
       <Logo />
 
       <div className="ml-2 flex items-center gap-1 md:gap-2">
-        <GnosisIcon className="mr-2.5 size-6" />
+        <QuickGuideButton />
+        <GnosisIcon className="mx-2.5 size-6" />
         <ConnectWallet />
         <div className="flex items-center">
           <LightButton

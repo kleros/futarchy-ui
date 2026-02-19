@@ -10,6 +10,7 @@ import {
   IdenticonOrAvatar,
 } from "@/components/ConnectWallet/AccountDisplay";
 import LightButton from "@/components/LightButton";
+import QuickGuideButton from "@/components/QuickGuideButton";
 import ThemeToggle from "@/components/ThemeToggle";
 
 import HelpIcon from "@/assets/menu-icons/help.svg";
@@ -72,6 +73,13 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
 
         <hr className="border-klerosUIComponentsStroke w-full" />
         <div>
+          <QuickGuideButton
+            className={clsx(
+              "[&_.button-text]:text-klerosUIComponentsPrimaryText! [&_.button-text]:text-base",
+              "[&>svg_path]:fill-klerosUIComponentsSecondaryText [&_.button-svg]:mr-2",
+              "hover:[&>svg_path]:fill-klerosUIComponentsPrimaryText",
+            )}
+          />
           <LightButton
             className={clsx(
               "[&>p]:text-klerosUIComponentsPrimaryText [&>p]:ml-2 [&>p]:font-normal",
