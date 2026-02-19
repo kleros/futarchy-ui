@@ -15,7 +15,7 @@ import { type IChartData } from "@/hooks/useChartData";
 
 import { shortenName } from "@/utils";
 
-import { IMarket } from "@/consts/markets";
+import { IMarket, startTime } from "@/consts/markets";
 
 import Legend from "./Legend";
 
@@ -81,7 +81,8 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     const latestTimestamp = Date.now() / 1000;
 
     // Generate common timestamps for all markets
-    const timestamps = getTimestamps(1751328000, latestTimestamp);
+    // DEV: chart start time
+    const timestamps = getTimestamps(startTime, latestTimestamp);
 
     const seriesData: Record<
       string,
@@ -228,7 +229,10 @@ const getTimestamps = (firstTimestamp: number, lastTimestamp: number) => {
     timestamps.push(currentTimestamp);
     currentTimestamp += 60 * 60 * 4;
   }
-  timestamps.push(lastTimestamp);
+  // if the startTime is in future
+  if (firstTimestamp < lastTimestamp) {
+    timestamps.push(lastTimestamp);
+  }
   return timestamps;
 };
 
