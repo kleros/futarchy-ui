@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { useTradeWallet } from "@/context/TradeWalletContext";
 import { useTokensBalances } from "@/hooks/useTokenBalances";
 
-import MovieIcon from "@/assets/svg/movie.svg";
+import HomeIcon from "@/assets/svg/homes.svg";
 
 import { markets } from "@/consts/markets";
 
@@ -26,9 +26,9 @@ const ProjectBalances: React.FC = () => {
         {
           title: (
             <div className="flex items-center gap-2">
-              <MovieIcon className="size-6" />
+              <HomeIcon className="size-6" />
               <label className="text-klerosUIComponentsPrimaryText text-sm">
-                Movie tokens
+                Property tokens
               </label>
             </div>
           ),

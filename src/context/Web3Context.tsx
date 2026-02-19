@@ -21,19 +21,11 @@ configureRpcProviders({
   [gnosis.id]: GNOSIS_RPC,
 });
 
-const metadata = {
-  name: "Test",
-  description: "AppKit Example",
-  url: "https://reown.com/appkit", // origin must match your domain & subdomain
-  icons: ["https://assets.reown.com/reown-profile-pic.png"],
-};
-
 createAppKit({
   adapters: [wagmiAdapter],
   projectId: reownProjectId,
   networks: [gnosis],
   defaultNetwork: gnosis,
-  metadata: metadata,
   enableCoinbase: false,
   features: {
     analytics: false,

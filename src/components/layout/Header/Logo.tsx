@@ -6,8 +6,9 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 
-import _LogoDark from "@/assets/png/movies-logo-dark.png";
-import _Logo from "@/assets/png/movies-logo.png";
+import _LogoDark from "@/assets/png/realt-logo-custom.png";
+import _Logo from "@/assets/png/realt-logo.png";
+import BuiltByKleros from "@/assets/svg/badge-built-by-kleros-black.svg";
 
 const Logo: React.FC = () => {
   const { resolvedTheme } = useTheme();
@@ -19,28 +20,26 @@ const Logo: React.FC = () => {
 
   if (!mounted) {
     return (
-      <div className="flex items-center gap-4">
-        <Link href={"/"}>
-          <Image
-            src={_Logo}
-            alt="Movies experiment logo"
-            className="size-12 max-h-12 hover:brightness-105 md:ml-6"
-          />
-        </Link>
-      </div>
+      <Link href={"/"} className="flex items-center gap-6 md:gap-9">
+        <Image
+          src={_Logo}
+          alt="RealT Distilled Judgement"
+          className="max-h-14 w-27 hover:brightness-105 max-md:max-h-10 md:ml-6"
+        />
+        <BuiltByKleros className="[&_path]:fill-klerosUIComponentsPrimaryText w-37.5 max-md:w-30" />
+      </Link>
     );
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <Link href={"/"}>
-        <Image
-          src={resolvedTheme === "dark" ? _LogoDark : _Logo}
-          alt="Movies experiment logo"
-          className="size-12 max-h-12 hover:brightness-105 md:ml-6"
-        />
-      </Link>
-    </div>
+    <Link href={"/"} className="flex items-center gap-6 md:gap-9">
+      <Image
+        src={resolvedTheme === "dark" ? _LogoDark : _Logo}
+        alt="RealT Distilled Judgement"
+        className="max-h-14 w-27 hover:brightness-105 max-md:max-h-10 md:ml-6"
+      />
+      <BuiltByKleros className="[&_path]:fill-klerosUIComponentsPrimaryText w-37.5 max-md:w-30" />
+    </Link>
   );
 };
 
