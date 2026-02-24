@@ -1,19 +1,19 @@
 import { Address } from "viem";
 
 export const positionExplainerLink =
-  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
+  "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6#30d9a9db4f0881969c23e8152ab1146d";
 
 export const appGuideLink =
-  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0";
+  "https://www.notion.so/kleros/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f";
 
 export const faqLink =
-  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.3ti6nmmbwr6";
+  "https://www.notion.so/kleros/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f#30d9a9db4f0881b0a16efe465a5e5494";
 
 export const beginnerUserGuide =
-  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0";
+  "https://www.notion.so/kleros/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f";
 
 export const advancedUserGuide =
-  "https://docs.google.com/document/d/1ZuOspW3Yu5dtmWw1tFTJS9cImJfhY2oS1qKdrNNrRbA/edit?tab=t.0#heading=h.hk1q6fzb5utc";
+  "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6";
 
 export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
 
