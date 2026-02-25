@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import Image from "next/image";
 
-import ExternalLink from "@/components/ExternalLink";
 import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
