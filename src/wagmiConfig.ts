@@ -23,6 +23,7 @@ export const wagmiAdapter = new WagmiAdapter({
       http("https://rpc.gnosis.gateway.fm", { batch: true }),
     ]),
     [mainnet.id]: fallback([
+      http("https://ethereum-rpc.publicnode.com", { batch: true }),
       http("https://eth-mainnet.g.alchemy.com/v2/demo", { batch: true }),
     ]),
   },
