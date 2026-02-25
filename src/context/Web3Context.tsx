@@ -11,6 +11,11 @@ import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 import { wagmiAdapter } from "@/wagmiConfig";
 
 import { reownProjectId, GNOSIS_RPC } from "@/consts";
+import {
+  siteName,
+  metadata as websiteMetadata,
+  websiteUrl,
+} from "@/consts/metadata";
 const queryClient = new QueryClient();
 
 if (!reownProjectId) {
@@ -22,10 +27,10 @@ configureRpcProviders({
 });
 
 const metadata = {
-  name: "Test",
-  description: "AppKit Example",
-  url: "https://reown.com/appkit", // origin must match your domain & subdomain
-  icons: ["https://assets.reown.com/reown-profile-pic.png"],
+  name: siteName,
+  description: websiteMetadata.description ?? "",
+  url: websiteUrl,
+  icons: ["icon1.png"],
 };
 
 createAppKit({

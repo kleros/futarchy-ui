@@ -55,7 +55,7 @@ export interface IMarket {
   conditionId: `0x${string}`;
 }
 
-export const metadata = {
+export const marketMetadata = {
   name: "Session 1 - Movies Experiment",
   question:
     "If watched, what percentile score would Clément give to the movie?",

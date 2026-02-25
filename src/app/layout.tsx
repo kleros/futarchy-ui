@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 
 import clsx from "clsx";
@@ -11,6 +10,7 @@ import "@kleros/ui-components-library/style.css";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+export { metadata } from "@/consts/metadata";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,30 +23,6 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "Futarchy | Kleros",
-  description: "Prediction markets for distilled human judgement",
-  metadataBase: new URL("https://futarchy.kleros.builders"),
-  twitter: {
-    card: "summary_large_image",
-    title: "Futarchy | Kleros",
-    description: "Prediction markets for distilled human judgement",
-    site: "futarchy.kleros.builders",
-    creator: "@kleros_io",
-    creatorId: "1467726470533754880",
-    images: ["futarchy_kleros.png"],
-  },
-  openGraph: {
-    title: "Futarchy | Kleros",
-    description: "Prediction markets for distilled human judgement",
-    url: "https://futarchy.kleros.builders/",
-    siteName: "futarchy.kleros.builders",
-    images: ["futarchy_kleros.png"],
-    locale: "en_US",
-    type: "website",
-  },
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -57,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="box-border size-full" suppressHydrationWarning>
       <head>
-        <meta name="apple-mobile-web-app-title" content="Futarchy | Kleros" />
+        <meta name="apple-mobile-web-app-title" content="Foresight | Kleros" />
       </head>
       <body
         className={clsx(
