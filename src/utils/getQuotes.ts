@@ -5,7 +5,12 @@ import { sDaiAddress, wxdaiAddress } from "@/generated";
 
 import { ProcessedMarket } from "@/hooks/useProcessMarkets";
 
-import { DECIMALS, DEFAULT_CHAIN, VOLUME_MIN } from "@/consts";
+import {
+  DECIMALS,
+  DEFAULT_CHAIN,
+  PREDICTION_SLIPPAGE_BUFFER,
+  VOLUME_MIN,
+} from "@/consts";
 
 import { getMinimumAmountOut, getSwaprQuote } from "./swapr";
 
@@ -93,8 +98,11 @@ export const getQuotes = async ({
     return quotes;
   }, [] as SwaprV3Trade[]);
 
+  // Use minimumAmountOut (slippage-adjusted) to avoid over-allocating to buys
+  // when actual swap output is less than expected
   const collateralFromSell = sellQuotes.reduce(
-    (acc, curr) => acc + parseUnits(curr!.outputAmount.toExact(), DECIMALS),
+    (acc, curr) =>
+      acc + parseUnits(curr!.minimumAmountOut().toExact(), DECIMALS),
     0n,
   );
 
@@ -111,6 +119,9 @@ export const getQuotes = async ({
   const collateralFromMerge = minBigIntArray(newBalances);
 
   const totalCollateral = collateralFromSell + collateralFromMerge;
+  const bufferedCollateral =
+    (totalCollateral * BigInt(Math.round(PREDICTION_SLIPPAGE_BUFFER * 100))) /
+    100n;
 
   if (!totalCollateral) {
     throw new Error(
@@ -128,7 +139,8 @@ export const getQuotes = async ({
       // here we allocate the collateral based on the weight of prediction,
       // so if a market has high difference they get more collateral to utilize
       const availableBuyVolume =
-        (parseUnits(market.difference.toString(), DECIMALS) * totalCollateral) /
+        (parseUnits(market.difference.toString(), DECIMALS) *
+          bufferedCollateral) /
         parseUnits(sumBuyDifference.toString(), DECIMALS);
 
       const volume =
