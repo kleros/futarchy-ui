@@ -31,7 +31,8 @@ const GuideStructure: React.FC<IGuideStructure> = ({
   return (
     <Modal
       isOpen={isVisible}
-      className="h-fit w-full max-w-[calc(100vw-32px)] sm:w-294.5"
+      modalOverlayClassname="z-40"
+      className="h-fit max-h-[calc(100vh-32px)] w-full max-w-[calc(100vw-32px)] overflow-y-auto sm:w-294.5"
     >
       {/* top content */}
       <div
