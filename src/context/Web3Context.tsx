@@ -11,6 +11,11 @@ import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 import { wagmiAdapter } from "@/wagmiConfig";
 
 import { reownProjectId, GNOSIS_RPC } from "@/consts";
+import {
+  siteName,
+  metadata as websiteMetadata,
+  websiteUrl,
+} from "@/consts/metadata";
 const queryClient = new QueryClient();
 
 if (!reownProjectId) {
@@ -21,12 +26,20 @@ configureRpcProviders({
   [gnosis.id]: GNOSIS_RPC,
 });
 
+const metadata = {
+  name: siteName,
+  description: websiteMetadata.description ?? "",
+  url: websiteUrl,
+  icons: ["icon1.png"],
+};
+
 createAppKit({
   adapters: [wagmiAdapter],
   projectId: reownProjectId,
   networks: [gnosis],
   defaultNetwork: gnosis,
   enableCoinbase: false,
+  metadata: metadata,
   features: {
     analytics: false,
   },

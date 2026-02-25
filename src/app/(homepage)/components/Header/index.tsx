@@ -7,7 +7,7 @@ import SeerLogo from "@/components/SeerLogo";
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
 import ChartBar from "@/assets/svg/chart-bar.svg";
 
-import { endDate, metadata } from "@/consts/markets";
+import { endDate, marketMetadata } from "@/consts/markets";
 
 import Countdown from "./Countdown";
 
@@ -15,7 +15,7 @@ const Header: React.FC = () => {
   return (
     <div className="flex flex-col items-start gap-4">
       <h1 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
-        {metadata.name}
+        {marketMetadata.name}
       </h1>
       <div className="flex flex-wrap gap-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -45,11 +45,11 @@ const Header: React.FC = () => {
         <div className="flex size-full flex-wrap items-center gap-6 px-6 pt-3.75">
           <SeerLogo />
           <p className="text-klerosUIComponentsPrimaryText text-base">
-            {metadata.question}
+            {marketMetadata.question}
           </p>
         </div>
         <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
-          {metadata.questionDescription}
+          {marketMetadata.questionDescription}
         </p>
       </div>
     </div>

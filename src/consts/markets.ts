@@ -65,7 +65,7 @@ export interface IMarket {
   conditionId: `0x${string}`;
 }
 
-export const metadata = {
+export const marketMetadata = {
   name: "RealT Properties Predictions",
   question: "If evaluated, what is the current price of the property?",
   questionDescription:
