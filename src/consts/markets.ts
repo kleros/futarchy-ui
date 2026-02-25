@@ -4,13 +4,13 @@ export const positionExplainerLink =
   "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6#30d9a9db4f0881969c23e8152ab1146d";
 
 export const appGuideLink =
-  "https://www.notion.so/kleros/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f";
+  "https://kleros.notion.site/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f";
 
 export const faqLink =
-  "https://www.notion.so/kleros/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f#30d9a9db4f0881b0a16efe465a5e5494";
+  "https://kleros.notion.site/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f#30d9a9db4f088138a266e870c56159e0";
 
 export const beginnerUserGuide =
-  "https://www.notion.so/kleros/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f";
+  "https://kleros.notion.site/Kleros-Foresight-Beginner-User-Guide-30d9a9db4f088064a588f7d5acc2751f";
 
 export const advancedUserGuide =
   "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6";
