@@ -316,7 +316,6 @@ async function predictAllFromTradeExecutor({
   return result;
 }
 
-export const MAX_MARKETS_PER_BATCH = 8;
 export const useTradeExecutorPredictAll = (onSuccess?: () => unknown) => {
   const queryClient = useQueryClient();
   return useMutation({

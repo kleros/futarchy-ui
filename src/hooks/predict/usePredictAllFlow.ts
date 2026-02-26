@@ -15,12 +15,9 @@ import { formatError } from "@/utils/formatError";
 import { getQuotes, getSDaiToWXdaiData } from "@/utils/getQuotes";
 import { processMarket } from "@/utils/processMarket";
 
-import { collateral } from "@/consts";
+import { collateral, MAX_MARKETS_PER_BATCH } from "@/consts";
 
-import {
-  MAX_MARKETS_PER_BATCH,
-  useTradeExecutorPredictAll,
-} from "../tradeWallet/useTradeExecutorPredictAll";
+import { useTradeExecutorPredictAll } from "../tradeWallet/useTradeExecutorPredictAll";
 import { usePredictionMarkets } from "../usePredictionMarkets";
 
 import { usePredictState } from "./usePredictState";
