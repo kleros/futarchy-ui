@@ -283,6 +283,7 @@ export function usePredictAllFlow({
             getQuotes({
               account: tradeWallet!,
               processedMarkets: processed,
+              marketName: marketInfo.name,
             })
               .then((res) => ({
                 marketInfo,

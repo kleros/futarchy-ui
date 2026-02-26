@@ -22,6 +22,8 @@ export type GetQuoteProps = {
   // amount of underlyingBalance, if non-zero, the flow will mint and provide more liquidity to trade with
   //   amount: number; we use the underlyingBalance directly from processed market data
   processedMarkets: ProcessedMarket[];
+  // market name for clearer error messages when predicting multiple markets
+  marketName?: string;
 };
 
 export type GetQuotesResult = {
@@ -32,9 +34,13 @@ export type GetQuotesResult = {
   mergeAmount: bigint;
 };
 
+const withMarketContext = (msg: string, marketName?: string) =>
+  marketName ? `${msg}\nMarket: ${marketName}` : msg;
+
 export const getQuotes = async ({
   account,
   processedMarkets,
+  marketName,
 }: GetQuoteProps) => {
   const [buyMarkets, sellMarkets] = processedMarkets.reduce(
     (acc, curr) => {
@@ -82,7 +88,12 @@ export const getQuotes = async ({
 
   // means there were sell markets but no route was found
   if (!sellPromises.length && sellMarkets.length > 0) {
-    throw new Error("Quote Info: No sell route found.\nTry higher amount.");
+    throw new Error(
+      withMarketContext(
+        "Quote Info: No sell route found.\nTry higher amount.",
+        marketName,
+      ),
+    );
   }
 
   const sellTokenMapping: { [key: string]: bigint } = {};
@@ -125,7 +136,10 @@ export const getQuotes = async ({
 
   if (!totalCollateral) {
     throw new Error(
-      `Quote Error: Cannot sell to Underlying token.\nNot enough collateral.`,
+      withMarketContext(
+        "Quote Error: Cannot sell to Underlying token.\nNot enough collateral.",
+        marketName,
+      ),
     );
   }
 
@@ -176,7 +190,12 @@ export const getQuotes = async ({
   );
 
   if (!buyPromises.length && buyMarkets.length > 0) {
-    throw new Error("Quote Error: No Buy Route found.\nTry higher amount.");
+    throw new Error(
+      withMarketContext(
+        "Quote Error: No Buy Route found.\nTry higher amount.",
+        marketName,
+      ),
+    );
   }
 
   const buyQuoteResult = await Promise.allSettled(buyPromises);
@@ -189,7 +208,10 @@ export const getQuotes = async ({
 
   if (!buyQuotes) {
     throw new Error(
-      `Quote Error: Cannot buy from Underlying token.\nNo route found.`,
+      withMarketContext(
+        "Quote Error: Cannot buy from Underlying token.\nNo route found.",
+        marketName,
+      ),
     );
   }
   return {

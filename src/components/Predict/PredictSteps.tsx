@@ -132,7 +132,9 @@ const PredictSteps: React.FC<IPredictSteps> = ({
     if (!isUndefined(error)) {
       steps.push({
         title: "Prediction failed!",
-        subtitle: error,
+        subtitle: (
+          <span className="break-words whitespace-pre-wrap">{error}</span>
+        ) as unknown as string,
         variant: "#ca2314",
         party: "",
         Icon: CloseOutline,
