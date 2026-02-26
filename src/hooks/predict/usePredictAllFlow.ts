@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 
 import { seerCreditsAddress } from "@/generated";
-import { useMarketsStore } from "@/store/markets";
+import { PredictionMarket, useMarketsStore } from "@/store/markets";
 
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
 import { useDepositToTradeExecutor } from "@/hooks/tradeWallet/useDepositToTradeExecutor";
@@ -15,7 +15,7 @@ import { formatError } from "@/utils/formatError";
 import { getQuotes, getSDaiToWXdaiData } from "@/utils/getQuotes";
 import { processMarket } from "@/utils/processMarket";
 
-import { collateral } from "@/consts";
+import { collateral, MAX_MARKETS_PER_BATCH } from "@/consts";
 
 import { useTradeExecutorPredictAll } from "../tradeWallet/useTradeExecutorPredictAll";
 import { usePredictionMarkets } from "../usePredictionMarkets";
@@ -220,64 +220,100 @@ export function usePredictAllFlow({
           snapshot.initialSDAIDeposit - sDaiToWXDaiData.slippage;
       }
 
-      // process markets (UP & DOWN)
-      const processedMarkets = await Promise.all(
-        markets.map(async (market) => {
-          const upProcessed = await processMarket({
-            underlying: market.underlyingToken,
-            outcome: market.upToken,
-            tradeExecutor: tradeWallet!,
-            mintAmount: snapshot.initialSDAIDeposit ?? 0n,
-            targetPrice: market?.predictedPrice ?? 0,
-          });
+      // chunk markets to stay under block gas limit
+      const chunks: PredictionMarket[][] = [];
+      for (let i = 0; i < markets.length; i += MAX_MARKETS_PER_BATCH) {
+        chunks.push(markets.slice(i, i + MAX_MARKETS_PER_BATCH));
+      }
 
-          const downProcessed = await processMarket({
-            underlying: market.underlyingToken,
-            outcome: market.downToken,
-            tradeExecutor: tradeWallet!,
-            mintAmount: snapshot.initialSDAIDeposit ?? 0n,
-            targetPrice: 1 - (market?.predictedPrice ?? 0),
-          });
+      for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+        const chunkMarkets = chunks[chunkIndex];
+        const isFirstChunk = chunkIndex === 0;
+        const totalChunks = chunks.length;
 
-          return {
-            marketInfo: market,
-            processed: [upProcessed, downProcessed],
-          };
-        }),
-      );
+        const chunkProgressMsg =
+          totalChunks > 1
+            ? `Processing batch ${chunkIndex + 1} of ${totalChunks}...`
+            : undefined;
 
-      setFlag("isProcessingMarkets", false);
+        setFlag("chunkProgressMessage", chunkProgressMsg);
+        setFlag("isProcessingMarkets", true);
 
-      // get quotes
-      setFlag("isLoadingQuotes", true);
-      const quotesPerMarket = await Promise.all(
-        processedMarkets.map(({ marketInfo, processed }) =>
-          getQuotes({
-            account: tradeWallet!,
-            processedMarkets: processed, // only UP + DOWN for this market
-          })
-            .then((res) => ({
-              marketInfo,
-              getQuotesResult: res,
-              amount: processed[0].underlyingBalance,
-            }))
-            .catch((err) => {
-              setFlag("isLoadingQuotes", false);
-              throw err;
-            }),
-        ),
-      );
-      setFlag("isLoadingQuotes", false);
+        // process markets (UP & DOWN) for this chunk
+        const processedMarkets = await Promise.all(
+          chunkMarkets.map(async (market) => {
+            const mintAmountForChunk = isFirstChunk
+              ? (snapshot.initialSDAIDeposit ?? 0n)
+              : 0n;
 
-      // execute trade
-      await tradeExecutorPredictAll.mutateAsync({
-        marketsData: quotesPerMarket,
-        tradeExecutor: tradeWallet!,
-        mintAmount:
-          (snapshot.initialSDAIDeposit ?? 0n) -
-          (sDaiToWXDaiData?.minSDaiReceived ?? 0n),
-        seerCreditsSwapQuote: sDaiToWXDaiData?.quote,
-      });
+            const upProcessed = await processMarket({
+              underlying: market.underlyingToken,
+              outcome: market.upToken,
+              tradeExecutor: tradeWallet!,
+              mintAmount: mintAmountForChunk,
+              targetPrice: market?.predictedPrice ?? 0,
+            });
+
+            const downProcessed = await processMarket({
+              underlying: market.underlyingToken,
+              outcome: market.downToken,
+              tradeExecutor: tradeWallet!,
+              mintAmount: mintAmountForChunk,
+              targetPrice: 1 - (market?.predictedPrice ?? 0),
+            });
+
+            return {
+              marketInfo: market,
+              processed: [upProcessed, downProcessed],
+            };
+          }),
+        );
+
+        setFlag("isProcessingMarkets", false);
+
+        // get quotes for this chunk
+        const quotesProgressMsg =
+          totalChunks > 1
+            ? `Loading quotes for batch ${chunkIndex + 1} of ${totalChunks}...`
+            : undefined;
+        setFlag("chunkProgressMessage", quotesProgressMsg);
+        setFlag("isLoadingQuotes", true);
+        const quotesPerMarket = await Promise.all(
+          processedMarkets.map(({ marketInfo, processed }) =>
+            getQuotes({
+              account: tradeWallet!,
+              processedMarkets: processed,
+            })
+              .then((res) => ({
+                marketInfo,
+                getQuotesResult: res,
+                amount: processed[0].underlyingBalance,
+              }))
+              .catch((err) => {
+                setFlag("isLoadingQuotes", false);
+                throw err;
+              }),
+          ),
+        );
+        setFlag("isLoadingQuotes", false);
+        setFlag("chunkProgressMessage", undefined);
+
+        // execute trade for this chunk
+        const chunkMintAmount = isFirstChunk
+          ? (snapshot.initialSDAIDeposit ?? 0n) -
+            (sDaiToWXDaiData?.minSDaiReceived ?? 0n)
+          : 0n;
+
+        await tradeExecutorPredictAll.mutateAsync({
+          marketsData: quotesPerMarket,
+          tradeExecutor: tradeWallet!,
+          mintAmount: chunkMintAmount,
+          seerCreditsSwapQuote: isFirstChunk
+            ? sDaiToWXDaiData?.quote
+            : undefined,
+          skipSuccessSideEffects: !(chunkIndex === totalChunks - 1),
+        });
+      }
       setFlag("isPredictionSuccessful", true);
 
       // close + reset

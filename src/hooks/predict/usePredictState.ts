@@ -12,6 +12,7 @@ export interface PredictState {
   isProcessingMarkets: boolean;
   isLoadingQuotes: boolean;
   isPredictionSuccessful: boolean;
+  chunkProgressMessage?: string;
   frozenToBeAdded?: bigint;
   frozenToBeAddedSeerCredits?: bigint;
   error?: string;
@@ -28,6 +29,7 @@ const initialState: PredictState = {
   isLoadingQuotes: false,
   isPredictionSuccessful: false,
   isSending: false,
+  chunkProgressMessage: undefined,
   frozenToBeAdded: undefined,
   frozenToBeAddedSeerCredits: undefined,
   createdTradeWallet: undefined,

@@ -18,6 +18,7 @@ import { config } from "@/wagmiConfig";
 
 import { isUndefined } from "@/utils";
 import { GetQuotesResult } from "@/utils/getQuotes";
+import { getMinimumAmountOut } from "@/utils/swapr";
 import { waitForTransaction } from "@/utils/waitForTransaction";
 
 import { DECIMALS, DEFAULT_CHAIN } from "@/consts";
@@ -25,7 +26,6 @@ import { IMarket, parentMarket } from "@/consts/markets";
 
 import { mergeFromRouter, splitFromRouter } from "./useTradeExecutorPredict";
 import { getSplitFromTradeExecutorCalls } from "./useTradeExecutorSplit";
-import { getMinimumAmountOut } from "@/utils/swapr";
 
 interface MarketsData {
   marketInfo: IMarket;
@@ -45,6 +45,8 @@ interface PredictAllProps {
   // defined if collateral needs to minted to Parent Market
   mintAmount?: bigint;
   seerCreditsSwapQuote?: SwaprV3Trade;
+  // When true, skips onSuccess side effects - use for intermediate chunks
+  skipSuccessSideEffects?: boolean;
 }
 
 interface Call {
@@ -318,7 +320,9 @@ export const useTradeExecutorPredictAll = (onSuccess?: () => unknown) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (props: PredictAllProps) => predictAllFromTradeExecutor(props),
-    onSuccess() {
+    onSuccess(_data, variables) {
+      if (variables.skipSuccessSideEffects) return;
+
       onSuccess?.();
       setTimeout(() => {
         queryClient.refetchQueries({ queryKey: ["useTokenBalance"] });
