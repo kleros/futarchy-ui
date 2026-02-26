@@ -145,18 +145,34 @@ const getApproveCalls = async ({
         ]
       : [];
 
-  // sell approve calls
-  const sellApproveCalls = sellQuotes.map((quote) => ({
-    to: quote.inputAmount.currency.address!,
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [
-        quote.approveAddress as Address,
-        parseUnits(quote.maximumAmountIn().toExact(), DECIMALS),
-      ],
+  // sell approve calls - consolidate by (token, spender) in case multiple sells
+  // share the same token (defensive, typically each sell is a different outcome)
+  const sellApproveByKey = new Map<
+    string,
+    { token: Address; spender: Address; amount: bigint }
+  >();
+  for (const quote of sellQuotes) {
+    const token = quote.inputAmount.currency.address! as Address;
+    const spender = quote.approveAddress as Address;
+    const amount = parseUnits(quote.maximumAmountIn().toExact(), DECIMALS);
+    const key = `${token}-${spender}`;
+    const existing = sellApproveByKey.get(key);
+    sellApproveByKey.set(key, {
+      token,
+      spender,
+      amount: existing ? existing.amount + amount : amount,
+    });
+  }
+  const sellApproveCalls = [...sellApproveByKey.values()].map(
+    ({ token, spender, amount }) => ({
+      to: token,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [spender, amount],
+      }),
     }),
-  }));
+  );
 
   // approve gnosis router to merge UP and DOWN tokens
   const mergeApproveCalls =
@@ -189,18 +205,34 @@ const getApproveCalls = async ({
         ]
       : [];
 
-  // buy approve calls
-  const buyApproveCalls = buyQuotes.map((quote) => ({
-    to: quote.inputAmount.currency.address!,
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [
-        quote.approveAddress as Address,
-        parseUnits(quote.maximumAmountIn().toExact(), DECIMALS),
-      ],
+  // buy approve calls - consolidate by (token, spender) so multiple buys of same
+  // underlying (UP + DOWN) don't overwrite each other; we need sum of amounts
+  const buyApproveByKey = new Map<
+    string,
+    { token: Address; spender: Address; amount: bigint }
+  >();
+  for (const quote of buyQuotes) {
+    const token = quote.inputAmount.currency.address! as Address;
+    const spender = quote.approveAddress as Address;
+    const amount = parseUnits(quote.maximumAmountIn().toExact(), DECIMALS);
+    const key = `${token}-${spender}`;
+    const existing = buyApproveByKey.get(key);
+    buyApproveByKey.set(key, {
+      token,
+      spender,
+      amount: existing ? existing.amount + amount : amount,
+    });
+  }
+  const buyApproveCalls = [...buyApproveByKey.values()].map(
+    ({ token, spender, amount }) => ({
+      to: token,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [spender, amount],
+      }),
     }),
-  }));
+  );
 
   return {
     splitApproveCall,
