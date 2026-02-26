@@ -29,6 +29,7 @@ interface IPredictSteps {
   isLoadingQuotes: boolean;
   isMakingPrediction: boolean;
   isPredictionSuccessful: boolean;
+  chunkProgressMessage?: string;
   error?: string;
 }
 
@@ -45,16 +46,19 @@ const PredictSteps: React.FC<IPredictSteps> = ({
   isLoadingQuotes,
   isMakingPrediction,
   isPredictionSuccessful,
+  chunkProgressMessage,
   error,
 }) => {
   const predictionProgressText = useMemo(() => {
     if (isMakingPrediction) return "Making prediction...";
-    if (isLoadingQuotes) return "Loading Quotes...";
+    if (chunkProgressMessage) return chunkProgressMessage;
+    if (isLoadingQuotes) return "Loading quotes...";
     if (isProcessingMarkets) return "Processing markets...";
     if (isPredictionSuccessful) return "Prediction Successful!";
     return "";
   }, [
     isMakingPrediction,
+    chunkProgressMessage,
     isLoadingQuotes,
     isProcessingMarkets,
     isPredictionSuccessful,
@@ -128,7 +132,9 @@ const PredictSteps: React.FC<IPredictSteps> = ({
     if (!isUndefined(error)) {
       steps.push({
         title: "Prediction failed!",
-        subtitle: error,
+        subtitle: (
+          <span className="break-words whitespace-pre-wrap">{error}</span>
+        ) as unknown as string,
         variant: "#ca2314",
         party: "",
         Icon: CloseOutline,

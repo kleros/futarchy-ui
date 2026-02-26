@@ -18,6 +18,7 @@ import { config } from "@/wagmiConfig";
 
 import { isUndefined } from "@/utils";
 import { GetQuotesResult } from "@/utils/getQuotes";
+import { getMinimumAmountOut } from "@/utils/swapr";
 import { waitForTransaction } from "@/utils/waitForTransaction";
 
 import { DECIMALS, DEFAULT_CHAIN } from "@/consts";
@@ -25,7 +26,6 @@ import { IMarket, parentMarket } from "@/consts/markets";
 
 import { mergeFromRouter, splitFromRouter } from "./useTradeExecutorPredict";
 import { getSplitFromTradeExecutorCalls } from "./useTradeExecutorSplit";
-import { getMinimumAmountOut } from "@/utils/swapr";
 
 interface MarketsData {
   marketInfo: IMarket;
@@ -45,6 +45,8 @@ interface PredictAllProps {
   // defined if collateral needs to minted to Parent Market
   mintAmount?: bigint;
   seerCreditsSwapQuote?: SwaprV3Trade;
+  // When true, skips onSuccess side effects - use for intermediate chunks
+  skipSuccessSideEffects?: boolean;
 }
 
 interface Call {
@@ -143,18 +145,34 @@ const getApproveCalls = async ({
         ]
       : [];
 
-  // sell approve calls
-  const sellApproveCalls = sellQuotes.map((quote) => ({
-    to: quote.inputAmount.currency.address!,
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [
-        quote.approveAddress as Address,
-        parseUnits(quote.maximumAmountIn().toExact(), DECIMALS),
-      ],
+  // sell approve calls - consolidate by (token, spender) in case multiple sells
+  // share the same token (defensive, typically each sell is a different outcome)
+  const sellApproveByKey = new Map<
+    string,
+    { token: Address; spender: Address; amount: bigint }
+  >();
+  for (const quote of sellQuotes) {
+    const token = quote.inputAmount.currency.address! as Address;
+    const spender = quote.approveAddress as Address;
+    const amount = parseUnits(quote.maximumAmountIn().toExact(), DECIMALS);
+    const key = `${token}-${spender}`;
+    const existing = sellApproveByKey.get(key);
+    sellApproveByKey.set(key, {
+      token,
+      spender,
+      amount: existing ? existing.amount + amount : amount,
+    });
+  }
+  const sellApproveCalls = [...sellApproveByKey.values()].map(
+    ({ token, spender, amount }) => ({
+      to: token,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [spender, amount],
+      }),
     }),
-  }));
+  );
 
   // approve gnosis router to merge UP and DOWN tokens
   const mergeApproveCalls =
@@ -187,18 +205,34 @@ const getApproveCalls = async ({
         ]
       : [];
 
-  // buy approve calls
-  const buyApproveCalls = buyQuotes.map((quote) => ({
-    to: quote.inputAmount.currency.address!,
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [
-        quote.approveAddress as Address,
-        parseUnits(quote.maximumAmountIn().toExact(), DECIMALS),
-      ],
+  // buy approve calls - consolidate by (token, spender) so multiple buys of same
+  // underlying (UP + DOWN) don't overwrite each other; we need sum of amounts
+  const buyApproveByKey = new Map<
+    string,
+    { token: Address; spender: Address; amount: bigint }
+  >();
+  for (const quote of buyQuotes) {
+    const token = quote.inputAmount.currency.address! as Address;
+    const spender = quote.approveAddress as Address;
+    const amount = parseUnits(quote.maximumAmountIn().toExact(), DECIMALS);
+    const key = `${token}-${spender}`;
+    const existing = buyApproveByKey.get(key);
+    buyApproveByKey.set(key, {
+      token,
+      spender,
+      amount: existing ? existing.amount + amount : amount,
+    });
+  }
+  const buyApproveCalls = [...buyApproveByKey.values()].map(
+    ({ token, spender, amount }) => ({
+      to: token,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [spender, amount],
+      }),
     }),
-  }));
+  );
 
   return {
     splitApproveCall,
@@ -318,7 +352,9 @@ export const useTradeExecutorPredictAll = (onSuccess?: () => unknown) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (props: PredictAllProps) => predictAllFromTradeExecutor(props),
-    onSuccess() {
+    onSuccess(_data, variables) {
+      if (variables.skipSuccessSideEffects) return;
+
       onSuccess?.();
       setTimeout(() => {
         queryClient.refetchQueries({ queryKey: ["useTokenBalance"] });

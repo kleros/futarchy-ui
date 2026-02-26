@@ -19,7 +19,7 @@ export const useGetQuotes = (quoteProps: GetQuoteProps, enabled: boolean) => {
       ),
     ],
     queryFn: () => {
-      return getQuotes({ account, processedMarkets });
+      return getQuotes(quoteProps);
     },
   });
 };

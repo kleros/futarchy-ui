@@ -200,6 +200,7 @@ export function usePredictFlow({
       const getQuotesResult = await getQuotes({
         account: tradeWallet!,
         processedMarkets,
+        marketName: market.name,
       });
       setFlag("isLoadingQuotes", false);
 

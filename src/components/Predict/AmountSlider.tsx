@@ -24,7 +24,7 @@ const AmountSlider: React.FC<IAmountSlider> = ({
   };
 
   return (
-    <div className="relative mt-4 w-[calc(100%-18px)]">
+    <div className="relative mt-4 w-[calc(100%-32px)] self-center">
       <Slider
         className={clsx(
           "relative z-1",

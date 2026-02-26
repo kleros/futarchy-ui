@@ -6,10 +6,12 @@ import { headers } from "next/headers";
 
 import Web3Context from "@/context/Web3Context";
 
-import "@kleros/ui-components-library/style.css";
-import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+
+import "@kleros/ui-components-library/style.css";
+import "./globals.css";
+
 export { metadata } from "@/consts/metadata";
 
 const geistSans = localFont({
