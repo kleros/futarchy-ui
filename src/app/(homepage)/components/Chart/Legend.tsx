@@ -10,12 +10,14 @@ interface ILegend {
   marketsData?: MarketsData;
   visibleMarkets: Set<string>;
   onToggleMarket: (marketName: string) => void;
+  onHoverMarket?: (marketName: string | null) => void;
 }
 
 const Legend: React.FC<ILegend> = ({
   marketsData,
   visibleMarkets,
   onToggleMarket,
+  onHoverMarket,
 }) => {
   return (
     <div
@@ -25,15 +27,18 @@ const Legend: React.FC<ILegend> = ({
       )}
     >
       {typeof marketsData !== "undefined" ? (
-        <div>
+        <div onMouseLeave={() => onHoverMarket?.(null)}>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(marketsData).map(
-              ([name, { market, data }], index) => {
-                const isVisible = visibleMarkets.has(name);
-                return (
+            {Object.entries(marketsData).map(([name, { market, data }]) => {
+              const isVisible = visibleMarkets.has(name);
+              return (
+                <span
+                  key={name}
+                  onMouseEnter={() => onHoverMarket?.(name)}
+                  onMouseLeave={() => onHoverMarket?.(null)}
+                >
                   <Tag
-                    key={`item-${index}`}
-                    text={`${name} ${data.at(-1)?.value.toFixed(2)}%`}
+                    text={`${name} ${data.at(-1)?.value?.toFixed(2) ?? "0.00"}%`}
                     active={isVisible}
                     onClick={() => onToggleMarket(name)}
                     className={clsx(
@@ -46,9 +51,9 @@ const Legend: React.FC<ILegend> = ({
                       borderColor: isVisible ? market.color : "transparent",
                     }}
                   />
-                );
-              },
-            )}
+                </span>
+              );
+            })}
           </div>
           <Tag
             key="all"
