@@ -47,7 +47,7 @@ export default function Home() {
     <div className="w-full px-4 py-12 md:px-8 lg:px-32">
       <div className="mx-auto max-w-294">
         <Header />
-        <div className="min-h-96">
+        <div className="min-h-106">
           {!isUndefined(chartData) ? (
             <Chart data={chartData} />
           ) : (

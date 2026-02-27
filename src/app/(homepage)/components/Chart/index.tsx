@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 
 import {
   createChart,
+  type ISeriesApi,
   LineSeries,
   LineStyle,
   UTCTimestamp,
@@ -65,6 +66,30 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   }, [theme]);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const seriesRefMap = useRef<Record<string, ISeriesApi<"Line">>>({});
+  const seriesColorsRef = useRef<Record<string, string>>({});
+  const seriesOrderRef = useRef<Record<string, number>>({});
+
+  const handleHoverMarket = React.useCallback(
+    (marketName: string | null) => {
+      const map = seriesRefMap.current;
+      const colors = seriesColorsRef.current;
+      const orders = seriesOrderRef.current;
+      const strokeColor = gridLinesColor;
+      const isResetting = marketName === null;
+      Object.entries(map).forEach(([name, s]) => {
+        const isHovered = name === marketName;
+        s.applyOptions({
+          lineWidth: isHovered ? 4 : 2,
+          color:
+            (isResetting || isHovered ? colors[name] : strokeColor) ??
+            strokeColor,
+        });
+        s.setSeriesOrder(isHovered ? 999 : (orders[name] ?? 0));
+      });
+    },
+    [gridLinesColor],
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [series, marketsData] = useMemo(() => {
@@ -155,7 +180,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         textColor: accentColor,
       },
       width: chartContainerRef?.current?.clientWidth,
-      height: 300,
+      height: 400,
       autoSize: true,
       rightPriceScale: {
         borderVisible: false,
@@ -185,16 +210,23 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     });
     chart.timeScale().fitContent();
 
+    seriesRefMap.current = {};
+    seriesColorsRef.current = {};
+    seriesOrderRef.current = {};
+    let orderIndex = 0;
     Object.entries(series).forEach(([marketName, marketData]) => {
       if (visibleMarkets.has(marketData.info.name)) {
-        const series = chart.addSeries(LineSeries, {
+        const lineSeries = chart.addSeries(LineSeries, {
           color: marketData.info.color,
           lineWidth: 2,
           title: shortenName(marketName),
         });
-        series.setData(
+        lineSeries.setData(
           marketData.data as Array<{ time: UTCTimestamp; value: number }>,
         );
+        seriesRefMap.current[marketName] = lineSeries;
+        seriesColorsRef.current[marketName] = marketData.info.color;
+        seriesOrderRef.current[marketName] = orderIndex++;
       }
     });
 
@@ -202,7 +234,9 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-
+      seriesRefMap.current = {};
+      seriesColorsRef.current = {};
+      seriesOrderRef.current = {};
       chart.remove();
     };
   }, [series, accentColor, visibleMarkets, gridLinesColor]);
@@ -213,6 +247,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         marketsData={marketsData}
         visibleMarkets={visibleMarkets}
         onToggleMarket={handleToggleMarket}
+        onHoverMarket={handleHoverMarket}
       />
       <h2 className="text-klerosUIComponentsPrimaryText mt-6 mb-4 text-base font-semibold">
         Market Estimate Scores
