@@ -2,13 +2,16 @@
 
 import React, { useEffect } from "react";
 
+import { Button } from "@kleros/ui-components-library";
 import { useLocalStorage, useToggle } from "react-use";
 
 import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
+import { useMarketsStore } from "@/store/markets";
 
 import MarketContextProvider from "@/context/MarketContext";
 import { TradeWalletProvider } from "@/context/TradeWalletContext";
 import { useChartData } from "@/hooks/useChartData";
+import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import FirstVisitGuide from "@/components/Guides/FirstVisit";
 import Loader from "@/components/Loader";
@@ -26,6 +29,10 @@ import ProjectFunding from "./components/ProjectFunding";
 
 export default function Home() {
   const { data: chartData } = useChartData(markets);
+  const predictionMarkets = usePredictionMarkets();
+  const resetPredictionMarkets = useMarketsStore(
+    (state) => state.resetPredictionMarkets,
+  );
 
   const { data: winningOutcomes } = useReadGnosisRouterGetWinningOutcomes({
     args: [parentConditionId],
@@ -71,6 +78,14 @@ export default function Home() {
                 </MarketContextProvider>
               ))}
             </div>
+            {predictionMarkets.length > 0 ? (
+              <Button
+                variant="secondary"
+                small
+                text="Reset Predictions"
+                onPress={resetPredictionMarkets}
+              />
+            ) : null}
             <PredictAll />
           </TradeWalletProvider>
 

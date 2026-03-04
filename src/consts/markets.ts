@@ -30,7 +30,7 @@ export const invalidMarket: Address =
   "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
 
 // in unix timestamp, seconds
-export const startTime: number = 1772645400;
+export const startTime: number = 1771871400;
 export const endTime: number = 1775239200;
 export const endDate: string = "Friday 3rd April 18:00 UTC";
 export interface IDetails {
