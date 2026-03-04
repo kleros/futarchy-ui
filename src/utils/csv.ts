@@ -63,7 +63,10 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
       throw new Error(`Row ${i + 1}: Score cannot be negative`);
     }
 
-    const maxScore = formatWithPrecision(market.maxValue, market.precision);
+    const maxScore = formatWithPrecision(
+      market.maxValue * market.precision,
+      market.precision,
+    );
     if (score > +maxScore) {
       throw new Error(
         `Row ${
