@@ -13,6 +13,7 @@
   "dependencies": {
     "@cowprotocol/cow-sdk": "^5.10.3",
     "@kleros/ui-components-library": "^3.7.0",
+    "@netlify/blobs": "^10.6.0",
     "@reown/appkit": "^1.7.11",
     "@reown/appkit-adapter-wagmi": "^1.7.11",
     "@swapr/sdk": "https://github.com/seer-pm/swapr-sdk#6dea7e63f7e05c84a4374717ee1ad5baca86f7de",
@@ -34,6 +35,7 @@
     "react-dom": "^18",
     "react-jdenticon": "^1.4.0",
     "react-use": "^17.6.0",
+    "swiper": "^12.0.2",
     "viem": "^2.31.4",
     "wagmi": "^2.15.6",
     "zustand": "^5.0.8"
