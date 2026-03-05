@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 import { isUndefined } from "@/utils";
 
-import { IMarket } from "@/consts/markets";
+import { IMarket, parentMarket } from "@/consts/markets";
 
 export interface PredictionMarket extends IMarket {
   prediction?: number;
@@ -100,7 +100,7 @@ export const useMarketsStore = create<MarketsStore>()(
         }),
     }),
     {
-      name: "futarchy-predictions",
+      name: `futarchy-predictions-${parentMarket}`,
       partialize: (state) => ({
         markets: Object.fromEntries(
           Object.entries(state.markets)
