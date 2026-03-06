@@ -89,3 +89,7 @@ export const MIN_SEER_CREDITS_USAGE = 0.01;
 export const MAX_MARKETS_PER_BATCH = Number(
   process.env.NEXT_PUBLIC_MAX_MARKETS_PER_BATCH ?? 10,
 );
+
+// prefilled swap links
+export const COWSWAP_ETH_TO_XDAI_SWAP_LINK =
+  "https://swap.cow.fi/#/1/swap/ETH/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE?targetChainId=100";

@@ -2,6 +2,7 @@ import React from "react";
 
 import ExternalLink from "@/components/ExternalLink";
 
+import { COWSWAP_ETH_TO_XDAI_SWAP_LINK } from "@/consts";
 import { advancedUserGuide, beginnerUserGuide } from "@/consts/markets";
 
 export const Title: React.FC = () => {
@@ -20,6 +21,7 @@ export const SubTitle: React.FC = () => {
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8">
         <ExternalLink url={beginnerUserGuide} text="Beginner User Guide" />
         <ExternalLink url={advancedUserGuide} text="Advanced User Guide" />
+        <ExternalLink url={COWSWAP_ETH_TO_XDAI_SWAP_LINK} text="Acquire xDAI" />
       </div>
     </div>
   );
