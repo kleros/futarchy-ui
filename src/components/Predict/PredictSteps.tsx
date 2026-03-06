@@ -88,9 +88,9 @@ const PredictSteps: React.FC<IPredictSteps> = ({
 
     if (toBeAddedSeerCredits && toBeAddedSeerCredits > 0n) {
       steps.push({
-        title: "Add Seer Credits to wallet",
+        title: "Add Foresight Credits to wallet",
         party: isAddingSeerCredits ? <Spinner className="mb-1" /> : "",
-        subtitle: `Adding ${formatValue(toBeAddedSeerCredits)} Seer Credits`,
+        subtitle: `Adding ${formatValue(toBeAddedSeerCredits)} Foresight Credits`,
         Icon: isSeerCreditsAdded ? CheckOutline : CircleOutline,
         state: isAddingSeerCredits
           ? "loading"

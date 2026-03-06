@@ -1,7 +1,13 @@
-import DAIIcon from "@/assets/svg/dai.svg";
-import SeerCreditsIcon from "@/assets/svg/seer-credits.svg";
-import { sDaiAddress, seerCreditsAddress, wxdaiAddress } from "@/generated";
 import { Address } from "viem";
+
+import {
+  foresightCreditsAddress,
+  sDaiAddress,
+  wxdaiAddress,
+} from "@/generated";
+
+import DAIIcon from "@/assets/svg/dai.svg";
+import ForesightCreditsIcon from "@/assets/svg/foresight-logo.svg";
 
 export enum TokenType {
   sDAI = "sDAI",
@@ -27,7 +33,7 @@ export const Tokens: Record<
     Icon: DAIIcon,
   },
   [TokenType.SeerCredits]: {
-    address: seerCreditsAddress,
-    Icon: SeerCreditsIcon,
+    address: foresightCreditsAddress,
+    Icon: ForesightCreditsIcon,
   },
 };

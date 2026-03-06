@@ -98,7 +98,7 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
         {seerCreditsBalance > MIN_SEER_CREDITS_USAGE ? (
           <Checkbox
             small
-            label={`Use your Seer credits. Available: ${formatValue(seerCreditsBalance)}`}
+            label={`Use your Foresight Credits. Available: ${formatValue(seerCreditsBalance)}`}
             onChange={toggleIsUsingCredits}
             defaultSelected={isUsingSeerCredits}
             className="mt-4 w-fit pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
@@ -112,7 +112,7 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
             <p className="text-klerosUIComponentsSecondaryText text-xs">
               {isUsingSeerCredits && toBeAddedSeerCredits ? (
                 <span>
-                  &nbsp;{formatValue(toBeAddedSeerCredits)} (Seer Credits)
+                  &nbsp;{formatValue(toBeAddedSeerCredits)} (Foresight Credits)
                 </span>
               ) : null}
               {tradeWalletSDaiUsage > 0n ? (

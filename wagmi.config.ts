@@ -8,8 +8,8 @@ const gnosisRouter = getContractInfo("gnosisRouter");
 const sDAI = getContractInfo("sDAI");
 const sDAIAdapter = getContractInfo("sDAIAdapter");
 const conditionalRouter = getContractInfo("conditionalRouter");
-const creditsManager = getContractInfo("seerCreditsManager");
-const seerCredits = getContractInfo("seerCredits");
+const creditsManager = getContractInfo("foresightCreditsManager");
+const foresightCredits = getContractInfo("foresightCredits");
 const WXDAI = getContractInfo("wrappedXDai");
 
 export default defineConfig({
@@ -20,7 +20,7 @@ export default defineConfig({
     { ...sDAIAdapter },
     { ...conditionalRouter },
     { ...creditsManager },
-    { ...seerCredits },
+    { ...foresightCredits },
     { ...WXDAI },
     { name: "ERC20", abi: erc20Abi },
   ],

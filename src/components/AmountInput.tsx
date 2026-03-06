@@ -72,7 +72,7 @@ const AmountInput: React.FC<IAmountInput> = ({
             icon: <SDAIIcon className="mr-2 size-6" />,
           },
           {
-            text: "Seer Credits",
+            text: "Foresight Credits",
             itemValue: TokenType.SeerCredits,
             id: TokenType.SeerCredits,
             icon: <SeerCreditsIcon className="mr-2 size-6" />,
