@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 
-import { seerCreditsAddress } from "@/generated";
+import { foresightCreditsAddress } from "@/generated";
 import { PredictionMarket, useMarketsStore } from "@/store/markets";
 
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
@@ -163,7 +163,7 @@ export function usePredictAllFlow({
         setFlag("isAddingSeerCredits", true);
 
         await depositToTradeExecutor.mutateAsync({
-          token: seerCreditsAddress,
+          token: foresightCreditsAddress,
           amount: snapshot.initialToBeAddedSeerCredits,
           tradeExecutor: tradeWallet,
           isXDai: false,

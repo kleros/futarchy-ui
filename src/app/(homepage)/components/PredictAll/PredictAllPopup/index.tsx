@@ -6,7 +6,7 @@ import { useToggle } from "react-use";
 import { useAccount, useBalance } from "wagmi";
 
 import {
-  seerCreditsAddress,
+  foresightCreditsAddress,
   useReadSDaiPreviewDeposit,
   useReadSDaiPreviewRedeem,
 } from "@/generated";
@@ -67,7 +67,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   });
   const { data: userSeerCreditsBalanceData } = useTokenBalance({
     address: account,
-    token: seerCreditsAddress,
+    token: foresightCreditsAddress,
   });
   const { data: userXDaiBalanceData } = useBalance({
     address: account,

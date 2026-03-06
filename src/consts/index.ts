@@ -45,15 +45,15 @@ const contracts = {
     abi: CondtionalRouterAbi,
     name: "conditionalRouter",
   },
-  seerCreditsManager: {
-    address: "0xB29D0C9875D93483891c0645fdC13D665a4d2D70",
+  foresightCreditsManager: {
+    address: "0x17592eFE59a318A6B0AFE32145ee04eAFeeA8A61",
     abi: CreditsManagerAbi,
     name: "CreditsManager",
   },
-  seerCredits: {
-    address: "0xEDd48e43EBd4E2b31238a5CBA8FD548fC051aCAF",
+  foresightCredits: {
+    address: "0x09E7014D2c15Eb8C5ee25853FE6842FF5E2c94f9",
     abi: erc20Abi,
-    name: "SeerCredits",
+    name: "ForesightCredits",
   },
   wrappedXDai: {
     address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d",
@@ -89,3 +89,7 @@ export const MIN_SEER_CREDITS_USAGE = 0.01;
 export const MAX_MARKETS_PER_BATCH = Number(
   process.env.NEXT_PUBLIC_MAX_MARKETS_PER_BATCH ?? 10,
 );
+
+// prefilled swap links
+export const COWSWAP_ETH_TO_XDAI_SWAP_LINK =
+  "https://swap.cow.fi/#/1/swap/ETH/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE?targetChainId=100";
