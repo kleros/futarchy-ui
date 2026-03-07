@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 
 import { Button } from "@kleros/ui-components-library";
+import clsx from "clsx";
 import { useLocalStorage, useToggle } from "react-use";
 
 import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
@@ -24,6 +25,7 @@ import AdvancedSection from "./components/AdvancedSection";
 import Chart from "./components/Chart";
 import Header from "./components/Header";
 import ParticipateSection from "./components/ParticipateSection";
+import ExportPredictions from "./components/ParticipateSection/CsvUpload/ExportPredictions";
 import PredictAll from "./components/PredictAll";
 import ProjectFunding from "./components/ProjectFunding";
 
@@ -79,12 +81,20 @@ export default function Home() {
               ))}
             </div>
             {predictionMarkets.length > 0 ? (
-              <Button
-                variant="secondary"
-                small
-                text="Reset Predictions"
-                onPress={resetPredictionMarkets}
-              />
+              <div
+                className={clsx(
+                  "flex w-full flex-wrap justify-between gap-4",
+                  "flex-col-reverse items-start sm:flex-row sm:items-center",
+                )}
+              >
+                <Button
+                  variant="secondary"
+                  small
+                  text="Reset Predictions"
+                  onPress={resetPredictionMarkets}
+                />
+                <ExportPredictions />
+              </div>
             ) : null}
             <PredictAll />
           </TradeWalletProvider>
