@@ -15,7 +15,7 @@ const ExportPredictions: React.FC = () => {
 
   const handleExport = useCallback(() => {
     const csv = generateMarketCsv(markets);
-    downloadCsvFile(`market-predictions-${new Date().toDateString()}.csv`, csv);
+    downloadCsvFile(`market-predictions-${new Date().toUTCString()}.csv`, csv);
   }, [markets]);
 
   return (
