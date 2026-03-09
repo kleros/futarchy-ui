@@ -37,6 +37,16 @@ export type GetQuotesResult = {
 const withMarketContext = (msg: string, marketName?: string) =>
   marketName ? `${msg}\nMarket: ${marketName}` : msg;
 
+/**
+ * @description Tries to get quotes for a single market's UP and DOWN tokens [upProcessed, downProcessed].
+ * Will skip if no route is found for either sell or buy direction.
+ * Only throws if not enough collateral is acquired to get buy quotes.
+ *
+ * Note: If sellQuotes or buyQuotes are empty, we still return partial results,
+ *       since selling or buying alone can move the price toward the user's prediction.
+ *
+ * Note: processedMarkets = [upProcessed, downProcessed]. Can be buy both, sell both, or mixed.
+ */
 export const getQuotes = async ({
   account,
   processedMarkets,
@@ -86,11 +96,11 @@ export const getQuotes = async ({
     [] as Promise<SwaprV3Trade | null>[],
   );
 
-  // means there were sell markets but no route was found
+  // no sell promises added (all volumes below minimum)
   if (!sellPromises.length && sellMarkets.length > 0) {
-    throw new Error(
+    console.warn(
       withMarketContext(
-        "Quote Info: No sell route found.\nTry higher amount.",
+        `getQuotes: No sell quotes requested (all volumes below minimum: ${VOLUME_MIN}).`,
         marketName,
       ),
     );
@@ -137,7 +147,7 @@ export const getQuotes = async ({
   if (!totalCollateral) {
     throw new Error(
       withMarketContext(
-        "Quote Error: Cannot sell to Underlying token.\nNot enough collateral.",
+        "Quote Error: Not enough collateral. Could not acquire enough collateral to find buy quotes",
         marketName,
       ),
     );
@@ -189,10 +199,11 @@ export const getQuotes = async ({
     [] as Promise<SwaprV3Trade | null>[],
   );
 
+  // no buy promises added (all volumes below minimum)
   if (!buyPromises.length && buyMarkets.length > 0) {
-    throw new Error(
+    console.warn(
       withMarketContext(
-        "Quote Error: No Buy Route found.\nTry higher amount.",
+        `getQuotes: No buy quotes requested (all volumes below minimum: ${VOLUME_MIN}).`,
         marketName,
       ),
     );
@@ -206,14 +217,6 @@ export const getQuotes = async ({
     return quotes;
   }, [] as SwaprV3Trade[]);
 
-  if (!buyQuotes) {
-    throw new Error(
-      withMarketContext(
-        "Quote Error: Cannot buy from Underlying token.\nNo route found.",
-        marketName,
-      ),
-    );
-  }
   return {
     quotes: { sellQuotes, buyQuotes },
     mergeAmount: collateralFromMerge,

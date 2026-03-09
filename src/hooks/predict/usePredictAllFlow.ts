@@ -278,24 +278,44 @@ export function usePredictAllFlow({
             : undefined;
         setFlag("chunkProgressMessage", quotesProgressMsg);
         setFlag("isLoadingQuotes", true);
-        const quotesPerMarket = await Promise.all(
+
+        // We skip markets that fail (too low amount or just quote not found) and proceed with the rest
+        const quoteResults = await Promise.allSettled(
           processedMarkets.map(({ marketInfo, processed }) =>
             getQuotes({
               account: tradeWallet!,
               processedMarkets: processed,
               marketName: marketInfo.name,
-            })
-              .then((res) => ({
-                marketInfo,
-                getQuotesResult: res,
-                amount: processed[0].underlyingBalance,
-              }))
-              .catch((err) => {
-                setFlag("isLoadingQuotes", false);
-                throw err;
-              }),
+            }).then((res) => ({
+              marketInfo,
+              getQuotesResult: res,
+              amount: processed[0].underlyingBalance,
+            })),
           ),
         );
+
+        const quotesPerMarket = quoteResults
+          .filter((r) => r.status === "fulfilled")
+          .map((r) => r.value);
+
+        const failedCount = quoteResults.filter(
+          (r) => r.status === "rejected",
+        ).length;
+        if (failedCount > 0) {
+          console.warn(
+            `Skipped ${failedCount} market(s) due to quote/route failures in batch ${chunkIndex + 1}: `,
+          );
+        }
+
+        if (quotesPerMarket.length === 0) {
+          setFlag("isLoadingQuotes", false);
+          throw new Error(
+            failedCount === processedMarkets.length
+              ? "No routes found for any market in this batch. Try higher amount."
+              : "All markets in this batch failed to get quotes.",
+          );
+        }
+
         setFlag("isLoadingQuotes", false);
         setFlag("chunkProgressMessage", undefined);
 
