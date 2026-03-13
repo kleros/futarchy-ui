@@ -30,7 +30,9 @@ const content = [
   {
     title: <Title />,
     subtitle: <SubTitle />,
-    svg: <GuideSvg className="max-h-66.5 max-w-53" />,
+    svg: (
+      <GuideSvg className="dark:[&_path]:fill-klerosUIComponentsPrimaryText max-h-66.5" />
+    ),
   },
 ];
 

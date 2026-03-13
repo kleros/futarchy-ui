@@ -1,6 +1,6 @@
 import { SwaprV3Trade } from "@swapr/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { writeContract } from "@wagmi/core";
+import { getAccount, getPublicClient, writeContract } from "@wagmi/core";
 import { type BytesLike } from "ethers";
 import { Address, encodeFunctionData, erc20Abi, parseUnits } from "viem";
 
@@ -17,6 +17,7 @@ import {
 import { config } from "@/wagmiConfig";
 
 import { isUndefined } from "@/utils";
+import { estimateGasWithBuffer } from "@/utils/gasLimit";
 import { GetQuotesResult } from "@/utils/getQuotes";
 import { getMinimumAmountOut } from "@/utils/swapr";
 import { waitForTransaction } from "@/utils/waitForTransaction";
@@ -332,13 +333,33 @@ async function predictAllFromTradeExecutor({
     seerCreditsSwapQuote,
   });
 
+  const valueCalls = calls.map((call) => ({
+    ...call,
+    value: call?.value ?? 0n,
+  }));
+
+  // try to add a capped buffer, otherwise let wallet estimate the gas
+  const publicClient = getPublicClient(config, { chainId: DEFAULT_CHAIN.id });
+  const account = getAccount(config);
+  const gas =
+    publicClient && account?.address
+      ? await estimateGasWithBuffer(publicClient, {
+          address: tradeExecutor,
+          abi: TradeExecutorAbi,
+          functionName: "batchValueExecute",
+          args: [valueCalls],
+          account: account.address,
+        })
+      : undefined;
+
   const writePromise = writeContract(config, {
     address: tradeExecutor,
     abi: TradeExecutorAbi,
     functionName: "batchValueExecute",
-    args: [calls.map((call) => ({ ...call, value: call?.value ?? 0n }))],
+    args: [valueCalls],
     value: 0n,
     chainId: DEFAULT_CHAIN.id,
+    ...(!isUndefined(gas) && { gas }),
   });
 
   const result = await waitForTransaction(() => writePromise);

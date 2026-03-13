@@ -1,52 +1,56 @@
+import Papa from "papaparse";
+
 import { PredictionMarket } from "@/store/markets";
 
 import marketFromName from "./marketIdFromName";
 
-import { formatWithPrecision, isUndefined } from ".";
+import { formatWithPrecision } from ".";
 
 export const parseMarketCSV = (csvText: string): Record<string, number> => {
-  const lines = csvText.trim().split("\n");
+  const parsed = Papa.parse<{ marketName: string; score: string }>(csvText, {
+    header: true,
+    skipEmptyLines: true,
+  });
 
-  if (lines.length < 2) {
+  if (parsed.errors.length > 0) {
+    const firstError = parsed.errors[0];
+    throw new Error(
+      `CSV parse error${firstError.row != null ? ` at row ${firstError.row + 1}` : ""}: ${firstError.message}`,
+    );
+  }
+
+  const rows = parsed.data;
+  const fields = parsed.meta.fields;
+
+  if (rows.length === 0) {
     throw new Error("CSV must have at least a header row and one data row");
   }
 
-  const headers = lines[0].split(",").map((h) => h.trim());
-
-  // Check for required columns
-  if (headers.length !== 2) {
+  // Check for required columns (matches original strict validation)
+  if (!fields || fields.length !== 2) {
     throw new Error("CSV must have exactly 2 columns: marketName, score");
   }
 
-  if (!headers.includes("marketName") || !headers.includes("score")) {
+  if (!fields.includes("marketName") || !fields.includes("score")) {
     throw new Error("CSV must have columns: marketName, score");
   }
 
   const result: Record<string, number> = {};
 
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue; // Skip empty lines
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row) continue;
 
-    const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+    const marketName = String(row.marketName ?? "").trim();
+    const scoreStr = String(row.score ?? "").trim();
 
-    if (isUndefined(values) || values.length !== 2) {
-      throw new Error(
-        `Row ${i + 1}: Expected 2 columns, found ${values?.length}`,
-      );
-    }
-
-    // remove quotes
-    const marketName = values[0].replace(/^"|"$/g, "");
-    const scoreStr = values[1];
-    // Check for empty values
     if (!marketName || !scoreStr) {
-      throw new Error(`Row ${i + 1}: All columns must have values`);
+      throw new Error(`Row ${i + 2}: All columns must have values`);
     }
     const market = marketFromName(marketName);
 
     if (!market) {
-      throw new Error(`Row ${i + 1}: No market found named: ${marketName}`);
+      throw new Error(`Row ${i + 2}: No market found named: ${marketName}`);
     }
 
     const marketId = market.marketId;
@@ -55,12 +59,12 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
     const score = parseFloat(scoreStr);
     if (isNaN(score)) {
       throw new Error(
-        `Row ${i + 1}: Score "${scoreStr}" is not a valid number`,
+        `Row ${i + 2}: Score "${scoreStr}" is not a valid number`,
       );
     }
 
     if (score < 0) {
-      throw new Error(`Row ${i + 1}: Score cannot be negative`);
+      throw new Error(`Row ${i + 2}: Score cannot be negative`);
     }
 
     const maxScore = formatWithPrecision(
@@ -69,9 +73,7 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
     );
     if (score > +maxScore) {
       throw new Error(
-        `Row ${
-          i + 1
-        }: Score cannot be greater than the max value of ${maxScore}`,
+        `Row ${i + 2}: Score cannot be greater than the max value of ${maxScore}`,
       );
     }
 
@@ -86,23 +88,17 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
 };
 
 export function generateMarketCsv(markets: Record<string, PredictionMarket>) {
-  const header = ["marketName", "score"];
+  const data = Object.values(markets).map((market) => ({
+    marketName: market.name,
+    score: formatWithPrecision(
+      market.prediction ?? market.marketEstimate ?? 0,
+      market.precision,
+    ),
+  }));
 
-  const rows = Object.values(markets).map((market) => {
-    return [
-      `"${market.name}"`,
-      formatWithPrecision(
-        market.prediction ?? market.marketEstimate ?? 0,
-        market.precision,
-      ),
-    ];
+  return Papa.unparse(data, {
+    columns: ["marketName", "score"],
   });
-
-  const csvContent = [header, ...rows]
-    .map((row) => row.map((v) => `${v}`).join(","))
-    .join("\n");
-
-  return csvContent;
 }
 
 export function downloadCsvFile(filename: string, content: string) {

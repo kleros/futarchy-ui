@@ -16,10 +16,14 @@ const ParticipateSection: React.FC = () => {
         className="border-gradient-purple-blue h-auto w-full border-none px-4 py-6 md:px-8"
       >
         <p className="text-klerosUIComponentsSecondaryText text-sm">
+          {/* NOTE: project specific */}
           <strong className="text-klerosUIComponentsPrimaryText text-base">
-            Set estimates for the projects below.
+            Set estimates for the movies below.
           </strong>{" "}
-          You can choose how many projects you want to predict.
+          <br />
+          You can choose how many movies you want to predict. <br />
+          Note that the same capital can be used to predict on all movies at
+          once.
         </p>
       </Card>
       <CsvUpload />

@@ -6902,6 +6902,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5.5.2":
+  version: 5.5.2
+  resolution: "@types/papaparse@npm:5.5.2"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/27b097b6f8f204b20ade1f2cbf4798eb38caa5fbfa3180fd0faa5e3f9aea371c1786ae180d56f3287556463eefe3100c953e316ea6ee99d7ae1d04111cfc9e50
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.7.15
   resolution: "@types/prop-types@npm:15.7.15"
@@ -11370,6 +11379,7 @@ __metadata:
     "@tailwindcss/postcss": "npm:^4.1.4"
     "@tanstack/react-query": "npm:^5.74.4"
     "@types/node": "npm:^20"
+    "@types/papaparse": "npm:^5.5.2"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
     "@wagmi/cli": "npm:^2.3.1"
@@ -11389,6 +11399,7 @@ __metadata:
     micro-memoize: "npm:^4.2.0"
     next: "npm:14.2.35"
     next-themes: "npm:^0.4.6"
+    papaparse: "npm:^5.5.3"
     pino-pretty: "npm:^13.0.0"
     postcss: "npm:^8"
     prettier: "npm:^3.5.3"
@@ -14497,6 +14508,13 @@ __metadata:
   version: 1.0.1
   resolution: "package-json-from-dist@npm:1.0.1"
   checksum: 10c0/62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
+  languageName: node
+  linkType: hard
+
+"papaparse@npm:^5.5.3":
+  version: 5.5.3
+  resolution: "papaparse@npm:5.5.3"
+  checksum: 10c0/623aae6a35703308fd5a39d616fb3837231ebc70697346355ea508154d3f24df75b6554b736afc1924192205518a5db14e75f5e1cf35d154326050a37cdd9447
   languageName: node
   linkType: hard
 

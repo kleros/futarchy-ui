@@ -185,6 +185,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       rightPriceScale: {
         borderVisible: false,
         visible: true,
+        ensureEdgeTickMarksVisible: true,
       },
       localization: {
         priceFormatter: (val: number) => `${val.toFixed(2)}%`,
@@ -196,6 +197,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       timeScale: {
         borderVisible: false,
         timeVisible: true,
+        rightOffset: 10,
       },
       grid: {
         vertLines: {
