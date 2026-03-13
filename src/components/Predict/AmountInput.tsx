@@ -21,6 +21,7 @@ interface IPredictAmountInput {
   className?: string;
   inputProps?: React.ComponentProps<typeof BigNumberField>;
   isFirstPrediction: boolean;
+  isUsingCredits: boolean;
 }
 
 const PredictAmountInput: React.FC<IPredictAmountInput> = ({
@@ -34,6 +35,7 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
   className,
   inputProps,
   isFirstPrediction,
+  isUsingCredits,
 }) => {
   const notEnoughBalance = useMemo(() => {
     if (!isUndefined(value) && !isUndefined(balance) && value > balance)
@@ -74,6 +76,7 @@ const PredictAmountInput: React.FC<IPredictAmountInput> = ({
           <span className="text-klerosUIComponentsSecondaryText text-xs">
             Balance: {formatValue(balance ?? 0n)} &nbsp;
             {selectedToken === TokenType.sDAI ? "sDAI" : "xDAI"}
+            {isUsingCredits ? " ( + Foresight credits)" : null}
           </span>
           <LightButton
             small

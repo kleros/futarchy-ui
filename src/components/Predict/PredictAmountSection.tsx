@@ -8,6 +8,8 @@ import { formatValue, isUndefined } from "@/utils";
 import { MIN_SEER_CREDITS_USAGE } from "@/consts";
 import { TokenType } from "@/consts/tokens";
 
+import LightButton from "../LightButton";
+
 import AmountInput from "./AmountInput";
 import AmountSlider from "./AmountSlider";
 
@@ -83,6 +85,7 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
         )}
         <AmountInput
           {...{ setAmount, selectedToken, setSelectedToken, isFirstPrediction }}
+          isUsingCredits={isUsingSeerCredits}
           balance={availableBalance}
           equivalentSDAI={sDAIDepositAmount}
           value={amount}
@@ -94,15 +97,35 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
           balance={availableBalance}
           setValue={setAmount}
         />
+        <hr className="border-klerosUIComponentsStroke my-4 w-full" />
         {/* Seer credits checkbox */}
         {seerCreditsBalance > MIN_SEER_CREDITS_USAGE ? (
-          <Checkbox
-            small
-            label={`Use your Foresight Credits. Available: ${formatValue(seerCreditsBalance)}`}
-            onChange={toggleIsUsingCredits}
-            defaultSelected={isUsingSeerCredits}
-            className="mt-4 w-fit pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
-          />
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <Checkbox
+              small
+              label={`Use your Foresight Credits. Available: ${formatValue(seerCreditsBalance)}`}
+              onChange={toggleIsUsingCredits}
+              defaultSelected={isUsingSeerCredits}
+              className="w-fit pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
+            />
+            <LightButton
+              small
+              variant="tertiary"
+              text="Use max credits"
+              className={clsx(
+                "p-0",
+                "[&_.button-text]:text-klerosUIComponentsPrimaryBlue [&_.button-text]:text-xs",
+                "hover:bg-klerosUIComponentsWhiteBackground",
+                !isUsingSeerCredits && "hidden",
+              )}
+              onPress={() => {
+                if (!isUsingSeerCredits) {
+                  toggleIsUsingCredits(true);
+                }
+                setAmount(seerCreditsBalance);
+              }}
+            />
+          </div>
         ) : null}
         {!isUndefined(amount) && amount > 0n ? (
           <div className="mt-2 flex flex-row flex-wrap items-center">
