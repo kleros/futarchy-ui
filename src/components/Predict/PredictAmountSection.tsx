@@ -24,9 +24,11 @@ interface IPredictAmountSection {
   isSending: boolean;
 
   seerCreditsBalance: bigint;
+  seerCreditsEquivalentXDAI: bigint;
+  creditsFromWallet?: bigint;
+  creditsFromEOA?: bigint;
 
   toBeAdded: bigint;
-  toBeAddedSeerCredits?: bigint;
   sDAIDepositAmount?: bigint;
 
   isWalletCreated: boolean;
@@ -43,8 +45,10 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
   availableBalance,
   isSending,
   seerCreditsBalance,
+  seerCreditsEquivalentXDAI,
+  creditsFromWallet = 0n,
+  creditsFromEOA = 0n,
   toBeAdded,
-  toBeAddedSeerCredits,
   sDAIDepositAmount,
   isWalletCreated,
   isUsingSeerCredits,
@@ -56,15 +60,18 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
     return (
       sDAIDepositAmount -
       toBeAdded -
-      (isUsingSeerCredits ? (toBeAddedSeerCredits ?? 0n) : 0n)
+      (isUsingSeerCredits ? creditsFromEOA + creditsFromWallet : 0n)
     );
   }, [
     sDAIDepositAmount,
     toBeAdded,
     isUsingSeerCredits,
-    toBeAddedSeerCredits,
     isWalletCreated,
+    creditsFromEOA,
+    creditsFromWallet,
   ]);
+
+  const isXDAI = selectedToken === TokenType.xDAI;
 
   return (
     <div className="flex flex-col items-center gap-1.5">
@@ -103,7 +110,8 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <Checkbox
               small
-              label={`Use your Foresight Credits. Available: ${formatValue(seerCreditsBalance)}`}
+              label={`Use your Foresight Credits. Available: ${formatValue(seerCreditsBalance)}
+                      ${isXDAI ? `( ~${formatValue(seerCreditsEquivalentXDAI)} xdai )` : ""}`}
               onChange={toggleIsUsingCredits}
               defaultSelected={isUsingSeerCredits}
               className="w-fit pl-6 text-xs font-semibold [&_div]:top-0 [&_div]:size-4 [&_svg]:size-4"
@@ -122,7 +130,9 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
                 if (!isUsingSeerCredits) {
                   toggleIsUsingCredits(true);
                 }
-                setAmount(seerCreditsBalance);
+                setAmount(
+                  isXDAI ? seerCreditsEquivalentXDAI : seerCreditsBalance,
+                );
               }}
             />
           </div>
@@ -133,14 +143,22 @@ export const PredictAmountSection: React.FC<IPredictAmountSection> = ({
               Total: {formatValue(sDAIDepositAmount ?? 0n)} sDAI =
             </p>
             <p className="text-klerosUIComponentsSecondaryText text-xs">
-              {isUsingSeerCredits && toBeAddedSeerCredits ? (
+              {isUsingSeerCredits && creditsFromWallet > 0n ? (
                 <span>
-                  &nbsp;{formatValue(toBeAddedSeerCredits)} (Foresight Credits)
+                  &nbsp;{formatValue(creditsFromWallet)} (Credits in Trade
+                  Wallet)
+                </span>
+              ) : null}
+              {isUsingSeerCredits && creditsFromEOA > 0n ? (
+                <span>
+                  &nbsp;+ {formatValue(creditsFromEOA)} (Credits from Your
+                  Wallet)
                 </span>
               ) : null}
               {tradeWalletSDaiUsage > 0n ? (
                 <span>
-                  &nbsp;+ {formatValue(tradeWalletSDaiUsage)} (Trade Wallet)
+                  &nbsp;+ {formatValue(tradeWalletSDaiUsage)} (sDAI in Trade
+                  Wallet)
                 </span>
               ) : null}
               {toBeAdded > 0n ? (
