@@ -6,13 +6,13 @@ import { useToggle } from "react-use";
 import { useAccount, useBalance } from "wagmi";
 
 import {
-  foresightCreditsAddress,
   useReadSDaiPreviewDeposit,
   useReadSDaiPreviewRedeem,
 } from "@/generated";
 
 import { usePredictAllFlow } from "@/hooks/predict/usePredictAllFlow";
 import { useCheckTradeExecutorCreated } from "@/hooks/tradeWallet/useCheckTradeExecutorCreated";
+import { useCreditsBalance } from "@/hooks/useCreditsBalance";
 import { useFirstPredictionStatus } from "@/hooks/useFirstPredictionStatus";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
@@ -65,10 +65,16 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     address: account,
     token: collateral.address,
   });
-  const { data: userSeerCreditsBalanceData } = useTokenBalance({
-    address: account,
-    token: foresightCreditsAddress,
+  const {
+    walletCredits,
+    totalCredits: seerCreditsBalance,
+    totalCreditsEquivalentXDAI: seerCreditsEquivalentXDAI,
+  } = useCreditsBalance({
+    account,
+    tradeExecutor,
+    isXDai,
   });
+
   const { data: userXDaiBalanceData } = useBalance({
     address: account,
   });
@@ -77,19 +83,6 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     address: tradeExecutor,
     token: collateral.address,
   });
-
-  const { data: seerCreditsEquivalentXDAI } = useReadSDaiPreviewRedeem({
-    args: [userSeerCreditsBalanceData?.value ?? 0n],
-    query: {
-      enabled:
-        !isUndefined(userSeerCreditsBalanceData) &&
-        userSeerCreditsBalanceData.value > 0 &&
-        isXDai,
-      retry: false,
-    },
-  });
-
-  const seerCreditsBalance = userSeerCreditsBalanceData?.value ?? 0n;
 
   const { data: tokensBalances } = useTokensBalances(
     tradeExecutor,
@@ -135,7 +128,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     return resultingDeposit;
   }, [resultingDeposit, amount, isXDai]);
 
-  // additional sDAI required to be deposited, accounts for Seer credits if being used
+  // additional sDAI required to be deposited, accounts for Seer credits (EOA + wallet) if being used
   const toBeAdded = useMemo(() => {
     if (isUndefined(sDAIDepositAmount)) return 0n;
     // account for wallet balance
@@ -143,7 +136,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
       sDAIDepositAmount > (walletSDaiBalanceData?.value ?? 0n)
         ? sDAIDepositAmount - (walletSDaiBalanceData?.value ?? 0n)
         : 0n;
-    //account for Seer Credits
+    // account for Seer Credits (EOA + trade wallet)
     if (isUsingSeerCredits) {
       return sDAIDepositWalletBalanceOffset - seerCreditsBalance > 0
         ? sDAIDepositWalletBalanceOffset - seerCreditsBalance
@@ -157,13 +150,23 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     isUsingSeerCredits,
   ]);
 
-  const toBeAddedSeerCredits = useMemo(() => {
+  const creditsToSwap = useMemo(() => {
     if (!isUsingSeerCredits) return 0n;
-    // sDAIDepositAmount is alrd adjusted in case xDAI is selected
     return (sDAIDepositAmount ?? 0n) > seerCreditsBalance
       ? seerCreditsBalance
-      : sDAIDepositAmount;
-  }, [seerCreditsBalance, sDAIDepositAmount, isUsingSeerCredits]);
+      : (sDAIDepositAmount ?? 0n);
+  }, [isUsingSeerCredits, sDAIDepositAmount, seerCreditsBalance]);
+
+  // offset deposit by wallet credits, only deposit from eoa
+  const toBeAddedSeerCredits = useMemo(() => {
+    if (!isUsingSeerCredits) return 0n;
+    return creditsToSwap > walletCredits ? creditsToSwap - walletCredits : 0n;
+  }, [isUsingSeerCredits, creditsToSwap, walletCredits]);
+
+  // For display, distinguish credits from wallet vs EOA
+  const creditsFromWallet =
+    creditsToSwap > walletCredits ? walletCredits : creditsToSwap;
+  const creditsFromEOA = toBeAddedSeerCredits;
 
   // when using xDAI input, we need to convert the additional sDAI amount required,
   // back to xDAI to take what's necessary
@@ -175,7 +178,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     },
   });
 
-  // can be either xDAI or sDAI
+  // can be either xDAI or sDAI (includes credits from both EOA and trade wallet)
   const availableBalance = useMemo(() => {
     const seerCreditBalanceEquivalent = isXDai
       ? (seerCreditsEquivalentXDAI ?? 0n)
@@ -224,6 +227,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     toBeAdded,
     toBeAddedXDai,
     toBeAddedSeerCredits,
+    creditsToSwap,
     walletUnderlyingBalances: underlyingTokensBalances,
     walletTokensBalances: tokensBalances,
     onDone: () => {
@@ -263,10 +267,12 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
               availableBalance,
               isSending,
               toBeAdded,
-              toBeAddedSeerCredits,
               toggleIsUsingCredits,
               isUsingSeerCredits,
               seerCreditsBalance,
+              seerCreditsEquivalentXDAI,
+              creditsFromWallet,
+              creditsFromEOA,
               sDAIDepositAmount,
               isFirstPrediction,
             }}
