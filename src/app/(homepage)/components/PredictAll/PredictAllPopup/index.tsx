@@ -233,10 +233,10 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     onDone: () => {
       toggleIsOpen();
       resetUI();
+      toggleGuide(true);
 
-      //show advanced user guide if it was the first prediction from user
+      // if it was the first prediction from user
       if (firstPredictionRef.current) {
-        toggleGuide(true);
         setStoredHasPredicted(true);
       }
     },

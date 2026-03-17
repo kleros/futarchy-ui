@@ -7,19 +7,14 @@ import { advancedUserGuide } from "@/consts/markets";
 import GuideStructure, { IGuide } from "../GuideStructure";
 
 export const Title: React.FC = () => {
-  return (
-    <>
-      Congrats on your
-      <br /> first prediction! 🎉
-    </>
-  );
+  return <>Congrats on your prediction! 🎉</>;
 };
 
 export const SubTitle: React.FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-klerosUIComponentsSecondaryText text-sm">
-        To do more predictions 👉 see first our
+        To do advanced predictions 👉 see first our
       </p>
       <ExternalLink url={advancedUserGuide} text="Advanced User Guide" />
     </div>
