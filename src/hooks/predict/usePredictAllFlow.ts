@@ -36,7 +36,10 @@ interface UsePredictAllFlowArgs {
   sDAIDepositAmount?: bigint;
   toBeAdded: bigint;
   toBeAddedXDai?: bigint;
+  /** Amount of credits to deposit from EOA (skip if 0, credits already in wallet) */
   toBeAddedSeerCredits?: bigint;
+  /** Total credits to swap (EOA + wallet) - used for credit<>sDAI quote */
+  creditsToSwap?: bigint;
 
   walletUnderlyingBalances?: bigint[];
   walletTokensBalances?: bigint[];
@@ -53,6 +56,7 @@ export function usePredictAllFlow({
   toBeAdded,
   toBeAddedXDai,
   toBeAddedSeerCredits,
+  creditsToSwap,
   walletUnderlyingBalances,
   walletTokensBalances,
   onDone,
@@ -206,7 +210,7 @@ export function usePredictAllFlow({
 
       const sDaiToWXDaiData = await getSDaiToWXdaiData(
         tradeWallet!,
-        toBeAddedSeerCredits,
+        creditsToSwap,
       );
 
       // the expected/equivalent sDAI received by using SeerCredits can be less than initially calculated
