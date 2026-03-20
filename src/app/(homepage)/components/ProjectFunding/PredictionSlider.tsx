@@ -60,8 +60,8 @@ const PredictionSliderContent: React.FC = () => {
           maxValue={maxValue * precision}
           minValue={minValue * precision}
           value={prediction}
-          leftLabel=""
-          rightLabel=""
+          leftLabel={`$${formatWithPrecision(minValue * precision, precision)}M`}
+          rightLabel={`$${formatWithPrecision(maxValue * precision, precision)}M`}
           aria-label="Slider"
           callback={setPrediction}
           formatter={(value) => `$${formatWithPrecision(value, precision)}M`}
@@ -77,7 +77,7 @@ const PredictionSliderContent: React.FC = () => {
           isDisabled={!hasLiquidity}
         />
         <div
-          className="pointer-events-none absolute bottom-0"
+          className="pointer-events-none absolute bottom-1/3"
           style={{
             transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%))`,
           }}
