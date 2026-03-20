@@ -26,7 +26,8 @@ import PredictionSlider from "./PredictionSlider";
 
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
-  const { name, color, upToken, downToken, details, underlyingToken } = market;
+  const { name, color, upToken, downToken, realtContract, underlyingToken } =
+    market;
   const isSelected = useMarketsStore((s) => {
     const m = s.markets[market.marketId];
     return !!m?.prediction && m.prediction !== m.marketEstimate;
@@ -133,7 +134,12 @@ const ProjectFunding: React.FC = () => {
                   "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
                   "[&_#body-wrapper]:max-sm:px-0",
                 )}
-                items={[{ title: "Details", body: <Details {...details} /> }]}
+                items={[
+                  {
+                    title: "Details",
+                    body: <Details contract={realtContract} />,
+                  },
+                ]}
               />
             </div>
           ),

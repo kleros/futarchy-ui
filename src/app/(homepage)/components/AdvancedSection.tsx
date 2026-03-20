@@ -16,7 +16,7 @@ import { downloadCsvFile, generateRealtDataCsv } from "@/utils/csv";
 
 import { markets } from "@/consts/markets";
 
-const contractAddresses = markets.map((m) => m.details.contract);
+const contractAddresses = markets.map((m) => m.realtContract);
 
 const AdvancedSection: React.FC = () => {
   const { data: allRealtData, isLoading } = useAllRealtMarketData();
