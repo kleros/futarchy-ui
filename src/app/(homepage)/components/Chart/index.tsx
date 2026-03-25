@@ -197,7 +197,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       timeScale: {
         borderVisible: false,
         timeVisible: true,
-        rightOffset: 10,
+        rightOffset: 20,
       },
       grid: {
         vertLines: {
