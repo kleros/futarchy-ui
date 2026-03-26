@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 
 import { foresightCreditsAddress } from "@/generated";
-import { PredictionMarket, useMarketsStore } from "@/store/markets";
+import { PredictionMarket } from "@/store/markets";
 
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
 import { useDepositToTradeExecutor } from "@/hooks/tradeWallet/useDepositToTradeExecutor";
@@ -65,9 +65,6 @@ export function usePredictAllFlow({
   const { state, setFlag, reset } = usePredictState();
 
   const markets = usePredictionMarkets();
-  const resetPredictionMarkets = useMarketsStore(
-    (state) => state.resetPredictionMarkets,
-  );
 
   const createTradeExecutor = useCreateTradeExecutor();
   const depositToTradeExecutor = useDepositToTradeExecutor(() => {});
@@ -345,13 +342,9 @@ export function usePredictAllFlow({
       setTimeout(() => {
         onDone();
         reset();
-        queryClient
-          .refetchQueries({
-            queryKey: ["useTicksData"],
-          })
-          .then(() => {
-            resetPredictionMarkets();
-          });
+        queryClient.refetchQueries({
+          queryKey: ["useTicksData"],
+        });
       }, 1000);
     } catch (e) {
       if (e instanceof Error) {
