@@ -4,6 +4,8 @@ import clsx from "clsx";
 import ChartBarIcon from "@/assets/svg/chart-bar.svg";
 import StatsBarIcon from "@/assets/svg/stats-bar.svg";
 
+import { formatCompactUsd } from "@/utils/formatCompactUsd";
+
 import { type MarketsData } from ".";
 
 interface ILegend {
@@ -38,7 +40,7 @@ const Legend: React.FC<ILegend> = ({
                   onMouseLeave={() => onHoverMarket?.(null)}
                 >
                   <Tag
-                    text={`${name} ${data.at(-1)?.value?.toFixed(2) ?? "0.00"}%`}
+                    text={`${name} ${formatCompactUsd(data.at(-1)?.value ?? 0)}`}
                     active={isVisible}
                     onClick={() => onToggleMarket(name)}
                     className={clsx(

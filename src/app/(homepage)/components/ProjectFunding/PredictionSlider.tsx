@@ -13,8 +13,9 @@ import { useMarketContext } from "@/context/MarketContext";
 
 import { Skeleton } from "@/components/Skeleton";
 
-import { formatWithPrecision, isUndefined } from "@/utils";
+import { isUndefined } from "@/utils";
 import { getReadableTextColor } from "@/utils/getReadableTextColor";
+import { formatUsd } from "@/utils/marketRange";
 
 const LoadingSkeleton: React.FC = () => (
   <div className="relative w-full">
@@ -42,7 +43,9 @@ const PredictionSliderContent: React.FC = () => {
     showEstimateVariant,
     hasLiquidity,
   } = useMarketContext();
-  const { maxValue, minValue, precision, color } = market;
+  const { minValue, maxValue, initialInvestmentUsd, color } = market;
+
+  const step = Math.max(1, Math.round(initialInvestmentUsd / 100));
 
   const sliderTheme = useMemo(() => {
     if (resolvedTheme === "light") return isUpPredict ? "#3FEC65" : "#F75C7B";
@@ -57,14 +60,15 @@ const PredictionSliderContent: React.FC = () => {
             "w-full",
             "[&_#slider-label]:!text-klerosUIComponentsPrimaryText [&_#slider-label]:font-semibold",
           )}
-          maxValue={maxValue * precision}
-          minValue={minValue * precision}
+          maxValue={maxValue}
+          minValue={minValue}
+          step={step}
           value={prediction}
-          leftLabel={`$${formatWithPrecision(minValue * precision, precision)}M`}
-          rightLabel={`$${formatWithPrecision(maxValue * precision, precision)}M`}
+          leftLabel={formatUsd(minValue)}
+          rightLabel={formatUsd(maxValue)}
           aria-label="Slider"
           callback={setPrediction}
-          formatter={(value) => `$${formatWithPrecision(value, precision)}M`}
+          formatter={(value) => formatUsd(value)}
           // @ts-expect-error other values not needed
           theme={
             showEstimateVariant
@@ -96,7 +100,7 @@ const PredictionSliderContent: React.FC = () => {
             }}
           >
             {/* TODO: updates for individual experiments */}
-            {`$${formatWithPrecision(marketEstimate, precision)}M`}
+            {formatUsd(marketEstimate)}
           </div>
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>

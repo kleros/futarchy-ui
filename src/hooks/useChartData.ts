@@ -3,6 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits } from "viem";
 
+import { chartValueFromPoolPrice } from "@/utils/marketRange";
+
 import { IMarket } from "@/consts/markets";
 
 interface IDataPoint {
@@ -50,6 +52,7 @@ const getSqrtPrices = (
 export const useChartData = (markets: Array<IMarket>) =>
   useQuery<IChartData[]>({
     queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
+    enabled: markets.length > 0,
     queryFn: async () => {
       const { data }: { data: IReturn[] } = await fetch("api/market-chart", {
         next: { revalidate: 300 },
@@ -69,16 +72,16 @@ export const useChartData = (markets: Array<IMarket>) =>
             ) {
               ({ token0Price, token1Price } = getSqrtPrices(sqrtPrice));
             }
+            const poolPrice = parseFloat(
+              (dataPoint.pool.token0.id.toLowerCase() ===
+              market.underlyingToken.toLowerCase()
+                ? token0Price
+                : token1Price
+              ).slice(0, 9),
+            );
             return {
               timestamp: dataPoint.periodStartUnix,
-              value:
-                parseFloat(
-                  (dataPoint.pool.token0.id.toLowerCase() ===
-                  market.underlyingToken.toLowerCase()
-                    ? token0Price
-                    : token1Price
-                  ).slice(0, 9),
-                ) * market.maxValue,
+              value: chartValueFromPoolPrice(poolPrice, market),
             };
           },
         );

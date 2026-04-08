@@ -15,6 +15,7 @@ import {
 import { type IChartData } from "@/hooks/useChartData";
 
 import { shortenName } from "@/utils";
+import { formatCompactUsd } from "@/utils/formatCompactUsd";
 
 import { IMarket, startTime } from "@/consts/markets";
 
@@ -123,12 +124,13 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
       Object.entries(marketsData).forEach(([marketName, marketInfo]) => {
         const { data, market } = marketInfo;
 
-        const maxValue = market.maxValue;
+        const { minValue, maxValue } = market;
 
         // Find valid start index (skip extreme values)
         let validStartIndex = 0;
         for (let i = 0; i < data.length; i++) {
-          const isExtreme = data[i].value === maxValue || data[i].value < 0.1;
+          const isExtreme =
+            data[i].value === maxValue || data[i].value < minValue + 0.1;
           if (!isExtreme && i > 0) {
             validStartIndex = i;
             break;
@@ -188,7 +190,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         ensureEdgeTickMarksVisible: true,
       },
       localization: {
-        priceFormatter: (val: number) => `${val.toFixed(2)}%`,
+        priceFormatter: (val: number) => formatCompactUsd(val),
       },
       leftPriceScale: {
         borderVisible: false,
@@ -252,7 +254,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         onHoverMarket={handleHoverMarket}
       />
       <h2 className="text-klerosUIComponentsPrimaryText mt-6 mb-4 text-base font-semibold">
-        Market Estimate Scores
+        Market estimates (USD)
       </h2>
       <div ref={chartContainerRef} />
     </div>

@@ -2,9 +2,9 @@ import Papa from "papaparse";
 
 import { PredictionMarket } from "@/store/markets";
 
-import marketFromName from "./marketIdFromName";
+import { formatUsdPlain } from "@/utils/marketRange";
 
-import { formatWithPrecision } from ".";
+import marketFromName from "./marketIdFromName";
 
 export const parseMarketCSV = (csvText: string): Record<string, number> => {
   const parsed = Papa.parse<{ marketName: string; score: string }>(csvText, {
@@ -55,29 +55,28 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
 
     const marketId = market.marketId;
 
-    // Validate score
-    const score = parseFloat(scoreStr);
-    if (isNaN(score)) {
+    const parsedUsd = parseFloat(scoreStr);
+    if (isNaN(parsedUsd)) {
       throw new Error(
-        `Row ${i + 2}: Score "${scoreStr}" is not a valid number`,
+        `Row ${i + 2}: Value "${scoreStr}" is not a valid number`,
       );
     }
 
-    if (score < 0) {
-      throw new Error(`Row ${i + 2}: Score cannot be negative`);
-    }
+    const predictionUsd = Math.round(parsedUsd);
 
-    const maxScore = formatWithPrecision(
-      market.maxValue * market.precision,
-      market.precision,
-    );
-    if (score > +maxScore) {
+    if (predictionUsd < market.minValue) {
       throw new Error(
-        `Row ${i + 2}: Score cannot be greater than the max value of ${maxScore}`,
+        `Row ${i + 2}: Price must be at least ${market.minValue} USD for property ${marketName}`,
       );
     }
 
-    result[marketId] = Math.round(score * market.precision);
+    if (predictionUsd > market.maxValue) {
+      throw new Error(
+        `Row ${i + 2}: Price must be at most ${market.maxValue} USD for property ${marketName}`,
+      );
+    }
+
+    result[marketId] = predictionUsd;
   }
 
   if (Object.values(result).length === 0) {
@@ -90,10 +89,7 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
 export function generateMarketCsv(markets: Record<string, PredictionMarket>) {
   const data = Object.values(markets).map((market) => ({
     marketName: market.name,
-    score: formatWithPrecision(
-      market.prediction ?? market.marketEstimate ?? 0,
-      market.precision,
-    ),
+    score: formatUsdPlain(market.prediction ?? market.marketEstimate ?? 0),
   }));
 
   return Papa.unparse(data, {

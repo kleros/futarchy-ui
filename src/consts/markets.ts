@@ -1,5 +1,7 @@
 import { Address } from "viem";
 
+import { deriveMarketRangeFromInvestment } from "@/utils/marketRange";
+
 export const positionExplainerLink =
   "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6#30d9a9db4f0881969c23e8152ab1146d";
 
@@ -41,13 +43,14 @@ export interface IMarket {
   downToken: Address;
   underlyingToken: Address;
   invalidToken: Address;
-  minValue: number;
-  maxValue: number;
-  precision: number;
   marketId: Address;
   parentMarketOutcome: number;
   realtContract: Address;
   conditionId: `0x${string}`;
+  initialInvestmentUsd: number;
+  minValue: number;
+  maxValue: number;
+  precision: number;
 }
 
 export const marketMetadata = {
@@ -57,7 +60,7 @@ export const marketMetadata = {
     "Which properties will be selected for evaluation as a part of “RealT Properties Predictions”? \nAnd for each property, what price will that property be appraised at?",
 };
 
-export const markets: Array<IMarket> = [
+export const markets: IMarket[] = [
   {
     name: "23750 W 7 Mile",
     color: "#E6194B",
@@ -65,14 +68,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
     underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
     invalidToken: "0x11463F43181eB643bA8a584756CCB27a9B8f7B98",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
     parentMarketOutcome: 0,
     conditionId:
       "0x3d963acd72df546f58bf4ea76fda6957c830e6e3f8965517c396fc76dc2c08a3",
     realtContract: "0x0f388d7e65a969dbcbfab21bc3ab6629af78f4cf",
+    initialInvestmentUsd: 944_537,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(944_537),
   },
   {
     name: "18881 Mound",
@@ -81,14 +84,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
     underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
     invalidToken: "0x971bd2446cc32dFa26410Cc46978AA0c371Bc48e",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
     parentMarketOutcome: 1,
     conditionId:
       "0xa4cc97a4e4f6e02c546a5b3bb49e2c411dcb4c6dcd478cef9cd0c86605c59878",
     realtContract: "0x5c4e3fa9704d4212c6434190af6379cfbda47e13",
+    initialInvestmentUsd: 336_340,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(336_340),
   },
   {
     name: "14631-14633 Plymouth",
@@ -97,14 +100,14 @@ export const markets: Array<IMarket> = [
     downToken: "0xdd510abc6a848662371c3455717949035cc24019",
     underlyingToken: "0xfb06c25e59302d8a0318d6df41a2f29deeea1c8a",
     invalidToken: "0x43D6E82de1E64531b5E47891b186227edA566344",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0xfdd8af90af2722d5fe39adf1002fbd069b8a76c0",
     parentMarketOutcome: 2,
     conditionId:
       "0xe97f19928d4143377d3cb97043c90408ccb9c51788447f42d2df9d65694c8171",
     realtContract: "0x854a0cfa24012937d3d15682ecc3d5b474bfa97e",
+    initialInvestmentUsd: 1_389_025,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(1_389_025),
   },
   {
     name: "11373 Prest",
@@ -113,14 +116,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x372d0798ffe8c3aa982a15258c0fea22c6a768df",
     underlyingToken: "0xe85d556d1aaae2f6027336e468e9c981251a4bef",
     invalidToken: "0x3Aa738505C22e670a074e60566bD7264e7D682B1",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0x1f2e76d66047e7f8e0deea373a0c04ffecab31df",
     parentMarketOutcome: 3,
     conditionId:
       "0xdc8f8277da182ee2d5293c754a1cfb8d3761720259cf17a65df61b7cb6983721",
     realtContract: "0xd8b19f31186fc7350be018651aa1383175923bb3",
+    initialInvestmentUsd: 76_806,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(76_806),
   },
   {
     name: "16728-16730 Woodingham",
@@ -129,14 +132,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x34f8572eab463606a014c37ff68b78ac9361cacc",
     underlyingToken: "0xb3933fd994af5db7ae985a0d62ed2dda918a839b",
     invalidToken: "0x12c91f543a48F58e3E54c398f19BEc4b62aFD617",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0x2338ca7d59b7e15bd03dd81cf5f5bb59b6c6c6d4",
     parentMarketOutcome: 4,
     conditionId:
       "0xf857ab39ef39d99f00d38ab07a5676406dfd5382f6d2177c44642e147d8dd0ad",
     realtContract: "0xc7697f5e86a102eaf4000719a2dc477d65beea7d",
+    initialInvestmentUsd: 143_897,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(143_897),
   },
   {
     name: "9518 Franklin",
@@ -145,14 +148,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x31e3d82a613e5aeea7c3a65c3d657cacaaaf2674",
     underlyingToken: "0x6d0407b5ae419fdd92ffdc64abf04c5f28950e02",
     invalidToken: "0xe54422171C40aA14B0fc935DEA7AFb85BE15357d",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0x9a274ea86665d872fc58c8f26fd97a18b844c6ac",
     parentMarketOutcome: 5,
     conditionId:
       "0x8054990ae8221c8a08581381a0d2e3e5f23144a4d18a2398858be52dd94cc8c9",
     realtContract: "0x4ae9d3343bbc6a894b7ee7f843c224c953f1661b",
+    initialInvestmentUsd: 461_643,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(461_643),
   },
   {
     name: "8034 Faith",
@@ -161,14 +164,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x64974d3bf944fafec6fa19a900f3679a716b3a86",
     underlyingToken: "0x20025021e440edd39d486f3c6a1d7adb9c269faf",
     invalidToken: "0x406B8Ee2DF07c644414E852542dAB98BdDf39234",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0xc25af7d4a5cb36bb3ce9faf652a5f7f989a1d57a",
     parentMarketOutcome: 6,
     conditionId:
       "0xe35db6fb9992ab689e21751f036ccc9a8548b71dec3089874cf4a19a13cd34bb",
     realtContract: "0x90d280b6456f8233e115e6aabb2ca89249dafd39",
+    initialInvestmentUsd: 327_296,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(327_296),
   },
   {
     name: "1769 Cheryl",
@@ -177,14 +180,14 @@ export const markets: Array<IMarket> = [
     downToken: "0x044e1b6d8aacbda5699423578bd200484f7473c3",
     underlyingToken: "0x67d0f938ea12e7e30b8ccc24dd031d656cc3927d",
     invalidToken: "0xA9099Baa3b74c1d602aCe8CeaC5933a16A0456C5",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0xd31d05158722f64b6a49e25bccc47d3203eecbe9",
     parentMarketOutcome: 7,
     conditionId:
       "0x3c102db4f274983b648bd27a4092866e1b81dbc08b8738a5c694a8d8c3948a81",
     realtContract: "0x19f824662ba9df78e368022f085b708fccc201c8",
+    initialInvestmentUsd: 307_272,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(307_272),
   },
   {
     name: "9311 Bedford",
@@ -193,13 +196,13 @@ export const markets: Array<IMarket> = [
     downToken: "0xe9d025d3cbd783d6a92626b650a32f7cbaca0e7d",
     underlyingToken: "0x58ce7a53abeca1db90cec0e6b7dcbe3a36d986c4",
     invalidToken: "0xcA4c82fd178aaf4b72ECe35774ce04B7Aa2E5361",
-    minValue: 0,
-    maxValue: 10,
-    precision: 100,
     marketId: "0x13d48a73811c01f574e1bfa4c58b7d95d2f590e4",
     parentMarketOutcome: 8,
     conditionId:
       "0x2dcf754f36437ea0c298e5d27a0f3904dc2335a6e239b15a104f3ca7787c5926",
     realtContract: "0xa83cbd26964ea953f86c741871a1ab2a256cb82d",
+    initialInvestmentUsd: 90_270,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(90_270),
   },
 ];

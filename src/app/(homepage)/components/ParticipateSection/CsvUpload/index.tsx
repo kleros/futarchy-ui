@@ -31,8 +31,8 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
       const csvText = await file.text();
       const records = parseMarketCSV(csvText);
 
-      Object.entries(records).forEach(([marketId, score]) => {
-        setPrediction(marketId, score);
+      Object.entries(records).forEach(([marketId, predictionUsd]) => {
+        setPrediction(marketId, predictionUsd);
       });
 
       toggleIsOpen();
@@ -48,7 +48,7 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
       {...{ isOpen }}
     >
       <div className="flex size-full flex-col justify-center gap-6">
-        <h2 className="w-full. text-klerosUIComponentsPrimaryText text-center text-2xl font-semibold">
+        <h2 className="text-klerosUIComponentsPrimaryText w-full text-center text-2xl font-semibold">
           Upload CSV Predictions
         </h2>
         <div
@@ -70,18 +70,18 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
               marketName,score
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              23750 W 7 Mile,4.45
+              23750 W 7 Mile,1200000
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              18881 Mound,5.52
+              18881 Mound,450000
             </span>
             <span className="text-klerosUIComponentsSecondaryText text-sm">
               ...
             </span>
           </div>
           <span className="text-klerosUIComponentsPrimaryText text-sm">
-            Each row represents a prediction for a property&apos;s price in the
-            Gnosis ecosystem.
+            Each row is a property name and a predicted price in USD (whole
+            dollars, within that property&apos;s min/max range).
           </span>
         </div>
         <CsvDownload />
