@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
-export const websiteUrl = "https://foresight.kleros.io";
-export const siteName = "foresight.kleros.io";
+export const websiteUrl = "https://realt.foresight.kleros.io";
+export const siteName = "realt.foresight.kleros.io";
 
 export const metadata: Metadata = {
   title: "Foresight | Kleros",

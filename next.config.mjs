@@ -9,6 +9,13 @@ const nextConfig = {
         pathname: "/**",
         search: "",
       },
+      {
+        protocol: "https",
+        hostname: "realt.co",
+        port: "",
+        pathname: "/**",
+        search: "",
+      },
     ],
   },
   webpack: (config) => {

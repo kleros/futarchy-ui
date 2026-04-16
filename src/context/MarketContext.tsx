@@ -18,6 +18,7 @@ import { useGetWinningOutcomes } from "@/hooks/useGetWinningOutcomes";
 import { useMarketPrice } from "@/hooks/useMarketPrice";
 
 import { isUndefined } from "@/utils";
+import { outcomeFromPoolPrice, outcomeRangeSpan } from "@/utils/marketRange";
 
 import { IMarket, parentConditionId } from "@/consts/markets";
 
@@ -66,7 +67,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const setMarketEstimate = useMarketsStore((state) => state.setMarketEstimate);
 
-  const { underlyingToken, upToken, downToken, maxValue, precision } = market;
+  const { underlyingToken, upToken, downToken } = market;
 
   const [localPrediction, setLocalPrediction] = useState<number | undefined>(
     undefined,
@@ -82,7 +83,6 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     [localPrediction],
   );
 
-  // initialize market
   useEffect(() => {
     setMarket(market);
   }, []);
@@ -114,9 +114,9 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const marketEstimate = useMemo(
     () =>
       typeof marketPrice !== "undefined"
-        ? Math.round(marketPrice * maxValue * precision)
+        ? outcomeFromPoolPrice(marketPrice, market)
         : 0,
-    [marketPrice, maxValue, precision],
+    [marketPrice, market],
   );
 
   useEffect(() => {
@@ -134,14 +134,13 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     ) {
       setLocalPrediction(marketEstimate);
     }
-  }, [localPrediction, marketEstimate, market.precision, currentPrices]);
+  }, [localPrediction, marketEstimate, currentPrices]);
 
   const showEstimateVariant = useMemo(() => {
     if (isUndefined(localPrediction) || !hasLiquidity) return false;
-    return (
-      Math.abs(localPrediction - marketEstimate) >
-      market.maxValue / market.precision / 100
-    );
+    const span = outcomeRangeSpan(market);
+    if (span === 0) return false;
+    return Math.abs(localPrediction - marketEstimate) > span / 100;
   }, [localPrediction, market, marketEstimate, hasLiquidity]);
 
   const { data: winningOutcomes } = useGetWinningOutcomes(market.conditionId);

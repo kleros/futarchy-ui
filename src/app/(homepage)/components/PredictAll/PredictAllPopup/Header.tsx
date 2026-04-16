@@ -8,13 +8,14 @@ import { useMarketsStore } from "@/store/markets";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import LightButton from "@/components/LightButton";
+import { ScrollFade } from "@/components/ScrollFade";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 import ArrowDown from "@/assets/svg/long-arrow-down.svg";
 import ArrowUp from "@/assets/svg/long-arrow-up.svg";
 
-import { formatWithPrecision, isUndefined } from "@/utils";
-import { ScrollFade } from "@/components/ScrollFade";
+import { isUndefined } from "@/utils";
+import { formatUsd } from "@/utils/marketRange";
 
 const Header: React.FC = () => {
   const markets = usePredictionMarkets();
@@ -62,12 +63,12 @@ const Header: React.FC = () => {
                   <div className="space-x-2">
                     <span className="text-klerosUIComponentsPrimaryText text-sm sm:text-base">
                       {/* TODO: Changes per experiment */}
-                      Score
+                      Price
                     </span>
                     <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold sm:text-base">
                       {market.prediction
-                        ? `${formatWithPrecision(market.prediction, market.precision)}%`
-                        : "0%"}
+                        ? formatUsd(market.prediction)
+                        : formatUsd(0)}
                     </span>
                   </div>
                 </div>

@@ -38,8 +38,8 @@ createAppKit({
   projectId: reownProjectId,
   networks: [gnosis],
   defaultNetwork: gnosis,
-  metadata: metadata,
   enableCoinbase: false,
+  metadata: metadata,
   features: {
     analytics: false,
   },
