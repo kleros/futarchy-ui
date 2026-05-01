@@ -94,7 +94,7 @@ interface FactoryStore {
 const DEFAULT_OPENING_TIME = 2_000_000_000;
 
 const makeChild = (label = "Outcome"): ChildForm => ({
-  marketName: `Score if ${label} wins (0-10)`,
+  marketName: `Score if ${label} is watched (0-10)`,
   outcomeLabelLow: "DOWN",
   outcomeLabelHigh: "UP",
   tokenNameLow: `${label.toUpperCase()}_DN`,
@@ -108,7 +108,7 @@ const makeChild = (label = "Outcome"): ChildForm => ({
 });
 
 const initialParent = (): ParentForm => ({
-  marketName: "Which movie wins the weekend?",
+  marketName: "Which movies should we watch this weekend?",
   outcomes: ["Movie A", "Movie B"],
   tokenNames: ["MVA", "MVB", ""],
   category: "movies",

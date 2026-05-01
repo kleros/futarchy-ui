@@ -29,7 +29,7 @@ const ChildFields: React.FC<ChildFieldsProps> = ({ index }) => {
           value={child.marketName}
           onChange={(v) => set(index, "marketName", v)}
           isDisabled={isDeploying}
-          placeholder="IMDb score if A wins (0-10)"
+          placeholder="IMDb score if A is watched (0-10)"
         />
       </Field>
 

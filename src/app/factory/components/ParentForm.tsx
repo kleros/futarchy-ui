@@ -33,24 +33,25 @@ const ParentForm: React.FC = () => {
     >
       <div className="flex flex-col gap-1">
         <h2 className="text-klerosUIComponentsPrimaryText text-lg font-semibold">
-          Parent categorical market
+          Parent multi-categorical market
         </h2>
         <p className="text-klerosUIComponentsSecondaryText text-xs">
-          Defines the high-level categorical question. Each outcome becomes one
-          branch and the basis for a scalar child.
+          Defines the high-level multi-categorical question. Reality.eth picks
+          a non-empty subset of outcomes; each selected branch keeps its child
+          conditional alive.
         </p>
       </div>
 
       <Field
         label="Market name"
-        tooltip="The Reality question for the parent. Combined with outcomes + category + lang."
+        tooltip="The Reality multi-select question for the parent. Combined with outcomes + category + lang."
       >
         <TextField
           aria-label="market-name"
           value={parent.marketName}
           onChange={(v) => setField("marketName", v)}
           isDisabled={isDeploying}
-          placeholder="Which movie wins the weekend?"
+          placeholder="Which movies should we watch this weekend?"
         />
       </Field>
 

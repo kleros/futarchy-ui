@@ -87,7 +87,7 @@ export const useFactoryDeploy = () => {
             id: PARENT_STEP_ID,
             title: "Open phased session",
             description:
-              "Deploys the parent categorical market. One signature.",
+              "Deploys the parent multi-categorical market. One signature.",
             status: "pending",
           },
           ...batchPlans.map(

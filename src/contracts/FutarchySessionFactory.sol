@@ -19,13 +19,13 @@ interface ISeerMarketFactory {
         string[] tokenNames;
     }
 
-    function createCategoricalMarket(CreateMarketParams calldata params) external returns (address market);
+    function createMultiCategoricalMarket(CreateMarketParams calldata params) external returns (address market);
 
     function createScalarMarket(CreateMarketParams calldata params) external returns (address market);
 }
 
 /// @title FutarchyFactory
-/// @notice Permissionless orchestrator around Seer’s `MarketFactory`: one categorical parent and one scalar child per parent outcome in a single transaction.
+/// @notice Permissionless orchestrator around Seer’s `MarketFactory`: one multi-categorical parent and one scalar child per parent outcome in a single transaction.
 /// @dev This contract trusts the Seer `MarketFactory` at `seerMarketFactory`. Market resolution, CTF conditions, and wrapped ERC20 behavior are entirely defined upstream; this wrapper only validates calldata shape, forwards calls, stores a session record, and emits events.
 contract FutarchyFactory {
 
@@ -37,15 +37,15 @@ contract FutarchyFactory {
     /// @dev For phased deploys, `completedAt` is 0 until all children exist; `openedAt` is set when the parent is deployed.
     struct Session {
         address deployer; // Account that opened or atomically deployed the session (`msg.sender` at start).
-        address parentMarket; // Seer categorical `Market` clone returned by `createCategoricalMarket`.
+        address parentMarket; // Seer multi-categorical `Market` clone returned by `createMultiCategoricalMarket`.
         address[] childMarkets; // Seer scalar clones; `childMarkets[i]` is parent outcome `i` (grows in phased mode).
         uint64 openedAt; // When the parent market was deployed.
         uint64 completedAt; // When all `expectedChildCount` children were deployed; 0 if still incomplete in phased mode.
         uint256 expectedChildCount; // `parent.outcomes.length`; fixed at parent deployment.
     }
 
-    /// @notice Calldata subset for the parent categorical market passed to Seer `createCategoricalMarket`.
-    /// @dev Becomes `ISeerMarketFactory.CreateMarketParams` with `questionStart`, `questionEnd`, `outcomeType` empty, bounds zero, and `parentMarket` zero.
+    /// @notice Calldata subset for the parent multi-categorical market passed to Seer `createMultiCategoricalMarket`.
+    /// @dev Becomes `ISeerMarketFactory.CreateMarketParams` with `questionStart`, `questionEnd`, `outcomeType` empty, bounds zero, and `parentMarket` zero. Multiple outcomes can resolve true.
     struct ParentCategoricalConfig {
         string marketName; // Encoded with `outcomes`, `category`, `lang` for the parent Reality question (Seer path).
         string[] outcomes; // The market outcomes, doesn't include the INVALID_RESULT outcome.
@@ -75,7 +75,7 @@ contract FutarchyFactory {
 
     /// @notice Top-level argument to `deployFutarchySession`.
     struct DeployFutarchySessionParams {
-        ParentCategoricalConfig parent; // Parent categorical configuration.
+        ParentCategoricalConfig parent; // Parent multi-categorical configuration.
         ChildScalarConfig[] children; // One entry per parent outcome, ordered by `parentOutcomeIndex`.
     }
 
@@ -96,7 +96,7 @@ contract FutarchyFactory {
     // *              Events               * //
     // ************************************* //
 
-    /// @notice Emitted immediately after Seer returns the parent categorical clone.
+    /// @notice Emitted immediately after Seer returns the parent multi-categorical clone.
     /// @param sessionId Session identifier
     /// @param deployer `msg.sender` for this deployment.
     /// @param parentMarket Address of the parent `Market` clone.
@@ -146,10 +146,10 @@ contract FutarchyFactory {
     // *             External              * //
     // ************************************* //
 
-    /// @notice Deploys parent + one scalar child per categorical outcome in a single transaction.
+    /// @notice Deploys parent + one scalar child per parent outcome in a single transaction.
     /// @param params Parent config and one `ChildScalarConfig` per outcome, ordered by `parentOutcomeIndex == 0..N-1`.
     /// @return sessionId Monotonic id assigned for this deployment.
-    /// @return parentAddress Seer categorical market clone.
+    /// @return parentAddress Seer multi-categorical market clone.
     /// @return childMarkets Seer scalar child clone per parent outcome, same order as `params.parent.outcomes`.
     function deployFutarchySession(DeployFutarchySessionParams calldata params)
         external
@@ -160,7 +160,7 @@ contract FutarchyFactory {
 
         sessionId = sessionCount;
         address deployer = msg.sender;
-        parentAddress = _seerCreateCategoricalParent(params.parent);
+        parentAddress = _seerCreateMultiCategoricalParent(params.parent);
 
         if (parentAddress == address(0)) revert ZeroSeerMarket();
 
@@ -188,7 +188,7 @@ contract FutarchyFactory {
     /// @notice Deploys the parent only; pass full `children` so it is validated. The same `msg.sender` must later call `deploySessionChildBatch` with matching configs.
     /// @param params Parent configuration and one `ChildScalarConfig` per outcome
     /// @return sessionId Monotonic id for this open session.
-    /// @return parentAddress Seer categorical `Market` clone.
+    /// @return parentAddress Seer multi-categorical `Market` clone.
     function openPhasedFutarchySession(DeployFutarchySessionParams calldata params)
         external
         returns (uint256 sessionId, address parentAddress)
@@ -197,7 +197,7 @@ contract FutarchyFactory {
         sessionId = sessionCount;
         address deployer = msg.sender;
 
-        parentAddress = _seerCreateCategoricalParent(params.parent);
+        parentAddress = _seerCreateMultiCategoricalParent(params.parent);
         if (parentAddress == address(0)) revert ZeroSeerMarket();
         
         uint256 outcomeCount = params.parent.outcomes.length;
@@ -290,8 +290,7 @@ contract FutarchyFactory {
         }
     }
 
-    /// @dev `questionStart` / `questionEnd` / `outcomeType` are empty: Seer’s `createCategoricalMarket` path ignores them; only `marketName`, `outcomes`, `category`, `lang`, and token list drive the parent.
-    function _seerCreateCategoricalParent(ParentCategoricalConfig calldata parentConfig) private returns (address parentAddress) {
+    function _seerCreateMultiCategoricalParent(ParentCategoricalConfig calldata parentConfig) private returns (address parentAddress) {
         ISeerMarketFactory.CreateMarketParams memory createParams = ISeerMarketFactory.CreateMarketParams({
             marketName: parentConfig.marketName,
             outcomes: parentConfig.outcomes,
@@ -308,7 +307,7 @@ contract FutarchyFactory {
             openingTime: parentConfig.openingTime,
             tokenNames: parentConfig.tokenNames
         });
-        parentAddress = seerMarketFactory.createCategoricalMarket(createParams);
+        parentAddress = seerMarketFactory.createMultiCategoricalMarket(createParams);
     }
 
     /// @notice Deploys one scalar child for `parentOutcomeIndex`, returns the clone address.

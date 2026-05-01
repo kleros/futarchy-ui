@@ -63,7 +63,7 @@ const contracts = {
     name: "WXDAI",
   },
   futarchyFactory: {
-    address: "0xE3B4DbA324393c83C0367a57A572c26d322DadAE",
+    address: "0x1285e312D926C244321a3C1D47BC7C102DA816c5",
     abi: FutarchyFactoryAbi as unknown as Abi,
     name: "FutarchyFactory",
   },
