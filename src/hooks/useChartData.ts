@@ -56,6 +56,11 @@ export const useChartData = (markets: Array<IMarket>) =>
       }).then((res) => res.json());
       return data.map((rawData: IReturn, i: number) => {
         const market = markets[i];
+
+        // TEMP: skip markets with no data available
+        if (rawData.length < 2) {
+          return { [market.name]: { market, data: [] } };
+        }
         const processed: IChartData[""]["data"] = rawData[1].map(
           (dataPoint) => {
             let token0Price = dataPoint.token0Price;
