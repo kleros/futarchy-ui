@@ -52,41 +52,36 @@ export const useChartData = (markets: Array<IMarket>) =>
     queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
     queryFn: async () => {
       const { data }: { data: IReturn[] } = await fetch("api/market-chart", {
-        next: { revalidate: 300 },
+        // next: { revalidate: 300 },
       }).then((res) => res.json());
       return data.map((rawData: IReturn, i: number) => {
         const market = markets[i];
 
-        // TEMP: skip markets with no data available
-        if (rawData.length < 2) {
-          return { [market.name]: { market, data: [] } };
-        }
-        const processed: IChartData[""]["data"] = rawData[1].map(
-          (dataPoint) => {
-            let token0Price = dataPoint.token0Price;
-            let token1Price = dataPoint.token1Price;
-            const sqrtPrice = dataPoint.sqrtPrice;
-            if (
-              token0Price === "0" &&
-              token1Price === "0" &&
-              sqrtPrice &&
-              sqrtPrice !== "0"
-            ) {
-              ({ token0Price, token1Price } = getSqrtPrices(sqrtPrice));
-            }
-            return {
-              timestamp: dataPoint.periodStartUnix,
-              value:
-                parseFloat(
-                  (dataPoint.pool.token0.id.toLowerCase() ===
-                  market.underlyingToken.toLowerCase()
-                    ? token0Price
-                    : token1Price
-                  ).slice(0, 9),
-                ) * market.maxValue,
-            };
-          },
-        );
+        const flatData = rawData.flat();
+        const processed: IChartData[""]["data"] = flatData.map((dataPoint) => {
+          let token0Price = dataPoint.token0Price;
+          let token1Price = dataPoint.token1Price;
+          const sqrtPrice = dataPoint.sqrtPrice;
+          if (
+            token0Price === "0" &&
+            token1Price === "0" &&
+            sqrtPrice &&
+            sqrtPrice !== "0"
+          ) {
+            ({ token0Price, token1Price } = getSqrtPrices(sqrtPrice));
+          }
+          return {
+            timestamp: dataPoint.periodStartUnix,
+            value:
+              parseFloat(
+                (dataPoint.pool.token0.id.toLowerCase() ===
+                market.underlyingToken.toLowerCase()
+                  ? token0Price
+                  : token1Price
+                ).slice(0, 9),
+              ) * market.maxValue,
+          };
+        });
         return { [market.name]: { market, data: processed } };
       });
     },
