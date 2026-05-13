@@ -24,7 +24,7 @@ export async function GET() {
 
       const upstream = await fetch(
         `https://app.seer.pm/.netlify/functions/market-chart?marketId=${marketId}&chainId=${chainId}`,
-        { next: { revalidate: 300 } },
+        // { next: { revalidate: 300 } },
       );
       return await upstream.json();
     }),
