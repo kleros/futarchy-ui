@@ -42,7 +42,7 @@ async function redeemParentsToTradeExecutor({
     }),
   };
 
-  const calls = [redeemCall, ...approveCalls];
+  const calls = [...approveCalls, redeemCall];
 
   const writePromise = writeContract(config, {
     address: tradeExecutor,
