@@ -1,20 +1,16 @@
 import React, { useMemo } from "react";
 
 import { Button, Modal } from "@kleros/ui-components-library";
-import { Address, formatUnits } from "viem";
+import { Address } from "viem";
 
-import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
-
-import { useRedeemParentsToTradeExecutor } from "@/hooks/tradeWallet/useRedeemParentsToTradeExecutor";
-import { useTokensBalances } from "@/hooks/useTokenBalances";
+import { useRedeemFullBatchToTradeExecutor } from "@/hooks/tradeWallet/useRedeemFullBatchToTradeExecutor";
+import { useMarketResolutionInfo } from "@/hooks/useMarketResolutionInfo";
 
 import LightButton from "@/components/LightButton";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 
-import { isUndefined } from "@/utils";
-
-import { markets, parentConditionId } from "@/consts/markets";
+import { formatError } from "@/utils/formatError";
 
 interface RedeemParentsInterfaceProps {
   isOpen: boolean;
@@ -27,109 +23,67 @@ export const RedeemParentsInterface: React.FC<RedeemParentsInterfaceProps> = ({
   isOpen,
   toggleIsOpen,
 }) => {
-  const { data: winningOutcomes, isLoading: winningOutcomesLoading } =
-    useReadGnosisRouterGetWinningOutcomes({
-      args: [parentConditionId],
-    });
-
-  const numberOutcomes = useMemo(
-    () =>
-      winningOutcomes?.reduce((acc, outcome) => (outcome ? acc + 1 : acc), 0),
-    [winningOutcomes],
-  );
-
-  const winningTokens = useMemo(() => {
-    if (!winningOutcomesLoading && !isUndefined(winningOutcomes)) {
-      return markets
-        .filter(
-          ({ parentMarketOutcome }) => winningOutcomes[parentMarketOutcome],
-        )
-        .map(({ underlyingToken, parentMarketOutcome }) => ({
-          underlyingToken,
-          index: parentMarketOutcome,
-        }));
-    }
-  }, [winningOutcomesLoading, winningOutcomes]);
-
-  const { data: balances, isLoading: balancesLoading } = useTokensBalances(
-    tradeExecutor,
-    winningTokens?.map(({ underlyingToken }) => underlyingToken) ?? [],
-  );
-
-  const winningTokensWithBalance = useMemo(
-    () =>
-      winningTokens
-        ?.map(({ underlyingToken, index }, i) => ({
-          address: underlyingToken,
-          index,
-          balance: balances?.[i] as bigint,
-        }))
-        .filter(({ balance }) => balance > 0n),
-    [balances, winningTokens],
-  );
-
-  const isCheckingStatus =
-    winningOutcomesLoading ||
-    balancesLoading ||
-    isUndefined(numberOutcomes) ||
-    isUndefined(winningTokensWithBalance);
-
-  // if there is value to be redeemed, its redeemable
-  const isRedeemable = useMemo(() => {
-    if (isCheckingStatus) return;
-    if (isUndefined(numberOutcomes) && numberOutcomes === 0) return false;
-    const totalBalance = winningTokensWithBalance.reduce(
-      (acc, { balance }) => acc + balance,
-      0n,
-    );
-    return totalBalance > 0n;
-  }, [numberOutcomes, winningTokensWithBalance, isCheckingStatus]);
-
-  // estimatted value of tokens based on number of winning outcomes
-  const totalValue = useMemo(() => {
-    // can be zero if market not resolved yet
-    if (numberOutcomes === 0) return;
-    const totalBalance = winningTokensWithBalance?.reduce(
-      (acc, { balance }) => acc + balance,
-      0n,
-    );
-
-    if (
-      !isUndefined(totalBalance) &&
-      !isUndefined(winningTokensWithBalance) &&
-      !isUndefined(numberOutcomes)
-    ) {
-      const formattedAmount = parseFloat(
-        formatUnits(totalBalance / BigInt(numberOutcomes), 18),
-      ).toFixed(2);
-      if (formattedAmount !== "0.00") {
-        return formattedAmount;
-      } else if (totalBalance > 0n) {
-        return "< 0.01";
-      }
-    }
-  }, [winningTokensWithBalance, numberOutcomes]);
-
-  const redeemParentsFromTradeExecutor = useRedeemParentsToTradeExecutor(() => {
+  const {
+    isCheckingStatus,
+    isRedeemable,
+    parentRedeemConfig,
+    childRedeemConfig,
+    totalValue,
+    winningChildMarkets,
+    numberOutcomes,
+    areAllChildResolved,
+    childResolvedByMarketId,
+  } = useMarketResolutionInfo(tradeExecutor);
+  const redeemFullBatch = useRedeemFullBatchToTradeExecutor(() => {
     toggleIsOpen();
   });
 
   const handleRedeem = () => {
-    if (isUndefined(balances)) return;
+    if (!isRedeemable) return;
 
-    redeemParentsFromTradeExecutor.mutate({
-      tokens: markets.map(({ marketId }) => marketId),
-      outcomeIndexes: markets.map(({ parentMarketOutcome }) =>
-        BigInt(parentMarketOutcome),
-      ),
-      amounts: balances,
+    redeemFullBatch.mutate({
       tradeExecutor,
+      parent: parentRedeemConfig, // it can be undefined since it's possible there's nothing to redeem on parent side
+      children: childRedeemConfig,
     });
   };
 
+  const mutationErrorText =
+    redeemFullBatch.isError && redeemFullBatch.error
+      ? formatError(redeemFullBatch.error)
+      : undefined;
+
+  const statusMessage = useMemo(() => {
+    if (isCheckingStatus) return "Checking redemptions...";
+    if (numberOutcomes === 0) return "Parent market is not resolved yet.";
+    if (!areAllChildResolved) {
+      const pending = winningChildMarkets.filter(
+        (m) => !childResolvedByMarketId.get(m.marketId),
+      );
+      const names = pending.map((m) => m.name).join(", ");
+      return pending.length > 0
+        ? `Waiting for child markets to resolve: ${names}`
+        : "Waiting for child markets to resolve.";
+    }
+    if (isRedeemable) {
+      return `You can redeem parent outcome tokens and conditional (UP/DOWN) tokens in one transaction${
+        totalValue ? ` (about ${totalValue} sDAI combined).` : "."
+      }`;
+    }
+    return "Nothing to redeem.";
+  }, [
+    areAllChildResolved,
+    childResolvedByMarketId,
+    isCheckingStatus,
+    isRedeemable,
+    numberOutcomes,
+    totalValue,
+    winningChildMarkets,
+  ]);
+
   return (
     <Modal
-      className="relative h-fit w-max min-w-full overflow-x-hidden p-6 py-8 md:min-w-2xl"
+      className="relative h-fit w-full min-w-full overflow-x-hidden p-6 py-8 md:w-max md:min-w-2xl"
       onOpenChange={toggleIsOpen}
       {...{ isOpen }}
     >
@@ -147,24 +101,22 @@ export const RedeemParentsInterface: React.FC<RedeemParentsInterfaceProps> = ({
           <h2 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
             Redeem Tokens
           </h2>
-          <p className="text-klerosUIComponentsPrimaryText text-sm">
-            {isCheckingStatus
-              ? "Checking redemptions..."
-              : isRedeemable
-                ? `You have tokens from the selected projects that were not spent. 
-                   You can redeem up to ${totalValue} sDAI.`
-                : "Nothing to redeem."}
+          <p className="text-klerosUIComponentsPrimaryText text-center text-sm text-wrap">
+            {statusMessage}
           </p>
+          {mutationErrorText ? (
+            <p className="text-center text-sm text-red-600">
+              {mutationErrorText}
+            </p>
+          ) : null}
         </div>
 
         <Button
           text="Redeem"
           isDisabled={
-            redeemParentsFromTradeExecutor.isPending ||
-            isCheckingStatus ||
-            !isRedeemable
+            redeemFullBatch.isPending || isCheckingStatus || !isRedeemable
           }
-          isLoading={redeemParentsFromTradeExecutor.isPending}
+          isLoading={redeemFullBatch.isPending}
           onPress={handleRedeem}
         />
       </div>

@@ -2,6 +2,7 @@ import { Address, erc20Abi, type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
 import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
+import { ConditionalTokensAbi } from "@/abi/ConditionalTokens";
 import { CowSwapAbi } from "@/abi/CowSwap";
 import { CreditsManagerAbi } from "@/abi/CreditsManager";
 import { RouterAbi } from "@/abi/Router";
@@ -44,6 +45,11 @@ const contracts = {
     address: "0x774284d5cdfec3a0a0ebc7283ad4d5b33013c29c",
     abi: CondtionalRouterAbi,
     name: "conditionalRouter",
+  },
+  conditionalTokens: {
+    address: "0xCeAfDD6bc0bEF976fdCd1112955828E00543c0Ce",
+    abi: ConditionalTokensAbi,
+    name: "ConditionalTokens",
   },
   foresightCreditsManager: {
     address: "0x17592eFE59a318A6B0AFE32145ee04eAFeeA8A61",
