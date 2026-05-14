@@ -36,8 +36,8 @@ const ParentForm: React.FC = () => {
           Parent multi-categorical market
         </h2>
         <p className="text-klerosUIComponentsSecondaryText text-xs">
-          Defines the high-level multi-categorical question. Reality.eth picks
-          a non-empty subset of outcomes; each selected branch keeps its child
+          Defines the high-level multi-categorical question. Reality.eth picks a
+          non-empty subset of outcomes; each selected branch keeps its child
           conditional alive.
         </p>
       </div>
