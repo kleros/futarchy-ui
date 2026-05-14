@@ -8,6 +8,7 @@ const gnosisRouter = getContractInfo("gnosisRouter");
 const sDAI = getContractInfo("sDAI");
 const sDAIAdapter = getContractInfo("sDAIAdapter");
 const conditionalRouter = getContractInfo("conditionalRouter");
+const conditionalTokens = getContractInfo("conditionalTokens");
 const creditsManager = getContractInfo("foresightCreditsManager");
 const foresightCredits = getContractInfo("foresightCredits");
 const WXDAI = getContractInfo("wrappedXDai");
@@ -19,6 +20,7 @@ export default defineConfig({
     { ...sDAI },
     { ...sDAIAdapter },
     { ...conditionalRouter },
+    { ...conditionalTokens },
     { ...creditsManager },
     { ...foresightCredits },
     { ...WXDAI },
