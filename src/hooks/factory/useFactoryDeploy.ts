@@ -75,6 +75,13 @@ export const useFactoryDeploy = () => {
 
     const parentConfig = buildParentConfig(parent);
     const childConfigs = children.map((c, i) => buildChildConfig(c, i));
+    const multiCategoricalParent =
+      parent.parentMarketKind === "multicategorical";
+    const sessionParams = {
+      parent: parentConfig,
+      children: childConfigs,
+      multiCategoricalParent,
+    };
     const isPhased = children.length > PHASED_THRESHOLD;
     const mode = isPhased ? "phased" : "atomic";
     const batchPlans = isPhased
@@ -87,7 +94,7 @@ export const useFactoryDeploy = () => {
             id: PARENT_STEP_ID,
             title: "Open phased session",
             description:
-              "Deploys the parent multi-categorical market. One signature.",
+              "Deploys the parent market (categorical or multi-categorical). One signature.",
             status: "pending",
           },
           ...batchPlans.map(
@@ -119,10 +126,7 @@ export const useFactoryDeploy = () => {
     try {
       if (!isPhased) {
         store.updateStep(ATOMIC_STEP_ID, { status: "running" });
-        const result = await atomicMutation.mutateAsync({
-          parent: parentConfig,
-          children: childConfigs,
-        });
+        const result = await atomicMutation.mutateAsync(sessionParams);
         store.setSessionInfo({
           sessionId: result.sessionId.toString(),
           parentMarket: result.parentMarket,
@@ -134,10 +138,7 @@ export const useFactoryDeploy = () => {
         });
       } else {
         store.updateStep(PARENT_STEP_ID, { status: "running" });
-        const opened = await phasedOpenMutation.mutateAsync({
-          parent: parentConfig,
-          children: childConfigs,
-        });
+        const opened = await phasedOpenMutation.mutateAsync(sessionParams);
         store.setSessionInfo({
           sessionId: opened.sessionId.toString(),
           parentMarket: opened.parentMarket,

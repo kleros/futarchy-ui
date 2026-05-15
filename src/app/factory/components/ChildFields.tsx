@@ -21,8 +21,8 @@ const ChildFields: React.FC<ChildFieldsProps> = ({ index }) => {
   return (
     <div className="flex w-full flex-col gap-4 px-1 py-3">
       <Field
-        label="Scalar question"
-        tooltip="Reality.eth question text for this child. Asked only if the parent resolves to this outcome."
+        label="Scalar question (resolved)"
+        tooltip="Filled from the template and this child’s parent outcome + ticker. You can edit it directly; it will refresh if you change the template, outcome label, or ticker."
       >
         <TextField
           aria-label={`child-${index}-name`}

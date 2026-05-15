@@ -1,7 +1,16 @@
 import type { Address } from "viem";
 import { create } from "zustand";
 
+import {
+  applyChildQuestionTemplate,
+  recomputeChildrenMarketNames,
+} from "@/utils/childQuestionTemplate";
+
+export type ParentMarketKind = "multicategorical" | "categorical";
+
 export interface ParentForm {
+  /** Single-winner categorical parent vs multi-select parent at Reality layer. */
+  parentMarketKind: ParentMarketKind;
   marketName: string;
   outcomes: string[];
   /** length must be `outcomes.length + 1`; last slot is reserved for SER-INVALID and is left empty. */
@@ -12,6 +21,11 @@ export interface ParentForm {
   minBond: string;
   /** Reality `openingTime` as a unix timestamp (seconds). */
   openingTime: number;
+  /**
+   * Pattern for each scalar child’s Reality question. Use `${outcome}` or
+   * `${marketName}` for the parent outcome label, `${token}` for its wrapped ticker.
+   */
+  childQuestionTemplate: string;
 }
 
 export interface ChildForm {
@@ -93,21 +107,34 @@ interface FactoryStore {
 
 const DEFAULT_OPENING_TIME = 2_000_000_000;
 
-const makeChild = (label = "Outcome"): ChildForm => ({
-  marketName: `Score if ${label} is watched (0-10)`,
-  outcomeLabelLow: "DOWN",
-  outcomeLabelHigh: "UP",
-  tokenNameLow: `${label.toUpperCase()}_DN`,
-  tokenNameHigh: `${label.toUpperCase()}_UP`,
-  lowerBound: "0",
-  upperBound: "10",
-  minBond: "1",
-  openingTime: DEFAULT_OPENING_TIME,
-  category: "movies",
-  lang: "en",
-});
+const makeChild = (
+  scalarTickerPrefix: string,
+  parent: ParentForm,
+  outcomeIndex: number,
+): ChildForm => {
+  const outcome = parent.outcomes[outcomeIndex] ?? scalarTickerPrefix;
+  const token = parent.tokenNames[outcomeIndex] ?? "";
+  return {
+    marketName: applyChildQuestionTemplate(
+      parent.childQuestionTemplate,
+      outcome,
+      token,
+    ),
+    outcomeLabelLow: "DOWN",
+    outcomeLabelHigh: "UP",
+    tokenNameLow: `${scalarTickerPrefix.toUpperCase()}_DN`,
+    tokenNameHigh: `${scalarTickerPrefix.toUpperCase()}_UP`,
+    lowerBound: "0",
+    upperBound: "10",
+    minBond: "1",
+    openingTime: parent.openingTime,
+    category: parent.category,
+    lang: parent.lang,
+  };
+};
 
 const initialParent = (): ParentForm => ({
+  parentMarketKind: "multicategorical",
   marketName: "Which movies should we watch this weekend?",
   outcomes: ["Movie A", "Movie B"],
   tokenNames: ["MVA", "MVB", ""],
@@ -115,9 +142,13 @@ const initialParent = (): ParentForm => ({
   lang: "en",
   minBond: "1",
   openingTime: DEFAULT_OPENING_TIME,
+  childQuestionTemplate: "Score if ${outcome} is watched (0-10)",
 });
 
-const initialChildren = (): ChildForm[] => [makeChild("A"), makeChild("B")];
+const initialChildren = (): ChildForm[] => {
+  const p = initialParent();
+  return [makeChild("A", p, 0), makeChild("B", p, 1)];
+};
 
 const blankRuntime = {
   mode: undefined as DeployMode | undefined,
@@ -135,23 +166,43 @@ export const useFactoryStore = create<FactoryStore>((set) => ({
   ...blankRuntime,
 
   setParentField: (key, value) =>
-    set((state) => ({ parent: { ...state.parent, [key]: value } })),
+    set((state) => {
+      const parent = { ...state.parent, [key]: value };
+      const syncMeta =
+        key === "category" || key === "lang" || key === "openingTime";
+      const refreshChildQuestions = key === "childQuestionTemplate";
+      let children = state.children;
+      if (syncMeta) {
+        children = state.children.map((c) => ({ ...c, [key]: value }));
+      }
+      if (refreshChildQuestions) {
+        children = recomputeChildrenMarketNames({
+          template: parent.childQuestionTemplate,
+          outcomes: parent.outcomes,
+          tokenNames: parent.tokenNames,
+          children,
+        });
+      }
+      return { parent, children };
+    }),
 
   addOutcome: () =>
     set((state) => {
-      const nextLetter = String.fromCharCode(65 + state.parent.outcomes.length);
+      const idx = state.parent.outcomes.length;
+      const nextLetter = String.fromCharCode(65 + idx);
       const nextLabel = `Movie ${nextLetter}`;
+      const parent = {
+        ...state.parent,
+        outcomes: [...state.parent.outcomes, nextLabel],
+        tokenNames: [
+          ...state.parent.tokenNames.slice(0, -1),
+          `MV${nextLetter}`,
+          "",
+        ],
+      };
       return {
-        parent: {
-          ...state.parent,
-          outcomes: [...state.parent.outcomes, nextLabel],
-          tokenNames: [
-            ...state.parent.tokenNames.slice(0, -1),
-            `MV${nextLetter}`,
-            "",
-          ],
-        },
-        children: [...state.children, makeChild(nextLetter)],
+        parent,
+        children: [...state.children, makeChild(nextLetter, parent, idx)],
       };
     }),
 
@@ -171,24 +222,50 @@ export const useFactoryStore = create<FactoryStore>((set) => ({
     }),
 
   updateOutcome: (index, value) =>
-    set((state) => ({
-      parent: {
+    set((state) => {
+      const parent = {
         ...state.parent,
         outcomes: state.parent.outcomes.map((o, i) =>
           i === index ? value : o,
         ),
-      },
-    })),
+      };
+      const children = state.children.map((c, i) =>
+        i === index
+          ? {
+              ...c,
+              marketName: applyChildQuestionTemplate(
+                parent.childQuestionTemplate,
+                value,
+                parent.tokenNames[index] ?? "",
+              ),
+            }
+          : c,
+      );
+      return { parent, children };
+    }),
 
   updateTokenName: (index, value) =>
-    set((state) => ({
-      parent: {
+    set((state) => {
+      const parent = {
         ...state.parent,
         tokenNames: state.parent.tokenNames.map((t, i) =>
           i === index ? value : t,
         ),
-      },
-    })),
+      };
+      const children = state.children.map((c, i) =>
+        i === index
+          ? {
+              ...c,
+              marketName: applyChildQuestionTemplate(
+                parent.childQuestionTemplate,
+                parent.outcomes[index] ?? "",
+                value,
+              ),
+            }
+          : c,
+      );
+      return { parent, children };
+    }),
 
   setChildField: (index, key, value) =>
     set((state) => ({

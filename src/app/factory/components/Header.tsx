@@ -18,10 +18,11 @@ const Header: React.FC = () => (
     </div>
     <p className="text-klerosUIComponentsSecondaryText max-w-3xl text-sm">
       Wraps Seer&apos;s <code className="font-mono">MarketFactory</code> to
-      deploy a multi-categorical parent and one scalar child per parent outcome.
-      Any non-empty subset of parent outcomes can resolve true. Up to 6 children
-      deploy in a single transaction; larger sessions are deployed in phases,
-      signing batches of children after the parent.
+      deploy either a categorical parent (single winning outcome plus invalid)
+      or a multi-categorical parent (non-empty subset of outcomes). Each parent
+      outcome gets one scalar child market. Up to six children deploy
+      atomically; larger sessions open the parent first, then batches of
+      children.
     </p>
     <div className="text-klerosUIComponentsSecondaryText flex items-center gap-2 text-xs">
       <span>Factory:</span>

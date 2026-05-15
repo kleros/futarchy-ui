@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Accordion, Card, Tag } from "@kleros/ui-components-library";
+import { Accordion, Card, Tag, TextField } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
 import {
@@ -10,9 +10,15 @@ import {
 } from "@/store/factory";
 
 import ChildFields from "./ChildFields";
+import Field from "./Field";
 
 const ChildrenForm: React.FC = () => {
   const outcomes = useFactoryStore((s) => s.parent.outcomes);
+  const childQuestionTemplate = useFactoryStore(
+    (s) => s.parent.childQuestionTemplate,
+  );
+  const setParentField = useFactoryStore((s) => s.setParentField);
+  const isDeploying = useFactoryStore((s) => s.isDeploying);
   const childrenCount = useFactoryStore((s) => s.children.length);
   const isPhased = childrenCount > PHASED_THRESHOLD;
   const phasedSignatures = isPhased
@@ -35,7 +41,8 @@ const ChildrenForm: React.FC = () => {
           </h2>
           <p className="text-klerosUIComponentsSecondaryText text-xs">
             Each child is a scalar market bound to a single parent outcome
-            index. Bounds and labels follow Seer&apos;s scalar template.
+            index. Set one question template below; each child’s Reality text is
+            built from its parent outcome label and ticker.
           </p>
         </div>
         <Tag
@@ -47,6 +54,19 @@ const ChildrenForm: React.FC = () => {
           className={clsx(isPhased && "bg-klerosUIComponentsMediumBlue")}
         />
       </div>
+
+      <Field
+        label="Child question template"
+        tooltip="Placeholders: ${outcome} or ${marketName} = that row’s parent outcome label; ${token} = its wrapped ticker (Outcomes section). Editing the template refreshes every child question. Editing one outcome or ticker updates only that child’s resolved question."
+      >
+        <TextField
+          aria-label="child-question-template"
+          value={childQuestionTemplate}
+          onChange={(v) => setParentField("childQuestionTemplate", v)}
+          isDisabled={isDeploying}
+          placeholder="Score if ${outcome} is watched (0-10)"
+        />
+      </Field>
 
       <Accordion
         aria-label="children-accordion"

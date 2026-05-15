@@ -3,6 +3,8 @@ import { parseEther } from "viem";
 
 import type { ChildForm, DeployStep, ParentForm } from "@/store/factory";
 
+import type { SeerChildMarketSnapshotFields } from "@/utils/seerMarketReads";
+
 export interface ParentCategoricalConfig {
   marketName: string;
   outcomes: readonly string[];
@@ -31,6 +33,7 @@ export interface ChildScalarConfig {
 export interface DeployFutarchySessionParams {
   parent: ParentCategoricalConfig;
   children: readonly ChildScalarConfig[];
+  multiCategoricalParent: boolean;
 }
 
 const safeParseEther = (value: string) =>
@@ -94,6 +97,8 @@ export const validateFactoryForm = (
   children: ChildForm[],
 ): string | undefined => {
   if (!parent.marketName.trim()) return "Parent market name is required";
+  if (!parent.childQuestionTemplate.trim())
+    return "Child question template is required";
   if (parent.outcomes.length < 2) return "Add at least two parent outcomes";
   if (parent.tokenNames.length !== parent.outcomes.length + 1)
     return "Token names must match outcomes (plus one invalid slot)";
@@ -149,6 +154,14 @@ export interface SessionSnapshotMarket {
   openingTime: number;
   category: string;
   lang: string;
+  /** From `Market.parentWrappedOutcome` (collateral for this branch); lowercase */
+  underlyingToken?: string;
+  downToken?: string;
+  upToken?: string;
+  invalidToken?: string;
+  /** `Market.parentOutcome()` as decimal string */
+  parentOutcome?: string;
+  conditionId?: string;
 }
 
 export interface SessionSnapshot {
@@ -162,6 +175,7 @@ export interface SessionSnapshot {
   };
   parent: {
     marketId: Address;
+    parentMarketKind: ParentForm["parentMarketKind"];
     name: string;
     outcomes: string[];
     tokenNames: string[];
@@ -169,6 +183,7 @@ export interface SessionSnapshot {
     lang: string;
     minBond: string;
     openingTime: number;
+    childQuestionTemplate: string;
   };
   markets: SessionSnapshotMarket[];
 }
@@ -183,6 +198,7 @@ export const buildSessionSnapshot = (args: {
   children: ChildForm[];
   steps: DeployStep[];
   deployer?: Address;
+  childMarketChain?: readonly (SeerChildMarketSnapshotFields | null)[];
 }): SessionSnapshot => ({
   session: {
     id: args.sessionId,
@@ -199,6 +215,7 @@ export const buildSessionSnapshot = (args: {
   },
   parent: {
     marketId: args.parentMarket,
+    parentMarketKind: args.parent.parentMarketKind,
     name: args.parent.marketName,
     outcomes: [...args.parent.outcomes],
     tokenNames: [...args.parent.tokenNames],
@@ -206,21 +223,35 @@ export const buildSessionSnapshot = (args: {
     lang: args.parent.lang,
     minBond: args.parent.minBond,
     openingTime: args.parent.openingTime,
+    childQuestionTemplate: args.parent.childQuestionTemplate,
   },
-  markets: args.children.map((child, index) => ({
-    name: child.marketName,
-    marketId: args.childMarkets[index],
-    parentMarketOutcome: index,
-    minValue: Number(child.lowerBound),
-    maxValue: Number(child.upperBound),
-    outcomeLabels: {
-      low: child.outcomeLabelLow,
-      high: child.outcomeLabelHigh,
-    },
-    tokenNames: { low: child.tokenNameLow, high: child.tokenNameHigh },
-    minBond: child.minBond,
-    openingTime: child.openingTime,
-    category: child.category,
-    lang: child.lang,
-  })),
+  markets: args.children.map((child, index) => {
+    const chain = args.childMarketChain?.[index];
+    const base: SessionSnapshotMarket = {
+      name: child.marketName,
+      marketId: args.childMarkets[index],
+      parentMarketOutcome: index,
+      minValue: Number(child.lowerBound),
+      maxValue: Number(child.upperBound),
+      outcomeLabels: {
+        low: child.outcomeLabelLow,
+        high: child.outcomeLabelHigh,
+      },
+      tokenNames: { low: child.tokenNameLow, high: child.tokenNameHigh },
+      minBond: child.minBond,
+      openingTime: child.openingTime,
+      category: child.category,
+      lang: child.lang,
+    };
+    if (!chain) return base;
+    return {
+      ...base,
+      underlyingToken: chain.underlyingToken,
+      downToken: chain.downToken,
+      upToken: chain.upToken,
+      invalidToken: chain.invalidToken,
+      parentOutcome: chain.parentOutcome,
+      conditionId: chain.conditionId,
+    };
+  }),
 });

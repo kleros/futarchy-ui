@@ -296,6 +296,11 @@ export const FutarchyFactoryAbi = [
             name: "children",
             type: "tuple[]",
           },
+          {
+            internalType: "bool",
+            name: "multiCategoricalParent",
+            type: "bool",
+          },
         ],
         internalType: "struct FutarchyFactory.DeployFutarchySessionParams",
         name: "params",
@@ -566,6 +571,11 @@ export const FutarchyFactoryAbi = [
             internalType: "struct FutarchyFactory.ChildScalarConfig[]",
             name: "children",
             type: "tuple[]",
+          },
+          {
+            internalType: "bool",
+            name: "multiCategoricalParent",
+            type: "bool",
           },
         ],
         internalType: "struct FutarchyFactory.DeployFutarchySessionParams",

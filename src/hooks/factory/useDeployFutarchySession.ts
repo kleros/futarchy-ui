@@ -27,6 +27,7 @@ async function deployFutarchySession(
       {
         parent: { ...params.parent },
         children: params.children.map((c) => ({ ...c })),
+        multiCategoricalParent: params.multiCategoricalParent,
       },
     ],
     chainId: DEFAULT_CHAIN.id,

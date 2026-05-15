@@ -8,13 +8,34 @@ import {
 } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
-import { useFactoryStore } from "@/store/factory";
+import { useFactoryStore, type ParentMarketKind } from "@/store/factory";
 
 import MinusIcon from "@/assets/svg/minus-outline.svg";
 import PlusIcon from "@/assets/svg/plus-outline.svg";
 
 import DateTimeInput from "./DateTimeInput";
 import Field from "./Field";
+
+const PARENT_KIND_ORDER = [
+  "multicategorical",
+  "categorical",
+] as const satisfies readonly ParentMarketKind[];
+
+const PARENT_KIND_COPY: Record<
+  ParentMarketKind,
+  { label: string; description: string }
+> = {
+  multicategorical: {
+    label: "Multi-categorical",
+    description:
+      "Several parent outcomes may resolve positively (Reality subset answer). Uses Seer createMultiCategoricalMarket.",
+  },
+  categorical: {
+    label: "Categorical",
+    description:
+      "Exactly one outcome wins (+ invalid branch). Uses Seer createCategoricalMarket.",
+  },
+};
 
 const ParentForm: React.FC = () => {
   const parent = useFactoryStore((s) => s.parent);
@@ -25,6 +46,8 @@ const ParentForm: React.FC = () => {
   const updateTokenName = useFactoryStore((s) => s.updateTokenName);
   const isDeploying = useFactoryStore((s) => s.isDeploying);
 
+  const selectedKind = parent.parentMarketKind ?? "multicategorical";
+
   return (
     <Card
       round
@@ -33,18 +56,75 @@ const ParentForm: React.FC = () => {
     >
       <div className="flex flex-col gap-1">
         <h2 className="text-klerosUIComponentsPrimaryText text-lg font-semibold">
-          Parent multi-categorical market
+          Parent market
         </h2>
         <p className="text-klerosUIComponentsSecondaryText text-xs">
-          Defines the high-level multi-categorical question. Reality.eth picks a
-          non-empty subset of outcomes; each selected branch keeps its child
-          conditional alive.
+          Choose whether the Reality parent is exclusive (single winner) or
+          allows a non-empty subset of outcomes before binding scalar children
+          per branch.
         </p>
       </div>
 
       <Field
+        as="div"
+        label="Parent type"
+        tooltip="Forwarded to FutarchyFactory: Seer MarketFactory categorical vs multi-categorical template."
+      >
+        <fieldset
+          role="radiogroup"
+          aria-label="Parent market type"
+          disabled={isDeploying}
+          className="pointer-events-auto relative z-[2] m-0 flex min-w-0 flex-col gap-2 border-0 p-0"
+        >
+          {PARENT_KIND_ORDER.map((kind) => {
+            const sel = selectedKind === kind;
+            const inputId = `parent-market-kind-${kind}`;
+            return (
+              <label
+                key={kind}
+                htmlFor={inputId}
+                className={clsx(
+                  "border-klerosUIComponentsStroke rounded-base flex cursor-pointer items-start gap-3 border p-3 transition",
+                  "hover:border-klerosUIComponentsPrimaryBlue/40 has-[:focus-visible]:outline has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-klerosUIComponentsPrimaryBlue",
+                  sel &&
+                    "border-klerosUIComponentsPrimaryBlue bg-klerosUIComponentsWhiteBackground shadow-sm",
+                  isDeploying && "cursor-not-allowed opacity-60",
+                )}
+              >
+                <input
+                  id={inputId}
+                  type="radio"
+                  name="factory-parent-market-kind"
+                  value={kind}
+                  checked={sel}
+                  onChange={(e) => {
+                    setField(
+                      "parentMarketKind",
+                      e.target.value as ParentMarketKind,
+                    );
+                  }}
+                  className={clsx(
+                    "border-klerosUIComponentsStroke text-klerosUIComponentsPrimaryBlue mt-1 h-4 w-4 shrink-0",
+                    "accent-klerosUIComponentsPrimaryBlue",
+                  )}
+                />
+                <span className="flex min-w-0 flex-col gap-1">
+                  <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+                    {PARENT_KIND_COPY[kind].label}
+                  </span>
+                  <span className="text-klerosUIComponentsSecondaryText text-xs leading-snug">
+                    {PARENT_KIND_COPY[kind].description}
+                  </span>
+                </span>
+              </label>
+            );
+          })}
+        </fieldset>
+      </Field>
+
+      <Field
         label="Market name"
-        tooltip="The Reality multi-select question for the parent. Combined with outcomes + category + lang."
+        tooltip="Encoded with outcomes, category, lang for the parent Reality question."
       >
         <TextField
           aria-label="market-name"
