@@ -10,7 +10,11 @@ import { formatValue, isUndefined } from "@/utils";
 import { DECIMALS, DEFAULT_CHAIN } from "@/consts";
 import { markets, parentConditionId } from "@/consts/markets";
 
-import { useConditionalMarketPayouts } from "./useConditionalMarketPayouts";
+import {
+  payoutDenominatorContract,
+  payoutNumeratorsContract,
+  useConditionalMarketPayouts,
+} from "./useConditionalMarketPayouts";
 import { useGetWinningOutcomes } from "./useGetWinningOutcomes";
 import { useTokensBalances } from "./useTokenBalances";
 
@@ -65,6 +69,62 @@ export const useMarketResolutionInfo = (tradeExecutor: Address) => {
       childResolvedByMarketId.get(child.marketId),
     );
   }, [winningChildMarkets, childResolvedByMarketId]);
+
+  const parentOutcomeIndices = useMemo(
+    () =>
+      [...new Set(winningChildMarkets.map((m) => m.parentMarketOutcome))].sort(
+        (a, b) => a - b,
+      ),
+    [winningChildMarkets],
+  );
+
+  const parentReadsEnabled =
+    areAllChildResolved && parentOutcomeIndices.length > 0;
+
+  const parentPayoutReads = useMemo(
+    () => [
+      payoutDenominatorContract(parentConditionId),
+      ...parentOutcomeIndices.map((slot) =>
+        payoutNumeratorsContract(parentConditionId, BigInt(slot)),
+      ),
+    ],
+    [parentOutcomeIndices],
+  );
+
+  const { data: parentPayoutData, isLoading: isLoadingParentPayouts } =
+    useReadContracts({
+      allowFailure: false,
+      contracts: parentPayoutReads,
+      query: { enabled: parentReadsEnabled },
+    });
+
+  const parentPayoutDenom = useMemo(() => {
+    const nReads = parentOutcomeIndices.length + 1;
+    if (
+      !parentReadsEnabled ||
+      isUndefined(parentPayoutData) ||
+      parentPayoutData.length !== nReads
+    ) {
+      return 0n;
+    }
+    return parentPayoutData[0] as bigint;
+  }, [parentReadsEnabled, parentOutcomeIndices, parentPayoutData]);
+
+  const parentNumeratorsByOutcome = useMemo(() => {
+    const map = new Map<number, bigint>();
+    const nReads = parentOutcomeIndices.length + 1;
+    if (
+      !parentReadsEnabled ||
+      isUndefined(parentPayoutData) ||
+      parentPayoutData.length !== nReads
+    ) {
+      return map;
+    }
+    parentOutcomeIndices.forEach((slot, i) =>
+      map.set(slot, parentPayoutData[i + 1] as bigint),
+    );
+    return map;
+  }, [parentReadsEnabled, parentOutcomeIndices, parentPayoutData]);
 
   const { payoutsByMarketId, isLoading: isLoadingPayouts } =
     useConditionalMarketPayouts({
@@ -134,31 +194,48 @@ export const useMarketResolutionInfo = (tradeExecutor: Address) => {
   }, [balances, winningChildMarkets, underlyingCount]);
 
   const parentCollateralWei = useMemo(() => {
-    if (isUndefined(underlyingTokensWithBalance)) return 0n;
-    return underlyingTokensWithBalance.reduce(
-      (acc, { balance }) => acc + balance,
-      0n,
-    );
-  }, [underlyingTokensWithBalance]);
+    if (isUndefined(underlyingTokensWithBalance) || parentPayoutDenom === 0n) {
+      return 0n;
+    }
+    const denominator = parentPayoutDenom;
+    return underlyingTokensWithBalance.reduce((acc, row) => {
+      const n = parentNumeratorsByOutcome.get(row.parentMarketOutcome) ?? 0n;
+      return acc + (row.balance * n) / denominator;
+    }, 0n);
+  }, [
+    parentNumeratorsByOutcome,
+    parentPayoutDenom,
+    underlyingTokensWithBalance,
+  ]);
 
   const childCollateralWei = useMemo(() => {
     if (!areAllChildResolved || isLoadingPayouts) return 0n;
+    if (parentPayoutDenom === 0n) return 0n;
 
+    const dParent = parentPayoutDenom;
     let sum = 0n;
+
     for (const market of winningChildMarkets) {
       const payout = payoutsByMarketId.get(market.marketId);
       const child = childRedeemConfig.find(
         (row) => row.marketId === market.marketId,
       );
       if (!payout || !child || payout.denominator === 0n) continue;
-      sum += (child.upAmount * payout.numeratorUp) / payout.denominator;
-      sum += (child.downAmount * payout.numeratorDown) / payout.denominator;
+
+      const parentNum =
+        parentNumeratorsByOutcome.get(market.parentMarketOutcome) ?? 0n;
+      const numerator =
+        child.upAmount * payout.numeratorUp +
+        child.downAmount * payout.numeratorDown;
+      sum += (numerator * parentNum) / (payout.denominator * dParent);
     }
     return sum;
   }, [
     areAllChildResolved,
     childRedeemConfig,
     isLoadingPayouts,
+    parentNumeratorsByOutcome,
+    parentPayoutDenom,
     payoutsByMarketId,
     winningChildMarkets,
   ]);
@@ -168,6 +245,7 @@ export const useMarketResolutionInfo = (tradeExecutor: Address) => {
     isLoadingChildWinningOutcomes ||
     isLoadingBalances ||
     isUndefined(underlyingTokensWithBalance) ||
+    isLoadingParentPayouts ||
     isLoadingPayouts;
 
   const isRedeemable = useMemo(() => {

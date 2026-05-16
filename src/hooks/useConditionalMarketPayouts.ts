@@ -10,6 +10,27 @@ import { isUndefined } from "@/utils";
 import { DEFAULT_CHAIN } from "@/consts";
 import { IMarket } from "@/consts/markets";
 
+export const payoutDenominatorContract = (conditionId: Hex) =>
+  ({
+    address: conditionalTokensAddress,
+    abi: conditionalTokensAbi,
+    functionName: "payoutDenominator" as const,
+    args: [conditionId],
+    chainId: DEFAULT_CHAIN.id,
+  }) as const;
+
+export const payoutNumeratorsContract = (
+  conditionId: Hex,
+  outcomeSlotIndex: bigint,
+) =>
+  ({
+    address: conditionalTokensAddress,
+    abi: conditionalTokensAbi,
+    functionName: "payoutNumerators" as const,
+    args: [conditionId, outcomeSlotIndex],
+    chainId: DEFAULT_CHAIN.id,
+  }) as const;
+
 type ConditionalMarketPayout = {
   marketId: Address;
   conditionId: Hex;
@@ -30,27 +51,9 @@ export function useConditionalMarketPayouts({
   const { data, isLoading } = useReadContracts({
     allowFailure: false,
     contracts: markets.flatMap((m) => [
-      {
-        address: conditionalTokensAddress,
-        abi: conditionalTokensAbi,
-        functionName: "payoutDenominator" as const,
-        args: [m.conditionId],
-        chainId: DEFAULT_CHAIN.id,
-      },
-      {
-        address: conditionalTokensAddress,
-        abi: conditionalTokensAbi,
-        functionName: "payoutNumerators" as const,
-        args: [m.conditionId, 1n],
-        chainId: DEFAULT_CHAIN.id,
-      },
-      {
-        address: conditionalTokensAddress,
-        abi: conditionalTokensAbi,
-        functionName: "payoutNumerators" as const,
-        args: [m.conditionId, 0n],
-        chainId: DEFAULT_CHAIN.id,
-      },
+      payoutDenominatorContract(m.conditionId),
+      payoutNumeratorsContract(m.conditionId, 1n),
+      payoutNumeratorsContract(m.conditionId, 0n),
     ]),
     query: { enabled: isEnabled },
   });
