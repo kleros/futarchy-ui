@@ -38,7 +38,7 @@ export function useCurrentMarketPrices(
     // returning mid price in case market is not yet traded on
     if (
       isUndefined(Object.values(upPoolData)[0]) ||
-      Object.values(downPoolData)[0]
+      isUndefined(Object.values(downPoolData)[0])
     ) {
       return !isUndefined(upOnChainPrice?.price) &&
         !isUndefined(downOnChainPrice?.price)
