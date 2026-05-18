@@ -1,17 +1,24 @@
 import clsx from "clsx";
 import Image from "next/image";
 
+import { useWinningAnswers } from "@/hooks/useWinningAnswers";
+
 import ExternalLink from "@/components/ExternalLink";
 import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
 import ChartBar from "@/assets/svg/chart-bar.svg";
 
+import { cn } from "@/utils";
+import { getReadableTextColor } from "@/utils/getReadableTextColor";
+
 import { endDate, marketMetadata } from "@/consts/markets";
 
 import Countdown from "./Countdown";
 
 const Header: React.FC = () => {
+  const { winningMarkets, isLoading } = useWinningAnswers();
+
   return (
     <div className="flex flex-col items-start gap-4">
       <h1 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
@@ -59,6 +66,41 @@ const Header: React.FC = () => {
           , to get an idea of what he would like/dislike.
         </p>
       </div>
+      {!isLoading && winningMarkets.length > 0 ? (
+        <div className="border-b-klerosUIComponentsStroke w-full space-y-2 border-b pb-8">
+          <h2 className="text-klerosUIComponentsPrimaryText text-base font-semibold">
+            Market resolved:
+          </h2>
+          <div className="flex flex-row flex-wrap items-center gap-2">
+            {winningMarkets.map(({ market, finalAnswer }) => (
+              <div
+                className={cn(
+                  "rounded-base h-fit px-1 py-0.5",
+                  "flex flex-row gap-2",
+                )}
+                key={market.marketId}
+                style={{
+                  backgroundColor: market.color,
+                }}
+              >
+                <p
+                  className="text-xs"
+                  style={{ color: getReadableTextColor(market.color) }}
+                >
+                  {market.name}
+                  <span
+                    className="mx-1 text-xs"
+                    style={{ color: getReadableTextColor(market.color) }}
+                  >
+                    |
+                  </span>
+                  {finalAnswer}%
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

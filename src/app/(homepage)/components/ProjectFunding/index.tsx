@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import {
   Accordion,
@@ -12,7 +12,9 @@ import { useMarketsStore } from "@/store/markets";
 
 import { useMarketContext } from "@/context/MarketContext";
 import { useTradeWallet } from "@/context/TradeWalletContext";
+import { useMarketResolutionInfo } from "@/hooks/useMarketResolutionInfo";
 import { useTokenPositionValue } from "@/hooks/useTokenPositionValue";
+import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
 import CheckOutline from "@/assets/svg/check-outline-button.svg";
 import InfoIcon from "@/assets/svg/info.svg";
@@ -31,6 +33,19 @@ const ProjectFunding: React.FC = () => {
     return !!m?.prediction && m.prediction !== m.marketEstimate;
   });
   const { tradeExecutor } = useTradeWallet();
+
+  const { isMarketResolved } = useMarketResolutionInfo(tradeExecutor);
+  const { winningMarkets } = useWinningAnswers();
+
+  const { isEvaluated, answer } = useMemo(() => {
+    if (winningMarkets.length === 0) return { isEvaluated: false, answer: 0 };
+    const selected = winningMarkets.find(
+      (m) => m.market.marketId === market.marketId,
+    );
+    return selected
+      ? { isEvaluated: true, answer: selected.finalAnswer }
+      : { isEvaluated: false, answer: 0 };
+  }, [winningMarkets, market]);
 
   const { value: upValue } = useTokenPositionValue(
     upToken,
@@ -70,8 +85,23 @@ const ProjectFunding: React.FC = () => {
                     <h3 className="text-klerosUIComponentsPrimaryText text-left font-semibold">
                       {name}
                     </h3>
+                    {/* NOTE: experiment specific */}
+                    {isMarketResolved ? (
+                      <span
+                        className={clsx(
+                          isEvaluated
+                            ? "text-green-400"
+                            : "text-klerosUIComponentsSecondaryText",
+                          "text-sm",
+                        )}
+                      >
+                        {isEvaluated
+                          ? `(Evaluated: ${answer}%)`
+                          : "(Not evaluated)"}
+                      </span>
+                    ) : null}
                   </div>
-                  {totalValue > 0 ? (
+                  {totalValue > 0 && !isMarketResolved ? (
                     <div className="flex items-center gap-2">
                       <div className="border-klerosUIComponentsPrimaryText h-4 w-0 border-[0.5px] max-md:hidden" />
 
@@ -117,7 +147,7 @@ const ProjectFunding: React.FC = () => {
               <div className="pt-8 pb-4">
                 <PredictionSlider />
               </div>
-              {tradeExecutor ? (
+              {tradeExecutor && !isMarketResolved ? (
                 <div className="flex w-full items-center justify-between gap-2">
                   <PositionValue
                     {...{ upToken, downToken, underlyingToken, tradeExecutor }}

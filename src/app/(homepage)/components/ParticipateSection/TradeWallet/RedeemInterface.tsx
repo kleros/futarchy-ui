@@ -66,9 +66,7 @@ export const RedeemParentsInterface: React.FC<RedeemParentsInterfaceProps> = ({
         : "Waiting for child markets to resolve.";
     }
     if (isRedeemable) {
-      return `You can redeem parent outcome tokens and conditional (UP/DOWN) tokens in one transaction${
-        totalValue ? ` (about ${totalValue} sDAI combined).` : "."
-      }`;
+      return `Redeemable value: ${totalValue ? ` ${totalValue} sDAI` : "."}`;
     }
     return "Nothing to redeem.";
   }, [
@@ -101,7 +99,7 @@ export const RedeemParentsInterface: React.FC<RedeemParentsInterfaceProps> = ({
           <h2 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
             Redeem Tokens
           </h2>
-          <p className="text-klerosUIComponentsPrimaryText text-center text-sm text-wrap">
+          <p className="text-klerosUIComponentsPrimaryText text-center text-sm text-wrap whitespace-pre">
             {statusMessage}
           </p>
           {mutationErrorText ? (

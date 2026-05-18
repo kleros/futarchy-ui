@@ -2,6 +2,10 @@ import { useMemo } from "react";
 
 import { Address } from "viem";
 
+import { isUndefined } from "@/utils";
+
+import { useMarketPrice } from "../useMarketPrice";
+
 import { useTicksData } from "./useTicksData";
 import { tickToPrice, isTwoStringsEqual } from "./utils";
 
@@ -25,9 +29,25 @@ export function useCurrentMarketPrices(
   const { data: upPoolData } = useTicksData(underlying, upToken);
   const { data: downPoolData } = useTicksData(underlying, downToken);
 
-  return useMemo(() => {
-    if (!upPoolData || !downPoolData) return undefined;
+  const { data: upOnChainPrice } = useMarketPrice(upToken, underlying);
+  const { data: downOnChainPrice } = useMarketPrice(downToken, underlying);
 
+  return useMemo(() => {
+    if (isUndefined(upPoolData) || isUndefined(downPoolData)) return undefined;
+
+    // returning mid price in case market is not yet traded on
+    if (
+      isUndefined(Object.values(upPoolData)[0]) ||
+      isUndefined(Object.values(downPoolData)[0])
+    ) {
+      return !isUndefined(upOnChainPrice?.price) &&
+        !isUndefined(downOnChainPrice?.price)
+        ? {
+            upPrice: parseFloat(upOnChainPrice.price),
+            downPrice: parseFloat(downOnChainPrice.price),
+          }
+        : undefined;
+    }
     const { poolInfo: upPool } = Object.values(upPoolData)[0];
     const { poolInfo: downPool } = Object.values(downPoolData)[0];
 
