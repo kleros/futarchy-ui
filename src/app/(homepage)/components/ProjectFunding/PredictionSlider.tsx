@@ -15,6 +15,7 @@ import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 import { Skeleton } from "@/components/Skeleton";
 
 import { isUndefined } from "@/utils";
+import { formatCompactUsd } from "@/utils/formatCompactUsd";
 import { getReadableTextColor } from "@/utils/getReadableTextColor";
 import { formatUsd } from "@/utils/marketRange";
 
@@ -73,8 +74,8 @@ const PredictionSliderContent: React.FC = () => {
           minValue={minValue}
           step={step}
           value={prediction}
-          leftLabel={formatUsd(minValue)}
-          rightLabel={formatUsd(maxValue)}
+          leftLabel={formatCompactUsd(minValue)}
+          rightLabel={formatCompactUsd(maxValue)}
           aria-label="Slider"
           callback={setPrediction}
           formatter={(value) => formatUsd(value)}

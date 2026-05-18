@@ -23,18 +23,18 @@ export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
 export const projectsChosen = 1;
 
 export const parentMarket: Address =
-  "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
+  "0x81759938fa04b056665101e1310d8e952278cfea";
 
 export const parentConditionId =
-  "0x0d6c99d7eb9fa657236905b6cf464eaa938371ae5ce8cf153af450321377241d";
+  "0x99620cbd56c47f85faebea20eb0c8942265d40c5078ff6503b09b6bd9f377afd";
 
 export const invalidMarket: Address =
-  "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
+  "0x78E1CEd3131d34242F375781a608459F5d125bBD";
 
 // in unix timestamp, seconds
-export const startTime: number = 1771871400;
-export const endTime: number = 1775239200;
-export const endDate: string = "Friday 3rd April 18:00 UTC";
+export const startTime: number = 1779121721;
+export const endTime: number = 1781721000;
+export const endDate: string = "Wednesday 17th June 00:00 UTC";
 
 export interface IMarket {
   name: string;
@@ -57,21 +57,21 @@ export const marketMetadata = {
   name: "RealT Properties Predictions",
   question: "If evaluated, what is the current price of the property?",
   questionDescription:
-    "Which properties will be selected for evaluation as a part of “RealT Properties Predictions”? \nAnd for each property, what price will that property be appraised at?",
+    "Which property will be selected for evaluation as a part of “RealT Properties Predictions”? \nAnd for the selected property, what price will that property be appraised at?",
 };
 
 export const markets: IMarket[] = [
   {
     name: "23750 W 7 Mile",
     color: "#E6194B",
-    upToken: "0x0ee25eb2e22c01fa832dd5fea5637fba4cd5e870",
-    downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
-    underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
-    invalidToken: "0x11463F43181eB643bA8a584756CCB27a9B8f7B98",
-    marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
+    upToken: "0xe454cd972be39d35e66859d5e17fad62d2e89c2d",
+    downToken: "0x3014cc3a9d0f75df628a4fcede81913bf3245146",
+    underlyingToken: "0xf627c1ab254c501b50af998ff445bf46160ed028",
+    invalidToken: "0x54f75c5c2f86142048c52f147f48c9502acc1bed",
+    marketId: "0x5e2740e18d4aa1902985930b1cbc84bc4c6f7bc6",
     parentMarketOutcome: 0,
     conditionId:
-      "0x3d963acd72df546f58bf4ea76fda6957c830e6e3f8965517c396fc76dc2c08a3",
+      "0xcc89d5865421ce1994c456dd52b6492d11d49b2d585a51dc3effd05bc28903d6",
     realtContract: "0x0f388d7e65a969dbcbfab21bc3ab6629af78f4cf",
     initialInvestmentUsd: 944_537,
     precision: 1,
@@ -80,14 +80,14 @@ export const markets: IMarket[] = [
   {
     name: "18881 Mound",
     color: "#3CB44B",
-    upToken: "0x028ec9938471bbad5167c2e5281144a94d1acbe9",
-    downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
-    underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
-    invalidToken: "0x971bd2446cc32dFa26410Cc46978AA0c371Bc48e",
-    marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
+    upToken: "0xb3ce7989e21db61981d22459a1a3c0c796abf1d1",
+    downToken: "0x8965553deabcc18e12f399b4a96ddf91a164e01c",
+    underlyingToken: "0x430ac881c8939db9972e7c2db22f6f2f84e6d24f",
+    invalidToken: "0xc72904116695779b66fb1a597f9217535055be3e",
+    marketId: "0x65a993a2e1f5fb0e74bf8457d22594da80acd6d7",
     parentMarketOutcome: 1,
     conditionId:
-      "0xa4cc97a4e4f6e02c546a5b3bb49e2c411dcb4c6dcd478cef9cd0c86605c59878",
+      "0xc213303d3ee24e33984273b92d571dc546a47312608601a72382b7f3265d7d4b",
     realtContract: "0x5c4e3fa9704d4212c6434190af6379cfbda47e13",
     initialInvestmentUsd: 336_340,
     precision: 1,
@@ -96,14 +96,14 @@ export const markets: IMarket[] = [
   {
     name: "14631-14633 Plymouth",
     color: "#FFD93D",
-    upToken: "0xad2248b8eaa3e3a405c1ba79dd436947f8b427df",
-    downToken: "0xdd510abc6a848662371c3455717949035cc24019",
-    underlyingToken: "0xfb06c25e59302d8a0318d6df41a2f29deeea1c8a",
-    invalidToken: "0x43D6E82de1E64531b5E47891b186227edA566344",
-    marketId: "0xfdd8af90af2722d5fe39adf1002fbd069b8a76c0",
+    upToken: "0x9fd2e6608b53e0e505b1c344ca548a17f64ad99c",
+    downToken: "0xf0f389404e319fdaedb5c4c97f75976a6b3ee55c",
+    underlyingToken: "0xeb7a7b1874deb358556042fd5fa0d58cdf040b13",
+    invalidToken: "0xc932da176714cd99d11b24285c2b0af8f8d180d0",
+    marketId: "0x9567de50523c1a45d96d8f08d8eb89c436aef9ee",
     parentMarketOutcome: 2,
     conditionId:
-      "0xe97f19928d4143377d3cb97043c90408ccb9c51788447f42d2df9d65694c8171",
+      "0x32b55332f1dc7447068de66a8bce47cfba81b384cc5e698d7481fa9f98cbd876",
     realtContract: "0x854a0cfa24012937d3d15682ecc3d5b474bfa97e",
     initialInvestmentUsd: 1_389_025,
     precision: 1,
@@ -112,14 +112,14 @@ export const markets: IMarket[] = [
   {
     name: "11373 Prest",
     color: "#6BCB77",
-    upToken: "0xfa020fcd05e0b91dae83a2a08c5b5533edf8c851",
-    downToken: "0x372d0798ffe8c3aa982a15258c0fea22c6a768df",
-    underlyingToken: "0xe85d556d1aaae2f6027336e468e9c981251a4bef",
-    invalidToken: "0x3Aa738505C22e670a074e60566bD7264e7D682B1",
-    marketId: "0x1f2e76d66047e7f8e0deea373a0c04ffecab31df",
+    upToken: "0x194a4c7c4733f1c2339e3bb417409e80cb7c6771",
+    downToken: "0x91ad49fecc87fb1872527374abbac3f99478ebdf",
+    underlyingToken: "0x502c3696909002f81f835de44fd4cdc7963c7ba4",
+    invalidToken: "0xae24a579d44ecf6e446d7443c781c416d8369326",
+    marketId: "0xf2062f251087d9fcb94d906c585bc9cf246d7e13",
     parentMarketOutcome: 3,
     conditionId:
-      "0xdc8f8277da182ee2d5293c754a1cfb8d3761720259cf17a65df61b7cb6983721",
+      "0xc63d6def0dc3ebf07f05230a88aa0860a3a495f0571a5deec998725ddb5a6f38",
     realtContract: "0xd8b19f31186fc7350be018651aa1383175923bb3",
     initialInvestmentUsd: 76_806,
     precision: 1,
@@ -128,14 +128,14 @@ export const markets: IMarket[] = [
   {
     name: "16728-16730 Woodingham",
     color: "#4D96FF",
-    upToken: "0x7ee3806d16dc6a76bef2b11880b70cc70f74fa1a",
-    downToken: "0x34f8572eab463606a014c37ff68b78ac9361cacc",
-    underlyingToken: "0xb3933fd994af5db7ae985a0d62ed2dda918a839b",
-    invalidToken: "0x12c91f543a48F58e3E54c398f19BEc4b62aFD617",
-    marketId: "0x2338ca7d59b7e15bd03dd81cf5f5bb59b6c6c6d4",
+    upToken: "0x93f654c9075b5e511d8c2def0c12837041ed7668",
+    downToken: "0xa6dda6de987092d000e57a1b0d61a6bbc81cc2c1",
+    underlyingToken: "0x68410953112ea147492b3172636be14aed130e2a",
+    invalidToken: "0x0db78ba293f18346ca56844a96b1ed987399f167",
+    marketId: "0x79d73cf4b48028f5642c174847fab5765c6ca4f7",
     parentMarketOutcome: 4,
     conditionId:
-      "0xf857ab39ef39d99f00d38ab07a5676406dfd5382f6d2177c44642e147d8dd0ad",
+      "0x3cf23a4969d8982e1f53705012b399c7ad3e4d893d1d9145b1a18d8e2c927535",
     realtContract: "0xc7697f5e86a102eaf4000719a2dc477d65beea7d",
     initialInvestmentUsd: 143_897,
     precision: 1,
@@ -144,14 +144,14 @@ export const markets: IMarket[] = [
   {
     name: "9518 Franklin",
     color: "#845EC2",
-    upToken: "0x37e70bae5e87327feece73a7c227446571f92137",
-    downToken: "0x31e3d82a613e5aeea7c3a65c3d657cacaaaf2674",
-    underlyingToken: "0x6d0407b5ae419fdd92ffdc64abf04c5f28950e02",
-    invalidToken: "0xe54422171C40aA14B0fc935DEA7AFb85BE15357d",
-    marketId: "0x9a274ea86665d872fc58c8f26fd97a18b844c6ac",
+    upToken: "0x9ff9b462c422802b3d7576d07ca749e484624532",
+    downToken: "0x0d671d7a398f92c356587761f2fe05ad90d57022",
+    underlyingToken: "0xfde72fd1930d2fe58b885899c8ef6700c1531207",
+    invalidToken: "0x3c41d4d6bf3eaa64eee71a3182d43af32179e6fd",
+    marketId: "0xa0be79657446c1e999aed43240f4e51ab5f57b43",
     parentMarketOutcome: 5,
     conditionId:
-      "0x8054990ae8221c8a08581381a0d2e3e5f23144a4d18a2398858be52dd94cc8c9",
+      "0x9a81564c2aeaf1c9bf0435ef6ddc204b7d61618f2e0228b163e5b82c9f00d956",
     realtContract: "0x4ae9d3343bbc6a894b7ee7f843c224c953f1661b",
     initialInvestmentUsd: 461_643,
     precision: 1,
@@ -160,14 +160,14 @@ export const markets: IMarket[] = [
   {
     name: "8034 Faith",
     color: "#FF9671",
-    upToken: "0x53a9011c5570bfb8148954c4f49a6625dc44077b",
-    downToken: "0x64974d3bf944fafec6fa19a900f3679a716b3a86",
-    underlyingToken: "0x20025021e440edd39d486f3c6a1d7adb9c269faf",
-    invalidToken: "0x406B8Ee2DF07c644414E852542dAB98BdDf39234",
-    marketId: "0xc25af7d4a5cb36bb3ce9faf652a5f7f989a1d57a",
+    upToken: "0x9d56ba8c10fc54634ebd98704aaa14d0aaa5f696",
+    downToken: "0x9bac576d365a761c86ac8bb9520233b79540295c",
+    underlyingToken: "0x334db733779bfeeb6c55016e7cdd2ab4d2410c81",
+    invalidToken: "0xc854f228b785f61109622bbabdb21261125c061b",
+    marketId: "0x705b3a807a5292de13caa74653aed08bf28da925",
     parentMarketOutcome: 6,
     conditionId:
-      "0xe35db6fb9992ab689e21751f036ccc9a8548b71dec3089874cf4a19a13cd34bb",
+      "0x3a9eb779e8c1f55ae4fbe39f1a685632e0a533bbc3e20c053725d4c4f34a1a1d",
     realtContract: "0x90d280b6456f8233e115e6aabb2ca89249dafd39",
     initialInvestmentUsd: 327_296,
     precision: 1,
@@ -176,14 +176,14 @@ export const markets: IMarket[] = [
   {
     name: "1769 Cheryl",
     color: "#0081CF",
-    upToken: "0xaed0fad91e7149ec84bb4d0a2a77be819169275f",
-    downToken: "0x044e1b6d8aacbda5699423578bd200484f7473c3",
-    underlyingToken: "0x67d0f938ea12e7e30b8ccc24dd031d656cc3927d",
-    invalidToken: "0xA9099Baa3b74c1d602aCe8CeaC5933a16A0456C5",
-    marketId: "0xd31d05158722f64b6a49e25bccc47d3203eecbe9",
+    upToken: "0xe76380508f562b02227d9142cb8e0817ebf8c5eb",
+    downToken: "0xca877b196d3c3678382a9b1a4b39dc5f796c2ba7",
+    underlyingToken: "0xffd48b89e73bb5c1ff71c9c1e19fe7c3da34649a",
+    invalidToken: "0xe7289a855f7fd0e03855ab784df448f4b573071f",
+    marketId: "0x4e9ad039f4660deee317d278dfb18e5f0826db11",
     parentMarketOutcome: 7,
     conditionId:
-      "0x3c102db4f274983b648bd27a4092866e1b81dbc08b8738a5c694a8d8c3948a81",
+      "0xbb581276e52669477ed3c4939089f865d4922c4c0dff64af27d84e71d157db9e",
     realtContract: "0x19f824662ba9df78e368022f085b708fccc201c8",
     initialInvestmentUsd: 307_272,
     precision: 1,
@@ -192,14 +192,14 @@ export const markets: IMarket[] = [
   {
     name: "9311 Bedford",
     color: "#FFC75F",
-    upToken: "0x9d64a3e7e55880f3c8f9c584ed32397bb6f0b9f6",
-    downToken: "0xe9d025d3cbd783d6a92626b650a32f7cbaca0e7d",
-    underlyingToken: "0x58ce7a53abeca1db90cec0e6b7dcbe3a36d986c4",
-    invalidToken: "0xcA4c82fd178aaf4b72ECe35774ce04B7Aa2E5361",
-    marketId: "0x13d48a73811c01f574e1bfa4c58b7d95d2f590e4",
+    upToken: "0x992811ff3f617f8a873479bd26eace30c68bae1e",
+    downToken: "0xbf83818f00d320d21f2c0778e84442fdcfaed02c",
+    underlyingToken: "0xdd3cc8529ef123f0335ef7b797ac0ff982005457",
+    invalidToken: "0x0d44b4ae8f66a163b996aa2d2a7c96018f1dc786",
+    marketId: "0x884b265f85f2b735b9648ffe560a672ba297ca45",
     parentMarketOutcome: 8,
     conditionId:
-      "0x2dcf754f36437ea0c298e5d27a0f3904dc2335a6e239b15a104f3ca7787c5926",
+      "0xc879850a56ad17be855eb5bc3cddf55b4c8095b2fadb82e63de35ccb8ea2bc84",
     realtContract: "0xa83cbd26964ea953f86c741871a1ab2a256cb82d",
     initialInvestmentUsd: 90_270,
     precision: 1,
