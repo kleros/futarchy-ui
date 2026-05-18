@@ -275,9 +275,7 @@ export const useMarketResolutionInfo = (tradeExecutor?: Address) => {
   ]);
 
   const isMarketResolved =
-    areAllChildResolved &&
-    !isUndefined(parentWinningOutcomes) &&
-    parentWinningOutcomes?.length > 0;
+    winningChildMarkets.length > 0 && areAllChildResolved;
 
   return {
     winningChildMarkets,
