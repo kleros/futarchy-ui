@@ -18,7 +18,7 @@ import {
 import { useGetWinningOutcomes } from "./useGetWinningOutcomes";
 import { useTokensBalances } from "./useTokenBalances";
 
-export const useMarketResolutionInfo = (tradeExecutor: Address) => {
+export const useMarketResolutionInfo = (tradeExecutor?: Address) => {
   // check the parent market resolution
   const {
     data: parentWinningOutcomes,
@@ -274,6 +274,11 @@ export const useMarketResolutionInfo = (tradeExecutor: Address) => {
     parentCollateralWei,
   ]);
 
+  const isMarketResolved =
+    areAllChildResolved &&
+    !isUndefined(parentWinningOutcomes) &&
+    parentWinningOutcomes?.length > 0;
+
   return {
     winningChildMarkets,
     numberOutcomes,
@@ -284,5 +289,6 @@ export const useMarketResolutionInfo = (tradeExecutor: Address) => {
     areAllChildResolved,
     childResolvedByMarketId,
     totalValue,
+    isMarketResolved,
   };
 };

@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { useSize } from "react-use";
 
 import { useMarketContext } from "@/context/MarketContext";
+import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
 import { Skeleton } from "@/components/Skeleton";
 
@@ -46,6 +47,14 @@ const PredictionSliderContent: React.FC = () => {
   const { minValue, maxValue, initialInvestmentUsd, color } = market;
 
   const step = Math.max(1, Math.round(initialInvestmentUsd / 100));
+  const { winningMarkets } = useWinningAnswers();
+
+  const resolvedMarket = useMemo(() => {
+    if (winningMarkets.length === 0) return undefined;
+    return winningMarkets.find(
+      (winningMarket) => winningMarket.market.marketId === market.marketId,
+    );
+  }, [winningMarkets, market]);
 
   const sliderTheme = useMemo(() => {
     if (resolvedTheme === "light") return isUpPredict ? "#3FEC65" : "#F75C7B";
@@ -104,6 +113,30 @@ const PredictionSliderContent: React.FC = () => {
           </div>
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>
+
+        {isUndefined(resolvedMarket) ? null : (
+          <div
+            className="pointer-events-none absolute bottom-0"
+            // TODO: updates for individual experiment
+            style={{
+              transform: `translateX(calc(${!isUndefined(resolvedMarket.finalAnswer) && width ? (resolvedMarket.finalAnswer / 100) * width : 0}px - 50%))`,
+            }}
+          >
+            <label className="text-klerosUIComponentsPrimaryText block w-full text-center text-xs">
+              Resolved
+            </label>
+            <div
+              className={clsx(
+                "bg-klerosUIComponentsSuccess rounded-base px-2 py-0.75",
+                "text-center text-xs text-black",
+              )}
+            >
+              {/* TODO: updates for individual experiments */}
+              {`${resolvedMarket.finalAnswer}%`}
+            </div>
+            <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
+          </div>
+        )}
       </div>
     ),
     { width: 300 },
