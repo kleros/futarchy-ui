@@ -9,9 +9,10 @@ import {
 } from "viem";
 import { gnosis } from "viem/chains";
 
+import { DECIMALS } from "@/consts";
+
 import { getTradeArgs } from "./trade";
 import { getTradeExactOutArgs } from "./tradeExactOut";
-import { DECIMALS } from "@/consts";
 
 type GetQuoteArgs = {
   address?: Address;

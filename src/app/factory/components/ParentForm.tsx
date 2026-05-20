@@ -85,7 +85,7 @@ const ParentForm: React.FC = () => {
                 htmlFor={inputId}
                 className={clsx(
                   "border-klerosUIComponentsStroke rounded-base flex cursor-pointer items-start gap-3 border p-3 transition",
-                  "hover:border-klerosUIComponentsPrimaryBlue/40 has-[:focus-visible]:outline has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-klerosUIComponentsPrimaryBlue",
+                  "hover:border-klerosUIComponentsPrimaryBlue/40 has-[:focus-visible]:outline-klerosUIComponentsPrimaryBlue has-[:focus-visible]:outline has-[:focus-visible]:outline-offset-2",
                   sel &&
                     "border-klerosUIComponentsPrimaryBlue bg-klerosUIComponentsWhiteBackground shadow-sm",
                   isDeploying && "cursor-not-allowed opacity-60",
