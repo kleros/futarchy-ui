@@ -14,7 +14,7 @@ import ExternalArrow from "@/assets/svg/external-arrow.svg";
 
 import { downloadCsvFile, generateRealtDataCsv } from "@/utils/csv";
 
-import { markets } from "@/consts/markets";
+import { markets, seerMarketLink } from "@/consts/markets";
 
 const contractAddresses = markets.map((m) => m.realtContract);
 
@@ -44,9 +44,7 @@ const AdvancedSection: React.FC = () => {
           Check the opportunities if you want to LP or Trade specific outcome
           tokens in Seer.&nbsp;
           <Link
-            href={
-              "https://app.seer.pm/markets/100/which-movies-will-clement-watch-as-part-of-the-distilled-clements-judgement-expe-2"
-            }
+            href={seerMarketLink}
             target="_blank"
             rel="noreferrer noopener"
             className="text-klerosUIComponentsPrimaryBlue items-center text-sm"
