@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import clsx from "clsx";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
+import { ToastContainer } from "react-toastify";
 
 import Web3Context from "@/context/Web3Context";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
       >
         <Web3Context {...{ cookies }}>
           <ThemeProvider themes={["light", "dark"]} attribute="class">
+            <ToastContainer className="p-4 pt-[70px]" />
             <Header />
             {children}
             <Footer />
