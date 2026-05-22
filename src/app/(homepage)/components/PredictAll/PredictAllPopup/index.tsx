@@ -31,13 +31,13 @@ import Header from "./Header";
 interface IPredictAllPopup {
   isOpen: boolean;
   toggleIsOpen: () => void;
-  toggleGuide: (val: boolean) => void;
+  toggleSuccessPopup: (val: boolean) => void;
 }
 
 export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
   isOpen,
   toggleIsOpen,
-  toggleGuide,
+  toggleSuccessPopup,
 }) => {
   const markets = usePredictionMarkets();
 
@@ -233,7 +233,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     onDone: () => {
       toggleIsOpen();
       resetUI();
-      toggleGuide(true);
+      toggleSuccessPopup(true);
 
       // if it was the first prediction from user
       if (firstPredictionRef.current) {
