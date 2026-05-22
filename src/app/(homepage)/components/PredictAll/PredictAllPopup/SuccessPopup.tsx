@@ -31,7 +31,7 @@ const SuccessPopup: React.FC<ISuccessPopup> = ({ isVisible, closePopup }) => {
       <h1 className="text-klerosUIComponentsPrimaryText text-center text-2xl font-semibold whitespace-pre-line">
         {"Congratulations! \nYour Prediction was Done!"}
       </h1>
-      <CheckIcon />
+      <CheckIcon className="size-32" />
 
       <hr className="border-klerosUIComponentsStroke w-full" />
       {isSubscribed ? (
