@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/Skeleton";
 import { isUndefined } from "@/utils";
 import { formatCompactUsd } from "@/utils/formatCompactUsd";
 import { getReadableTextColor } from "@/utils/getReadableTextColor";
-import { formatUsd } from "@/utils/marketRange";
+import { formatUsd, predictionToNormalizedPrice } from "@/utils/marketRange";
 
 const LoadingSkeleton: React.FC = () => (
   <div className="relative w-full">
@@ -115,12 +115,12 @@ const PredictionSliderContent: React.FC = () => {
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>
 
-        {isUndefined(resolvedMarket) ? null : (
+        {isUndefined(resolvedMarket) ||
+        isUndefined(resolvedMarket.finalAnswer) ? null : (
           <div
             className="pointer-events-none absolute bottom-0"
-            // TODO: updates for individual experiment
             style={{
-              transform: `translateX(calc(${!isUndefined(resolvedMarket.finalAnswer) && width ? (resolvedMarket.finalAnswer / 100) * width : 0}px - 50%))`,
+              transform: `translateX(calc(${width ? predictionToNormalizedPrice(resolvedMarket.finalAnswer, market) * width : 0}px - 50%))`,
             }}
           >
             <label className="text-klerosUIComponentsPrimaryText block w-full text-center text-xs">
@@ -132,8 +132,7 @@ const PredictionSliderContent: React.FC = () => {
                 "text-center text-xs text-black",
               )}
             >
-              {/* TODO: updates for individual experiments */}
-              {`${resolvedMarket.finalAnswer}%`}
+              {formatUsd(resolvedMarket.finalAnswer)}
             </div>
             <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
           </div>

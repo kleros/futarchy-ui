@@ -24,7 +24,11 @@ export function predictionToNormalizedPrice(
   if (range <= 0) {
     return 0;
   }
-  return (predictionUsd - market.minValue) / range;
+  const clamped = Math.min(
+    market.maxValue,
+    Math.max(market.minValue, predictionUsd),
+  );
+  return (clamped - market.minValue) / range;
 }
 
 /** Inverse of {@link predictionToNormalizedPrice} (whole USD). */
