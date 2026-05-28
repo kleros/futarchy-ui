@@ -3445,8 +3445,8 @@ __metadata:
   linkType: hard
 
 "@kleros/kleros-app@file:./kleros-app-2.3.0.tgz::locator=futarchy-poc-14%40workspace%3A.":
-  version: 2.2.2
-  resolution: "@kleros/kleros-app@file:./kleros-app-2.3.0.tgz#./kleros-app-2.3.0.tgz::hash=c276ed&locator=futarchy-poc-14%40workspace%3A."
+  version: 2.3.0
+  resolution: "@kleros/kleros-app@file:./kleros-app-2.3.0.tgz#./kleros-app-2.3.0.tgz::hash=534663&locator=futarchy-poc-14%40workspace%3A."
   dependencies:
     jose: "npm:^5.9.6"
   peerDependencies:
@@ -3457,7 +3457,7 @@ __metadata:
     react-dom: ^18.3.1
     viem: ^2.24.1
     wagmi: ^2.14.15
-  checksum: 10c0/973e37d4125e72bbe038225c01e648f3a44d48458b4b9b4e2297ad2caf92bf3950f64fe8383262cafcc560b486b472bedb7ce2e8b63a62562b7fb275390e6d28
+  checksum: 10c0/4eba170889c3c73e0f616a74eb612db7eedc3e49f3ad6ac4af8f9c0a25dff48be65ff02364c915b24c1e40da5efa3c95d2388a30dbbb6d898164edb067e4ab11
   languageName: node
   linkType: hard
 
