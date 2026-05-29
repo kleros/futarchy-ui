@@ -60,7 +60,7 @@ export interface IMarket {
 }
 
 export const marketMetadata = {
-  name: "Distilled Clément's Judgement - Round 2",
+  name: "Distilled Clément's Judgement - Session 2",
   question:
     "If watched, what percentile score would Clément give to the movie?",
 };
