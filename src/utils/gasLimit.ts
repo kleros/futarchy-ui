@@ -1,6 +1,8 @@
 import type { PublicClient } from "viem";
 
-export const GNOSIS_BLOCK_GAS_LIMIT = 17_000_000n;
+export const GNOSIS_BLOCK_GAS_LIMIT = BigInt(
+  process.env.NEXT_PUBLIC_GNOSIS_BLOCK_GAS_LIMIT ?? 16_500_000n,
+);
 
 /** Buffer multiplier for gas estimation (20% ) */
 const GAS_BUFFER_MULTIPLIER = 1.2;
