@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 
 import { Button } from "@kleros/ui-components-library";
-import { useAppKit, useAppKitState } from "@reown/appkit/react";
+import { useAppKit, useAppKitState, useDisconnect } from "@reown/appkit/react";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import { DEFAULT_CHAIN } from "@/consts";
@@ -51,6 +51,11 @@ const ConnectButton: React.FC<{ text?: string; className?: string }> = ({
       onPress={async () => open({ view: "Connect" })}
     />
   );
+};
+
+export const DisconnectWalletButton: React.FC = () => {
+  const { disconnect } = useDisconnect();
+  return <Button text={`Disconnect`} small onPress={() => disconnect()} />;
 };
 
 const ConnectWallet: React.FC<{ text?: string; className?: string }> = ({

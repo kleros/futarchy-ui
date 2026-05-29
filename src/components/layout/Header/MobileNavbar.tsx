@@ -14,15 +14,20 @@ import QuickGuideButton from "@/components/QuickGuideButton";
 import ThemeToggle from "@/components/ThemeToggle";
 
 import HelpIcon from "@/assets/menu-icons/help.svg";
+import SettingsIcon from "@/assets/menu-icons/settings.svg";
 import HamburgerIcon from "@/assets/svg/hamburger.svg";
 
 import Logo from "./Logo";
 
 interface IMobileNavbar {
   toggleIsHelpOpen: () => void;
+  toggleIsSettingsOpen: () => void;
 }
 
-const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
+const MobileNavbar: React.FC<IMobileNavbar> = ({
+  toggleIsHelpOpen,
+  toggleIsSettingsOpen,
+}) => {
   const { isConnected } = useAccount();
   const [isMenuOpen, toggleIsMenuOpen] = useToggle(false);
   const { disconnect } = useDisconnect();
@@ -48,7 +53,6 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
         onOpenChange={toggleIsMenuOpen}
         isDismissable
       >
-        <hr className="border-klerosUIComponentsStroke w-full" />
         <div className="flex flex-wrap items-center justify-between gap-4">
           {isConnected ? (
             <>
@@ -87,6 +91,14 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({ toggleIsHelpOpen }) => {
             text="Help"
             icon={<HelpIcon className={clsx("size-4")} />}
             onPress={toggleIsHelpOpen}
+          />
+          <LightButton
+            className={clsx(
+              "[&>p]:text-klerosUIComponentsPrimaryText [&>p]:ml-2 [&>p]:font-normal",
+            )}
+            text="Settings"
+            icon={<SettingsIcon className={clsx("size-4")} />}
+            onPress={toggleIsSettingsOpen}
           />
           <ThemeToggle withText />
         </div>
