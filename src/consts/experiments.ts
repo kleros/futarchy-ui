@@ -25,7 +25,7 @@ export const experiments: IExperiment[] = [
     countLabel: "20 Movies",
     tradingPeriod: "Until Friday 3rd 18:00 UTC",
     endTime: 1775239200,
-    status: "coming soon",
+    status: "live",
   },
   {
     slug: "realt",
@@ -37,7 +37,7 @@ export const experiments: IExperiment[] = [
     countLabel: "9 Properties",
     tradingPeriod: "Until Wednesday 17th 00:00 UTC",
     endTime: 1781721000,
-    status: "live",
+    status: "coming soon",
   },
   {
     slug: "movies",
