@@ -21,10 +21,29 @@ import TradingIcon from "@/assets/svg/chart-bar.svg";
 import CountdownIcon from "@/assets/svg/cronometer.svg";
 import TagIcon from "@/assets/svg/tag-category.svg";
 
-import { type IExperiment } from "@/consts/experiments";
+import { type ExperimentStatus, type IExperiment } from "@/consts/experiments";
 
 const IMAGE_HEIGHT_DEFAULT = 180;
 const IMAGE_HEIGHT_HOVERED = 80;
+
+const statusStyles: Record<
+  ExperimentStatus,
+  { label: string; className: string }
+> = {
+  live: {
+    label: "Live",
+    className: "bg-[#00c853] text-white",
+  },
+  ended: {
+    label: "Ended",
+    className:
+      "bg-white/80 text-gray-700 backdrop-blur-sm dark:bg-black/60 dark:text-gray-300",
+  },
+  "coming soon": {
+    label: "Coming Soon",
+    className: "bg-klerosUIComponentsPrimaryBlue text-white",
+  },
+};
 
 const bannerMap: Record<string, StaticImageData> = {
   "movies-banner": MoviesBanner,
@@ -79,6 +98,7 @@ const ExperimentCard: React.FC<IExperiment> = ({
   countLabel,
   tradingPeriod,
   endTime,
+  status,
 }) => {
   const [hovered, setHovered] = useState(false);
   const { resolvedTheme } = useTheme();
@@ -129,6 +149,14 @@ const ExperimentCard: React.FC<IExperiment> = ({
             animate={{ opacity: hovered ? 0.7 : 0 }}
             transition={{ duration: 0.25 }}
           />
+          <span
+            className={clsx(
+              "absolute top-3 right-3 rounded-full px-2.5 py-0.5 text-xs font-medium",
+              statusStyles[status].className,
+            )}
+          >
+            {statusStyles[status].label}
+          </span>
         </motion.div>
 
         <motion.div

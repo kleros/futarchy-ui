@@ -1,3 +1,5 @@
+export type ExperimentStatus = "live" | "ended" | "coming soon";
+
 export interface IExperiment {
   slug: string;
   name: string;
@@ -8,20 +10,22 @@ export interface IExperiment {
   countLabel: string;
   tradingPeriod: string;
   endTime: number;
+  status: ExperimentStatus;
 }
 
 export const experiments: IExperiment[] = [
   {
-    slug: "movies",
-    name: "Movies Experiment",
+    slug: "movies-s2",
+    name: "Movies Experiment - Session 2",
     question:
       "If watched, what percentile score would Clément give to the movie?",
-    url: "https://movies.foresight.kleros.io",
+    url: "https://movies-r2.foresight.kleros.io",
     icon: "movie",
     banner: "movies-banner",
-    countLabel: "16 Movies",
+    countLabel: "20 Movies",
     tradingPeriod: "Until Friday 3rd 18:00 UTC",
     endTime: 1775239200,
+    status: "coming soon",
   },
   {
     slug: "realt",
@@ -33,17 +37,19 @@ export const experiments: IExperiment[] = [
     countLabel: "9 Properties",
     tradingPeriod: "Until Wednesday 17th 00:00 UTC",
     endTime: 1781721000,
+    status: "live",
   },
   {
-    slug: "movies-s2",
-    name: "Movies Experiment - Session 2",
+    slug: "movies",
+    name: "Movies Experiment",
     question:
       "If watched, what percentile score would Clément give to the movie?",
     url: "https://movies.foresight.kleros.io",
     icon: "movie",
     banner: "movies-banner",
-    countLabel: "20 Movies",
+    countLabel: "16 Movies",
     tradingPeriod: "Until Friday 3rd 18:00 UTC",
     endTime: 1775239200,
+    status: "ended",
   },
 ];
