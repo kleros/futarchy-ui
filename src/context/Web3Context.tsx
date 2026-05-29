@@ -2,6 +2,7 @@
 
 import React, { type ReactNode } from "react";
 
+import { AtlasProvider, Products } from "@kleros/kleros-app";
 import { gnosis } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
 import { configureRpcProviders } from "@swapr/sdk";
@@ -16,7 +17,9 @@ import {
   metadata as websiteMetadata,
   websiteUrl,
 } from "@/consts/metadata";
+
 const queryClient = new QueryClient();
+const atlasUri = process.env.NEXT_PUBLIC_ATLAS_URI;
 
 if (!reownProjectId) {
   throw new Error("Project ID is not defined");
@@ -56,12 +59,26 @@ const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
     cookies,
   );
 
+  if (!atlasUri) {
+    throw Error("NEXT_PUBLIC_ATLAS_URI not configured");
+  }
+
   return (
     <WagmiProvider
       config={wagmiAdapter.wagmiConfig as Config}
       {...{ initialState }}
     >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AtlasProvider
+          config={{
+            uri: atlasUri,
+            product: Products.CourtV2,
+            wagmiConfig: wagmiAdapter.wagmiConfig,
+          }}
+        >
+          {children}
+        </AtlasProvider>
+      </QueryClientProvider>
     </WagmiProvider>
   );
 };

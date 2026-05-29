@@ -131,3 +131,8 @@ export function clamp(value: number, min: number, max: number): number {
  */
 export const formatWithPrecision = (value: number, precision: number) =>
   (value / precision).toFixed(Math.log10(precision));
+
+/**
+ * Checks if a string is empty or contains only whitespace.
+ */
+export const isEmpty = (str: string): boolean => str.trim() === "";
