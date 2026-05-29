@@ -21,7 +21,7 @@ export const experiments: IExperiment[] = [
       "If watched, what percentile score would Clément give to the movie?",
     url: "https://movies-r2.foresight.kleros.io",
     icon: "movie",
-    banner: "movies-banner",
+    banner: "movies-r2-banner",
     countLabel: "20 Movies",
     tradingPeriod: "Until Friday 3rd 18:00 UTC",
     endTime: 1775239200,

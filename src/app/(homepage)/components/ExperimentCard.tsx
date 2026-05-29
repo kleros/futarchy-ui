@@ -15,6 +15,7 @@ import MovieLightIcon from "@/assets/experiments/movies-light.svg";
 import RealtDarkIcon from "@/assets/experiments/realt-dark.svg";
 import RealtLightIcon from "@/assets/experiments/realt-light.svg";
 import MoviesBanner from "@/assets/png/movies-banner.png";
+import MoviesR2Banner from "@/assets/png/movies-r2-banner.png";
 import PropertiesBanner from "@/assets/png/properties-banner.png";
 import ArrowIcon from "@/assets/svg/arrow-right.svg";
 import TradingIcon from "@/assets/svg/chart-bar.svg";
@@ -46,6 +47,7 @@ const statusStyles: Record<
 };
 
 const bannerMap: Record<string, StaticImageData> = {
+  "movies-r2-banner": MoviesR2Banner,
   "movies-banner": MoviesBanner,
   "properties-banner": PropertiesBanner,
 };
