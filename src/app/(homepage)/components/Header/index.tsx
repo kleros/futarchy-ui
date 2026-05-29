@@ -38,7 +38,10 @@ const Header: React.FC = () => {
         <Countdown />
         <LiquiditySummary />
       </div>
-
+      <ExternalLink
+        text="Distilled Clément's Judgement - Session 2"
+        url="https://movies-r2.foresight.kleros.io/"
+      />
       <div
         className={clsx(
           "relative mt-8 box-border w-full overflow-hidden rounded-xl",
