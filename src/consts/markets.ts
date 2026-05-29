@@ -260,7 +260,7 @@ export const markets: Array<IMarket> = [
     details: {
       imdbURL: "https://www.imdb.com/title/tt0328832/",
       posterURL:
-        "https://upload.wikimedia.org/wikipedia/en/5/5a/The_Animatrix_DVD.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/d/d2/The-animatrix-poster.jpeg",
       summary:
         "Nine animated short films expand the Matrix universe, exploring backstories and side stories from the Wachowskis' sci-fi world.",
     },
