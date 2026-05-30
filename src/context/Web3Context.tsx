@@ -41,8 +41,8 @@ createAppKit({
   projectId: reownProjectId,
   networks: [gnosis],
   defaultNetwork: gnosis,
-  metadata: metadata,
   enableCoinbase: false,
+  metadata: metadata,
   features: {
     analytics: false,
   },
@@ -72,7 +72,7 @@ const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
         <AtlasProvider
           config={{
             uri: atlasUri,
-            product: Products.CourtV2,
+            product: Products.Foresight,
             wagmiConfig: wagmiAdapter.wagmiConfig,
           }}
         >

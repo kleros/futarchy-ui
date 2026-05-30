@@ -73,7 +73,7 @@ const PositionValue: React.FC<IPositionValue> = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-x-2 gap-y-3">
       <h3 className="text-klerosUIComponentsPrimaryText">
         {isResolved ? (
           <strong>Position to redeem:</strong>
@@ -83,7 +83,7 @@ const PositionValue: React.FC<IPositionValue> = ({
       </h3>
       <div
         className={clsx(
-          "flex flex-col justify-start gap-4",
+          "flex flex-col justify-start gap-x-4 gap-y-1",
           "flex-wrap md:flex-row md:items-center md:justify-center",
         )}
       >
@@ -133,7 +133,7 @@ const PositionValue: React.FC<IPositionValue> = ({
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
-              "flex items-center gap-1",
+              "flex w-fit items-center gap-1",
               "text-klerosUIComponentsPrimaryText justify-center text-sm",
               "hover:text-klerosUIComponentsPrimaryBlue transition-colors",
             )}

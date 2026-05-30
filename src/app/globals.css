@@ -76,6 +76,20 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    background-color: #fff;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+    svg {
+      fill: #333333 !important;
+      width: 16px !important;
+      height: 16px !important;
+    }
+  }
   :root {
     --background: #ffffff;
     --foreground: #171717;

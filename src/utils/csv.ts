@@ -2,9 +2,9 @@ import Papa from "papaparse";
 
 import { PredictionMarket } from "@/store/markets";
 
-import marketFromName from "./marketIdFromName";
+import { formatUsdPlain } from "@/utils/marketRange";
 
-import { formatWithPrecision } from ".";
+import marketFromName from "./marketIdFromName";
 
 export const parseMarketCSV = (csvText: string): Record<string, number> => {
   const parsed = Papa.parse<{ marketName: string; score: string }>(csvText, {
@@ -55,29 +55,28 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
 
     const marketId = market.marketId;
 
-    // Validate score
-    const score = parseFloat(scoreStr);
-    if (isNaN(score)) {
+    const parsedUsd = parseFloat(scoreStr);
+    if (isNaN(parsedUsd)) {
       throw new Error(
-        `Row ${i + 2}: Score "${scoreStr}" is not a valid number`,
+        `Row ${i + 2}: Value "${scoreStr}" is not a valid number`,
       );
     }
 
-    if (score < 0) {
-      throw new Error(`Row ${i + 2}: Score cannot be negative`);
-    }
+    const predictionUsd = Math.round(parsedUsd);
 
-    const maxScore = formatWithPrecision(
-      market.maxValue * market.precision,
-      market.precision,
-    );
-    if (score > +maxScore) {
+    if (predictionUsd < market.minValue) {
       throw new Error(
-        `Row ${i + 2}: Score cannot be greater than the max value of ${maxScore}`,
+        `Row ${i + 2}: Price must be at least ${market.minValue} USD for property ${marketName}`,
       );
     }
 
-    result[marketId] = Math.round(score * market.precision);
+    if (predictionUsd > market.maxValue) {
+      throw new Error(
+        `Row ${i + 2}: Price must be at most ${market.maxValue} USD for property ${marketName}`,
+      );
+    }
+
+    result[marketId] = predictionUsd;
   }
 
   if (Object.values(result).length === 0) {
@@ -90,10 +89,7 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
 export function generateMarketCsv(markets: Record<string, PredictionMarket>) {
   const data = Object.values(markets).map((market) => ({
     marketName: market.name,
-    score: formatWithPrecision(
-      market.prediction ?? market.marketEstimate ?? 0,
-      market.precision,
-    ),
+    score: formatUsdPlain(market.prediction ?? market.marketEstimate ?? 0),
   }));
 
   return Papa.unparse(data, {
@@ -109,4 +105,75 @@ export function downloadCsvFile(filename: string, content: string) {
   link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+function escapeCsvValue(value: unknown): string {
+  if (value === null || value === undefined) return "";
+
+  if (Array.isArray(value) || (typeof value === "object" && value !== null)) {
+    const json = JSON.stringify(value);
+    return `"${json.replace(/"/g, '""')}"`;
+  }
+
+  const str = String(value);
+  if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+function flattenObject(
+  obj: Record<string, unknown>,
+  prefix = "",
+): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    const flatKey = prefix ? `${prefix}.${key}` : key;
+
+    if (Array.isArray(value)) {
+      result[flatKey] = value;
+    } else if (
+      value !== null &&
+      typeof value === "object" &&
+      !(value instanceof Date)
+    ) {
+      Object.assign(
+        result,
+        flattenObject(value as Record<string, unknown>, flatKey),
+      );
+    } else {
+      result[flatKey] = value;
+    }
+  }
+
+  return result;
+}
+
+export function generateRealtDataCsv(
+  allData: Record<string, Record<string, unknown>>,
+  contractAddresses: string[],
+): string {
+  const entries = contractAddresses
+    .map((addr) => allData[addr.toLowerCase()])
+    .filter(Boolean)
+    .map((data) => flattenObject(data as Record<string, unknown>));
+
+  if (entries.length === 0) return "";
+
+  // Collect all unique keys across all entries to ensure no field is missed
+  const allKeys = new Set<string>();
+  for (const entry of entries) {
+    for (const key of Object.keys(entry)) {
+      allKeys.add(key);
+    }
+  }
+  const columns = Array.from(allKeys);
+
+  const header = columns.map(escapeCsvValue).join(",");
+  const rows = entries.map((entry) =>
+    columns.map((col) => escapeCsvValue(entry[col])).join(","),
+  );
+
+  return [header, ...rows].join("\n");
 }

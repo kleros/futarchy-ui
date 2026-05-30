@@ -14,8 +14,10 @@ import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
 import { Skeleton } from "@/components/Skeleton";
 
-import { formatWithPrecision, isUndefined } from "@/utils";
+import { isUndefined } from "@/utils";
+import { formatCompactUsd } from "@/utils/formatCompactUsd";
 import { getReadableTextColor } from "@/utils/getReadableTextColor";
+import { formatUsd, predictionToNormalizedPrice } from "@/utils/marketRange";
 
 const LoadingSkeleton: React.FC = () => (
   <div className="relative w-full">
@@ -43,7 +45,9 @@ const PredictionSliderContent: React.FC = () => {
     showEstimateVariant,
     hasLiquidity,
   } = useMarketContext();
-  const { maxValue, minValue, precision, color } = market;
+  const { minValue, maxValue, initialInvestmentUsd, color } = market;
+
+  const step = Math.max(1, Math.round(initialInvestmentUsd / 100));
   const { winningMarkets } = useWinningAnswers();
 
   const resolvedMarket = useMemo(() => {
@@ -66,14 +70,15 @@ const PredictionSliderContent: React.FC = () => {
             "w-full",
             "[&_#slider-label]:!text-klerosUIComponentsPrimaryText [&_#slider-label]:font-semibold",
           )}
-          maxValue={maxValue * precision}
-          minValue={minValue * precision}
+          maxValue={maxValue}
+          minValue={minValue}
+          step={step}
           value={prediction}
-          leftLabel=""
-          rightLabel=""
+          leftLabel={formatCompactUsd(minValue)}
+          rightLabel={formatCompactUsd(maxValue)}
           aria-label="Slider"
           callback={setPrediction}
-          formatter={(value) => `${formatWithPrecision(value, precision)}`}
+          formatter={(value) => formatUsd(value)}
           // @ts-expect-error other values not needed
           theme={
             showEstimateVariant
@@ -86,7 +91,7 @@ const PredictionSliderContent: React.FC = () => {
           isDisabled={!hasLiquidity}
         />
         <div
-          className="pointer-events-none absolute bottom-0"
+          className="pointer-events-none absolute bottom-1/3"
           style={{
             transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%))`,
           }}
@@ -105,17 +110,17 @@ const PredictionSliderContent: React.FC = () => {
             }}
           >
             {/* TODO: updates for individual experiments */}
-            {`${formatWithPrecision(marketEstimate, precision)}%`}
+            {formatUsd(marketEstimate)}
           </div>
           <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
         </div>
 
-        {isUndefined(resolvedMarket) ? null : (
+        {isUndefined(resolvedMarket) ||
+        isUndefined(resolvedMarket.finalAnswer) ? null : (
           <div
             className="pointer-events-none absolute bottom-0"
-            // TODO: updates for individual experiment
             style={{
-              transform: `translateX(calc(${!isUndefined(resolvedMarket.finalAnswer) && width ? (resolvedMarket.finalAnswer / 100) * width : 0}px - 50%))`,
+              transform: `translateX(calc(${width ? predictionToNormalizedPrice(resolvedMarket.finalAnswer, market) * width : 0}px - 50%))`,
             }}
           >
             <label className="text-klerosUIComponentsPrimaryText block w-full text-center text-xs">
@@ -127,8 +132,7 @@ const PredictionSliderContent: React.FC = () => {
                 "text-center text-xs text-black",
               )}
             >
-              {/* TODO: updates for individual experiments */}
-              {`${resolvedMarket.finalAnswer}%`}
+              {formatUsd(resolvedMarket.finalAnswer)}
             </div>
             <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
           </div>
