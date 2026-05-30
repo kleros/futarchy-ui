@@ -17,22 +17,26 @@ export const advancedUserGuide =
 
 export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
 
+export const seerMarketLink =
+  "https://app.seer.pm/markets/100/which-movies-will-clement-watch-as-part-of-the-distilled-clements-judgement-expe-3";
+
 // TODO: update to latest
 export const projectsChosen = 5;
 
 export const parentMarket: Address =
-  "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
+  "0x6b182ffe23a9df5f5bfb2e9b6b4ce5716e84ab1f";
 
 export const parentConditionId =
-  "0x0d6c99d7eb9fa657236905b6cf464eaa938371ae5ce8cf153af450321377241d";
+  "0x72ae8f9929c0e485bdf0f054f53ca9d55c6e27bc356732ea2f0eb775ae435920";
 
 export const invalidMarket: Address =
-  "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
+  "0x8FD01b1879AC2D141ddb4514F13c7C06E11c9938";
 
 // in unix timestamp, seconds
-export const startTime: number = 1771871400;
-export const endTime: number = 1775239200;
-export const endDate: string = "Friday 3rd April 18:00 UTC";
+export const startTime: number = 1779341400;
+export const endTime: number = 1781913600;
+export const endDate: string = "Saturday, 20 June 2026 00:00 UTC";
+
 export interface IDetails {
   imdbURL?: string;
   posterURL?: string;
@@ -56,376 +60,472 @@ export interface IMarket {
 }
 
 export const marketMetadata = {
-  name: "Session 1 - Movies Experiment",
+  name: "Distilled Clément's Judgement - Session 2",
   question:
     "If watched, what percentile score would Clément give to the movie?",
 };
 
+const MARKET_COLORS = [
+  "#E6194B",
+  "#3CB44B",
+  "#FFD93D",
+  "#6BCB77",
+  "#4D96FF",
+  "#845EC2",
+  "#FF9671",
+  "#0081CF",
+  "#FFC75F",
+  "#00C9A7",
+  "#C34A36",
+  "#9B51E0",
+  "#2D4059",
+  "#F9F871",
+  "#B0A8B9",
+  "#FF8066",
+  "#F58231",
+  "#911EB4",
+  "#46F0F0",
+  "#D2F53C",
+] as const;
+
 export const markets: Array<IMarket> = [
   {
-    name: "Judge Dredd (1995)",
-    color: "#E6194B",
-    upToken: "0x0ee25eb2e22c01fa832dd5fea5637fba4cd5e870",
-    downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
-    underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
-    invalidToken: "0x11463F43181eB643bA8a584756CCB27a9B8f7B98",
+    name: "Anatomy of a Fall (2023)",
+    color: MARKET_COLORS[0],
+    upToken: "0x967c2c9449855ac7c68b7abfabc2321cb68a6190",
+    downToken: "0x5bfbe9307156c984a6c88ed8d91fd6e17d1738b9",
+    underlyingToken: "0x48e99311f273375e17f5a030324bb9ac8372aa1d",
+    invalidToken: "0x5f0096d28b0f1cee3e3e7ef4ebe72f62f2625184",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
+    marketId: "0x500753632d2787dc33f0c891c228b8e33755e2c8",
     parentMarketOutcome: 0,
     conditionId:
-      "0x3d963acd72df546f58bf4ea76fda6957c830e6e3f8965517c396fc76dc2c08a3",
+      "0xfd443bca42916c670e6363566260f92beda5ac2432aab17b3224916ea8db2057",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0113492/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_judge%2520dredd",
+      imdbURL: "https://www.imdb.com/title/tt17009710/",
       posterURL:
-        "https://resizing.flixster.com/BsX7kI5BwBsc9xSQPEt5ddA3PI4=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p16918_p_v8_ae.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/8/88/Anatomy_of_a_Fall_%282023%29_film_poster.jpg",
       summary:
-        "In a dystopian future, Joseph Dredd, the most famous Judge (a police officer with instant field judiciary powers), is convicted for a crime he did not commit and must face his murderous counterpart.",
+        "A writer stands trial for her husband's death at their remote chalet, while their blind son wrestles with whether he witnessed the truth.",
     },
   },
   {
-    name: "Bacurau (2019)",
-    color: "#3CB44B",
-    upToken: "0x028ec9938471bbad5167c2e5281144a94d1acbe9",
-    downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
-    underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
-    invalidToken: "0x971bd2446cc32dFa26410Cc46978AA0c371Bc48e",
+    name: "Les Misérables (2012)",
+    color: MARKET_COLORS[1],
+    upToken: "0x238bf04f081e973872fdf4c886c1bfbac8bf79fe",
+    downToken: "0xb9e3a26b7ee054af700ed3ff01665bcab3a84dca",
+    underlyingToken: "0xc43e91405bfbdef25861a6b68e390f6036e6b365",
+    invalidToken: "0xbb0747df5a07ae4ed77ba1f54ba857745d3c1d07",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
+    marketId: "0x8f0f575b91999d857249cf909ca93e01ec104607",
     parentMarketOutcome: 1,
     conditionId:
-      "0xa4cc97a4e4f6e02c546a5b3bb49e2c411dcb4c6dcd478cef9cd0c86605c59878",
+      "0x51490ca267fd6bab25d5600aa4f4664a3fb340196e1867e977fdb3c223d207e6",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt2762506/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_bacura",
+      imdbURL: "https://www.imdb.com/title/tt1707386/",
       posterURL:
-        "https://resizing.flixster.com/MUNwK1o6mdxwkgj-2v86bWf6xXM=/206x305/v2/https://resizing.flixster.com/-cGVSNCtYaLQDwteIiI9LUMoqJ0=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2Y3NWE5YWNjLTRlNzktNGEzYi05NTg5LWNhOTBiYTJlODM1OC53ZWJw",
+        "https://upload.wikimedia.org/wikipedia/en/0/05/Les_Mis%C3%A9rables_2019_film_poster.jpg",
       summary:
-        "After the death of her grandmother, Teresa comes home to her matriarchal village in a near-future Brazil to find a succession of sinister events that mobilizes all of its residents.",
+        "After a police sting goes wrong in a Paris banlieue, an anti-crime squad patrols a tense housing project where a new officer witnesses escalating brutality.",
     },
   },
   {
-    name: "The Hitchhiker's Guide to the Galaxy (2005)",
-    color: "#FFD93D",
-    upToken: "0xad2248b8eaa3e3a405c1ba79dd436947f8b427df",
-    downToken: "0xdd510abc6a848662371c3455717949035cc24019",
-    underlyingToken: "0xfb06c25e59302d8a0318d6df41a2f29deeea1c8a",
-    invalidToken: "0x43D6E82de1E64531b5E47891b186227edA566344",
+    name: "American Sniper (2014)",
+    color: MARKET_COLORS[2],
+    upToken: "0x45726ec447f3870313f66f18f850d9e606f89d66",
+    downToken: "0x7a6c6d455b1dd72424f9c38f2720a44acb5d3610",
+    underlyingToken: "0x3bdd96d52f517b8b36ed25f46e8d98e603a30d20",
+    invalidToken: "0x69983f6fc5225d567f6aac68c803dac9b02e82df",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0xfdd8af90af2722d5fe39adf1002fbd069b8a76c0",
+    marketId: "0x7b3e2fb92f24303eb1d379d041eaa94e8a1eb04d",
     parentMarketOutcome: 2,
     conditionId:
-      "0xe97f19928d4143377d3cb97043c90408ccb9c51788447f42d2df9d65694c8171",
+      "0x96426fa3c094337e6c78ea11a3787ce9ccf63e0e53779d954cd1b6e889bb4a3c",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0371724/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_the%2520hitch",
+      imdbURL: "https://www.imdb.com/title/tt2179136/",
       posterURL:
-        "https://resizing.flixster.com/otfSVWc26cetfV0acq5Z5-E9A60=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p35755_p_v8_am.jpg",
-      summary: `Mere seconds before the Earth is to be demolished by an alien construction crew, journeyman Arthur Dent is swept off the planet by his friend Ford Prefect, a researcher penning a new edition of "The Hitchhiker's Guide to the Galaxy."`,
+        "https://upload.wikimedia.org/wikipedia/en/1/10/American_Sniper_poster.jpg",
+      summary:
+        "Navy SEAL sniper Chris Kyle becomes a legend on the battlefield in Iraq, but his skill and the war take a heavy toll on his life back home.",
     },
   },
   {
-    name: "Everything, Everywhere, All At Once (2022)",
-    color: "#6BCB77",
-    upToken: "0xfa020fcd05e0b91dae83a2a08c5b5533edf8c851",
-    downToken: "0x372d0798ffe8c3aa982a15258c0fea22c6a768df",
-    underlyingToken: "0xe85d556d1aaae2f6027336e468e9c981251a4bef",
-    invalidToken: "0x3Aa738505C22e670a074e60566bD7264e7D682B1",
+    name: "Top Gun: Maverick (2022)",
+    color: MARKET_COLORS[3],
+    upToken: "0x66b52fc7c7574eae684c0c43f24a49fd4c5a0a7c",
+    downToken: "0xff9e4c1e1bd2e646745b13de888748096896afe7",
+    underlyingToken: "0x43ec5b66d596abb631b4c9c884d184899ca7bf52",
+    invalidToken: "0xaac3a1ed8aadd3b5ab82af0d1dc0bb9fe5ebe013",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x1f2e76d66047e7f8e0deea373a0c04ffecab31df",
+    marketId: "0x49312327caf9f981a85ee08a8e415f1a15093791",
     parentMarketOutcome: 3,
     conditionId:
-      "0xdc8f8277da182ee2d5293c754a1cfb8d3761720259cf17a65df61b7cb6983721",
+      "0x42a1615f88d589e1135f2c891cc2d26c44b5d815c758e2a3d305a5ecbbdfb870",
     details: {
-      imdbURL: "https://www.imdb.com/title/tt6710474/?ref_=fn_all_ttl_1",
+      imdbURL: "https://www.imdb.com/title/tt1745960/",
       posterURL:
-        "https://resizing.flixster.com/I2Z0zDTKJdvO7Akh819HROIhZQ4=/206x305/v2/https://resizing.flixster.com/mx-agGjjsUK1QMyuv3AJhHI3hgo=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzLzA3ZjU2MGU1LWMxODItNDlkMC1hYzJhLTY2YzMwOGZkMDhiZi5qcGc=",
+        "https://upload.wikimedia.org/wikipedia/en/1/13/Top_Gun_Maverick_Poster.jpg",
       summary:
-        "A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes and connecting with the lives she could have led.",
+        "Decades after Top Gun, Maverick trains elite pilots for a dangerous mission while confronting his past and the son of his late best friend.",
     },
   },
   {
-    name: "12 angry men (1957)",
-    color: "#4D96FF",
-    upToken: "0x7ee3806d16dc6a76bef2b11880b70cc70f74fa1a",
-    downToken: "0x34f8572eab463606a014c37ff68b78ac9361cacc",
-    underlyingToken: "0xb3933fd994af5db7ae985a0d62ed2dda918a839b",
-    invalidToken: "0x12c91f543a48F58e3E54c398f19BEc4b62aFD617",
+    name: "Thor (2011)",
+    color: MARKET_COLORS[4],
+    upToken: "0x388d554356ccfe6f414c02f70cda3dba999896b5",
+    downToken: "0x9933d36b508d52899f8b3c57f5705a0c8a913834",
+    underlyingToken: "0x3b3ee3bb10f1c67b07ab30a6d41f4b70a60ccae8",
+    invalidToken: "0xdbed44d21941f0d99594b7380d0f0e4faf0f6b87",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x2338ca7d59b7e15bd03dd81cf5f5bb59b6c6c6d4",
+    marketId: "0x8cb5c56f7acb92b005383f73eb7f3b18caf60896",
     parentMarketOutcome: 4,
     conditionId:
-      "0xf857ab39ef39d99f00d38ab07a5676406dfd5382f6d2177c44642e147d8dd0ad",
+      "0xe3bda46d820c58664dc1b801a8956cab65b75678c06beeb7394eb9259b5422cb",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0050083/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_12%2520angry",
+      imdbURL: "https://www.imdb.com/title/tt0800369/",
       posterURL:
-        "https://resizing.flixster.com/FDNKxkwCqhqdzh-IvaGBfzqRb74=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p2084_p_v8_ar.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/9/95/Thor_%28film%29_poster.jpg",
       summary:
-        "The jury in a New York City murder trial is frustrated by a single member whose skeptical caution forces them to more carefully consider the evidence before jumping to a hasty verdict.",
+        "Banished to Earth and stripped of his powers, the arrogant god Thor must learn humility while his brother Loki schemes to seize the throne of Asgard.",
     },
   },
   {
-    name: "Alien (1979)",
-    color: "#845EC2",
-    upToken: "0x37e70bae5e87327feece73a7c227446571f92137",
-    downToken: "0x31e3d82a613e5aeea7c3a65c3d657cacaaaf2674",
-    underlyingToken: "0x6d0407b5ae419fdd92ffdc64abf04c5f28950e02",
-    invalidToken: "0xe54422171C40aA14B0fc935DEA7AFb85BE15357d",
+    name: "The Menu (2022)",
+    color: MARKET_COLORS[5],
+    upToken: "0x4b833793b98cf7fd561bc3b1bed8ff0ca89110a2",
+    downToken: "0x1076e6c5043cb5eb391b2e80a219398e51b08ca5",
+    underlyingToken: "0xdd488b509bd680d56e3d500c51d721bbcc8b9e9a",
+    invalidToken: "0x4304a98223b658f3c2ffaa6d8d176c0aad352418",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x9a274ea86665d872fc58c8f26fd97a18b844c6ac",
+    marketId: "0xfe2c4e911009c73989063cae5b55ae87a552da14",
     parentMarketOutcome: 5,
     conditionId:
-      "0x8054990ae8221c8a08581381a0d2e3e5f23144a4d18a2398858be52dd94cc8c9",
+      "0xf9fa567109e853a0198f7447ca4bc0a3bf30c7dc4fb765f53978d3c16a1295dd",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0078748/?ref_=nv_sr_srsg_3_tt_8_nm_0_in_0_q_alien",
+      imdbURL: "https://www.imdb.com/title/tt9764362/",
       posterURL:
-        "https://resizing.flixster.com/5R4bkJZC-W_K-YjmIMKAXCbts5Y=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p2571_p_v8_aw.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/d/db/The_Menu_%282022_film%29.jpg",
       summary:
-        "After investigating a mysterious transmission of unknown origin, the crew of a commercial spacecraft encounters a deadly lifeform.",
+        "A couple travels to a remote island for an exclusive dinner, where the celebrity chef serves a lavish tasting menu with horrifying surprises.",
     },
   },
   {
-    name: "Demolition Man (1993)",
-    color: "#FF9671",
-    upToken: "0x53a9011c5570bfb8148954c4f49a6625dc44077b",
-    downToken: "0x64974d3bf944fafec6fa19a900f3679a716b3a86",
-    underlyingToken: "0x20025021e440edd39d486f3c6a1d7adb9c269faf",
-    invalidToken: "0x406B8Ee2DF07c644414E852542dAB98BdDf39234",
+    name: "My Neighbor Totoro (1988)",
+    color: MARKET_COLORS[6],
+    upToken: "0xd61a865ac9409aa4198e1bb84d7c28ed88710c81",
+    downToken: "0xe703c82b4511fb2fcece2787373350fb55c49811",
+    underlyingToken: "0xc4bd2db6ef8211e57974d07361bba5d8452283cc",
+    invalidToken: "0x7a7745172bc511e241b11d05b27123379eb3163e",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0xc25af7d4a5cb36bb3ce9faf652a5f7f989a1d57a",
+    marketId: "0xef3c87d93df2b8c373b9c21f9bf1c6c2f8b587c6",
     parentMarketOutcome: 6,
     conditionId:
-      "0xe35db6fb9992ab689e21751f036ccc9a8548b71dec3089874cf4a19a13cd34bb",
+      "0xf1fc4619948ef32754e6765cf0cdcade45203bda0615e2248cc38517caccadd4",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0106697/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_demolition%2520man",
+      imdbURL: "https://www.imdb.com/title/tt0096283/",
       posterURL:
-        "https://resizing.flixster.com/e3iHOpnnUZKRPz_xHJVoLz8TkGM=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p15098_p_v10_ab.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/0/02/My_Neighbor_Totoro_-_Tonari_no_Totoro_%28Movie_Poster%29.jpg",
       summary:
-        "A police officer is brought out of suspended animation in prison to pursue an old ultra-violent nemesis who is loose in a non-violent future society.",
+        "Two young sisters who move to the countryside discover friendly forest spirits, including the gentle giant Totoro, in postwar rural Japan.",
     },
   },
   {
-    name: "Barbie (2023)",
-    color: "#0081CF",
-    upToken: "0xaed0fad91e7149ec84bb4d0a2a77be819169275f",
-    downToken: "0x044e1b6d8aacbda5699423578bd200484f7473c3",
-    underlyingToken: "0x67d0f938ea12e7e30b8ccc24dd031d656cc3927d",
-    invalidToken: "0xA9099Baa3b74c1d602aCe8CeaC5933a16A0456C5",
+    name: "The Animatrix (2003)",
+    color: MARKET_COLORS[7],
+    upToken: "0x6d48f3b0ae3ec4759536a3935372f94f35fd087b",
+    downToken: "0x56f3eea0668400d8b225ef2433679d3d0f15f552",
+    underlyingToken: "0xdb8b4a8febdb9ecdb73312d524255b6832fe3e76",
+    invalidToken: "0x8cb225d3464ba7e5ec12bec1889fcfe8fa1b8185",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0xd31d05158722f64b6a49e25bccc47d3203eecbe9",
+    marketId: "0x8187931ab39b5c635ce4ddb2ea9bbf41e925be7b",
     parentMarketOutcome: 7,
     conditionId:
-      "0x3c102db4f274983b648bd27a4092866e1b81dbc08b8738a5c694a8d8c3948a81",
+      "0x53543ebfa0679a0b1e25726b0648c09f5a333cf84d39fb3fd810d1d2e45d2050",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1517268/?ref_=nv_sr_srsg_1_tt_6_nm_1_in_0_q_barbie",
+      imdbURL: "https://www.imdb.com/title/tt0328832/",
       posterURL:
-        "https://resizing.flixster.com/r409CsU-O1gEcAP0VtU6tDD9sKI=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p13472534_p_v8_am.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/d/d2/The-animatrix-poster.jpeg",
       summary:
-        "Barbie and Ken are having the time of their lives in the seemingly perfect world of Barbie Land. However, when they get a chance to go to the outside world, they soon discover the joys and perils of living among regular humans.",
+        "Nine animated short films expand the Matrix universe, exploring backstories and side stories from the Wachowskis' sci-fi world.",
     },
   },
   {
-    name: "Eduardo e Mônica (2020)",
-    color: "#FFC75F",
-    upToken: "0x9d64a3e7e55880f3c8f9c584ed32397bb6f0b9f6",
-    downToken: "0xe9d025d3cbd783d6a92626b650a32f7cbaca0e7d",
-    underlyingToken: "0x58ce7a53abeca1db90cec0e6b7dcbe3a36d986c4",
-    invalidToken: "0xcA4c82fd178aaf4b72ECe35774ce04B7Aa2E5361",
+    name: "Passengers (2016)",
+    color: MARKET_COLORS[8],
+    upToken: "0x89ea42a0fd5e6ea4634e4e58eb9a43e7408240c2",
+    downToken: "0xb39db49b49ba52c758e80a6ce6df13af478a5734",
+    underlyingToken: "0x6ca7fb2edb8e99713197c421ff3672c2c0baffe6",
+    invalidToken: "0x9fb8f8011ab03346fee456b4b79d1dc79c13e0e9",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x13d48a73811c01f574e1bfa4c58b7d95d2f590e4",
+    marketId: "0xac5475709469db331a3ba2662e9545c1067e8b5f",
     parentMarketOutcome: 8,
     conditionId:
-      "0x2dcf754f36437ea0c298e5d27a0f3904dc2335a6e239b15a104f3ca7787c5926",
+      "0x0bfac68fa16de2643a3dae50563c511f870ef314b511331134cc3cd5e5e28287",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt8747460/?ref_=nv_sr_srsg_0_tt_2_nm_0_in_0_q_Eduardo%2520e%2520M%25C3%25B4nica%2520(2020)",
+      imdbURL: "https://www.imdb.com/title/tt1355644/",
       posterURL:
-        "https://resizing.flixster.com/IaXbRF4gIPh9jireK_4VCPNfdKc=/200x0/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p18824656_k_v8_aa.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/8/8e/Passengers_2016_film_poster.jpg",
       summary:
-        "On an unusual day, a series of coincidences lead Eduardo to meet Monica at a party. Curiosity is aroused between the two and, despite not being alike, they fall madly in love. This love needs to mature and learn to overcome differences.",
+        "Two passengers on a sleeper ship to a distant colony awaken ninety years early and must decide whether they can build a life together.",
     },
   },
   {
-    name: "Thor: The Dark World (2013)",
-    color: "#00C9A7",
-    upToken: "0x0c569fbc021119b778ea160efd718a5d592ef46c",
-    downToken: "0xd8d2dfe1912239451b5a4a0462006e95393f2151",
-    underlyingToken: "0x72ec9aade867b5b41705c6a83f66bc56485669b5",
-    invalidToken: "0xFa2e53b2E33309CEE9255b440f143308F92BbA83",
+    name: "The Killing of a Sacred Deer (2017)",
+    color: MARKET_COLORS[9],
+    upToken: "0x17cc453ccc96a2d5501a3fa4fb7c1052c2e1bb75",
+    downToken: "0x408bbfb7546b6c5d030347cf4b60296f9cf22c21",
+    underlyingToken: "0xc14918bd67e011ea538c75c84a5ee9ac6cadffbb",
+    invalidToken: "0x04de943c4636a182b7c112c32a45049ee3249918",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x878a332b5efc0a4bf983036beece050352baa73d",
+    marketId: "0x2798493f6d53627aa59880d83be95cb901a3a8ce",
     parentMarketOutcome: 9,
     conditionId:
-      "0xb223aad8405c321b761e3cba872e556c1de3a8b552a38249d626bc5aff7c6ba2",
+      "0x8b47e5ff9491428c4d57da2416a335e616155b623a51e2b890e575abb0384573",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1981115/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_thor%2520the%2520dark",
+      imdbURL: "https://www.imdb.com/title/tt5715874/",
       posterURL:
-        "https://resizing.flixster.com/HtozfP_2NYit3_l7s-cbtsiuWps=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p9530219_p_v13_aa.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/8/8f/The_Killing_of_a_Sacred_Deer.png",
       summary:
-        "When the Dark Elves attempt to plunge the universe into darkness, Thor must embark on a perilous and personal journey that will reunite him with doctor Jane Foster.",
+        "A renowned surgeon befriends a teenage boy linked to his past, and when his family falls inexplicably ill, he faces an impossible moral demand.",
     },
   },
   {
-    name: "Talk to me (2022)",
-    color: "#C34A36",
-    upToken: "0xf3c17e909bd1f9367ecdc786d137465d7ee96b6a",
-    downToken: "0xf99be182b6b0e6d994509ecdced281b94100435f",
-    underlyingToken: "0x2b3a8ac53ba42da13f542a867d2859642fb1db44",
-    invalidToken: "0x94b6580034e1FFf008Ac8370dF69E180740469b0",
+    name: "Childhood's End (2015)",
+    color: MARKET_COLORS[10],
+    upToken: "0x754a0db2ece55985c9b044dad78261d6c105d845",
+    downToken: "0x4605f461e6b4998fd70b718fb988d03faa816155",
+    underlyingToken: "0x93847f29e302d1ec2f1e403083e0a5dba9e2124e",
+    invalidToken: "0x34c13ec7aa59137ffc1f75451d3bd11c1b222beb",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0xee4a77447069f32f555f3d75aaba18a4acb54ac4",
+    marketId: "0x7ac9b38515a0573d30284459151c6b2d675a535c",
     parentMarketOutcome: 10,
     conditionId:
-      "0x715f9e8ccc373f85e2f9ec02bba8d23c5f87090b729750ca8adac5b0f969213e",
+      "0x302e4e7b2a205ddcce662e00777a3c24612d6c91960b6794f752773caf5d0753",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt10638522/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_talk%2520to%2520me",
+      imdbURL: "https://www.imdb.com/title/tt4146128/",
       posterURL:
-        "https://resizing.flixster.com/ejS3S8JOBfvZr_fQ_--6SyKKJpQ=/206x305/v2/https://resizing.flixster.com/9WxKriao1BmRamIaqig2k8hd5uM=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2YyZDQwYTM2LWZmYzEtNGUwMC05NzRkLTA3ODM0NThiNDE4Ny5qcGc=",
+        "https://upload.wikimedia.org/wikipedia/en/c/c5/Childhoods_End.jpeg",
       summary:
-        "When a group of friends discover how to conjure spirits using an embalmed hand, they become hooked on the new thrill, until one of them goes too far and unleashes terrifying supernatural forces.",
+        "Quiet alien overlords bring decades of global peace, but as humanity merges into a greater mind, the cost of utopia becomes terrifyingly clear.",
     },
   },
   {
-    name: "Fast & Furious 6 (2013)",
-    color: "#9B51E0",
-    upToken: "0x850d2ffa4475296cfbbd76247894a773e3b1be6c",
-    downToken: "0xb28c716f63b0dd272f62e25765a914baeebab8c2",
-    underlyingToken: "0x71c3df5edcab48cfb6a1a99255eff063f33b6265",
-    invalidToken: "0xb3cE80d6b30DcC4d605B290f4dC1Fc3B8C2bcC3b",
+    name: "Starship Troopers (1997)",
+    color: MARKET_COLORS[11],
+    upToken: "0xbe5a3c21bb6c7693e8b90c441bbd768b4edfb8d5",
+    downToken: "0x55a3cb76ef3e5be6dd1505a4804220c10df2e543",
+    underlyingToken: "0x76152d5d43bdab7c334976bc55abd75eef7a8616",
+    invalidToken: "0x3fae95ab95757ca28fa59263bf4786fcf36a936e",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x38a2923cc391b9cd926e5a2d07462dc7d189c407",
+    marketId: "0xa9cb10f9bbcda4c0295e3fc00e626677d56355d2",
     parentMarketOutcome: 11,
     conditionId:
-      "0x27f341cdecacbd7ff0e4bb7b28add74ddaa388ff9f16bc749e2828a71fe6a5f6",
+      "0xe50814656d9819f66520cb6938325193298060ada3d79189fa0c08e6b3d73780",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1905041/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_fast%2520%2526%2520furious%25206",
+      imdbURL: "https://www.imdb.com/title/tt0120201/",
       posterURL:
-        "https://resizing.flixster.com/dJUU6CNK8IBSjsImW4nXCxxUVwU=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p9573130_p_v7_ab.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/d/df/Starship_Troopers_-_movie_poster.jpg",
       summary:
-        "Hobbs has Dominic and Brian reassemble their crew to take down a team of mercenaries, but Dominic unexpectedly gets sidetracked with facing his presumed deceased girlfriend, Letty.",
+        "In a militarized future, young Johnny Rico joins the Mobile Infantry to fight giant alien bugs across the galaxy in satirical sci-fi action.",
     },
   },
   {
-    name: "Elysium (2013)",
-    color: "#2D4059",
-    upToken: "0xe9427a7a32daad2d29db2aad809b2a44060d8fc8",
-    downToken: "0x75b5cd86828f7c9009e30619a83b1b2da67f1342",
-    underlyingToken: "0xf52e0e144b73a0d5748bc53667efe3ba62fe5695",
-    invalidToken: "0x69641B6664a493ecF467D4D9aAB595A8b9Cc4a66",
+    name: "The Abyss (1989)",
+    color: MARKET_COLORS[12],
+    upToken: "0x7e6f2d518b629139d61d96c9dff1209d6909e70a",
+    downToken: "0x4f7768f59a232db901fd727a445cb4bc22bfc18c",
+    underlyingToken: "0x1355d1ed3fac25d89b13f4dc3d8e9b5794003e6a",
+    invalidToken: "0x2dbcf02936d8b6b510c2ce662b3724b45dcebe05",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0xc0dab34c6c2008391bdc742cec0bd0afb60d4d59",
+    marketId: "0xadc0f1ddd02671db80010dddb6cf94d72c7ee933",
     parentMarketOutcome: 12,
     conditionId:
-      "0x2d2ee6e67d4ffa2c2a14898a29d0afe3d3cdd8ad362811aad64770a90553cb3a",
+      "0x985eaff71339527c99d6221dea84478e7b660f661cd8c43fc3792af3cf297237",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1535108/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_elysium",
-      posterURL:
-        "https://resizing.flixster.com/WlkdhZWddtMIv8U2Tmlb74rmBZ4=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p9360879_p_v10_ar.jpg",
+      imdbURL: "https://www.imdb.com/title/tt0096754/",
+      posterURL: "https://upload.wikimedia.org/wikipedia/en/a/ad/TheAbyss.jpg",
       summary:
-        "In the year 2154, the very wealthy live on a man-made space station while the rest of the population resides on a ruined Earth. A man takes on a mission that could bring equality to the polarized worlds.",
+        "A deep-sea oil-rig crew joins a Navy salvage team to rescue a sunken nuclear sub and encounters something extraordinary on the ocean floor.",
     },
   },
   {
-    name: "Session 9 (2001)",
-    color: "#F9F871",
-    upToken: "0xe080c03ad6bc9f8fd5b45b5d3bf14ebcfa1ec0b5",
-    downToken: "0x76cce8491785789c2c5542f043ec6c35b12cd909",
-    underlyingToken: "0x1086a95c224dd586809a7f4d875b4f09d2ac9290",
-    invalidToken: "0x4F2b7EC3aAC8Bb0Ffb272a4B27B758D2FFC31bc6",
+    name: "Ghost in the Shell (1995)",
+    color: MARKET_COLORS[13],
+    upToken: "0xb32a17a7fe0202b3b670137cea74358771ee46ee",
+    downToken: "0x3eeacab5ec695df0b80697ab85e09a1393ce7abc",
+    underlyingToken: "0x4ea57352c40d6b1797a6b6a6fefa4c83316a8979",
+    invalidToken: "0x610d9136441764a580a55cf19c49455d57daefa4",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0xa7cf69c4c93d2f6811a394e92320979c3cf86b37",
+    marketId: "0xf5825dfa8f433f596583c157791f9d4781d159b1",
     parentMarketOutcome: 13,
     conditionId:
-      "0x6bc6c6fd532a02ec128e7c8dfe3e496295f677c861405a88b7da503f1882eef8",
+      "0xb96fd52ef04ddb6712643e081e1ca9c355757f0dedea1257b8e04fb354531225",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0261983/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_session%25209",
+      imdbURL: "https://www.imdb.com/title/tt0113568/",
       posterURL:
-        "https://resizing.flixster.com/pMiw8blJew0YXddZivo7mtYlUDg=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p28177_p_v13_ac.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/c/ca/Ghostintheshellposter.jpg",
       summary:
-        "Tensions rise within an asbestos cleaning crew as they work in an abandoned mental hospital with a horrific past that seems to be coming back.",
+        "In near-future Japan, cyborg Major Motoko Kusanagi hunts a hacker called the Puppet Master while questioning her own identity and humanity.",
     },
   },
   {
-    name: "Mamma Mia! (2008)",
-    color: "#B0A8B9",
-    upToken: "0xfa82984fc8ddeb71fdb2e6e471f30995178ad5f0",
-    downToken: "0x5d528dbec7e37927d8af41bfb1b54e7641dd3ccb",
-    underlyingToken: "0x11ed86c399f455819f495cda1256e9b52afd0971",
-    invalidToken: "0x756de0795875f925AC95ba37472D26bC4375c6a4",
+    name: "Heretic (2024)",
+    color: MARKET_COLORS[14],
+    upToken: "0xbf732107bd6fbe6e0eb088f6a97cf8abe6802055",
+    downToken: "0xa0450169175379d63ce5aa1992e7bf7741457026",
+    underlyingToken: "0x33d3082db08fbdf77528c93dee020e77d910e3b2",
+    invalidToken: "0x9767c4d0c22c21b0c31e17d9952209c16084936b",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x96638d67ac5bc5f8223f9e2d60e92f4d8dcf3147",
+    marketId: "0xbd3c0bffb63f9bcb903c5b6b9ccc4b2a6ba3a4e5",
     parentMarketOutcome: 14,
     conditionId:
-      "0x6e5b27306498d2917cdde6a3ea4791cd5a6fe8d8bf33d491c97524c431eda325",
+      "0x5715dc76897de91b9216b36cb0c6934556cb4078c9e7f285fdd0751aab093358",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0795421/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_mamma%2520mia",
+      imdbURL: "https://www.imdb.com/title/tt28015403/",
       posterURL:
-        "https://resizing.flixster.com/sD29k0EMFXDWY0DPiFoQsaxqDNU=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p176344_p_v8_al.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/c/cb/Heretic_film_poster.jpg",
       summary:
-        "Donna, an independent hotelier, is preparing for her daughter's wedding with the help of two old friends. Meanwhile Sophie, the spirited bride, has a plan. She invites three men from her mother's past in hope of meeting her real father.",
+        "Two Mormon missionaries visit the remote home of a reclusive bibliophile whose hospitality turns sinister as his true intentions emerge.",
     },
   },
   {
-    name: "Ethereum (2022)",
-    color: "#FF8066",
-    upToken: "0xf8313845248f2392a39bdcd50be0781c7cf497c1",
-    downToken: "0x3befdfbd7c2a7139acafc3005369d30ff2cd8f9a",
-    underlyingToken: "0x78c2edb5639af0ed4351f001c728c9026820887e",
-    invalidToken: "0x8eB59F4590fF6a0037a159ea1601D9d309aEa598",
+    name: "The Big Short (2015)",
+    color: MARKET_COLORS[15],
+    upToken: "0xe12748f000708f8b330395d3fa2c4b96b46fb9bc",
+    downToken: "0x7d754b4ccedd1ce0061b1e053cd00724fe0392ca",
+    underlyingToken: "0x4b2c273a4b9ca5d80e916afaa3d216d0d6c6412f",
+    invalidToken: "0x9619aab5a7641a0575ac9dbb659d46c2f1b1ea3c",
     minValue: 0,
     maxValue: 100,
     precision: 100,
-    marketId: "0x002c70343ddef063d0ad8da91104934318800d30",
+    marketId: "0x6fcff018e0be156e323b5f949ff4ff1568c2c3eb",
     parentMarketOutcome: 15,
     conditionId:
-      "0x2b9e73d1da8dc051ffe4972114f59e61ad1bfd65fda93d88bcfb6644ffb07f4b",
+      "0xf8bf1d768856581923af803429bda667209d7d9863f99af983856204df98d280",
     details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt22069858/?ref_=nv_sr_srsg_2_tt_8_nm_0_in_0_q_ethereum",
+      imdbURL: "https://www.imdb.com/title/tt1596363/",
       posterURL:
-        "https://play-lh.googleusercontent.com/ARlYF4lUWeSFL9CgcKmHIesZwjsRjB0qkCKyIcLYckxYdrAkmvz1RKLQ_RFPRQuedofL8xOeCBtz-MIStG8=w240-h480-rw",
+        "https://upload.wikimedia.org/wikipedia/en/1/16/The_Big_Short_%282015_film_poster%29.png",
       summary:
-        "Learn About the hottest cryptocurrency around, Ethereum. This amazing documentary explores the history of Ethereum, a decentralized, open-source blockchain with smart contract functionality.",
+        "Several outsiders in finance bet against the housing market and uncover the fraud and hubris that will trigger the 2008 economic collapse.",
+    },
+  },
+  {
+    name: "Cloud Atlas (2012)",
+    color: MARKET_COLORS[16],
+    upToken: "0x31ea41adfa09cdcb6ee256bd28bb22c879e5ffe0",
+    downToken: "0x5e3c1832ffaeeba797b01365238ca1340583d1e7",
+    underlyingToken: "0x499858c3aece42822c4889ac665555c293236b01",
+    invalidToken: "0x9e5e9ab95e12e1af53c4ae6483e9cad2670d7e42",
+    minValue: 0,
+    maxValue: 100,
+    precision: 100,
+    marketId: "0x70db29dcc22822784c5760153245440aeec6428a",
+    parentMarketOutcome: 16,
+    conditionId:
+      "0x3c6fedb5d704fd75996b8c2b98088c6aeb074ed88d62789cf1311451b100b709",
+    details: {
+      imdbURL: "https://www.imdb.com/title/tt1371111/",
+      posterURL:
+        "https://upload.wikimedia.org/wikipedia/en/2/20/Cloud_Atlas_Poster.jpg",
+      summary:
+        "Six interconnected stories across centuries explore how souls and actions ripple through time, from the 1840s to a distant post-apocalyptic future.",
+    },
+  },
+  {
+    name: "Mr. Nobody (2009)",
+    color: MARKET_COLORS[17],
+    upToken: "0x294c63c0c8a96d06e757e03cd837e1c11ce15f02",
+    downToken: "0x01cc85f5fc7d4372ae475657eb3e0d2f2cd2667c",
+    underlyingToken: "0xa463a8d226258f45dbca65865b0a4fb9c33e71c4",
+    invalidToken: "0xa31bc323d98818cc4fada613ebdfc87e56768f18",
+    minValue: 0,
+    maxValue: 100,
+    precision: 100,
+    marketId: "0x9258bd1f1d172cb84e31f92c9bc08e54e90970ce",
+    parentMarketOutcome: 17,
+    conditionId:
+      "0xe463976810553a8bf471f9201838c400ab8de0e399b97efaf6c487f48c7c57ed",
+    details: {
+      imdbURL: "https://www.imdb.com/title/tt0485947/",
+      posterURL:
+        "https://upload.wikimedia.org/wikipedia/en/3/32/Mr._Nobody_%28film_poster%29.jpg",
+      summary:
+        "At 118, the last mortal on Earth recounts alternate lives he could have lived, exploring choice, love, and the paths not taken.",
+    },
+  },
+  {
+    name: "Casablanca (1942)",
+    color: MARKET_COLORS[18],
+    upToken: "0x1907325a493f1719d891174f7f164c4896935b37",
+    downToken: "0x342013a8c79f67b85647f65ab37c0dfc9816ec71",
+    underlyingToken: "0x2cc229ac490ca0d67d89d42e78bc3aa02f3d1de3",
+    invalidToken: "0x4a916b61c3f129a93f842cafc9d347188e570f20",
+    minValue: 0,
+    maxValue: 100,
+    precision: 100,
+    marketId: "0xbcf97dea30b95c6c9e5cc502a2f75733ccbee0b6",
+    parentMarketOutcome: 18,
+    conditionId:
+      "0xc9c35b45bc5f2fbc567f8cc15a22affbb3ca945156f3d4fb8702fa808825a6b9",
+    details: {
+      imdbURL: "https://www.imdb.com/title/tt0034583/",
+      posterURL:
+        "https://upload.wikimedia.org/wikipedia/commons/b/b3/CasablancaPoster-Gold.jpg",
+      summary:
+        "In wartime Casablanca, an American cafe owner must choose between love for a woman and helping her resistance leader husband escape the Nazis.",
+    },
+  },
+  {
+    name: "The Lobster (2015)",
+    color: MARKET_COLORS[19],
+    upToken: "0x66ac8721f56fdfbe41c45e812ce7bb4fdc6f6063",
+    downToken: "0x47c944957dcf96695644de4460e1ee897b0f550c",
+    underlyingToken: "0x1f97ef03a4bb3d53f2edcaf87c22f08eebea891b",
+    invalidToken: "0xf805b48613a946c0a96594d8745959e017158ebc",
+    minValue: 0,
+    maxValue: 100,
+    precision: 100,
+    marketId: "0x85ea4a4f3d49a5d5287a7ca3c144438e3c112d42",
+    parentMarketOutcome: 19,
+    conditionId:
+      "0xdd7f95256c547abd09da73952d7e935fe5d23f68df2e4e041bfb8900f406cdb1",
+    details: {
+      imdbURL: "https://www.imdb.com/title/tt3464902/",
+      posterURL:
+        "https://upload.wikimedia.org/wikipedia/en/9/9d/The_Lobster_%282015%29_poster.jpg",
+      summary:
+        "In a hotel where singles must find a partner within 45 days or be turned into an animal, one man flees into the woods to join the resistance.",
     },
   },
 ];

@@ -36,7 +36,10 @@ const Header: React.FC = () => {
         </div>
         <Countdown />
       </div>
-
+      <ExternalLink
+        text="Distilled Clément's Judgement - Session 1"
+        url="https://movies.foresight.kleros.io/"
+      />
       <div
         className={clsx(
           "relative mt-8 box-border w-full overflow-hidden rounded-xl",
