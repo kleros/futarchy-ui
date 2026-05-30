@@ -3444,9 +3444,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kleros/kleros-app@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "@kleros/kleros-app@npm:2.2.2"
+"@kleros/kleros-app@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@kleros/kleros-app@npm:2.3.0"
   dependencies:
     jose: "npm:^5.9.6"
   peerDependencies:
@@ -3457,7 +3457,7 @@ __metadata:
     react-dom: ^18.3.1
     viem: ^2.24.1
     wagmi: ^2.14.15
-  checksum: 10c0/96712b793b761127354ed967d0b88b3d14f880c4d00019af8d3d234d66ae9714ee51a505cd619724b348a4e66ef30e0faffcb062e83a8ebd8115ec47f591fe1b
+  checksum: 10c0/c1eb2d0b90bc386606929d21afa571a86fcdd72ce94d2b468240e1f32e7ad68d2ef28cd6384f3b11dfa03e81d2d68a0e8fc21d2a730d94da0dcff3c630c1f471
   languageName: node
   linkType: hard
 
@@ -11110,7 +11110,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:^5.0.2"
     "@graphql-codegen/typescript-graphql-request": "npm:^6.3.0"
     "@graphql-codegen/typescript-operations": "npm:^5.0.2"
-    "@kleros/kleros-app": "npm:^2.2.2"
+    "@kleros/kleros-app": "npm:^2.3.0"
     "@kleros/ui-components-library": "npm:^3.7.0"
     "@reown/appkit": "npm:^1.7.11"
     "@reown/appkit-adapter-wagmi": "npm:^1.7.11"
