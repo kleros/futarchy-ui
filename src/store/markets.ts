@@ -2,8 +2,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { isUndefined } from "@/utils";
+import { predictionToNormalizedPrice } from "@/utils/marketRange";
 
-import { IMarket } from "@/consts/markets";
+import { IMarket, parentMarket } from "@/consts/markets";
 
 export interface PredictionMarket extends IMarket {
   prediction?: number;
@@ -41,8 +42,10 @@ export const useMarketsStore = create<MarketsStore>()(
           const market = state.markets[marketId];
           if (isUndefined(market)) return state;
 
-          const predictedPrice =
-            prediction / (market.maxValue * market.precision);
+          const predictedPrice = predictionToNormalizedPrice(
+            prediction,
+            market,
+          );
           return {
             markets: {
               ...state.markets,
@@ -74,8 +77,7 @@ export const useMarketsStore = create<MarketsStore>()(
                 {
                   ...market,
                   prediction: estimate,
-                  predictedPrice:
-                    estimate / (market.maxValue * market.precision),
+                  predictedPrice: predictionToNormalizedPrice(estimate, market),
                 },
               ];
             }),
@@ -89,18 +91,25 @@ export const useMarketsStore = create<MarketsStore>()(
           const market = state.markets[marketId];
           if (isUndefined(market)) return state;
 
+          const estimate = market.marketEstimate;
           return {
             markets: {
               ...state.markets,
               // Setting the prediction to marketEstimate,
               // removes it from the predicable markets (@/hooks/usePredictionMarkets)
-              [marketId]: { ...market, prediction: market?.marketEstimate },
+              [marketId]: {
+                ...market,
+                prediction: estimate,
+                predictedPrice: isUndefined(estimate)
+                  ? undefined
+                  : predictionToNormalizedPrice(estimate, market),
+              },
             },
           };
         }),
     }),
     {
-      name: "futarchy-predictions",
+      name: `futarchy-realt-predictions-${parentMarket}`,
       partialize: (state) => ({
         markets: Object.fromEntries(
           Object.entries(state.markets)

@@ -1,5 +1,7 @@
 import { Address } from "viem";
 
+import { deriveMarketRangeFromInvestment } from "@/utils/marketRange";
+
 export const positionExplainerLink =
   "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6#30d9a9db4f0881969c23e8152ab1146d";
 
@@ -17,27 +19,25 @@ export const advancedUserGuide =
 
 export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
 
+export const seerMarketLink =
+  "https://app.seer.pm/markets/100/which-property-will-be-selected-for-evaluation-as-part-of-the-realt-prediction-e-3";
+
 // TODO: update to latest
-export const projectsChosen = 5;
+export const projectsChosen = 1;
 
 export const parentMarket: Address =
-  "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e";
+  "0x9446c7cd29be9b0f5b7f05bfdc8a81cf83341a17";
 
 export const parentConditionId =
-  "0x0d6c99d7eb9fa657236905b6cf464eaa938371ae5ce8cf153af450321377241d";
+  "0x0737c9d5f79d0be9a628f4f2741bc8ab8bc44677246d71526575fd8282830443";
 
 export const invalidMarket: Address =
-  "0x45F2d1Bfa638E0A5f04dFacAAdbDbd0c2044eae8";
+  "0x769FF74Ab52cA375dA2B47C10116376421A8A64c";
 
 // in unix timestamp, seconds
-export const startTime: number = 1771871400;
-export const endTime: number = 1775239200;
-export const endDate: string = "Friday 3rd April 18:00 UTC";
-export interface IDetails {
-  imdbURL?: string;
-  posterURL?: string;
-  summary: string;
-}
+export const startTime: number = 1779327180;
+export const endTime: number = 1781721000;
+export const endDate: string = "Wednesday 17th June 00:00 UTC";
 
 export interface IMarket {
   name: string;
@@ -46,386 +46,166 @@ export interface IMarket {
   downToken: Address;
   underlyingToken: Address;
   invalidToken: Address;
+  marketId: Address;
+  parentMarketOutcome: number;
+  realtContract: Address;
+  conditionId: `0x${string}`;
+  initialInvestmentUsd: number;
   minValue: number;
   maxValue: number;
   precision: number;
-  marketId: Address;
-  parentMarketOutcome: number;
-  details: IDetails;
-  conditionId: `0x${string}`;
 }
 
 export const marketMetadata = {
-  name: "Session 1 - Movies Experiment",
-  question:
-    "If watched, what percentile score would Clément give to the movie?",
+  name: "RealT Properties Predictions",
+  question: "If evaluated, what is the current price of the property?",
+  questionDescription:
+    "Which property will be selected for evaluation as a part of “RealT Properties Predictions”? \nAnd for the selected property, what price will that property be appraised at?",
 };
 
-export const markets: Array<IMarket> = [
+export const markets: IMarket[] = [
   {
-    name: "Judge Dredd (1995)",
+    name: "23750 W 7 Mile",
     color: "#E6194B",
-    upToken: "0x0ee25eb2e22c01fa832dd5fea5637fba4cd5e870",
-    downToken: "0x4abea4bf9e35f4e957695374c388cee9f83ca1d0",
-    underlyingToken: "0xb72a1271caa3d84d3fbbbcbb0f63ee358b94f96a",
-    invalidToken: "0x11463F43181eB643bA8a584756CCB27a9B8f7B98",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x105d957043ee12f7705efa072af11e718f8c5b83",
+    upToken: "0xbe2513792354e1b968e978b28ba533e670b10d7a",
+    downToken: "0xa31847efee83119d31ddc8d531ff96ec78528a26",
+    underlyingToken: "0x643e6708becd02164ff6e8ecdab518de5e8ea65c",
+    invalidToken: "0x8760c4f85092d0db379c37ede98c7ded8a402028",
+    marketId: "0x7acd59be3b18a94c91b9dddcae53d62f1410240b",
     parentMarketOutcome: 0,
     conditionId:
-      "0x3d963acd72df546f58bf4ea76fda6957c830e6e3f8965517c396fc76dc2c08a3",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0113492/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_judge%2520dredd",
-      posterURL:
-        "https://resizing.flixster.com/BsX7kI5BwBsc9xSQPEt5ddA3PI4=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p16918_p_v8_ae.jpg",
-      summary:
-        "In a dystopian future, Joseph Dredd, the most famous Judge (a police officer with instant field judiciary powers), is convicted for a crime he did not commit and must face his murderous counterpart.",
-    },
+      "0x82226df23ab46ca8ac26a677cc548c92012294cceaad8fa5b8be002bb4081737",
+    realtContract: "0x0f388d7e65a969dbcbfab21bc3ab6629af78f4cf",
+    initialInvestmentUsd: 944_537,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(944_537),
   },
   {
-    name: "Bacurau (2019)",
+    name: "18881 Mound",
     color: "#3CB44B",
-    upToken: "0x028ec9938471bbad5167c2e5281144a94d1acbe9",
-    downToken: "0x53f82c3f6836dcba9d35450d906286a6ea089a26",
-    underlyingToken: "0xcb1f243baaf93199742e09dc98b16fc8b714b67c",
-    invalidToken: "0x971bd2446cc32dFa26410Cc46978AA0c371Bc48e",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x68af0afe82dda5c9c26e6a458a143caad35708d6",
+    upToken: "0xf6d130eaf7cb156d4af691b4e35181db2fe84a70",
+    downToken: "0x7e0c7fa477a82cfffa7367dd02aea96b82dc3263",
+    underlyingToken: "0x64c5fc69aaea54eedfefb1270af7cc893801e448",
+    invalidToken: "0xb7e7164e1de9154af1027bd20b7aa4de3438f767",
+    marketId: "0x1adc7298acb34cb59385ba007a542f59392ea9d5",
     parentMarketOutcome: 1,
     conditionId:
-      "0xa4cc97a4e4f6e02c546a5b3bb49e2c411dcb4c6dcd478cef9cd0c86605c59878",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt2762506/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_bacura",
-      posterURL:
-        "https://resizing.flixster.com/MUNwK1o6mdxwkgj-2v86bWf6xXM=/206x305/v2/https://resizing.flixster.com/-cGVSNCtYaLQDwteIiI9LUMoqJ0=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2Y3NWE5YWNjLTRlNzktNGEzYi05NTg5LWNhOTBiYTJlODM1OC53ZWJw",
-      summary:
-        "After the death of her grandmother, Teresa comes home to her matriarchal village in a near-future Brazil to find a succession of sinister events that mobilizes all of its residents.",
-    },
+      "0x40935a2f9046721322018d6709b74094042a8eee7fc2db5fd0e0db8935544a16",
+    realtContract: "0x5c4e3fa9704d4212c6434190af6379cfbda47e13",
+    initialInvestmentUsd: 336_340,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(336_340),
   },
   {
-    name: "The Hitchhiker's Guide to the Galaxy (2005)",
+    name: "14631-14633 Plymouth",
     color: "#FFD93D",
-    upToken: "0xad2248b8eaa3e3a405c1ba79dd436947f8b427df",
-    downToken: "0xdd510abc6a848662371c3455717949035cc24019",
-    underlyingToken: "0xfb06c25e59302d8a0318d6df41a2f29deeea1c8a",
-    invalidToken: "0x43D6E82de1E64531b5E47891b186227edA566344",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0xfdd8af90af2722d5fe39adf1002fbd069b8a76c0",
+    upToken: "0xb8bc865f8a7990ae37cee6e51260c015880ed7cc",
+    downToken: "0x18ed32e2aad7d445c8c72e3afee35e8357f5babd",
+    underlyingToken: "0x733f14dc8c1592f46df5073651513268791014b4",
+    invalidToken: "0x4beb629a302e65bac5f8e39fba7f924942424fb6",
+    marketId: "0x7dfa1ea4b31f5096e5674e4e17604ebd7c6fa947",
     parentMarketOutcome: 2,
     conditionId:
-      "0xe97f19928d4143377d3cb97043c90408ccb9c51788447f42d2df9d65694c8171",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0371724/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_the%2520hitch",
-      posterURL:
-        "https://resizing.flixster.com/otfSVWc26cetfV0acq5Z5-E9A60=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p35755_p_v8_am.jpg",
-      summary: `Mere seconds before the Earth is to be demolished by an alien construction crew, journeyman Arthur Dent is swept off the planet by his friend Ford Prefect, a researcher penning a new edition of "The Hitchhiker's Guide to the Galaxy."`,
-    },
+      "0xfa1bdea018d1f7735354aadb531a8fbfd6cc7d2562c4950559406f5b481ccdf0",
+    realtContract: "0x854a0cfa24012937d3d15682ecc3d5b474bfa97e",
+    initialInvestmentUsd: 1_389_025,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(1_389_025),
   },
   {
-    name: "Everything, Everywhere, All At Once (2022)",
+    name: "11373 Prest",
     color: "#6BCB77",
-    upToken: "0xfa020fcd05e0b91dae83a2a08c5b5533edf8c851",
-    downToken: "0x372d0798ffe8c3aa982a15258c0fea22c6a768df",
-    underlyingToken: "0xe85d556d1aaae2f6027336e468e9c981251a4bef",
-    invalidToken: "0x3Aa738505C22e670a074e60566bD7264e7D682B1",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x1f2e76d66047e7f8e0deea373a0c04ffecab31df",
+    upToken: "0xcd4c6f4c2ca01a99b541c26cb6a9ff0fe6abea69",
+    downToken: "0x439d40c9addf88993e8b45ea7b9587cc7160cde9",
+    underlyingToken: "0x51ef0c299a67acdb28dd3e1ac71c81dcee91079d",
+    invalidToken: "0x0f2662a1d632748ea5462415ced47769e4426fb2",
+    marketId: "0xfdc2902d8562133073669624bc54320fc0ac975e",
     parentMarketOutcome: 3,
     conditionId:
-      "0xdc8f8277da182ee2d5293c754a1cfb8d3761720259cf17a65df61b7cb6983721",
-    details: {
-      imdbURL: "https://www.imdb.com/title/tt6710474/?ref_=fn_all_ttl_1",
-      posterURL:
-        "https://resizing.flixster.com/I2Z0zDTKJdvO7Akh819HROIhZQ4=/206x305/v2/https://resizing.flixster.com/mx-agGjjsUK1QMyuv3AJhHI3hgo=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzLzA3ZjU2MGU1LWMxODItNDlkMC1hYzJhLTY2YzMwOGZkMDhiZi5qcGc=",
-      summary:
-        "A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes and connecting with the lives she could have led.",
-    },
+      "0xcc70777895ce8e0e6dc979509798021a1fb143d5b1c08f23e3f438464f648f0f",
+    realtContract: "0xd8b19f31186fc7350be018651aa1383175923bb3",
+    initialInvestmentUsd: 76_806,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(76_806),
   },
   {
-    name: "12 angry men (1957)",
+    name: "16728-16730 Woodingham",
     color: "#4D96FF",
-    upToken: "0x7ee3806d16dc6a76bef2b11880b70cc70f74fa1a",
-    downToken: "0x34f8572eab463606a014c37ff68b78ac9361cacc",
-    underlyingToken: "0xb3933fd994af5db7ae985a0d62ed2dda918a839b",
-    invalidToken: "0x12c91f543a48F58e3E54c398f19BEc4b62aFD617",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x2338ca7d59b7e15bd03dd81cf5f5bb59b6c6c6d4",
+    upToken: "0xab3fb717c036390fc199e19092100cc2d1f42d8e",
+    downToken: "0xebd2c06c341f617818d81344c96c8e11c27597e3",
+    underlyingToken: "0xab0b68be4638dad16f4e8c4493607438b99a73b0",
+    invalidToken: "0x82d044d344de4bf5b3e380e0f43ab1ad23fd092b",
+    marketId: "0xacfdbce48f1d217e9eaeeeb613bc69e59d1b8174",
     parentMarketOutcome: 4,
     conditionId:
-      "0xf857ab39ef39d99f00d38ab07a5676406dfd5382f6d2177c44642e147d8dd0ad",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0050083/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_12%2520angry",
-      posterURL:
-        "https://resizing.flixster.com/FDNKxkwCqhqdzh-IvaGBfzqRb74=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p2084_p_v8_ar.jpg",
-      summary:
-        "The jury in a New York City murder trial is frustrated by a single member whose skeptical caution forces them to more carefully consider the evidence before jumping to a hasty verdict.",
-    },
+      "0x9101e472cce97d8f6d47c8abe51b9346c57e90eeefb3a6b7d0d893538d771d14",
+    realtContract: "0xc7697f5e86a102eaf4000719a2dc477d65beea7d",
+    initialInvestmentUsd: 143_897,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(143_897),
   },
   {
-    name: "Alien (1979)",
+    name: "9518 Franklin",
     color: "#845EC2",
-    upToken: "0x37e70bae5e87327feece73a7c227446571f92137",
-    downToken: "0x31e3d82a613e5aeea7c3a65c3d657cacaaaf2674",
-    underlyingToken: "0x6d0407b5ae419fdd92ffdc64abf04c5f28950e02",
-    invalidToken: "0xe54422171C40aA14B0fc935DEA7AFb85BE15357d",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x9a274ea86665d872fc58c8f26fd97a18b844c6ac",
+    upToken: "0x37181ffbd521a3e062a5fa833d5bea83e35050e3",
+    downToken: "0xb3125c6e54ba7fdfb2dd30e89e52eb71fa294f90",
+    underlyingToken: "0x55a43c4cec7664a6515df0b7df410a56938b49f2",
+    invalidToken: "0xf8b59a97bc632653187fa0fc93e2e14d2006b002",
+    marketId: "0x911e310bda048be01b2ed2b6c856b8f10ee4647a",
     parentMarketOutcome: 5,
     conditionId:
-      "0x8054990ae8221c8a08581381a0d2e3e5f23144a4d18a2398858be52dd94cc8c9",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0078748/?ref_=nv_sr_srsg_3_tt_8_nm_0_in_0_q_alien",
-      posterURL:
-        "https://resizing.flixster.com/5R4bkJZC-W_K-YjmIMKAXCbts5Y=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p2571_p_v8_aw.jpg",
-      summary:
-        "After investigating a mysterious transmission of unknown origin, the crew of a commercial spacecraft encounters a deadly lifeform.",
-    },
+      "0xa54a9d0ae7150d3f5fb637cce9ab2dc94a31d72d3acaf3814731b95c9135ed1d",
+    realtContract: "0x4ae9d3343bbc6a894b7ee7f843c224c953f1661b",
+    initialInvestmentUsd: 461_643,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(461_643),
   },
   {
-    name: "Demolition Man (1993)",
+    name: "8034 Faith",
     color: "#FF9671",
-    upToken: "0x53a9011c5570bfb8148954c4f49a6625dc44077b",
-    downToken: "0x64974d3bf944fafec6fa19a900f3679a716b3a86",
-    underlyingToken: "0x20025021e440edd39d486f3c6a1d7adb9c269faf",
-    invalidToken: "0x406B8Ee2DF07c644414E852542dAB98BdDf39234",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0xc25af7d4a5cb36bb3ce9faf652a5f7f989a1d57a",
+    upToken: "0xa867ab33e8f982f980ed0c7d11c32da71fe2c393",
+    downToken: "0x1710bb5b7216481c37b0882ed447ffad5454be99",
+    underlyingToken: "0xdc0f60e48eb73eea5eb6cb163033f82dd928667c",
+    invalidToken: "0xbe0d50317118f413606c3bb8d3e4a43a4ad743f9",
+    marketId: "0x1db74195286b284ed6bdc7ed9ec0092fa7b90bd7",
     parentMarketOutcome: 6,
     conditionId:
-      "0xe35db6fb9992ab689e21751f036ccc9a8548b71dec3089874cf4a19a13cd34bb",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0106697/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_demolition%2520man",
-      posterURL:
-        "https://resizing.flixster.com/e3iHOpnnUZKRPz_xHJVoLz8TkGM=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p15098_p_v10_ab.jpg",
-      summary:
-        "A police officer is brought out of suspended animation in prison to pursue an old ultra-violent nemesis who is loose in a non-violent future society.",
-    },
+      "0xa30d5f5f3ffd2d23ec1ffb08878f1b76052bef8ee6d9b19eaff0cbb0c35a67cf",
+    realtContract: "0x90d280b6456f8233e115e6aabb2ca89249dafd39",
+    initialInvestmentUsd: 327_296,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(327_296),
   },
   {
-    name: "Barbie (2023)",
+    name: "1769 Cheryl",
     color: "#0081CF",
-    upToken: "0xaed0fad91e7149ec84bb4d0a2a77be819169275f",
-    downToken: "0x044e1b6d8aacbda5699423578bd200484f7473c3",
-    underlyingToken: "0x67d0f938ea12e7e30b8ccc24dd031d656cc3927d",
-    invalidToken: "0xA9099Baa3b74c1d602aCe8CeaC5933a16A0456C5",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0xd31d05158722f64b6a49e25bccc47d3203eecbe9",
+    upToken: "0x2ed11278a5da5f442b9de24ec1d2c798a6c12fb7",
+    downToken: "0x85450e10ddd065cc75343fffa9b658ebaac06123",
+    underlyingToken: "0xde8a6e7ebb1950ec1b5957bcc03675f2f42a607b",
+    invalidToken: "0xcace59ad51b6e3b13629333796c1d756a077b9d8",
+    marketId: "0x9e9aee3dc35a5d4fd9fac1f9b918aacfe9229cf7",
     parentMarketOutcome: 7,
     conditionId:
-      "0x3c102db4f274983b648bd27a4092866e1b81dbc08b8738a5c694a8d8c3948a81",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1517268/?ref_=nv_sr_srsg_1_tt_6_nm_1_in_0_q_barbie",
-      posterURL:
-        "https://resizing.flixster.com/r409CsU-O1gEcAP0VtU6tDD9sKI=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p13472534_p_v8_am.jpg",
-      summary:
-        "Barbie and Ken are having the time of their lives in the seemingly perfect world of Barbie Land. However, when they get a chance to go to the outside world, they soon discover the joys and perils of living among regular humans.",
-    },
+      "0x643bec3e8e883942e309f07b74a72a25129bf4530cd1c734c5510254641d8419",
+    realtContract: "0x19f824662ba9df78e368022f085b708fccc201c8",
+    initialInvestmentUsd: 307_272,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(307_272),
   },
   {
-    name: "Eduardo e Mônica (2020)",
+    name: "9311 Bedford",
     color: "#FFC75F",
-    upToken: "0x9d64a3e7e55880f3c8f9c584ed32397bb6f0b9f6",
-    downToken: "0xe9d025d3cbd783d6a92626b650a32f7cbaca0e7d",
-    underlyingToken: "0x58ce7a53abeca1db90cec0e6b7dcbe3a36d986c4",
-    invalidToken: "0xcA4c82fd178aaf4b72ECe35774ce04B7Aa2E5361",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x13d48a73811c01f574e1bfa4c58b7d95d2f590e4",
+    upToken: "0x15014f3c758a851ff57adeabff53639723ce0e85",
+    downToken: "0xef3922eb753e41c4e24a7877928c280e0bebd0bd",
+    underlyingToken: "0x8f20773ec4ba5f2e547282d043895680431cabf8",
+    invalidToken: "0x610b3028fbd70717db25ab666d965f177356198a",
+    marketId: "0x987226cc83d5d3baae096197f9708f3142c16691",
     parentMarketOutcome: 8,
     conditionId:
-      "0x2dcf754f36437ea0c298e5d27a0f3904dc2335a6e239b15a104f3ca7787c5926",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt8747460/?ref_=nv_sr_srsg_0_tt_2_nm_0_in_0_q_Eduardo%2520e%2520M%25C3%25B4nica%2520(2020)",
-      posterURL:
-        "https://resizing.flixster.com/IaXbRF4gIPh9jireK_4VCPNfdKc=/200x0/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p18824656_k_v8_aa.jpg",
-      summary:
-        "On an unusual day, a series of coincidences lead Eduardo to meet Monica at a party. Curiosity is aroused between the two and, despite not being alike, they fall madly in love. This love needs to mature and learn to overcome differences.",
-    },
-  },
-  {
-    name: "Thor: The Dark World (2013)",
-    color: "#00C9A7",
-    upToken: "0x0c569fbc021119b778ea160efd718a5d592ef46c",
-    downToken: "0xd8d2dfe1912239451b5a4a0462006e95393f2151",
-    underlyingToken: "0x72ec9aade867b5b41705c6a83f66bc56485669b5",
-    invalidToken: "0xFa2e53b2E33309CEE9255b440f143308F92BbA83",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x878a332b5efc0a4bf983036beece050352baa73d",
-    parentMarketOutcome: 9,
-    conditionId:
-      "0xb223aad8405c321b761e3cba872e556c1de3a8b552a38249d626bc5aff7c6ba2",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1981115/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_thor%2520the%2520dark",
-      posterURL:
-        "https://resizing.flixster.com/HtozfP_2NYit3_l7s-cbtsiuWps=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p9530219_p_v13_aa.jpg",
-      summary:
-        "When the Dark Elves attempt to plunge the universe into darkness, Thor must embark on a perilous and personal journey that will reunite him with doctor Jane Foster.",
-    },
-  },
-  {
-    name: "Talk to me (2022)",
-    color: "#C34A36",
-    upToken: "0xf3c17e909bd1f9367ecdc786d137465d7ee96b6a",
-    downToken: "0xf99be182b6b0e6d994509ecdced281b94100435f",
-    underlyingToken: "0x2b3a8ac53ba42da13f542a867d2859642fb1db44",
-    invalidToken: "0x94b6580034e1FFf008Ac8370dF69E180740469b0",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0xee4a77447069f32f555f3d75aaba18a4acb54ac4",
-    parentMarketOutcome: 10,
-    conditionId:
-      "0x715f9e8ccc373f85e2f9ec02bba8d23c5f87090b729750ca8adac5b0f969213e",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt10638522/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_talk%2520to%2520me",
-      posterURL:
-        "https://resizing.flixster.com/ejS3S8JOBfvZr_fQ_--6SyKKJpQ=/206x305/v2/https://resizing.flixster.com/9WxKriao1BmRamIaqig2k8hd5uM=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2YyZDQwYTM2LWZmYzEtNGUwMC05NzRkLTA3ODM0NThiNDE4Ny5qcGc=",
-      summary:
-        "When a group of friends discover how to conjure spirits using an embalmed hand, they become hooked on the new thrill, until one of them goes too far and unleashes terrifying supernatural forces.",
-    },
-  },
-  {
-    name: "Fast & Furious 6 (2013)",
-    color: "#9B51E0",
-    upToken: "0x850d2ffa4475296cfbbd76247894a773e3b1be6c",
-    downToken: "0xb28c716f63b0dd272f62e25765a914baeebab8c2",
-    underlyingToken: "0x71c3df5edcab48cfb6a1a99255eff063f33b6265",
-    invalidToken: "0xb3cE80d6b30DcC4d605B290f4dC1Fc3B8C2bcC3b",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x38a2923cc391b9cd926e5a2d07462dc7d189c407",
-    parentMarketOutcome: 11,
-    conditionId:
-      "0x27f341cdecacbd7ff0e4bb7b28add74ddaa388ff9f16bc749e2828a71fe6a5f6",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1905041/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_fast%2520%2526%2520furious%25206",
-      posterURL:
-        "https://resizing.flixster.com/dJUU6CNK8IBSjsImW4nXCxxUVwU=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p9573130_p_v7_ab.jpg",
-      summary:
-        "Hobbs has Dominic and Brian reassemble their crew to take down a team of mercenaries, but Dominic unexpectedly gets sidetracked with facing his presumed deceased girlfriend, Letty.",
-    },
-  },
-  {
-    name: "Elysium (2013)",
-    color: "#2D4059",
-    upToken: "0xe9427a7a32daad2d29db2aad809b2a44060d8fc8",
-    downToken: "0x75b5cd86828f7c9009e30619a83b1b2da67f1342",
-    underlyingToken: "0xf52e0e144b73a0d5748bc53667efe3ba62fe5695",
-    invalidToken: "0x69641B6664a493ecF467D4D9aAB595A8b9Cc4a66",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0xc0dab34c6c2008391bdc742cec0bd0afb60d4d59",
-    parentMarketOutcome: 12,
-    conditionId:
-      "0x2d2ee6e67d4ffa2c2a14898a29d0afe3d3cdd8ad362811aad64770a90553cb3a",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt1535108/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_elysium",
-      posterURL:
-        "https://resizing.flixster.com/WlkdhZWddtMIv8U2Tmlb74rmBZ4=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p9360879_p_v10_ar.jpg",
-      summary:
-        "In the year 2154, the very wealthy live on a man-made space station while the rest of the population resides on a ruined Earth. A man takes on a mission that could bring equality to the polarized worlds.",
-    },
-  },
-  {
-    name: "Session 9 (2001)",
-    color: "#F9F871",
-    upToken: "0xe080c03ad6bc9f8fd5b45b5d3bf14ebcfa1ec0b5",
-    downToken: "0x76cce8491785789c2c5542f043ec6c35b12cd909",
-    underlyingToken: "0x1086a95c224dd586809a7f4d875b4f09d2ac9290",
-    invalidToken: "0x4F2b7EC3aAC8Bb0Ffb272a4B27B758D2FFC31bc6",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0xa7cf69c4c93d2f6811a394e92320979c3cf86b37",
-    parentMarketOutcome: 13,
-    conditionId:
-      "0x6bc6c6fd532a02ec128e7c8dfe3e496295f677c861405a88b7da503f1882eef8",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0261983/?ref_=nv_sr_srsg_0_tt_8_nm_0_in_0_q_session%25209",
-      posterURL:
-        "https://resizing.flixster.com/pMiw8blJew0YXddZivo7mtYlUDg=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p28177_p_v13_ac.jpg",
-      summary:
-        "Tensions rise within an asbestos cleaning crew as they work in an abandoned mental hospital with a horrific past that seems to be coming back.",
-    },
-  },
-  {
-    name: "Mamma Mia! (2008)",
-    color: "#B0A8B9",
-    upToken: "0xfa82984fc8ddeb71fdb2e6e471f30995178ad5f0",
-    downToken: "0x5d528dbec7e37927d8af41bfb1b54e7641dd3ccb",
-    underlyingToken: "0x11ed86c399f455819f495cda1256e9b52afd0971",
-    invalidToken: "0x756de0795875f925AC95ba37472D26bC4375c6a4",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x96638d67ac5bc5f8223f9e2d60e92f4d8dcf3147",
-    parentMarketOutcome: 14,
-    conditionId:
-      "0x6e5b27306498d2917cdde6a3ea4791cd5a6fe8d8bf33d491c97524c431eda325",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt0795421/?ref_=nv_sr_srsg_0_tt_7_nm_1_in_0_q_mamma%2520mia",
-      posterURL:
-        "https://resizing.flixster.com/sD29k0EMFXDWY0DPiFoQsaxqDNU=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p176344_p_v8_al.jpg",
-      summary:
-        "Donna, an independent hotelier, is preparing for her daughter's wedding with the help of two old friends. Meanwhile Sophie, the spirited bride, has a plan. She invites three men from her mother's past in hope of meeting her real father.",
-    },
-  },
-  {
-    name: "Ethereum (2022)",
-    color: "#FF8066",
-    upToken: "0xf8313845248f2392a39bdcd50be0781c7cf497c1",
-    downToken: "0x3befdfbd7c2a7139acafc3005369d30ff2cd8f9a",
-    underlyingToken: "0x78c2edb5639af0ed4351f001c728c9026820887e",
-    invalidToken: "0x8eB59F4590fF6a0037a159ea1601D9d309aEa598",
-    minValue: 0,
-    maxValue: 100,
-    precision: 100,
-    marketId: "0x002c70343ddef063d0ad8da91104934318800d30",
-    parentMarketOutcome: 15,
-    conditionId:
-      "0x2b9e73d1da8dc051ffe4972114f59e61ad1bfd65fda93d88bcfb6644ffb07f4b",
-    details: {
-      imdbURL:
-        "https://www.imdb.com/title/tt22069858/?ref_=nv_sr_srsg_2_tt_8_nm_0_in_0_q_ethereum",
-      posterURL:
-        "https://play-lh.googleusercontent.com/ARlYF4lUWeSFL9CgcKmHIesZwjsRjB0qkCKyIcLYckxYdrAkmvz1RKLQ_RFPRQuedofL8xOeCBtz-MIStG8=w240-h480-rw",
-      summary:
-        "Learn About the hottest cryptocurrency around, Ethereum. This amazing documentary explores the history of Ethereum, a decentralized, open-source blockchain with smart contract functionality.",
-    },
+      "0xee5437a6e77919789498fe0b50a89da4b999ad551ab9c325b884713ea73f69f2",
+    realtContract: "0xa83cbd26964ea953f86c741871a1ab2a256cb82d",
+    initialInvestmentUsd: 90_270,
+    precision: 1,
+    ...deriveMarketRangeFromInvestment(90_270),
   },
 ];
