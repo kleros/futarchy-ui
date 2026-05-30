@@ -72,7 +72,7 @@ const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
         <AtlasProvider
           config={{
             uri: atlasUri,
-            product: Products.CourtV2,
+            product: Products.Foresight,
             wagmiConfig: wagmiAdapter.wagmiConfig,
           }}
         >
