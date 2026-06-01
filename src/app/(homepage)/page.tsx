@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import clsx from "clsx";
+
 import { experiments } from "@/consts/experiments";
 
 import BottomHeader from "./components/BottomHeader";
@@ -16,9 +18,14 @@ export default function Home() {
       <div className="mx-auto max-w-294">
         <Header />
 
-        <div className="my-12 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="my-12 flex w-full flex-wrap justify-center gap-4">
           {experiments.map((experiment) => (
-            <ExperimentCard key={experiment.slug} {...experiment} />
+            <div
+              key={experiment.slug}
+              className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)]"
+            >
+              <ExperimentCard {...experiment} />
+            </div>
           ))}
         </div>
         <BottomHeader />
