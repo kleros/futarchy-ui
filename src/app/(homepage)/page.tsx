@@ -2,8 +2,6 @@
 
 import React from "react";
 
-import clsx from "clsx";
-
 import { experiments } from "@/consts/experiments";
 
 import BottomHeader from "./components/BottomHeader";
