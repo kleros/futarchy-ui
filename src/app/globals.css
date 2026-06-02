@@ -81,6 +81,7 @@
     --foreground: #171717;
     --red-2: #f75c7b;
     --green-2: #3fec65;
+    --klerosUIComponentsPrimaryBlue: #4872ff;
   }
 
   :root.dark {
@@ -88,6 +89,7 @@
     --foreground: #ededed;
     --red-2: #ffd2db;
     --green-2: #d2ffdc;
+    --klerosUIComponentsPrimaryBlue: #4872ff;
   }
 
   body {
