@@ -9,6 +9,8 @@ import Link from "next/link";
 import _LogoDark from "@/assets/png/movies-logo-dark.png";
 import _Logo from "@/assets/png/movies-logo.png";
 
+import { homepageUrl } from "@/consts";
+
 const Logo: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -20,7 +22,7 @@ const Logo: React.FC = () => {
   if (!mounted) {
     return (
       <div className="flex items-center gap-4">
-        <Link href={"/"}>
+        <Link href={homepageUrl}>
           <Image
             src={_Logo}
             alt="Movies experiment logo"
@@ -33,7 +35,7 @@ const Logo: React.FC = () => {
 
   return (
     <div className="flex items-center gap-4">
-      <Link href={"/"}>
+      <Link href={homepageUrl}>
         <Image
           src={resolvedTheme === "dark" ? _LogoDark : _Logo}
           alt="Movies experiment logo"

@@ -1,9 +1,6 @@
 import { Tag } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
-import ChartBarIcon from "@/assets/svg/chart-bar.svg";
-import StatsBarIcon from "@/assets/svg/stats-bar.svg";
-
 import { type MarketsData } from ".";
 
 interface ILegend {
@@ -20,12 +17,7 @@ const Legend: React.FC<ILegend> = ({
   onHoverMarket,
 }) => {
   return (
-    <div
-      className={clsx(
-        "flex flex-col-reverse gap-4",
-        "border-klerosUIComponentsStroke items-start justify-center md:flex-row md:items-center md:justify-between",
-      )}
-    >
+    <div className="flex flex-col gap-4">
       {typeof marketsData !== "undefined" ? (
         <div onMouseLeave={() => onHoverMarket?.(null)}>
           <div className="flex flex-wrap gap-2">
@@ -70,28 +62,6 @@ const Legend: React.FC<ILegend> = ({
             }}
             className="mt-3 block h-6 cursor-pointer [&_p]:text-xs"
           />
-        </div>
-      ) : null}
-      {false ? (
-        <div className="flex gap-8">
-          <div className="flex items-center gap-2">
-            <StatsBarIcon className="size-4" />
-            <span className="text-klerosUIComponentsPrimaryText text-sm">
-              250.k
-            </span>
-            <span className="text-klerosUIComponentsSecondaryText text-sm">
-              Volume
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ChartBarIcon className="size-4" />
-            <span className="text-klerosUIComponentsPrimaryText text-sm">
-              88
-            </span>
-            <span className="text-klerosUIComponentsSecondaryText text-sm">
-              Trades
-            </span>
-          </div>
         </div>
       ) : null}
     </div>
