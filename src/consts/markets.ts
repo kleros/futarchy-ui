@@ -33,7 +33,7 @@ export const invalidMarket: Address =
   "0x8FD01b1879AC2D141ddb4514F13c7C06E11c9938";
 
 // in unix timestamp, seconds
-export const startTime: number = 1779341400;
+export const startTime: number = 1780617600;
 export const endTime: number = 1781913600;
 export const endDate: string = "Saturday, 20 June 2026 00:00 UTC";
 
