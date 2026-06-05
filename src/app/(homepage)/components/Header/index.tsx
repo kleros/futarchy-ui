@@ -62,7 +62,7 @@ const Header: React.FC = () => {
           You can look at{" "}
           <ExternalLink
             text="previous assessments"
-            url="https://www.criticker.com/profile/clesaege/"
+            url="https://www.criticker.com/ratings/clesaege/"
             showIcon={false}
             className="text-xs"
           />
