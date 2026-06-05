@@ -8,19 +8,24 @@ interface IWithHelpTooltip {
   tooltipMsg: string;
   place?: "bottom" | "left" | "right" | "top";
   children?: React.ReactNode;
+  tooltipProps?: Omit<
+    React.ComponentProps<typeof Tooltip>,
+    "text" | "children"
+  >;
 }
 
 const WithHelpTooltip: React.FC<IWithHelpTooltip> = ({
   tooltipMsg,
   children,
   place,
+  tooltipProps,
 }) => (
   <div className="flex items-center">
     {children}
     <Tooltip
       small
       text={tooltipMsg}
-      {...{ place }}
+      {...{ place, tooltipProps }}
       className="max-w-94 [&>small]:text-sm [&>small]:whitespace-pre-line"
     >
       <HelpIcon className="ml-2 size-3 md:size-3.5" />

@@ -15,6 +15,7 @@ import { getReadableTextColor } from "@/utils/getReadableTextColor";
 import { endDate, marketMetadata } from "@/consts/markets";
 
 import Countdown from "./Countdown";
+import LiquiditySummary from "./LiquiditySummary";
 
 const Header: React.FC = () => {
   const { winningMarkets, isLoading } = useWinningAnswers();
@@ -35,6 +36,7 @@ const Header: React.FC = () => {
           </span>
         </div>
         <Countdown />
+        <LiquiditySummary />
       </div>
 
       <div

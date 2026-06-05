@@ -99,6 +99,22 @@ export function commify(value: string | number): string {
 export const shortenName = (name: string) =>
   name.length > 16 ? `${name.slice(0, 12)}...` : name;
 
+export function formatBigNumbers(amount: number): string {
+  const quantifiers: [number, string][] = [
+    [1e9, "B"],
+    [1e6, "M"],
+    [1e3, "k"],
+  ];
+
+  for (const [denominator, letter] of quantifiers) {
+    if (amount >= denominator) {
+      return `${(amount / denominator).toFixed(2)}${letter}`;
+    }
+  }
+
+  return amount.toFixed(2);
+}
+
 export function formatBytecode(bytecode: string): Hex {
   // Remove any whitespace
   const cleaned = bytecode.trim();
