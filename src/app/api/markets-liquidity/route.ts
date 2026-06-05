@@ -7,11 +7,19 @@ import { markets } from "@/consts/markets";
 
 const CHAIN_ID = 100;
 
-type SeerMarketResponse = {
-  liquidityUSD: number;
+type PoolBalance = {
+  token0: { symbol: string; balance: number };
+  token1: { symbol: string; balance: number };
 };
 
-async function fetchSeerMarketLiquidity(marketId: Address): Promise<number> {
+type SeerMarketResponse = {
+  liquidityUSD: number;
+  poolBalance: Array<PoolBalance | null>;
+};
+
+async function fetchSeerMarket(
+  marketId: Address,
+): Promise<SeerMarketResponse | null> {
   const response = await fetch(
     "https://app.seer.pm/.netlify/functions/get-market",
     {
@@ -23,11 +31,10 @@ async function fetchSeerMarketLiquidity(marketId: Address): Promise<number> {
   );
 
   if (response.status !== 200) {
-    return 0;
+    return null;
   }
 
-  const market: SeerMarketResponse = await response.json();
-  return market.liquidityUSD ?? 0;
+  return response.json();
 }
 
 export async function OPTIONS() {
@@ -44,11 +51,15 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     const data = await Promise.all(
-      markets.map(async (market) => ({
-        name: market.name,
-        id: market.marketId,
-        liquidityUSD: await fetchSeerMarketLiquidity(market.marketId),
-      })),
+      markets.map(async (market) => {
+        const seerMarket = await fetchSeerMarket(market.marketId);
+
+        return {
+          name: market.name,
+          liquidityUSD: seerMarket?.liquidityUSD ?? 0,
+          poolBalance: seerMarket?.poolBalance ?? [],
+        };
+      }),
     );
 
     const averageLiquidityUSD =
