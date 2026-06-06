@@ -1,4 +1,4 @@
-import { Address, erc20Abi, type Abi } from "viem";
+import { Address, erc20Abi, parseUnits, type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
 import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
@@ -91,7 +91,7 @@ export const VOLUME_MIN = 0.01;
 /** Buffer applied to collateral allocation for batch predictions to account
  *  for swap slippage chain effects (0.98 = 2% safety margin) */
 export const PREDICTION_SLIPPAGE_BUFFER = 0.98;
-export const MIN_SEER_CREDITS_USAGE = 0.01;
+export const MIN_SEER_CREDITS_USAGE = parseUnits("0.01", DECIMALS);
 export const MAX_MARKETS_PER_BATCH = Number(
   process.env.NEXT_PUBLIC_MAX_MARKETS_PER_BATCH ?? 10,
 );
