@@ -24,7 +24,7 @@ import { ScrollFade } from "@/components/ScrollFade";
 
 import { isUndefined } from "@/utils";
 
-import { collateral } from "@/consts";
+import { collateral, MIN_SEER_CREDITS_USAGE } from "@/consts";
 import { TokenType } from "@/consts/tokens";
 
 import Header from "./Header";
@@ -74,6 +74,10 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     tradeExecutor,
     isXDai,
   });
+
+  const hasUsableSeerCredits = seerCreditsBalance > MIN_SEER_CREDITS_USAGE;
+  const effectiveIsUsingSeerCredits =
+    isUsingSeerCredits && hasUsableSeerCredits;
 
   const { data: userXDaiBalanceData } = useBalance({
     address: account,
@@ -137,7 +141,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
         ? sDAIDepositAmount - (walletSDaiBalanceData?.value ?? 0n)
         : 0n;
     // account for Seer Credits (EOA + trade wallet)
-    if (isUsingSeerCredits) {
+    if (effectiveIsUsingSeerCredits) {
       return sDAIDepositWalletBalanceOffset - seerCreditsBalance > 0
         ? sDAIDepositWalletBalanceOffset - seerCreditsBalance
         : 0n;
@@ -147,21 +151,21 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     sDAIDepositAmount,
     walletSDaiBalanceData,
     seerCreditsBalance,
-    isUsingSeerCredits,
+    effectiveIsUsingSeerCredits,
   ]);
 
   const creditsToSwap = useMemo(() => {
-    if (!isUsingSeerCredits) return 0n;
+    if (!effectiveIsUsingSeerCredits) return 0n;
     return (sDAIDepositAmount ?? 0n) > seerCreditsBalance
       ? seerCreditsBalance
       : (sDAIDepositAmount ?? 0n);
-  }, [isUsingSeerCredits, sDAIDepositAmount, seerCreditsBalance]);
+  }, [effectiveIsUsingSeerCredits, sDAIDepositAmount, seerCreditsBalance]);
 
   // offset deposit by wallet credits, only deposit from eoa
   const toBeAddedSeerCredits = useMemo(() => {
-    if (!isUsingSeerCredits) return 0n;
+    if (!effectiveIsUsingSeerCredits) return 0n;
     return creditsToSwap > walletCredits ? creditsToSwap - walletCredits : 0n;
-  }, [isUsingSeerCredits, creditsToSwap, walletCredits]);
+  }, [effectiveIsUsingSeerCredits, creditsToSwap, walletCredits]);
 
   // For display, distinguish credits from wallet vs EOA
   const creditsFromWallet =
@@ -186,10 +190,10 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     return !isXDai
       ? (userSDaiBalanceData?.value ?? 0n) +
           (walletSDaiBalanceData?.value ?? 0n) +
-          (isUsingSeerCredits ? seerCreditBalanceEquivalent : 0n)
+          (effectiveIsUsingSeerCredits ? seerCreditBalanceEquivalent : 0n)
       : (userXDaiBalanceData?.value ?? 0n) +
           (walletXDaiBalance ?? 0n) +
-          (isUsingSeerCredits ? seerCreditBalanceEquivalent : 0n);
+          (effectiveIsUsingSeerCredits ? seerCreditBalanceEquivalent : 0n);
   }, [
     isXDai,
     userSDaiBalanceData,
@@ -197,7 +201,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
     userXDaiBalanceData,
     walletXDaiBalance,
     seerCreditsBalance,
-    isUsingSeerCredits,
+    effectiveIsUsingSeerCredits,
     seerCreditsEquivalentXDAI,
   ]);
 
@@ -268,7 +272,7 @@ export const PredictAllPopup: React.FC<IPredictAllPopup> = ({
               isSending,
               toBeAdded,
               toggleIsUsingCredits,
-              isUsingSeerCredits,
+              isUsingSeerCredits: effectiveIsUsingSeerCredits,
               seerCreditsBalance,
               seerCreditsEquivalentXDAI,
               creditsFromWallet,
