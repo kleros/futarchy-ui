@@ -3,17 +3,16 @@ export const revalidate = 300;
 import { NextResponse } from "next/server";
 import { Address } from "viem";
 
+import {
+  calculateMarketLiquidity,
+  PoolBalance,
+} from "@/utils/calculateLiquidity";
+
 import { markets } from "@/consts/markets";
 
 const CHAIN_ID = 100;
 
-type PoolBalance = {
-  token0: { symbol: string; balance: number };
-  token1: { symbol: string; balance: number };
-};
-
 type SeerMarketResponse = {
-  liquidityUSD: number;
   poolBalance: Array<PoolBalance | null>;
 };
 
@@ -53,22 +52,27 @@ export async function GET() {
     const data = await Promise.all(
       markets.map(async (market) => {
         const seerMarket = await fetchSeerMarket(market.marketId);
+        const poolBalance = seerMarket?.poolBalance ?? [];
+        const liquidity = await calculateMarketLiquidity(market, poolBalance);
 
         return {
           name: market.name,
-          liquidityUSD: seerMarket?.liquidityUSD ?? 0,
-          poolBalance: seerMarket?.poolBalance ?? [],
+          poolBalance,
+          ...liquidity,
         };
       }),
     );
 
-    const averageLiquidityUSD =
-      data.length > 0
-        ? data.reduce((sum, market) => sum + market.liquidityUSD, 0) /
-          data.length
-        : 0;
+    const totalLiquiditySDai = data.reduce(
+      (sum, market) => sum + market.liquiditySDai,
+      0,
+    );
 
-    const res = NextResponse.json({ data, averageLiquidityUSD });
+    const res = NextResponse.json({
+      data,
+      totalLiquiditySDai,
+      parentOutcomeCount: markets.length,
+    });
     res.headers.set("Access-Control-Allow-Origin", "*");
     return res;
   } catch (error) {

@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useToggle } from "react-use";
 
+import { useSDaiPrice } from "@/hooks/useSDaiPrice";
+
 import LightButton from "@/components/LightButton";
 import WithHelpTooltip from "@/components/WithHelpTooltip";
 
@@ -21,32 +23,42 @@ type PoolBalance = {
 
 type MarketLiquidity = {
   name: string;
+  liquidityUnderlying: number;
+  liquiditySDai: number;
   liquidityUSD: number;
   poolBalance: Array<PoolBalance | null>;
 };
 
 type MarketsLiquidityResponse = {
-  data: MarketLiquidity[];
-  averageLiquidityUSD: number;
+  data: Omit<MarketLiquidity, "liquidityUSD">[];
+  totalLiquiditySDai: number;
 };
 
 function formatPoolBalance(pool: PoolBalance): string {
+  const token0IsOutcome = ["UP", "DOWN"].includes(
+    pool.token0.symbol.toUpperCase(),
+  );
+  const outcome = token0IsOutcome ? pool.token0 : pool.token1;
+  const underlying = token0IsOutcome ? pool.token1 : pool.token0;
+
   // eslint-disable-next-line max-len
-  return `${formatBigNumbers(pool.token0.balance)} ${pool.token0.symbol} / ${formatBigNumbers(pool.token1.balance)} ${pool.token1.symbol}`;
+  return `${formatBigNumbers(outcome.balance)} ${outcome.symbol} / ${formatBigNumbers(underlying.balance)} ${underlying.symbol}`;
 }
 
 interface ILiquidityModal {
   isOpen: boolean;
   toggleIsOpen: () => void;
   markets: MarketLiquidity[];
-  averageLiquidityUSD: number;
+  totalLiquidityUSD: number;
+  totalLiquiditySDai: number;
 }
 
 const LiquidityModal: React.FC<ILiquidityModal> = ({
   isOpen,
   toggleIsOpen,
   markets,
-  averageLiquidityUSD,
+  totalLiquidityUSD,
+  totalLiquiditySDai,
 }) => (
   <Modal
     className="relative h-fit w-full overflow-x-hidden p-8 px-2 md:w-162.5 md:px-8"
@@ -59,7 +71,8 @@ const LiquidityModal: React.FC<ILiquidityModal> = ({
           Liquidity by market
         </h2>
         <p className="text-klerosUIComponentsSecondaryText text-sm">
-          Average: ${formatBigNumbers(averageLiquidityUSD)}
+          Total: {formatBigNumbers(totalLiquiditySDai)} sDAI ($
+          {formatBigNumbers(totalLiquidityUSD)})
         </p>
       </div>
 
@@ -78,8 +91,11 @@ const LiquidityModal: React.FC<ILiquidityModal> = ({
                 <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
                   {market.name}
                 </span>
-                <span className="text-klerosUIComponentsPrimaryText shrink-0 text-sm font-semibold">
-                  ${formatBigNumbers(market.liquidityUSD)}
+                <span className="text-klerosUIComponentsPrimaryText shrink-0 text-right text-sm font-semibold">
+                  {formatBigNumbers(market.liquiditySDai)} sDAI
+                  <span className="text-klerosUIComponentsSecondaryText block text-xs font-normal">
+                    ${formatBigNumbers(market.liquidityUSD)}
+                  </span>
                 </span>
               </div>
               {pools.length > 0 ? (
@@ -108,6 +124,7 @@ const LiquidityModal: React.FC<ILiquidityModal> = ({
 
 const LiquiditySummary: React.FC = () => {
   const [isOpen, toggleIsOpen] = useToggle(false);
+  const { price: sDaiPrice } = useSDaiPrice();
 
   const {
     data: liquidityData,
@@ -127,24 +144,34 @@ const LiquiditySummary: React.FC = () => {
     staleTime: 300_000,
   });
 
-  const averageLabel = useMemo(() => {
+  const totalLabel = useMemo(() => {
     if (isLoading) return "...";
     if (isError || !liquidityData) return "N/A";
-    return `$${formatBigNumbers(liquidityData.averageLiquidityUSD)}`;
+    return `${formatBigNumbers(liquidityData.totalLiquiditySDai)} sDAI`;
   }, [liquidityData, isError, isLoading]);
 
-  const markets = liquidityData?.data ?? [];
+  const markets = useMemo(
+    (): MarketLiquidity[] =>
+      (liquidityData?.data ?? []).map((market) => ({
+        ...market,
+        liquidityUSD: market.liquiditySDai * sDaiPrice,
+      })),
+    [liquidityData, sDaiPrice],
+  );
+
+  const totalLiquiditySDai = liquidityData?.totalLiquiditySDai ?? 0;
+  const totalLiquidityUSD = totalLiquiditySDai * sDaiPrice;
   const canOpen = markets.length > 0;
 
   return (
     <div className="flex items-center gap-2">
       <StatsBarIcon className="size-3.5" />
       <span className="text-klerosUIComponentsSecondaryText text-sm">
-        Liquidity (avg):
+        Liquidity:
       </span>
       <WithHelpTooltip tooltipMsg="Click for detailed breakdown">
         <LightButton
-          text={averageLabel}
+          text={totalLabel}
           small
           isDisabled={!canOpen}
           onPress={() => toggleIsOpen(true)}
@@ -163,7 +190,8 @@ const LiquiditySummary: React.FC = () => {
         isOpen={isOpen}
         toggleIsOpen={toggleIsOpen}
         markets={markets}
-        averageLiquidityUSD={liquidityData?.averageLiquidityUSD ?? 0}
+        totalLiquidityUSD={totalLiquidityUSD}
+        totalLiquiditySDai={totalLiquiditySDai}
       />
     </div>
   );
