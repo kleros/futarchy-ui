@@ -7,6 +7,8 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useRef,
+  useCallback,
 } from "react";
 
 import { useDebounce } from "react-use";
@@ -71,15 +73,24 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   const [localPrediction, setLocalPrediction] = useState<number | undefined>(
     undefined,
   );
+  const isUserInitiatedRef = useRef(false);
+
+  const setUserPrediction = useCallback((prediction: number) => {
+    isUserInitiatedRef.current = true;
+    setLocalPrediction(prediction);
+  }, []);
 
   useDebounce(
     () => {
       if (!isUndefined(localPrediction)) {
-        setPrediction(market.marketId, localPrediction);
+        setPrediction(market.marketId, localPrediction, {
+          reviewed: isUserInitiatedRef.current,
+        });
+        isUserInitiatedRef.current = false;
       }
     },
     500,
-    [localPrediction],
+    [localPrediction, market.marketId, setPrediction],
   );
 
   // initialize market
@@ -89,7 +100,11 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   //sync global prediction to local (ui)
   useEffect(() => {
-    if (!isUndefined(prediction) && prediction !== localPrediction) {
+    if (isUndefined(prediction)) {
+      setLocalPrediction(undefined);
+      return;
+    }
+    if (prediction !== localPrediction) {
       setLocalPrediction(prediction);
     }
   }, [prediction]);
@@ -171,7 +186,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       marketEstimate,
       isUpPredict,
       prediction: localPrediction,
-      setPrediction: setLocalPrediction,
+      setPrediction: setUserPrediction,
       market,
       isLoadingMarketPrice,
       showEstimateVariant,
@@ -188,7 +203,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
       marketEstimate,
       isUpPredict,
       localPrediction,
-      setLocalPrediction,
+      setUserPrediction,
       market,
       isLoadingMarketPrice,
       showEstimateVariant,

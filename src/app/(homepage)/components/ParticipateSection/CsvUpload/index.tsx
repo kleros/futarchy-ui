@@ -32,7 +32,7 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
       const records = parseMarketCSV(csvText);
 
       Object.entries(records).forEach(([marketId, score]) => {
-        setPrediction(marketId, score);
+        setPrediction(marketId, score, { reviewed: true });
       });
 
       toggleIsOpen();
