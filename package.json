@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@cowprotocol/cow-sdk": "^5.10.3",
-    "@kleros/kleros-app": "^2.2.2",
+    "@kleros/kleros-app": "^3.0.1",
     "@kleros/ui-components-library": "^3.7.0",
     "@reown/appkit": "^1.7.11",
     "@reown/appkit-adapter-wagmi": "^1.7.11",

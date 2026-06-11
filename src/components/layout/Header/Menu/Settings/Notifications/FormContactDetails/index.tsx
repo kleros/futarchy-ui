@@ -1,7 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useAtlasProvider } from "@kleros/kleros-app";
-import { Button, Form, TextField } from "@kleros/ui-components-library";
+import {
+  AlertMessage,
+  Button,
+  Form,
+  TextField,
+} from "@kleros/ui-components-library";
+import clsx from "clsx";
 import { useAccount } from "wagmi";
 
 import InfoCard from "@/components/InfoCard";
@@ -11,12 +17,16 @@ import { timeLeftUntil } from "@/utils/date";
 import { errorToast, infoToast, successToast } from "@/utils/wrapWithToast";
 
 import EmailVerificationInfo from "./EmailVerificationInfo";
-import clsx from "clsx";
 
 // https://www.w3.org/TR/2012/WD-html-markup-20120329/input.email.html#input.email.attrs.value.single
 export const EMAIL_REGEX =
   // eslint-disable-next-line max-len
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+const unsubscribeButtonClassName = clsx(
+  "bg-klerosUIComponentsError! hover:bg-klerosUIComponentsError! hover:opacity-75",
+  "border-klerosUIComponentsError! [&_.button-text]:text-wrap! [&_.button-text]:text-white!",
+);
 
 type FormDetailsParams = {
   togglePopup: () => void;
@@ -29,6 +39,7 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
   infoText,
 }) => {
   const [emailInput, setEmailInput] = useState<string>("");
+  const [isConfirmingUnsubscribe, setIsConfirmingUnsubscribe] = useState(false);
   const { address } = useAccount();
   const {
     user,
@@ -37,6 +48,8 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
     addUser,
     updateEmail,
     isUpdatingUser,
+    isDeletingUser,
+    deleteUser,
     userExists,
     isVerified,
     authoriseUser,
@@ -71,6 +84,27 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
       return false;
     }
   }, [authoriseUser]);
+
+  const handleConfirmUnsubscribe = useCallback(async () => {
+    if (isUndefined(address)) return;
+
+    infoToast("Unsubscribing ...");
+    deleteUser()
+      .then((res) => {
+        if (!res) {
+          errorToast("Unsubscribe failed: Unknown error");
+          return;
+        }
+        setEmailInput("");
+        setIsConfirmingUnsubscribe(false);
+        successToast("You have been unsubscribed from notifications.");
+        togglePopup();
+      })
+      .catch((err) => {
+        console.error("Unsubscribe failed:", err);
+        errorToast(`Unsubscribe failed: ${err?.message || "Unknown error"}`);
+      });
+  }, [address, deleteUser, togglePopup]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -122,6 +156,7 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
         isAddingUser ||
         isFetchingUser ||
         isUpdatingUser ||
+        isDeletingUser ||
         !isEmailUpdateable ||
         isSigningIn
       }
@@ -174,13 +209,51 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
           }
         />
       ) : null}
+      {!isPostPrediction && isConfirmingUnsubscribe ? (
+        <AlertMessage
+          title="Warning"
+          variant="warning"
+          msg="This will unsubscribe you from all kleros products"
+        />
+      ) : null}
       {isPostPrediction ? (
         <div className="mt-8.25 flex w-full flex-row justify-center gap-4">
           <Button variant="secondary" text="Skip" onClick={togglePopup} />
           {SubscribeButton}
         </div>
       ) : (
-        <div className="flex justify-end">{SubscribeButton}</div>
+        <div className="flex flex-row-reverse justify-between gap-2">
+          {isConfirmingUnsubscribe ? (
+            <>
+              <Button
+                text="Confirm Unsubscribe"
+                onPress={handleConfirmUnsubscribe}
+                isDisabled={isFetchingUser || isDeletingUser}
+                isLoading={isDeletingUser}
+                className={unsubscribeButtonClassName}
+              />
+              <Button
+                variant="secondary"
+                text="Cancel"
+                onPress={() => setIsConfirmingUnsubscribe(false)}
+                isDisabled={isDeletingUser}
+              />
+            </>
+          ) : (
+            <>
+              {SubscribeButton}
+              {userExists ? (
+                <Button
+                  variant="secondary"
+                  text="Unsubscribe"
+                  onPress={() => setIsConfirmingUnsubscribe(true)}
+                  isDisabled={isFetchingUser || isDeletingUser}
+                  className={unsubscribeButtonClassName}
+                />
+              ) : null}
+            </>
+          )}
+        </div>
       )}
       <EmailVerificationInfo toggleIsSettingsOpen={togglePopup} />
     </Form>

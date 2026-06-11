@@ -2,7 +2,7 @@
 
 import React, { type ReactNode } from "react";
 
-import { AtlasProvider, Products } from "@kleros/kleros-app";
+import { AtlasProvider, SignupProduct } from "@kleros/kleros-app";
 import { gnosis } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
 import { configureRpcProviders } from "@swapr/sdk";
@@ -72,7 +72,7 @@ const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
         <AtlasProvider
           config={{
             uri: atlasUri,
-            product: Products.CourtV2,
+            signupProduct: SignupProduct.Foresight,
             wagmiConfig: wagmiAdapter.wagmiConfig,
           }}
         >
