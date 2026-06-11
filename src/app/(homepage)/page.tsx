@@ -10,7 +10,6 @@ import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 import { useMarketsStore } from "@/store/markets";
 
 import MarketContextProvider from "@/context/MarketContext";
-import { TradeWalletProvider } from "@/context/TradeWalletContext";
 import { useChartData } from "@/hooks/useChartData";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
@@ -67,37 +66,35 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <TradeWalletProvider>
-            <ParticipateSection />
-            <div className="flex flex-col gap-4">
-              {markets.map((market, i) => (
-                <MarketContextProvider
-                  key={market.marketId}
-                  selected={winningOutcomes?.at(i)}
-                  {...market}
-                >
-                  <ProjectFunding key={market.marketId} />
-                </MarketContextProvider>
-              ))}
-            </div>
-            {predictionMarkets.length > 0 ? (
-              <div
-                className={clsx(
-                  "flex w-full flex-wrap justify-between gap-4",
-                  "flex-col-reverse items-start sm:flex-row sm:items-center",
-                )}
+          <ParticipateSection />
+          <div className="flex flex-col gap-4">
+            {markets.map((market, i) => (
+              <MarketContextProvider
+                key={market.marketId}
+                selected={winningOutcomes?.at(i)}
+                {...market}
               >
-                <Button
-                  variant="secondary"
-                  small
-                  text="Reset Predictions"
-                  onPress={resetPredictionMarkets}
-                />
-                <ExportPredictions />
-              </div>
-            ) : null}
-            <PredictAll />
-          </TradeWalletProvider>
+                <ProjectFunding key={market.marketId} />
+              </MarketContextProvider>
+            ))}
+          </div>
+          {predictionMarkets.length > 0 ? (
+            <div
+              className={clsx(
+                "flex w-full flex-wrap justify-between gap-4",
+                "flex-col-reverse items-start sm:flex-row sm:items-center",
+              )}
+            >
+              <Button
+                variant="secondary"
+                small
+                text="Reset Predictions"
+                onPress={resetPredictionMarkets}
+              />
+              <ExportPredictions />
+            </div>
+          ) : null}
+          <PredictAll />
 
           <AdvancedSection />
         </div>

@@ -18,6 +18,8 @@ import {
   websiteUrl,
 } from "@/consts/metadata";
 
+import { TradeWalletProvider } from "./TradeWalletContext";
+
 const queryClient = new QueryClient();
 const atlasUri = process.env.NEXT_PUBLIC_ATLAS_URI;
 
@@ -76,7 +78,7 @@ const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
             wagmiConfig: wagmiAdapter.wagmiConfig,
           }}
         >
-          {children}
+          <TradeWalletProvider>{children}</TradeWalletProvider>
         </AtlasProvider>
       </QueryClientProvider>
     </WagmiProvider>
