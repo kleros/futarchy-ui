@@ -9,12 +9,22 @@ export interface PredictionMarket extends IMarket {
   prediction?: number;
   predictedPrice?: number;
   marketEstimate?: number;
+  isReviewed?: boolean;
 }
+
+export const isMarketReviewed = (market?: PredictionMarket) =>
+  !!market?.isReviewed ||
+  (!isUndefined(market?.prediction) &&
+    market.prediction !== market.marketEstimate);
 
 interface MarketsStore {
   markets: Record<string, PredictionMarket>;
   setMarket: (market: PredictionMarket) => void;
-  setPrediction: (marketId: string, prediction: number) => void;
+  setPrediction: (
+    marketId: string,
+    prediction: number,
+    options?: { reviewed?: boolean },
+  ) => void;
   setMarketEstimate: (marketId: string, estimate: number) => void;
   resetPredictionMarkets: () => void;
   removeMarket: (marketId: string) => void;
@@ -36,7 +46,7 @@ export const useMarketsStore = create<MarketsStore>()(
           },
         })),
 
-      setPrediction: (marketId, prediction) =>
+      setPrediction: (marketId, prediction, options) =>
         set((state) => {
           const market = state.markets[marketId];
           if (isUndefined(market)) return state;
@@ -46,7 +56,12 @@ export const useMarketsStore = create<MarketsStore>()(
           return {
             markets: {
               ...state.markets,
-              [marketId]: { ...market, prediction, predictedPrice },
+              [marketId]: {
+                ...market,
+                prediction,
+                predictedPrice,
+                isReviewed: options?.reviewed ? true : market.isReviewed,
+              },
             },
           };
         }),
@@ -63,26 +78,19 @@ export const useMarketsStore = create<MarketsStore>()(
         })),
 
       resetPredictionMarkets: () =>
-        set((state) => {
-          const markets = state.markets;
-          const updatedMarkets = Object.fromEntries(
-            Object.entries(markets).map(([marketId, market]) => {
-              const estimate = state.markets[marketId].marketEstimate ?? 0;
-
-              return [
-                marketId,
-                {
-                  ...market,
-                  prediction: estimate,
-                  predictedPrice:
-                    estimate / (market.maxValue * market.precision),
-                },
-              ];
-            }),
-          );
-
-          return { markets: updatedMarkets };
-        }),
+        set((state) => ({
+          markets: Object.fromEntries(
+            Object.entries(state.markets).map(([marketId, market]) => [
+              marketId,
+              {
+                ...market,
+                prediction: undefined,
+                predictedPrice: undefined,
+                isReviewed: false,
+              },
+            ]),
+          ),
+        })),
 
       removeMarket: (marketId) =>
         set((state) => {
@@ -94,7 +102,11 @@ export const useMarketsStore = create<MarketsStore>()(
               ...state.markets,
               // Setting the prediction to marketEstimate,
               // removes it from the predicable markets (@/hooks/usePredictionMarkets)
-              [marketId]: { ...market, prediction: market?.marketEstimate },
+              [marketId]: {
+                ...market,
+                prediction: market?.marketEstimate,
+                isReviewed: false,
+              },
             },
           };
         }),
@@ -106,11 +118,16 @@ export const useMarketsStore = create<MarketsStore>()(
           Object.entries(state.markets)
             .filter(
               ([, m]) =>
-                !isUndefined(m.prediction) && m.prediction !== m.marketEstimate,
+                !isUndefined(m.prediction) &&
+                (m.prediction !== m.marketEstimate || m.isReviewed),
             )
             .map(([id, m]) => [
               id,
-              { prediction: m.prediction, predictedPrice: m.predictedPrice },
+              {
+                prediction: m.prediction,
+                predictedPrice: m.predictedPrice,
+                isReviewed: m.isReviewed,
+              },
             ]),
         ),
       }),
