@@ -8,7 +8,7 @@ import {
 import clsx from "clsx";
 import Link from "next/link";
 
-import { useMarketsStore } from "@/store/markets";
+import { isMarketReviewed, useMarketsStore } from "@/store/markets";
 
 import { useMarketContext } from "@/context/MarketContext";
 import { useTradeWallet } from "@/context/TradeWalletContext";
@@ -28,10 +28,9 @@ import PredictionSlider from "./PredictionSlider";
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
   const { name, color, upToken, downToken, details, underlyingToken } = market;
-  const isSelected = useMarketsStore((s) => {
-    const m = s.markets[market.marketId];
-    return !!m?.prediction && m.prediction !== m.marketEstimate;
-  });
+  const isSelected = useMarketsStore((s) =>
+    isMarketReviewed(s.markets[market.marketId]),
+  );
   const { tradeExecutor } = useTradeWallet();
 
   const { isMarketResolved } = useMarketResolutionInfo(tradeExecutor);

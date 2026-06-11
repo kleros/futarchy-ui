@@ -2,6 +2,8 @@ import { useMemo } from "react";
 
 import { useMarketsStore } from "@/store/markets";
 
+import { isUndefined } from "@/utils";
+
 /**
  * @returns Markets with active predictions (prediction !== marketEstimate) for Predict All
  */
@@ -10,7 +12,9 @@ export const usePredictionMarkets = () => {
   return useMemo(
     () =>
       Object.values(markets).filter(
-        (market) => market.prediction !== market?.marketEstimate,
+        (market) =>
+          !isUndefined(market.prediction) &&
+          market.prediction !== market.marketEstimate,
       ),
     [markets],
   );
