@@ -1,20 +1,21 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
+import { useAtlasProvider } from "@kleros/kleros-app";
+import { Button } from "@kleros/ui-components-library";
+import clsx from "clsx";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { isAddress } from "viem";
 
-import { Button } from "@kleros/ui-components-library";
+import Loader from "@/components/Loader";
 
 import CheckIcon from "@/assets/svg/check-circle.svg";
-import WarningIcon from "@/assets/svg/warning-outline.svg";
 import InvalidIcon from "@/assets/svg/minus-outline.svg";
+import WarningIcon from "@/assets/svg/warning-outline.svg";
 
-import { useAtlasProvider } from "@kleros/kleros-app";
-import clsx from "clsx";
 import { cn } from "@/utils";
-import { useSearchParams } from "next/navigation";
-import Loader from "@/components/Loader";
-import Link from "next/link";
+
 import { tgLink } from "@/consts/markets";
 
 enum TextColor {
