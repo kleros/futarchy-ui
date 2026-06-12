@@ -7,7 +7,11 @@ import { IDetails } from "@/consts/markets";
 const Details: React.FC<IDetails> = ({ imdbURL, posterURL, summary }) => (
   <div className="flex flex-wrap items-start gap-4">
     {posterURL ? (
-      <img src={posterURL} alt="movie poster" className="rounded-base" />
+      <img
+        src={posterURL}
+        alt="movie poster"
+        className="rounded-base max-w-62.5"
+      />
     ) : null}
     <div>
       {imdbURL ? (
