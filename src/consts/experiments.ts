@@ -23,8 +23,8 @@ export const experiments: IExperiment[] = [
     icon: "movie",
     banner: "movies-r2-banner",
     countLabel: "20 Movies",
-    tradingPeriod: "Until Friday 3rd 18:00 UTC",
-    endTime: 1775239200,
+    tradingPeriod: "Until July 5th 00:00 UTC",
+    endTime: 1783209600,
     status: "live",
   },
   // {
