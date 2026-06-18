@@ -8,6 +8,7 @@ import { PredictionMarket } from "@/store/markets";
 
 import { useCreateTradeExecutor } from "@/hooks/tradeWallet/useCreateTradeExecutor";
 import { useDepositToTradeExecutor } from "@/hooks/tradeWallet/useDepositToTradeExecutor";
+import { pollChartDataUntilUpdated } from "@/hooks/useChartData";
 import { fetchTokenBalance } from "@/hooks/useTokenBalance";
 
 import { isUndefined } from "@/utils";
@@ -338,6 +339,11 @@ export function usePredictAllFlow({
       }
       setFlag("isPredictionSuccessful", true);
 
+      pollChartDataUntilUpdated({
+        queryClient,
+        marketNames: markets.map((m) => m.name),
+      });
+
       // close + reset
       setTimeout(() => {
         onDone();
@@ -345,7 +351,7 @@ export function usePredictAllFlow({
         queryClient.refetchQueries({
           queryKey: ["useTicksData"],
         });
-      }, 1000);
+      }, 3000);
     } catch (e) {
       if (e instanceof Error) {
         setFlag("error", formatError(e));
