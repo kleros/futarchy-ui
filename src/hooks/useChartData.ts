@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { type QueryClient, useQuery } from "@tanstack/react-query";
 import { formatUnits } from "viem";
 
-import { IMarket } from "@/consts/markets";
+import { IMarket, markets as chartMarkets } from "@/consts/markets";
 
 interface IDataPoint {
   pool: {
@@ -32,6 +32,12 @@ export type IChartData = Record<
   { market: IMarket; data: Array<{ timestamp: number; value: number }> }
 >;
 
+export const CHART_DATA_QUERY_KEY = ["chart-data"] as const;
+
+const CHART_DATA_REFETCH_INTERVAL_MS = 5 * 60 * 1000;
+const CHART_POLL_INTERVAL_MS = 3_000;
+const CHART_POLL_MAX_ATTEMPTS = 20;
+
 const getSqrtPrices = (
   sqrtPrice: string,
 ): { token0Price: `${number}`; token1Price: `${number}` } => {
@@ -47,43 +53,122 @@ const getSqrtPrices = (
   return { token0Price, token1Price };
 };
 
+async function fetchChartData(markets: Array<IMarket>, fresh = false) {
+  const url = fresh ? "api/market-chart?fresh=true" : "api/market-chart";
+  const { data }: { data: IReturn[] } = await fetch(url).then((res) =>
+    res.json(),
+  );
+  return data.map((rawData: IReturn, i: number) => {
+    const market = markets[i];
+
+    const processed: IChartData[""]["data"] = rawData[1].map((dataPoint) => {
+      let token0Price = dataPoint.token0Price;
+      let token1Price = dataPoint.token1Price;
+      const sqrtPrice = dataPoint.sqrtPrice;
+      if (
+        token0Price === "0" &&
+        token1Price === "0" &&
+        sqrtPrice &&
+        sqrtPrice !== "0"
+      ) {
+        ({ token0Price, token1Price } = getSqrtPrices(sqrtPrice));
+      }
+      return {
+        timestamp: dataPoint.periodStartUnix,
+        value:
+          parseFloat(
+            (dataPoint.pool.token0.id.toLowerCase() ===
+            market.underlyingToken.toLowerCase()
+              ? token0Price
+              : token1Price
+            ).slice(0, 9),
+          ) * market.maxValue,
+      };
+    });
+    return { [market.name]: { market, data: processed } };
+  });
+}
+
+type ChartPointSnapshot = { timestamp: number; value: number };
+
+function getMarketChartSnapshot(
+  data: IChartData[] | undefined,
+  marketName: string,
+) {
+  const entry = data?.find((item) => item[marketName])?.[marketName];
+  const lastPoint = entry?.data.at(-1);
+  if (!lastPoint) return null;
+  return { timestamp: lastPoint.timestamp, value: lastPoint.value };
+}
+
+function hasMarketChartUpdated(
+  previous: ChartPointSnapshot | null,
+  next: IChartData[],
+  marketName: string,
+) {
+  const nextSnapshot = getMarketChartSnapshot(next, marketName);
+  if (!nextSnapshot) return false;
+  if (!previous) return true;
+
+  return (
+    nextSnapshot.timestamp > previous.timestamp ||
+    nextSnapshot.value !== previous.value
+  );
+}
+
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+interface PollChartDataUntilUpdatedOptions {
+  queryClient: QueryClient;
+  marketNames: string[];
+  intervalMs?: number;
+  maxAttempts?: number;
+}
+
+export async function pollChartDataUntilUpdated({
+  queryClient,
+  marketNames,
+  intervalMs = CHART_POLL_INTERVAL_MS,
+  maxAttempts = CHART_POLL_MAX_ATTEMPTS,
+}: PollChartDataUntilUpdatedOptions): Promise<void> {
+  console.log("Starting chart poll");
+
+  if (marketNames.length === 0) return;
+
+  const baseline = queryClient.getQueryData<IChartData[]>(CHART_DATA_QUERY_KEY);
+  const previousByMarket = Object.fromEntries(
+    marketNames.map((name) => [name, getMarketChartSnapshot(baseline, name)]),
+  );
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    console.log("Chart poll attempt:", attempt);
+
+    const data = await fetchChartData(chartMarkets, true);
+    queryClient.setQueryData(CHART_DATA_QUERY_KEY, data);
+
+    const allUpdated = marketNames.every((name) =>
+      hasMarketChartUpdated(previousByMarket[name], data, name),
+    );
+    if (allUpdated) {
+      console.log("Chart polling finished.");
+
+      return;
+    }
+
+    if (attempt < maxAttempts - 1) {
+      await sleep(intervalMs);
+    }
+  }
+}
+
 export const useChartData = (markets: Array<IMarket>) =>
   useQuery<IChartData[]>({
-    queryKey: [`chart-${markets.map(({ marketId }) => marketId).join("-")}`],
-    queryFn: async () => {
-      const { data }: { data: IReturn[] } = await fetch("api/market-chart", {
-        next: { revalidate: 300 },
-      }).then((res) => res.json());
-      return data.map((rawData: IReturn, i: number) => {
-        const market = markets[i];
-
-        const processed: IChartData[""]["data"] = rawData[1].map(
-          (dataPoint) => {
-            let token0Price = dataPoint.token0Price;
-            let token1Price = dataPoint.token1Price;
-            const sqrtPrice = dataPoint.sqrtPrice;
-            if (
-              token0Price === "0" &&
-              token1Price === "0" &&
-              sqrtPrice &&
-              sqrtPrice !== "0"
-            ) {
-              ({ token0Price, token1Price } = getSqrtPrices(sqrtPrice));
-            }
-            return {
-              timestamp: dataPoint.periodStartUnix,
-              value:
-                parseFloat(
-                  (dataPoint.pool.token0.id.toLowerCase() ===
-                  market.underlyingToken.toLowerCase()
-                    ? token0Price
-                    : token1Price
-                  ).slice(0, 9),
-                ) * market.maxValue,
-            };
-          },
-        );
-        return { [market.name]: { market, data: processed } };
-      });
-    },
+    queryKey: CHART_DATA_QUERY_KEY,
+    queryFn: () => fetchChartData(markets),
+    staleTime: CHART_DATA_REFETCH_INTERVAL_MS,
+    refetchInterval: CHART_DATA_REFETCH_INTERVAL_MS,
+    refetchOnWindowFocus: false,
   });
