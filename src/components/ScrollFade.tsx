@@ -71,7 +71,7 @@ export const ScrollFade: React.FC<ScrollFadeProps> = ({
       <div
         ref={ref}
         className={clsx(
-          "w-full overflow-hidden overflow-y-auto",
+          "min-h-0 w-full flex-1 overflow-x-hidden overflow-y-auto",
           "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         )}
       >
