@@ -12,7 +12,12 @@ export interface PredictionMarket extends IMarket {
   isReviewed?: boolean;
 }
 
-export const isMarketReviewed = (market?: PredictionMarket) =>
+export const isMarketReviewed = (
+  market?: Pick<
+    PredictionMarket,
+    "isReviewed" | "prediction" | "marketEstimate"
+  >,
+) =>
   !!market?.isReviewed ||
   (!isUndefined(market?.prediction) &&
     market.prediction !== market.marketEstimate);
