@@ -3,6 +3,24 @@ import { NextResponse } from "next/server";
 import { markets } from "@/consts/markets";
 
 const chainId = "100";
+const CHART_CDN_MAX_AGE_SECONDS = 60;
+const CHART_CDN_STALE_WHILE_REVALIDATE_SECONDS = 300;
+
+const chartResponseCacheHeaders = (fresh: boolean) => {
+  if (fresh) {
+    return {
+      "Netlify-CDN-Cache-Control": "no-store",
+      "Cache-Control": "no-store",
+    };
+  }
+
+  return {
+    "Netlify-CDN-Cache-Control":
+      `public, max-age=${CHART_CDN_MAX_AGE_SECONDS}, ` +
+      `stale-while-revalidate=${CHART_CDN_STALE_WHILE_REVALIDATE_SECONDS}, durable`,
+    "Cache-Control": "public, max-age=0, must-revalidate",
+  };
+};
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -26,13 +44,22 @@ export async function GET(request: Request) {
         `https://app.seer.pm/.netlify/functions/market-chart` +
         `?marketId=${marketId}&chainId=${chainId}${fresh ? "&fresh=true" : ""}`;
 
-      const upstream = await fetch(upstreamUrl, { cache: "no-store" });
+      const upstream = await fetch(
+        upstreamUrl,
+        fresh
+          ? { cache: "no-store" }
+          : { next: { revalidate: CHART_CDN_MAX_AGE_SECONDS } },
+      );
       return await upstream.json();
     }),
   );
 
   const res = NextResponse.json({ data });
   res.headers.set("Access-Control-Allow-Origin", "*");
-  res.headers.set("Cache-Control", "no-store");
+  for (const [header, value] of Object.entries(
+    chartResponseCacheHeaders(fresh),
+  )) {
+    res.headers.set(header, value);
+  }
   return res;
 }
