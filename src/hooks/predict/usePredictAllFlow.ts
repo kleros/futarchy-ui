@@ -228,6 +228,8 @@ export function usePredictAllFlow({
         chunks.push(markets.slice(i, i + MAX_MARKETS_PER_BATCH));
       }
 
+      const tradedMarketNames: string[] = [];
+
       for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
         const chunkMarkets = chunks[chunkIndex];
         const isFirstChunk = chunkIndex === 0;
@@ -336,12 +338,17 @@ export function usePredictAllFlow({
             : undefined,
           skipSuccessSideEffects: !(chunkIndex === totalChunks - 1),
         });
+        // markets array can include un-traded markets where no quote was found,
+        // so using markets where quote was actually fetched and it was traded
+        tradedMarketNames.push(
+          ...quotesPerMarket.map(({ marketInfo }) => marketInfo.name),
+        );
       }
       setFlag("isPredictionSuccessful", true);
 
       pollChartDataUntilUpdated({
         queryClient,
-        marketNames: markets.map((m) => m.name),
+        marketNames: tradedMarketNames,
       });
 
       // close + reset
