@@ -54,10 +54,11 @@ const getSqrtPrices = (
 };
 
 async function fetchChartData(markets: Array<IMarket>, fresh = false) {
-  const url = fresh ? "api/market-chart?fresh=true" : "api/market-chart";
-  const { data }: { data: IReturn[] } = await fetch(url).then((res) =>
-    res.json(),
-  );
+  const url = fresh ? "api/market-chart/fresh" : "api/market-chart";
+  const { data }: { data: IReturn[] } = await fetch(
+    url,
+    fresh ? { cache: "no-store" } : undefined,
+  ).then((res) => res.json());
   return data.map((rawData: IReturn, i: number) => {
     const market = markets[i];
 
@@ -142,6 +143,7 @@ export async function pollChartDataUntilUpdated({
   const previousByMarket = Object.fromEntries(
     marketNames.map((name) => [name, getMarketChartSnapshot(baseline, name)]),
   );
+  const pendingMarkets = new Set(marketNames);
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     console.log("Chart poll attempt:", attempt);
@@ -149,10 +151,17 @@ export async function pollChartDataUntilUpdated({
     const data = await fetchChartData(chartMarkets, true);
     queryClient.setQueryData(CHART_DATA_QUERY_KEY, data);
 
-    const allUpdated = marketNames.every((name) =>
-      hasMarketChartUpdated(previousByMarket[name], data, name),
-    );
-    if (allUpdated) {
+    // will keep updating the chart as new data for each pending market arrives
+    for (const name of marketNames) {
+      if (
+        pendingMarkets.has(name) &&
+        hasMarketChartUpdated(previousByMarket[name], data, name)
+      ) {
+        pendingMarkets.delete(name);
+      }
+    }
+
+    if (pendingMarkets.size === 0) {
       console.log("Chart polling finished.");
 
       return;

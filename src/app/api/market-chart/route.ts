@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { markets } from "@/consts/markets";
-
-const chainId = "100";
+import { fetchMarketChartData } from "./fetchMarketChartData";
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -15,24 +13,15 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET(request: Request) {
-  const fresh = new URL(request.url).searchParams.get("fresh") === "true";
-
-  const data = await Promise.all(
-    markets.map(async (market) => {
-      const { marketId } = market;
-
-      const upstreamUrl =
-        `https://app.seer.pm/.netlify/functions/market-chart` +
-        `?marketId=${marketId}&chainId=${chainId}${fresh ? "&fresh=true" : ""}`;
-
-      const upstream = await fetch(upstreamUrl, { cache: "no-store" });
-      return await upstream.json();
-    }),
-  );
+export async function GET() {
+  const data = await fetchMarketChartData(false);
 
   const res = NextResponse.json({ data });
   res.headers.set("Access-Control-Allow-Origin", "*");
-  res.headers.set("Cache-Control", "no-store");
+  res.headers.set(
+    "Netlify-CDN-Cache-Control",
+    "public, max-age=60, stale-while-revalidate=300, durable",
+  );
+  res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
   return res;
 }
