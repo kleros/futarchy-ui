@@ -9,6 +9,8 @@ import clsx from "clsx";
 import dynamic from "next/dynamic";
 import { useSize } from "react-use";
 
+import { isMarketReviewed, useMarketsStore } from "@/store/markets";
+
 import { useMarketContext } from "@/context/MarketContext";
 import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
@@ -16,6 +18,8 @@ import { Skeleton } from "@/components/Skeleton";
 
 import { formatWithPrecision, isUndefined } from "@/utils";
 import { getReadableTextColor } from "@/utils/getReadableTextColor";
+
+const NEAR_MARKET_THRESHOLD_PERCENT = 5;
 
 const LoadingSkeleton: React.FC = () => (
   <div className="relative w-full">
@@ -43,8 +47,11 @@ const PredictionSliderContent: React.FC = () => {
     showEstimateVariant,
     hasLiquidity,
   } = useMarketContext();
-  const { maxValue, minValue, precision, color } = market;
+  const { maxValue, minValue, precision, color, marketId } = market;
   const { winningMarkets } = useWinningAnswers();
+  const isReviewed = useMarketsStore(
+    (state) => state.markets[marketId]?.isReviewed,
+  );
 
   const resolvedMarket = useMemo(() => {
     if (winningMarkets.length === 0) return undefined;
@@ -57,6 +64,26 @@ const PredictionSliderContent: React.FC = () => {
     if (resolvedTheme === "light") return isUpPredict ? "#3FEC65" : "#F75C7B";
     else return isUpPredict ? "#D2FFDC" : "#FFD2DB";
   }, [resolvedTheme, isUpPredict]);
+
+  const isPredictionNearMarket = useMemo(() => {
+    if (isUndefined(prediction)) return false;
+    const threshold =
+      (maxValue * precision * NEAR_MARKET_THRESHOLD_PERCENT) / 100;
+    return Math.abs(prediction - marketEstimate) <= threshold;
+  }, [prediction, marketEstimate, maxValue, precision]);
+
+  const hasActivePrediction = useMemo(
+    () =>
+      isMarketReviewed({
+        prediction,
+        marketEstimate,
+        isReviewed,
+      }),
+    [prediction, marketEstimate, isReviewed],
+  );
+
+  const shouldRepositionMarketPin =
+    isPredictionNearMarket && hasActivePrediction;
 
   const [sized] = useSize(
     ({ width }) => (
@@ -86,9 +113,12 @@ const PredictionSliderContent: React.FC = () => {
           isDisabled={!hasLiquidity}
         />
         <div
-          className="pointer-events-none absolute bottom-0"
+          className={clsx(
+            "pointer-events-none absolute bottom-0 flex flex-col transition-transform",
+            shouldRepositionMarketPin && "flex-col-reverse",
+          )}
           style={{
-            transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%))`,
+            transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%)) translateY(${shouldRepositionMarketPin ? "32px" : "0"})`,
           }}
         >
           <label className="text-klerosUIComponentsPrimaryText block w-full text-center text-xs">
@@ -107,7 +137,12 @@ const PredictionSliderContent: React.FC = () => {
             {/* TODO: updates for individual experiments */}
             {`${formatWithPrecision(marketEstimate, precision)}%`}
           </div>
-          <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
+          <span
+            className={clsx(
+              "bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75",
+              shouldRepositionMarketPin ? "hidden" : "rounded-b-full",
+            )}
+          />
         </div>
 
         {isUndefined(resolvedMarket) ? null : (
