@@ -1,22 +1,15 @@
 "use client";
-import React, { useMemo, useState } from "react";
 
-import { useTheme } from "next-themes";
+import { useState } from "react";
 
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import type { StaticImageData } from "next/image";
 import Link from "next/link";
-import _Countdown, { type CountdownRenderProps } from "react-countdown";
+import Countdown, { type CountdownRenderProps } from "react-countdown";
 
-import MovieDarkIcon from "@/assets/experiments/movies-dark.svg";
-import MovieLightIcon from "@/assets/experiments/movies-light.svg";
 import RealtDarkIcon from "@/assets/experiments/realt-dark.svg";
 import RealtLightIcon from "@/assets/experiments/realt-light.svg";
-import MoviesBanner from "@/assets/png/movies-banner.png";
-import MoviesR2Banner from "@/assets/png/movies-r2-banner.png";
-import PropertiesBanner from "@/assets/png/properties-banner.png";
 import ArrowIcon from "@/assets/svg/arrow-right.svg";
 import TradingIcon from "@/assets/svg/chart-bar.svg";
 import CountdownIcon from "@/assets/svg/cronometer.svg";
@@ -46,21 +39,29 @@ const statusStyles: Record<
   },
 };
 
-const bannerMap: Record<string, StaticImageData> = {
-  "movies-r2-banner": MoviesR2Banner,
-  "movies-banner": MoviesBanner,
-  "properties-banner": PropertiesBanner,
-};
-
 const iconMap: Record<
   string,
-  {
-    light: React.FC<React.SVGProps<SVGElement>>;
-    dark: React.FC<React.SVGProps<SVGElement>>;
-  }
+  | {
+      type: "image";
+      light: string;
+      dark: string;
+      width: number;
+      height: number;
+    }
+  | {
+      type: "svg";
+      light: React.FC<React.SVGProps<SVGElement>>;
+      dark: React.FC<React.SVGProps<SVGElement>>;
+    }
 > = {
-  movie: { light: MovieLightIcon, dark: MovieDarkIcon },
-  realt: { light: RealtLightIcon, dark: RealtDarkIcon },
+  movie: {
+    type: "image",
+    light: "/experiment-icons/movie-light.png",
+    dark: "/experiment-icons/movie-dark.png",
+    width: 46,
+    height: 40,
+  },
+  realt: { type: "svg", light: RealtLightIcon, dark: RealtDarkIcon },
 };
 
 const countdownRenderer = ({
@@ -91,7 +92,11 @@ const countdownRenderer = ({
   );
 };
 
-const ExperimentCard: React.FC<IExperiment> = ({
+export interface ExperimentCardProps extends IExperiment {
+  priority?: boolean;
+}
+
+const ExperimentCard: React.FC<ExperimentCardProps> = ({
   name,
   question,
   url,
@@ -101,17 +106,10 @@ const ExperimentCard: React.FC<IExperiment> = ({
   tradingPeriod,
   endTime,
   status,
+  priority = false,
 }) => {
   const [hovered, setHovered] = useState(false);
-  const { resolvedTheme } = useTheme();
-
-  const Icon = useMemo(() => {
-    const entry = iconMap[icon];
-    if (!entry) return null;
-    return resolvedTheme === "light" ? entry.light : entry.dark;
-  }, [icon, resolvedTheme]);
-
-  const bannerSrc = bannerMap[banner];
+  const icons = iconMap[icon];
 
   return (
     <Link
@@ -136,16 +134,16 @@ const ExperimentCard: React.FC<IExperiment> = ({
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          {bannerSrc ? (
+          <div className="relative size-full">
             <Image
-              src={bannerSrc}
+              src={banner}
               alt={name}
-              className="size-full object-cover"
-              placeholder="blur"
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+              priority={priority}
+              className="object-cover"
             />
-          ) : (
-            <div className="bg-klerosUIComponentsStroke size-full" />
-          )}
+          </div>
           <motion.div
             className="bg-klerosUIComponentsWhiteBackground absolute inset-0"
             animate={{ opacity: hovered ? 0.7 : 0 }}
@@ -211,7 +209,7 @@ const ExperimentCard: React.FC<IExperiment> = ({
                     <span className="text-klerosUIComponentsSecondaryText text-sm">
                       Countdown:
                     </span>
-                    <_Countdown
+                    <Countdown
                       date={new Date(endTime * 1000)}
                       renderer={countdownRenderer}
                     />
@@ -222,7 +220,37 @@ const ExperimentCard: React.FC<IExperiment> = ({
           </div>
 
           <div className="relative z-10 flex shrink-0 items-center justify-between p-6">
-            {Icon ? <Icon /> : null}
+            {icons?.type === "image" ? (
+              <>
+                <Image
+                  src={icons.light}
+                  alt=""
+                  width={icons.width}
+                  height={icons.height}
+                  className="dark:hidden"
+                  aria-hidden
+                />
+                <Image
+                  src={icons.dark}
+                  alt=""
+                  width={icons.width}
+                  height={icons.height}
+                  className="hidden dark:block"
+                  aria-hidden
+                />
+              </>
+            ) : icons?.type === "svg" ? (
+              (() => {
+                const LightIcon = icons.light;
+                const DarkIcon = icons.dark;
+                return (
+                  <>
+                    <LightIcon className="dark:hidden" aria-hidden />
+                    <DarkIcon className="hidden dark:block" aria-hidden />
+                  </>
+                );
+              })()
+            ) : null}
             <div className="flex items-center gap-2">
               <span className="text-klerosUIComponentsPrimaryBlue text-sm">
                 View

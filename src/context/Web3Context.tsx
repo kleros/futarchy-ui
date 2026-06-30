@@ -50,10 +50,10 @@ createAppKit({
 
 interface IWeb3Context {
   children: ReactNode;
-  cookies: string | null;
+  cookies?: string | null;
 }
 
-const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
+const Web3Context: React.FC<IWeb3Context> = ({ children, cookies = null }) => {
   const initialState = cookieToInitialState(
     wagmiAdapter.wagmiConfig as Config,
     cookies,

@@ -2,13 +2,6 @@ import { ThemeProvider } from "next-themes";
 
 import clsx from "clsx";
 import localFont from "next/font/local";
-import { headers } from "next/headers";
-import { ToastContainer } from "react-toastify";
-
-import Web3Context from "@/context/Web3Context";
-
-import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
 
 import "@kleros/ui-components-library/style.css";
 import "./globals.css";
@@ -31,8 +24,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookies = headers().get("cookie");
-
   return (
     <html lang="en" className="box-border size-full" suppressHydrationWarning>
       <head>
@@ -44,14 +35,9 @@ export default function RootLayout({
           "flex size-full flex-col",
         )}
       >
-        <Web3Context {...{ cookies }}>
-          <ThemeProvider themes={["light", "dark"]} attribute="class">
-            <ToastContainer className="p-4 pt-[70px]" />
-            <Header />
-            {children}
-            <Footer />
-          </ThemeProvider>
-        </Web3Context>
+        <ThemeProvider themes={["light", "dark"]} attribute="class">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
