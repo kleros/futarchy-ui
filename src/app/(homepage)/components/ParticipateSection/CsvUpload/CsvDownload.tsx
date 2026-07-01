@@ -13,7 +13,7 @@ import { downloadCsvFile, generateMarketCsv } from "@/utils/csv";
 const CsvDownload: React.FC = () => {
   const markets = useMarketsStore((state) => state.markets);
   const handleDownload = useCallback(() => {
-    const csv = generateMarketCsv(markets);
+    const csv = generateMarketCsv(markets, "marketEstimate");
     downloadCsvFile("market-predictions.csv", csv);
   }, [markets]);
 

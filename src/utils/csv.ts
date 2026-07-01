@@ -87,11 +87,26 @@ export const parseMarketCSV = (csvText: string): Record<string, number> => {
   return result;
 };
 
-export function generateMarketCsv(markets: Record<string, PredictionMarket>) {
+type MarketCsvScoreSource = "prediction" | "marketEstimate";
+
+function getCsvScore(
+  market: PredictionMarket,
+  scoreSource: MarketCsvScoreSource,
+): number {
+  if (scoreSource === "marketEstimate") {
+    return market.marketEstimate ?? 0;
+  }
+  return market.prediction ?? market.marketEstimate ?? 0;
+}
+
+export function generateMarketCsv(
+  markets: Record<string, PredictionMarket>,
+  scoreSource: MarketCsvScoreSource = "prediction",
+) {
   const data = Object.values(markets).map((market) => ({
     marketName: market.name,
     score: formatWithPrecision(
-      market.prediction ?? market.marketEstimate ?? 0,
+      getCsvScore(market, scoreSource),
       market.precision,
     ),
   }));
