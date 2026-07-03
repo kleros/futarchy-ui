@@ -3,6 +3,10 @@ import { tickToPrice, isTwoStringsEqual } from "@/hooks/liquidity/utils";
 
 import { IMarket, markets } from "@/consts/markets";
 
+export function underlyingToSessionSDai(underlyingAmount: number) {
+  return underlyingAmount / markets.length;
+}
+
 export type PoolBalance = {
   token0: { symbol: string; balance: number };
   token1: { symbol: string; balance: number };
@@ -64,7 +68,7 @@ export async function calculateMarketLiquidity(
     liquidityUnderlying += outcomeBalance * price + underlyingBalance;
   }
 
-  const liquiditySDai = liquidityUnderlying / markets.length;
+  const liquiditySDai = underlyingToSessionSDai(liquidityUnderlying);
 
   return { liquidityUnderlying, liquiditySDai };
 }
