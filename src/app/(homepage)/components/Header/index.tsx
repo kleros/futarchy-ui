@@ -16,7 +16,9 @@ import { endDate, marketMetadata } from "@/consts/markets";
 
 import Countdown from "./Countdown";
 import LiquiditySummary from "./LiquiditySummary";
+import MarketVolume from "./MarketVolume";
 import ProfitLoss from "./ProfitLoss";
+import UniqueTraders from "./UniqueTraders";
 
 const Header: React.FC = () => {
   const { winningMarkets, isLoading } = useWinningAnswers();
@@ -39,6 +41,8 @@ const Header: React.FC = () => {
         <Countdown />
         <LiquiditySummary />
         <ProfitLoss />
+        <UniqueTraders />
+        <MarketVolume />
       </div>
       <ExternalLink
         text="Distilled Clément's Judgement - Session 1"
