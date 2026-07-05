@@ -318,14 +318,15 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
 };
 
 const getTimestamps = (firstTimestamp: number, lastTimestamp: number) => {
+  if (firstTimestamp > lastTimestamp) return [];
+
   let currentTimestamp = firstTimestamp;
   const timestamps: Array<number> = [];
   while (currentTimestamp <= lastTimestamp) {
     timestamps.push(currentTimestamp);
     currentTimestamp += 60 * 60 * 4;
   }
-  // if the startTime is in future
-  if (firstTimestamp < lastTimestamp) {
+  if (timestamps.at(-1) !== lastTimestamp) {
     timestamps.push(lastTimestamp);
   }
   return timestamps;
