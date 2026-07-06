@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { isAddress } from "viem";
 
 import Loader from "@/components/Loader";
+import Web3Gated from "@/components/Web3Gated";
 
 import CheckIcon from "@/assets/svg/check-circle.svg";
 import InvalidIcon from "@/assets/svg/minus-outline.svg";
@@ -80,7 +81,7 @@ const messageConfigs = {
 
 type Status = keyof typeof messageConfigs;
 
-const EmailConfirmation: React.FC = () => {
+const EmailConfirmationContent: React.FC = () => {
   const { confirmEmail } = useAtlasProvider();
 
   const [status, setStatus] = useState<Status | null>(null);
@@ -171,5 +172,11 @@ const EmailConfirmation: React.FC = () => {
     </div>
   );
 };
+
+const EmailConfirmation: React.FC = () => (
+  <Web3Gated preload fallback={<Loader />}>
+    <EmailConfirmationContent />
+  </Web3Gated>
+);
 
 export default EmailConfirmation;

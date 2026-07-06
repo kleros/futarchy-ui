@@ -14,6 +14,7 @@ export const usePredictionMarkets = () => {
       Object.values(markets).filter(
         (market) =>
           !isUndefined(market.prediction) &&
+          !isUndefined(market.marketEstimate) &&
           market.prediction !== market.marketEstimate,
       ),
     [markets],

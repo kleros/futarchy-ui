@@ -1,23 +1,19 @@
-import { Button, Modal } from "@kleros/ui-components-library";
+import { Modal } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { useToggle } from "react-use";
-import { useAccount, useDisconnect } from "wagmi";
 
-import ConnectWallet from "@/components/ConnectWallet";
-import { CopiableAddressDisplay } from "@/components/ConnectWallet/AccountDetails";
-import {
-  ChainDisplay,
-  IdenticonOrAvatar,
-} from "@/components/ConnectWallet/AccountDisplay";
+import ConnectWalletSlot from "@/components/ConnectWallet/ConnectWalletSlot";
 import LightButton from "@/components/LightButton";
 import QuickGuideButton from "@/components/QuickGuideButton";
 import ThemeToggle from "@/components/ThemeToggle";
+import Web3Gated from "@/components/Web3Gated";
 
 import HelpIcon from "@/assets/menu-icons/help.svg";
 import SettingsIcon from "@/assets/menu-icons/settings.svg";
 import HamburgerIcon from "@/assets/svg/hamburger.svg";
 
 import Logo from "./Logo";
+import MobileNavbarWallet from "./MobileNavbarWallet";
 
 interface IMobileNavbar {
   toggleIsHelpOpen: () => void;
@@ -28,9 +24,7 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({
   toggleIsHelpOpen,
   toggleIsSettingsOpen,
 }) => {
-  const { isConnected } = useAccount();
   const [isMenuOpen, toggleIsMenuOpen] = useToggle(false);
-  const { disconnect } = useDisconnect();
 
   return (
     <>
@@ -54,25 +48,9 @@ const MobileNavbar: React.FC<IMobileNavbar> = ({
         isDismissable
       >
         <div className="flex flex-wrap items-center justify-between gap-4">
-          {isConnected ? (
-            <>
-              <div className="flex flex-col items-start gap-4 md:items-center">
-                <div className="flex gap-2">
-                  <IdenticonOrAvatar size={24} />
-                  <CopiableAddressDisplay />
-                </div>
-                <ChainDisplay />
-              </div>
-              <Button
-                small
-                variant="primary"
-                text="Disconnect"
-                onPress={() => disconnect()}
-              />
-            </>
-          ) : (
-            <ConnectWallet />
-          )}
+          <Web3Gated preload fallback={<ConnectWalletSlot />}>
+            <MobileNavbarWallet />
+          </Web3Gated>
         </div>
 
         <hr className="border-klerosUIComponentsStroke w-full" />

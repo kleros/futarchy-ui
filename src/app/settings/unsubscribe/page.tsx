@@ -10,6 +10,7 @@ import { useAccount } from "wagmi";
 
 import EnsureChain from "@/components/EnsureChain";
 import Loader from "@/components/Loader";
+import Web3Gated from "@/components/Web3Gated";
 
 import CheckIcon from "@/assets/svg/check-circle.svg";
 
@@ -22,7 +23,7 @@ const pageLayoutClassName = clsx(
   "md:justify-between lg:flex-row",
 );
 
-const Unsubscribe: React.FC = () => {
+const UnsubscribeContent: React.FC = () => {
   const { address } = useAccount();
   const [IsUnsubscribed, setIsUnsubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -177,5 +178,11 @@ const Unsubscribe: React.FC = () => {
     </div>
   );
 };
+
+const Unsubscribe: React.FC = () => (
+  <Web3Gated preload fallback={<Loader />}>
+    <UnsubscribeContent />
+  </Web3Gated>
+);
 
 export default Unsubscribe;

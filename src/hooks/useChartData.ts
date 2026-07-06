@@ -1,6 +1,7 @@
 "use client";
 
 import { type QueryClient, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
 
 import { IMarket, markets as chartMarkets } from "@/consts/markets";
@@ -33,6 +34,7 @@ export type IChartData = Record<
 >;
 
 export const CHART_DATA_QUERY_KEY = ["chart-data"] as const;
+const CHART_DATA_STORAGE_KEY = "chart-data-cache";
 
 const CHART_DATA_REFETCH_INTERVAL_MS = 5 * 60 * 1000;
 const CHART_POLL_INTERVAL_MS = 3_000;
@@ -88,6 +90,24 @@ async function fetchChartData(markets: Array<IMarket>, fresh = false) {
     });
     return { [market.name]: { market, data: processed } };
   });
+}
+
+function readChartCache(): IChartData[] | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const raw = localStorage.getItem(CHART_DATA_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as IChartData[]) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeChartCache(data: IChartData[]) {
+  try {
+    localStorage.setItem(CHART_DATA_STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // ignore quota errors
+  }
 }
 
 type ChartPointSnapshot = { timestamp: number; value: number };
@@ -173,11 +193,23 @@ export async function pollChartDataUntilUpdated({
   }
 }
 
-export const useChartData = (markets: Array<IMarket>) =>
-  useQuery<IChartData[]>({
+export const useChartData = (markets: Array<IMarket>) => {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  return useQuery<IChartData[]>({
     queryKey: CHART_DATA_QUERY_KEY,
-    queryFn: () => fetchChartData(markets),
+    queryFn: async () => {
+      const data = await fetchChartData(markets);
+      writeChartCache(data);
+      return data;
+    },
+    placeholderData: hasMounted ? readChartCache : undefined,
     staleTime: CHART_DATA_REFETCH_INTERVAL_MS,
     refetchInterval: CHART_DATA_REFETCH_INTERVAL_MS,
     refetchOnWindowFocus: false,
   });
+};

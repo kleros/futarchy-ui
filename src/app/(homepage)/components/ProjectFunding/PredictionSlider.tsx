@@ -39,7 +39,6 @@ const PredictionSliderContent: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const {
     isUpPredict,
-    marketPrice,
     prediction,
     setPrediction,
     marketEstimate,
@@ -68,7 +67,7 @@ const PredictionSliderContent: React.FC = () => {
   }, [resolvedTheme, isUpPredict]);
 
   const isPredictionNearMarket = useMemo(() => {
-    if (isUndefined(prediction)) return false;
+    if (isUndefined(prediction) || isUndefined(marketEstimate)) return false;
     const threshold =
       (maxValue * precision * NEAR_MARKET_THRESHOLD_PERCENT) / 100;
     return Math.abs(prediction - marketEstimate) <= threshold;
@@ -86,6 +85,10 @@ const PredictionSliderContent: React.FC = () => {
 
   const shouldRepositionMarketPin =
     isPredictionNearMarket && hasActivePrediction;
+
+  const sliderMin = minValue * precision;
+  const sliderMax = maxValue * precision;
+  const sliderRange = sliderMax - sliderMin;
 
   const [sized] = useSize(
     ({ width }) => (
@@ -120,7 +123,7 @@ const PredictionSliderContent: React.FC = () => {
             shouldRepositionMarketPin && "flex-col-reverse",
           )}
           style={{
-            transform: `translateX(calc(${!isUndefined(marketPrice) && width ? marketPrice * width : 0}px - 50%)) translateY(${shouldRepositionMarketPin ? "32px" : "0"})`,
+            transform: `translateX(calc(${width && !isUndefined(marketEstimate) ? ((marketEstimate - sliderMin) / sliderRange) * width : 0}px - 50%)) translateY(${shouldRepositionMarketPin ? "32px" : "0"})`,
           }}
         >
           <label className="text-klerosUIComponentsPrimaryText block w-full text-center text-xs">
@@ -137,7 +140,7 @@ const PredictionSliderContent: React.FC = () => {
             }}
           >
             {/* TODO: updates for individual experiments */}
-            {`${formatWithPrecision(marketEstimate, precision)}%`}
+            {`${formatWithPrecision(marketEstimate ?? 0, precision)}%`}
           </div>
           <span
             className={clsx(
@@ -175,7 +178,11 @@ const PredictionSliderContent: React.FC = () => {
     { width: 300 },
   );
 
-  return isUndefined(marketEstimate) ? <LoadingSkeleton /> : sized;
+  return isLoadingMarketPrice || isUndefined(marketEstimate) ? (
+    <LoadingSkeleton />
+  ) : (
+    sized
+  );
 };
 
 const PredictionSlider = dynamic(

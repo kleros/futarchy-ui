@@ -5,7 +5,8 @@ import localFont from "next/font/local";
 import { headers } from "next/headers";
 import { ToastContainer } from "react-toastify";
 
-import Web3Context from "@/context/Web3Context";
+import QueryProvider from "@/context/QueryProvider";
+import { Web3Root } from "@/context/Web3ReadyContext";
 
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
@@ -39,19 +40,22 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Foresight | Kleros" />
       </head>
       <body
+        suppressHydrationWarning
         className={clsx(
           `${geistSans.variable} ${geistMono.variable} bg-klerosUIComponentsLightBackground antialiased`,
           "flex size-full flex-col",
         )}
       >
-        <Web3Context {...{ cookies }}>
-          <ThemeProvider themes={["light", "dark"]} attribute="class">
-            <ToastContainer className="p-4 pt-[70px]" />
-            <Header />
-            {children}
-            <Footer />
-          </ThemeProvider>
-        </Web3Context>
+        <QueryProvider>
+          <Web3Root {...{ cookies }}>
+            <ThemeProvider themes={["light", "dark"]} attribute="class">
+              <ToastContainer className="p-4 pt-[70px]" />
+              <Header />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </Web3Root>
+        </QueryProvider>
       </body>
     </html>
   );

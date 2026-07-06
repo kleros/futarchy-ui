@@ -1,5 +1,5 @@
 import { getPoolAndTicksData } from "@/hooks/liquidity/getTicksData";
-import { tickToPrice, isTwoStringsEqual } from "@/hooks/liquidity/utils";
+import { getChartMarketPrice } from "@/hooks/liquidity/utils";
 
 import { IMarket, markets } from "@/consts/markets";
 
@@ -25,21 +25,11 @@ export async function calculateMarketLiquidity(
   const downPoolEntry = Object.values(poolData[1])[0];
 
   const upPrice = upPoolEntry
-    ? Number(
-        tickToPrice(upPoolEntry.poolInfo.tick)[
-          isTwoStringsEqual(upPoolEntry.poolInfo.token0, market.upToken) ? 0 : 1
-        ],
-      )
+    ? getChartMarketPrice(upPoolEntry.poolInfo, market.underlyingToken)
     : 0.5;
 
   const downPrice = downPoolEntry
-    ? Number(
-        tickToPrice(downPoolEntry.poolInfo.tick)[
-          isTwoStringsEqual(downPoolEntry.poolInfo.token0, market.downToken)
-            ? 0
-            : 1
-        ],
-      )
+    ? getChartMarketPrice(downPoolEntry.poolInfo, market.underlyingToken)
     : 0.5;
 
   let liquidityUnderlying = 0;

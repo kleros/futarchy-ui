@@ -118,6 +118,7 @@ export const useMarketsStore = create<MarketsStore>()(
     }),
     {
       name: "futarchy-predictions",
+      skipHydration: true,
       partialize: (state) => ({
         markets: Object.fromEntries(
           Object.entries(state.markets)

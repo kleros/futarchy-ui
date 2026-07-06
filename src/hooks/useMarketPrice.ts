@@ -2,10 +2,10 @@ import { Price, Token, TokenAmount } from "@swapr/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { Address, parseEther } from "viem";
 import { gnosis } from "viem/chains";
-import { usePublicClient } from "wagmi";
 
 import { SWAPR_QUOTER_ADDRESS } from "@/utils/swapr";
 import { getCurrenciesFromTokens } from "@/utils/trade";
+import { gnosisPublicClient } from "@/utils/gnosisPublicClient";
 
 import { SwaprQuoter } from "@/abi/SwaprQuoter";
 
@@ -20,17 +20,17 @@ export const useMarketPrice = (
   targetToken: Address,
   baseToken: Address,
   amount = "0.001",
+  queryEnabled = true,
 ) => {
-  const publicClient = usePublicClient();
   return useQuery<{ price: string; status: boolean }>({
     queryKey: ["useMarketPrice", baseToken, targetToken, amount],
-    refetchInterval: 10_000,
-    enabled: amount !== "0",
+    refetchInterval: 60_000,
+    staleTime: 60_000,
+    retry: 2,
+    enabled: queryEnabled && amount !== "0",
     queryFn: async () => {
       try {
-        if (!publicClient) return { price: "0", status: false };
-
-        const simulation = await publicClient.simulateContract({
+        const simulation = await gnosisPublicClient.simulateContract({
           address: SWAPR_QUOTER_ADDRESS,
           abi: SwaprQuoter,
           functionName: "quoteExactInputSingle",

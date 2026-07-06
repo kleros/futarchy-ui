@@ -5,6 +5,8 @@ import type { Address, Hex } from "viem";
 
 import { parentMarket } from "@/consts/markets";
 
+import { applyCdnCacheHeaders } from "../applyCdnCacheHeaders";
+
 const CHAIN_ID = 100;
 
 export async function OPTIONS() {
@@ -57,11 +59,7 @@ export async function GET() {
     } satisfies UniqueTradersResponse);
 
     res.headers.set("Access-Control-Allow-Origin", "*");
-    res.headers.set(
-      "Netlify-CDN-Cache-Control",
-      "public, max-age=60, stale-while-revalidate=300, durable",
-    );
-    res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+    applyCdnCacheHeaders(res);
     return res;
   } catch (error) {
     console.error("unique-traders", error);

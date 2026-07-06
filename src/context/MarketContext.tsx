@@ -27,7 +27,7 @@ interface IMarketContext {
   upPrice: number;
   downPrice: number;
   marketPrice: number;
-  marketEstimate: number;
+  marketEstimate: number | undefined;
   isUpPredict: boolean;
   prediction: number | undefined;
   setPrediction: (prediction: number) => void;
@@ -109,7 +109,11 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     }
   }, [prediction]);
 
-  const { data: marketPriceRaw } = useMarketPrice(upToken, underlyingToken);
+  const { data: marketPriceRaw } = useMarketPrice(
+    upToken,
+    underlyingToken,
+    "0.001",
+  );
 
   const currentPrices = useCurrentMarketPrices(
     underlyingToken,
@@ -119,26 +123,28 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
 
   const isLoadingMarketPrice = isUndefined(currentPrices);
 
-  const marketPrice = currentPrices?.upPrice ?? 0;
+  const marketPrice = currentPrices?.upPrice;
 
   const hasLiquidity = useMemo(() => marketPriceRaw?.status, [marketPriceRaw]);
 
-  const upPrice = marketPrice;
+  const upPrice = marketPrice ?? 0;
   const downPrice = currentPrices?.downPrice ?? 0;
 
-  const marketEstimate = useMemo(
-    () =>
-      typeof marketPrice !== "undefined"
-        ? Math.round(marketPrice * maxValue * precision)
-        : 0,
-    [marketPrice, maxValue, precision],
-  );
+  const marketEstimate = useMemo(() => {
+    if (isUndefined(currentPrices) || isUndefined(marketPrice)) {
+      return undefined;
+    }
+    return Math.round(marketPrice * maxValue * precision);
+  }, [currentPrices, marketPrice, maxValue, precision]);
 
   useEffect(() => {
-    setMarketEstimate(market.marketId, marketEstimate);
-  }, [marketEstimate]);
+    if (!isUndefined(marketEstimate)) {
+      setMarketEstimate(market.marketId, marketEstimate);
+    }
+  }, [marketEstimate, market.marketId, setMarketEstimate]);
 
-  const isUpPredict = (localPrediction ?? 0) > marketEstimate;
+  const isUpPredict =
+    !isUndefined(marketEstimate) && (localPrediction ?? 0) > marketEstimate;
 
   useEffect(() => {
     if (
@@ -152,7 +158,13 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
   }, [localPrediction, marketEstimate, market.precision, currentPrices]);
 
   const showEstimateVariant = useMemo(() => {
-    if (isUndefined(localPrediction) || !hasLiquidity) return false;
+    if (
+      isUndefined(localPrediction) ||
+      isUndefined(marketEstimate) ||
+      !hasLiquidity
+    ) {
+      return false;
+    }
     return (
       Math.abs(localPrediction - marketEstimate) >
       market.maxValue / market.precision / 100
@@ -182,7 +194,7 @@ const MarketContextProvider: React.FC<IMarketContextProvider> = ({
     () => ({
       upPrice,
       downPrice,
-      marketPrice,
+      marketPrice: marketPrice ?? 0,
       marketEstimate,
       isUpPredict,
       prediction: localPrediction,
