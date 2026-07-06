@@ -11,6 +11,7 @@ import { useMarketsStore } from "@/store/markets";
 
 import MarketContextProvider from "@/context/MarketContext";
 import { useChartData } from "@/hooks/useChartData";
+import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import FirstVisitGuide from "@/components/Guides/FirstVisit";
@@ -31,6 +32,7 @@ import ProjectFunding from "./components/ProjectFunding";
 export default function Home() {
   const { data: chartData } = useChartData(markets);
   const predictionMarkets = usePredictionMarkets();
+  const isTradingPeriodEnded = useIsTradingPeriodEnded();
   const resetPredictionMarkets = useMarketsStore(
     (state) => state.resetPredictionMarkets,
   );
@@ -90,6 +92,7 @@ export default function Home() {
                 small
                 text="Reset Predictions"
                 onPress={resetPredictionMarkets}
+                isDisabled={isTradingPeriodEnded}
               />
               <ExportPredictions />
             </div>
