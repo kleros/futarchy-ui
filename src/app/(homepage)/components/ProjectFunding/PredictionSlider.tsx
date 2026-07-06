@@ -12,6 +12,7 @@ import { useSize } from "react-use";
 import { isMarketReviewed, useMarketsStore } from "@/store/markets";
 
 import { useMarketContext } from "@/context/MarketContext";
+import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
 import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
 import { Skeleton } from "@/components/Skeleton";
@@ -49,6 +50,7 @@ const PredictionSliderContent: React.FC = () => {
   } = useMarketContext();
   const { maxValue, minValue, precision, color, marketId } = market;
   const { winningMarkets } = useWinningAnswers();
+  const isTradingPeriodEnded = useIsTradingPeriodEnded();
   const isReviewed = useMarketsStore(
     (state) => state.markets[marketId]?.isReviewed,
   );
@@ -110,7 +112,7 @@ const PredictionSliderContent: React.FC = () => {
                 }
               : undefined
           }
-          isDisabled={!hasLiquidity}
+          isDisabled={!hasLiquidity || isTradingPeriodEnded}
         />
         <div
           className={clsx(
