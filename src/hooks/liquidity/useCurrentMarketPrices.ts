@@ -7,7 +7,7 @@ import { isUndefined } from "@/utils";
 import { useMarketPrice } from "../useMarketPrice";
 
 import { useTicksData } from "./useTicksData";
-import { tickToPrice, isTwoStringsEqual } from "./utils";
+import { getChartMarketPrice, quoterToChartPrice } from "./utils";
 
 interface MarketPrices {
   upPrice: number;
@@ -25,42 +25,63 @@ export function useCurrentMarketPrices(
   underlying: Address,
   upToken: Address,
   downToken: Address,
+  enabled = true,
 ): MarketPrices | undefined {
-  const { data: upPoolData } = useTicksData(underlying, upToken);
-  const { data: downPoolData } = useTicksData(underlying, downToken);
+  const { data: upPoolData } = useTicksData(underlying, upToken, enabled);
+  const { data: downPoolData } = useTicksData(underlying, downToken, enabled);
 
-  const { data: upOnChainPrice } = useMarketPrice(upToken, underlying);
-  const { data: downOnChainPrice } = useMarketPrice(downToken, underlying);
+  const { data: upOnChainPrice } = useMarketPrice(
+    upToken,
+    underlying,
+    "0.001",
+    enabled,
+  );
+  const { data: downOnChainPrice } = useMarketPrice(
+    downToken,
+    underlying,
+    "0.001",
+    enabled,
+  );
 
   return useMemo(() => {
-    if (isUndefined(upPoolData) || isUndefined(downPoolData)) return undefined;
-
-    // returning mid price in case market is not yet traded on
-    if (
-      isUndefined(Object.values(upPoolData)[0]) ||
-      isUndefined(Object.values(downPoolData)[0])
-    ) {
-      return !isUndefined(upOnChainPrice?.price) &&
-        !isUndefined(downOnChainPrice?.price)
-        ? {
-            upPrice: parseFloat(upOnChainPrice.price),
-            downPrice: parseFloat(downOnChainPrice.price),
-          }
-        : undefined;
+    if (isUndefined(upPoolData) || isUndefined(downPoolData)) {
+      return undefined;
     }
-    const { poolInfo: upPool } = Object.values(upPoolData)[0];
-    const { poolInfo: downPool } = Object.values(downPoolData)[0];
 
-    const upPriceArr = tickToPrice(upPool.tick);
-    const downPriceArr = tickToPrice(downPool.tick);
+    const upPoolEntry = Object.values(upPoolData)[0];
+    const downPoolEntry = Object.values(downPoolData)[0];
 
-    const upPrice = Number(
-      upPriceArr[isTwoStringsEqual(upPool.token0, upToken) ? 0 : 1],
-    );
-    const downPrice = Number(
-      downPriceArr[isTwoStringsEqual(downPool.token0, downToken) ? 0 : 1],
-    );
+    // Pool missing or subgraph empty — fall back to on-chain quoter
+    if (isUndefined(upPoolEntry) || isUndefined(downPoolEntry)) {
+      if (
+        isUndefined(upOnChainPrice?.price) ||
+        isUndefined(downOnChainPrice?.price) ||
+        !upOnChainPrice.status ||
+        !downOnChainPrice.status
+      ) {
+        return undefined;
+      }
+
+      return {
+        upPrice: quoterToChartPrice(upOnChainPrice.price),
+        downPrice: quoterToChartPrice(downOnChainPrice.price),
+      };
+    }
+
+    const { poolInfo: upPool } = upPoolEntry;
+    const { poolInfo: downPool } = downPoolEntry;
+
+    const upPrice = getChartMarketPrice(upPool, underlying);
+    const downPrice = getChartMarketPrice(downPool, underlying);
 
     return { upPrice, downPrice };
-  }, [upToken, downToken, upPoolData, downPoolData]);
+  }, [
+    underlying,
+    upPoolData,
+    downPoolData,
+    upOnChainPrice?.price,
+    upOnChainPrice?.status,
+    downOnChainPrice?.price,
+    downOnChainPrice?.status,
+  ]);
 }

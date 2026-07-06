@@ -4,25 +4,12 @@ import { Modal, Tabs } from "@kleros/ui-components-library";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 
+import Web3Gated from "@/components/Web3Gated";
+
 import { isUndefined } from "@/utils";
 
 import General from "./General";
 import NotificationSettings from "./Notifications";
-
-const TABS = [
-  {
-    id: 0,
-    value: 0,
-    text: "General",
-    content: <General />,
-  },
-  {
-    id: 1,
-    value: 1,
-    text: "Notifications",
-    content: null,
-  },
-];
 
 const Settings: React.FC<{
   isOpen?: boolean;
@@ -60,10 +47,25 @@ const Settings: React.FC<{
       <Tabs
         className="w-full"
         items={[
-          TABS[0],
           {
-            ...TABS[1],
-            content: <NotificationSettings {...{ toggleIsSettingsOpen }} />,
+            id: 0,
+            value: 0,
+            text: "General",
+            content: isOpen ? (
+              <Web3Gated preload>
+                <General />
+              </Web3Gated>
+            ) : null,
+          },
+          {
+            id: 1,
+            value: 1,
+            text: "Notifications",
+            content: isOpen ? (
+              <Web3Gated preload>
+                <NotificationSettings {...{ toggleIsSettingsOpen }} />
+              </Web3Gated>
+            ) : null,
           },
         ]}
       />

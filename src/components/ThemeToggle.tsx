@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useTheme } from "next-themes";
 
@@ -15,6 +15,11 @@ const ThemeToggle: React.FC<{
   withText?: boolean;
 }> = ({ className, iconClassName, withText = false }) => {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleTheme = () => {
     if (theme === "light") {
@@ -28,6 +33,23 @@ const ThemeToggle: React.FC<{
     () => (theme === "light" ? "Dark Mode" : "Light Mode"),
     [theme],
   );
+
+  if (!mounted) {
+    return (
+      <LightButton
+        text={withText ? "Dark Mode" : ""}
+        onPress={() => {}}
+        icon={<MoonIcon className={cn("size-4", iconClassName)} />}
+        className={cn(
+          "flex min-h-8 items-center",
+          "[&>p]:text-klerosUIComponentsPrimaryText [&>p]:font-normal",
+          { "[&>p]:ml-2": withText },
+          className,
+        )}
+      />
+    );
+  }
+
   return (
     <LightButton
       text={withText ? text : ""}

@@ -223,3 +223,41 @@ export function isTwoStringsEqual(
     str2?.trim()?.toLocaleLowerCase() === str1?.trim()?.toLocaleLowerCase()
   );
 }
+
+/**
+ * Outcome-per-underlying price (0–1), aligned with the market chart:
+ * underlying is token0 → token0Price; otherwise token1Price.
+ */
+export function getChartMarketPrice(
+  pool: {
+    token0: Address;
+    token1: Address;
+    token0Price: number;
+    token1Price: number;
+  },
+  underlyingToken: Address,
+): number {
+  return isTwoStringsEqual(pool.token0, underlyingToken)
+    ? pool.token0Price
+    : pool.token1Price;
+}
+
+/**
+ * Pool price on the scale used by volume/trading hooks (underlying per outcome).
+ */
+export function getOutcomePoolPrice(
+  pool: { token0: Address; token1: Address; tick: number },
+  outcomeToken: Address,
+): number {
+  const prices = tickToPrice(pool.tick);
+  return Number(
+    prices[isTwoStringsEqual(pool.token0, outcomeToken) ? 0 : 1],
+  );
+}
+
+/** On-chain quoter returns underlying-per-outcome; chart uses the inverse. */
+export function quoterToChartPrice(price: string): number {
+  const ratio = parseFloat(price);
+  if (!ratio || !Number.isFinite(ratio)) return 0;
+  return 1 / ratio;
+}

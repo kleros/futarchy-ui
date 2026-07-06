@@ -10,6 +10,8 @@ import {
 
 import { markets } from "@/consts/markets";
 
+import { applyCdnCacheHeaders } from "../applyCdnCacheHeaders";
+
 const CHAIN_ID = 100;
 
 type SeerMarketResponse = {
@@ -74,6 +76,7 @@ export async function GET() {
       parentOutcomeCount: markets.length,
     });
     res.headers.set("Access-Control-Allow-Origin", "*");
+    applyCdnCacheHeaders(res);
     return res;
   } catch (error) {
     console.error("markets-liquidity", error);

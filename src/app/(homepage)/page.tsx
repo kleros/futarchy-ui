@@ -4,40 +4,56 @@ import React, { useEffect } from "react";
 
 import { Button } from "@kleros/ui-components-library";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import { useLocalStorage, useToggle } from "react-use";
 
-import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 import { useMarketsStore } from "@/store/markets";
 
-import MarketContextProvider from "@/context/MarketContext";
 import { useChartData } from "@/hooks/useChartData";
+import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
+import { useMarketsHydrated } from "@/hooks/useMarketsHydrated";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import FirstVisitGuide from "@/components/Guides/FirstVisit";
 import Loader from "@/components/Loader";
+import Web3Gated from "@/components/Web3Gated";
 
 import { isUndefined } from "@/utils";
 
-import { markets, parentConditionId } from "@/consts/markets";
+import { markets } from "@/consts/markets";
 
-import AdvancedSection from "./components/AdvancedSection";
-import Chart from "./components/Chart";
 import Header from "./components/Header";
-import ParticipateSection from "./components/ParticipateSection";
+import MarketsSectionSkeleton from "./components/MarketsSectionSkeleton";
+import ParticipateSectionSkeleton from "./components/ParticipateSection/ParticipateSectionSkeleton";
 import ExportPredictions from "./components/ParticipateSection/CsvUpload/ExportPredictions";
-import PredictAll from "./components/PredictAll";
-import ProjectFunding from "./components/ProjectFunding";
+
+const ParticipateSection = dynamic(
+  () => import("./components/ParticipateSection"),
+);
+const MarketsSection = dynamic(() => import("./components/MarketsSection"), {
+  ssr: false,
+  loading: () => <MarketsSectionSkeleton />,
+});
+const PredictAll = dynamic(() => import("./components/PredictAll"));
+const AdvancedSection = dynamic(() => import("./components/AdvancedSection"));
+
+const Chart = dynamic(() => import("./components/Chart"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-100 w-full items-center justify-center">
+      <Loader />
+    </div>
+  ),
+});
 
 export default function Home() {
   const { data: chartData } = useChartData(markets);
   const predictionMarkets = usePredictionMarkets();
+  const isTradingPeriodEnded = useIsTradingPeriodEnded();
+  const marketsHydrated = useMarketsHydrated();
   const resetPredictionMarkets = useMarketsStore(
     (state) => state.resetPredictionMarkets,
   );
-
-  const { data: winningOutcomes } = useReadGnosisRouterGetWinningOutcomes({
-    args: [parentConditionId],
-  });
 
   const [isOpen, toggleGuide] = useToggle(false);
   const [isOnboardingDone, setOnboardingDone] = useLocalStorage<boolean>(
@@ -66,19 +82,11 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <ParticipateSection />
-          <div className="flex flex-col gap-4">
-            {markets.map((market, i) => (
-              <MarketContextProvider
-                key={market.marketId}
-                selected={winningOutcomes?.at(i)}
-                {...market}
-              >
-                <ProjectFunding key={market.marketId} />
-              </MarketContextProvider>
-            ))}
-          </div>
-          {predictionMarkets.length > 0 ? (
+          <Web3Gated preload fallback={<ParticipateSectionSkeleton />}>
+            <ParticipateSection />
+          </Web3Gated>
+          <MarketsSection />
+          {marketsHydrated && predictionMarkets.length > 0 ? (
             <div
               className={clsx(
                 "flex w-full flex-wrap justify-between gap-4",
@@ -90,6 +98,7 @@ export default function Home() {
                 small
                 text="Reset Predictions"
                 onPress={resetPredictionMarkets}
+                isDisabled={isTradingPeriodEnded}
               />
               <ExportPredictions />
             </div>

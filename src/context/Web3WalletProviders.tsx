@@ -6,8 +6,6 @@ import { AtlasProvider, SignupProduct } from "@kleros/kleros-app";
 import { gnosis } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
 import { configureRpcProviders } from "@swapr/sdk";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 
 import { wagmiAdapter } from "@/wagmiConfig";
 
@@ -20,7 +18,6 @@ import {
 
 import { TradeWalletProvider } from "./TradeWalletContext";
 
-const queryClient = new QueryClient();
 const atlasUri = process.env.NEXT_PUBLIC_ATLAS_URI;
 
 if (!reownProjectId) {
@@ -50,39 +47,24 @@ createAppKit({
   },
 });
 
-interface IWeb3Context {
-  children: ReactNode;
-  cookies: string | null;
-}
-
-const Web3Context: React.FC<IWeb3Context> = ({ children, cookies }) => {
-  const initialState = cookieToInitialState(
-    wagmiAdapter.wagmiConfig as Config,
-    cookies,
-  );
-
+const Web3WalletProviders: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   if (!atlasUri) {
     throw Error("NEXT_PUBLIC_ATLAS_URI not configured");
   }
 
   return (
-    <WagmiProvider
-      config={wagmiAdapter.wagmiConfig as Config}
-      {...{ initialState }}
+    <AtlasProvider
+      config={{
+        uri: atlasUri,
+        signupProduct: SignupProduct.Foresight,
+        wagmiConfig: wagmiAdapter.wagmiConfig,
+      }}
     >
-      <QueryClientProvider client={queryClient}>
-        <AtlasProvider
-          config={{
-            uri: atlasUri,
-            signupProduct: SignupProduct.Foresight,
-            wagmiConfig: wagmiAdapter.wagmiConfig,
-          }}
-        >
-          <TradeWalletProvider>{children}</TradeWalletProvider>
-        </AtlasProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+      <TradeWalletProvider>{children}</TradeWalletProvider>
+    </AtlasProvider>
   );
 };
 
-export default Web3Context;
+export default Web3WalletProviders;

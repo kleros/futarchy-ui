@@ -15,7 +15,9 @@ const TradeWalletContext = createContext<ITradeWalletContext | undefined>(
 
 export const useTradeWallet = (): ITradeWalletContext => {
   const context = useContext(TradeWalletContext);
-  if (!context) throw Error("TradeWallet not initialized");
+  if (!context) {
+    return { tradeExecutor: undefined, isLoadingTradeWallet: true };
+  }
 
   return context;
 };

@@ -14,6 +14,7 @@ import { getGraphUrl, getToken0Token1 } from "@/hooks/liquidity/utils";
 
 import { underlyingToSessionSDai } from "@/utils/calculateLiquidity";
 
+import { applyCdnCacheHeaders } from "../applyCdnCacheHeaders";
 import { markets } from "@/consts/markets";
 
 type PoolRow = GetPoolsQuery["pools"][number];
@@ -108,11 +109,7 @@ export async function GET() {
       totalVolumeSDai,
     } satisfies MarketVolumeResponse);
     res.headers.set("Access-Control-Allow-Origin", "*");
-    res.headers.set(
-      "Netlify-CDN-Cache-Control",
-      "public, max-age=60, stale-while-revalidate=300, durable",
-    );
-    res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+    applyCdnCacheHeaders(res);
     return res;
   } catch (error) {
     console.error("market-volume", error);

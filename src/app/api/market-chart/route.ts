@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { applyCdnCacheHeaders } from "../applyCdnCacheHeaders";
+
 import { fetchMarketChartData } from "./fetchMarketChartData";
+
+export const revalidate = 300;
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -18,10 +22,6 @@ export async function GET() {
 
   const res = NextResponse.json({ data });
   res.headers.set("Access-Control-Allow-Origin", "*");
-  res.headers.set(
-    "Netlify-CDN-Cache-Control",
-    "public, max-age=60, stale-while-revalidate=300, durable",
-  );
-  res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+  applyCdnCacheHeaders(res);
   return res;
 }
