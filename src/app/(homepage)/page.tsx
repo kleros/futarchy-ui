@@ -14,7 +14,7 @@ import MarketContextProvider from "@/context/MarketContext";
 import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
-import FirstVisitGuide from "@/components/Guides/FirstVisit";
+import LazyFirstVisitGuide from "@/components/Guides/LazyFirstVisitGuide";
 import Loader from "@/components/Loader";
 
 import { isUndefined } from "@/utils";
@@ -103,13 +103,15 @@ export default function Home() {
           <AdvancedSection />
         </div>
 
-        <FirstVisitGuide
-          isVisible={isOpen}
-          closeGuide={() => {
-            setOnboardingDone(true);
-            toggleGuide(false);
-          }}
-        />
+        {isOpen ? (
+          <LazyFirstVisitGuide
+            isVisible={isOpen}
+            closeGuide={() => {
+              setOnboardingDone(true);
+              toggleGuide(false);
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );
