@@ -26,6 +26,7 @@ import { positionExplainerLink } from "@/consts/markets";
 
 import Details from "./Details";
 import PositionValue from "./PositionValue";
+import PredictionSlider from "./PredictionSlider";
 
 const AccordionExpandIcon: React.FC<{ expanded: boolean }> = ({ expanded }) =>
   expanded ? <MinusIcon /> : <PlusIcon />;
