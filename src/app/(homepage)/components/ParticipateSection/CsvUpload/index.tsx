@@ -6,6 +6,8 @@ import { useToggle } from "react-use";
 
 import { useMarketsStore } from "@/store/markets";
 
+import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
+
 import { isUndefined } from "@/utils";
 import { parseMarketCSV } from "@/utils/csv";
 
@@ -107,12 +109,15 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
 
 const CsvUpload: React.FC = () => {
   const [isOpen, toggleIsOpen] = useToggle(false);
+  const isTradingPeriodEnded = useIsTradingPeriodEnded();
+
   return (
     <div className="flex w-full justify-end">
       <Button
         text="Upload CSV Predictions"
         variant="secondary"
         onPress={toggleIsOpen}
+        isDisabled={isTradingPeriodEnded}
       />
       {isOpen ? <CsvUploadPopup {...{ isOpen, toggleIsOpen }} /> : null}
     </div>
