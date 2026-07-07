@@ -19,28 +19,14 @@ import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 import CheckOutline from "@/assets/svg/check-outline-button.svg";
 import InfoIcon from "@/assets/svg/info.svg";
 import MinusOutline from "@/assets/svg/minus-outline.svg";
-import MinusIcon from "@/assets/svg/minus.svg";
-import PlusIcon from "@/assets/svg/plus.svg";
+
+import { getMountOnInteractionCaptureProps } from "@/utils/mountOnInteractionCapture";
 
 import { positionExplainerLink } from "@/consts/markets";
 
 import Details from "./Details";
 import PositionValue from "./PositionValue";
 import PredictionSlider from "./PredictionSlider";
-
-const AccordionExpandIcon: React.FC<{ expanded: boolean }> = ({ expanded }) =>
-  expanded ? <MinusIcon /> : <PlusIcon />;
-
-const MountBodyOnExpand: React.FC<{
-  expanded: boolean;
-  onExpand: () => void;
-}> = ({ expanded, onExpand }) => {
-  useEffect(() => {
-    if (expanded) onExpand();
-  }, [expanded, onExpand]);
-
-  return <AccordionExpandIcon expanded={expanded} />;
-};
 
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
@@ -83,17 +69,14 @@ const ProjectFunding: React.FC = () => {
 
   const [shouldRenderBody, setShouldRenderBody] = useState(isSelected);
   const mountBody = useCallback(() => setShouldRenderBody(true), []);
+  const mountBodyCaptureProps = useMemo(
+    () => getMountOnInteractionCaptureProps(mountBody),
+    [mountBody],
+  );
 
   useEffect(() => {
     if (isSelected) setShouldRenderBody(true);
   }, [isSelected]);
-
-  const expandButton = useCallback(
-    ({ expanded }: { expanded: boolean; toggle: () => void }) => (
-      <MountBodyOnExpand expanded={expanded} onExpand={mountBody} />
-    ),
-    [mountBody],
-  );
 
   const body = shouldRenderBody ? (
     <div className="flex w-full flex-col">
@@ -120,91 +103,89 @@ const ProjectFunding: React.FC = () => {
   ) : null;
 
   return (
-    <CustomAccordion
-      aria-label="card"
-      className={clsx(
-        "bg-klerosUIComponentsLightBackground flex h-auto w-full max-w-full flex-col gap-4",
-        "hover:shadow-md [&>div]:my-0",
-      )}
-      items={[
-        {
-          title: (
-            <>
-              <div
-                className="flex flex-1 flex-wrap items-center justify-between gap-4"
-                onClickCapture={mountBody}
-              >
-                <div className="flex max-w-full grow basis-[70%] flex-wrap gap-2 md:min-w-[300px]">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="size-2 rounded-full"
-                      style={{ backgroundColor: color }}
-                    />
-                    <h3 className="text-klerosUIComponentsPrimaryText text-left font-semibold">
-                      {name}
-                    </h3>
-                    {/* NOTE: experiment specific */}
-                    {isMarketResolved ? (
-                      <span
-                        className={clsx(
-                          isEvaluated
-                            ? "text-green-400"
-                            : "text-klerosUIComponentsSecondaryText",
-                          "text-sm",
-                        )}
-                      >
-                        {isEvaluated
-                          ? `(Evaluated: ${answer}%)`
-                          : "(Not evaluated)"}
-                      </span>
-                    ) : null}
-                  </div>
-                  {totalValue > 0 && !isMarketResolved ? (
+    <div className="w-full" {...mountBodyCaptureProps}>
+      <CustomAccordion
+        aria-label="card"
+        className={clsx(
+          "bg-klerosUIComponentsLightBackground flex h-auto w-full max-w-full flex-col gap-4",
+          "hover:shadow-md [&>div]:my-0",
+        )}
+        items={[
+          {
+            title: (
+              <>
+                <div className="flex flex-1 flex-wrap items-center justify-between gap-4">
+                  <div className="flex max-w-full grow basis-[70%] flex-wrap gap-2 md:min-w-[300px]">
                     <div className="flex items-center gap-2">
-                      <div className="border-klerosUIComponentsPrimaryText h-4 w-0 border-[0.5px] max-md:hidden" />
-
-                      <p className="text-klerosUIComponentsPrimaryText justify-center text-sm"></p>
-                      <Tooltip
-                        text="Click here to understand your Position"
-                        small
-                        delay={0}
-                        closeDelay={300}
-                        className="px-2 py-2 [&_small]:text-xs"
-                      >
-                        <Link
-                          href={positionExplainerLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                      <span
+                        className="size-2 rounded-full"
+                        style={{ backgroundColor: color }}
+                      />
+                      <h3 className="text-klerosUIComponentsPrimaryText text-left font-semibold">
+                        {name}
+                      </h3>
+                      {/* NOTE: experiment specific */}
+                      {isMarketResolved ? (
+                        <span
                           className={clsx(
-                            "flex items-center gap-1",
-                            "text-klerosUIComponentsPrimaryText justify-center text-sm",
-                            "hover:text-klerosUIComponentsPrimaryBlue cursor-pointer transition-colors",
+                            isEvaluated
+                              ? "text-green-400"
+                              : "text-klerosUIComponentsSecondaryText",
+                            "text-sm",
                           )}
                         >
-                          Position:
-                          <span className="font-bold">
-                            {" "}
-                            {totalValue.toFixed(2)}${" "}
-                          </span>
-                          <InfoIcon className="mb-0.25 inline size-3" />
-                        </Link>
-                      </Tooltip>
+                          {isEvaluated
+                            ? `(Evaluated: ${answer}%)`
+                            : "(Not evaluated)"}
+                        </span>
+                      ) : null}
                     </div>
-                  ) : null}
+                    {totalValue > 0 && !isMarketResolved ? (
+                      <div className="flex items-center gap-2">
+                        <div className="border-klerosUIComponentsPrimaryText h-4 w-0 border-[0.5px] max-md:hidden" />
+
+                        <p className="text-klerosUIComponentsPrimaryText justify-center text-sm"></p>
+                        <Tooltip
+                          text="Click here to understand your Position"
+                          small
+                          delay={0}
+                          closeDelay={300}
+                          className="px-2 py-2 [&_small]:text-xs"
+                        >
+                          <Link
+                            href={positionExplainerLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={clsx(
+                              "flex items-center gap-1",
+                              "text-klerosUIComponentsPrimaryText justify-center text-sm",
+                              "hover:text-klerosUIComponentsPrimaryBlue cursor-pointer transition-colors",
+                            )}
+                          >
+                            Position:
+                            <span className="font-bold">
+                              {" "}
+                              {totalValue.toFixed(2)}${" "}
+                            </span>
+                            <InfoIcon className="mb-0.25 inline size-3" />
+                          </Link>
+                        </Tooltip>
+                      </div>
+                    ) : null}
+                  </div>
+                  {isSelected ? (
+                    <CheckOutline className="[&_path]:fill-klerosUIComponentsSuccess animate-fade-in size-4" />
+                  ) : (
+                    <MinusOutline className="size-4" />
+                  )}
                 </div>
-                {isSelected ? (
-                  <CheckOutline className="[&_path]:fill-klerosUIComponentsSuccess animate-fade-in size-4" />
-                ) : (
-                  <MinusOutline className="size-4" />
-                )}
-              </div>
-            </>
-          ),
-          body,
-          expandButton,
-        },
-      ]}
-    />
+              </>
+            ),
+            body,
+          },
+        ]}
+      />
+    </div>
   );
 };
 
