@@ -20,7 +20,7 @@ export async function GET() {
   res.headers.set("Access-Control-Allow-Origin", "*");
   res.headers.set(
     "Netlify-CDN-Cache-Control",
-    "public, max-age=60, stale-while-revalidate=300, durable",
+    "public, max-age=300, stale-while-revalidate=86400, durable",
   );
   res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
   return res;
