@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   Accordion,
@@ -19,12 +19,28 @@ import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 import CheckOutline from "@/assets/svg/check-outline-button.svg";
 import InfoIcon from "@/assets/svg/info.svg";
 import MinusOutline from "@/assets/svg/minus-outline.svg";
+import MinusIcon from "@/assets/svg/minus.svg";
+import PlusIcon from "@/assets/svg/plus.svg";
 
 import { positionExplainerLink } from "@/consts/markets";
 
 import Details from "./Details";
 import PositionValue from "./PositionValue";
-import PredictionSlider from "./PredictionSlider";
+
+const AccordionExpandIcon: React.FC<{ expanded: boolean }> = ({ expanded }) =>
+  expanded ? <MinusIcon /> : <PlusIcon />;
+
+const MountBodyOnExpand: React.FC<{
+  expanded: boolean;
+  onExpand: () => void;
+}> = ({ expanded, onExpand }) => {
+  useEffect(() => {
+    if (expanded) onExpand();
+  }, [expanded, onExpand]);
+
+  return <AccordionExpandIcon expanded={expanded} />;
+};
+
 const ProjectFunding: React.FC = () => {
   const { market } = useMarketContext();
   const { name, color, upToken, downToken, details, underlyingToken } = market;
@@ -63,6 +79,45 @@ const ProjectFunding: React.FC = () => {
     },
   );
   const totalValue = upValue + downValue;
+
+  const [shouldRenderBody, setShouldRenderBody] = useState(isSelected);
+  const mountBody = useCallback(() => setShouldRenderBody(true), []);
+
+  useEffect(() => {
+    if (isSelected) setShouldRenderBody(true);
+  }, [isSelected]);
+
+  const expandButton = useCallback(
+    ({ expanded }: { expanded: boolean; toggle: () => void }) => (
+      <MountBodyOnExpand expanded={expanded} onExpand={mountBody} />
+    ),
+    [mountBody],
+  );
+
+  const body = shouldRenderBody ? (
+    <div className="flex w-full flex-col">
+      <div className="pt-8 pb-4">
+        <PredictionSlider />
+      </div>
+      {tradeExecutor && !isMarketResolved ? (
+        <div className="flex w-full items-center justify-between gap-2">
+          <PositionValue
+            {...{ upToken, downToken, underlyingToken, tradeExecutor }}
+          />
+          {/* <OpenOrders /> */}
+        </div>
+      ) : null}
+      <Accordion
+        aria-label="accordion"
+        className={clsx(
+          "w-full max-w-full",
+          "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
+        )}
+        items={[{ title: "Details", body: <Details {...details} /> }]}
+      />
+    </div>
+  ) : null;
+
   return (
     <CustomAccordion
       aria-label="card"
@@ -74,7 +129,10 @@ const ProjectFunding: React.FC = () => {
         {
           title: (
             <>
-              <div className="flex flex-1 flex-wrap items-center justify-between gap-4">
+              <div
+                className="flex flex-1 flex-wrap items-center justify-between gap-4"
+                onClickCapture={mountBody}
+              >
                 <div className="flex max-w-full grow basis-[70%] flex-wrap gap-2 md:min-w-[300px]">
                   <div className="flex items-center gap-2">
                     <span
@@ -141,29 +199,8 @@ const ProjectFunding: React.FC = () => {
               </div>
             </>
           ),
-          body: (
-            <div className="flex w-full flex-col">
-              <div className="pt-8 pb-4">
-                <PredictionSlider />
-              </div>
-              {tradeExecutor && !isMarketResolved ? (
-                <div className="flex w-full items-center justify-between gap-2">
-                  <PositionValue
-                    {...{ upToken, downToken, underlyingToken, tradeExecutor }}
-                  />
-                  {/* <OpenOrders /> */}
-                </div>
-              ) : null}
-              <Accordion
-                aria-label="accordion"
-                className={clsx(
-                  "w-full max-w-full",
-                  "[&_#expand-button]:bg-klerosUIComponentsLightBackground [&_#expand-button_p]:font-normal",
-                )}
-                items={[{ title: "Details", body: <Details {...details} /> }]}
-              />
-            </div>
-          ),
+          body,
+          expandButton,
         },
       ]}
     />
