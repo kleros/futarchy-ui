@@ -4,17 +4,17 @@ import React, { useEffect } from "react";
 
 import { Button } from "@kleros/ui-components-library";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import { useLocalStorage, useToggle } from "react-use";
 
 import { useReadGnosisRouterGetWinningOutcomes } from "@/generated";
 import { useMarketsStore } from "@/store/markets";
 
 import MarketContextProvider from "@/context/MarketContext";
-import { useChartData } from "@/hooks/useChartData";
 import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
-import FirstVisitGuide from "@/components/Guides/FirstVisit";
+import LazyFirstVisitGuide from "@/components/Guides/LazyFirstVisitGuide";
 import Loader from "@/components/Loader";
 
 import { isUndefined } from "@/utils";
@@ -22,15 +22,22 @@ import { isUndefined } from "@/utils";
 import { markets, parentConditionId } from "@/consts/markets";
 
 import AdvancedSection from "./components/AdvancedSection";
-import Chart from "./components/Chart";
 import Header from "./components/Header";
 import ParticipateSection from "./components/ParticipateSection";
 import ExportPredictions from "./components/ParticipateSection/CsvUpload/ExportPredictions";
 import PredictAll from "./components/PredictAll";
 import ProjectFunding from "./components/ProjectFunding";
 
+const ChartSection = dynamic(() => import("./components/ChartSection"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-100 w-full items-center justify-center">
+      <Loader />
+    </div>
+  ),
+});
+
 export default function Home() {
-  const { data: chartData } = useChartData(markets);
   const predictionMarkets = usePredictionMarkets();
   const isTradingPeriodEnded = useIsTradingPeriodEnded();
   const resetPredictionMarkets = useMarketsStore(
@@ -58,13 +65,7 @@ export default function Home() {
       <div className="mx-auto max-w-294">
         <Header />
         <div className="min-h-100">
-          {!isUndefined(chartData) ? (
-            <Chart data={chartData} />
-          ) : (
-            <div className="flex h-100 w-full items-center justify-center">
-              <Loader />
-            </div>
-          )}
+          <ChartSection />
         </div>
 
         <div className="flex flex-col gap-4">
@@ -102,13 +103,15 @@ export default function Home() {
           <AdvancedSection />
         </div>
 
-        <FirstVisitGuide
-          isVisible={isOpen}
-          closeGuide={() => {
-            setOnboardingDone(true);
-            toggleGuide(false);
-          }}
-        />
+        {isOpen ? (
+          <LazyFirstVisitGuide
+            isVisible={isOpen}
+            closeGuide={() => {
+              setOnboardingDone(true);
+              toggleGuide(false);
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );

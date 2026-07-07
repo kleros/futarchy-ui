@@ -1,9 +1,11 @@
+import { processAllMarketChartData } from "@/lib/chartData";
+
 import { markets } from "@/consts/markets";
 
 const chainId = "100";
 
 export async function fetchMarketChartData(fresh: boolean) {
-  return Promise.all(
+  const rawResponses = await Promise.all(
     markets.map(async (market) => {
       const upstreamUrl =
         `https://app.seer.pm/.netlify/functions/market-chart` +
@@ -13,4 +15,6 @@ export async function fetchMarketChartData(fresh: boolean) {
       return await upstream.json();
     }),
   );
+
+  return processAllMarketChartData(rawResponses, markets);
 }

@@ -10,6 +10,8 @@ const Details: React.FC<IDetails> = ({ imdbURL, posterURL, summary }) => (
       <img
         src={posterURL}
         alt="movie poster"
+        loading="lazy"
+        decoding="async"
         className="rounded-base max-w-62.5"
       />
     ) : null}

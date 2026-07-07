@@ -1,10 +1,12 @@
+"use client";
+
 import { useToggle } from "react-use";
+
+import LazyFirstVisitGuide from "@/components/Guides/LazyFirstVisitGuide";
 
 import BookIcon from "@/assets/svg/book-open.svg";
 
 import { cn } from "@/utils";
-
-import FirstVisitGuide from "./Guides/FirstVisit";
 
 import LightButton from "./LightButton";
 
@@ -31,12 +33,14 @@ const QuickGuideButton: React.FC<QuickGuideButtonProps> = ({ className }) => {
         onPress={toggleGuide}
       />
 
-      <FirstVisitGuide
-        isVisible={isOpen}
-        closeGuide={() => {
-          toggleGuide(false);
-        }}
-      />
+      {isOpen ? (
+        <LazyFirstVisitGuide
+          isVisible={isOpen}
+          closeGuide={() => {
+            toggleGuide(false);
+          }}
+        />
+      ) : null}
     </>
   );
 };
