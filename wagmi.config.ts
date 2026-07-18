@@ -12,6 +12,7 @@ const conditionalTokens = getContractInfo("conditionalTokens");
 const creditsManager = getContractInfo("foresightCreditsManager");
 const foresightCredits = getContractInfo("foresightCredits");
 const WXDAI = getContractInfo("wrappedXDai");
+const futarchyFactory = getContractInfo("futarchyFactory");
 
 export default defineConfig({
   out: "src/generated.ts",
@@ -24,6 +25,7 @@ export default defineConfig({
     { ...creditsManager },
     { ...foresightCredits },
     { ...WXDAI },
+    { ...futarchyFactory },
     { name: "ERC20", abi: erc20Abi },
   ],
   plugins: [react()],
