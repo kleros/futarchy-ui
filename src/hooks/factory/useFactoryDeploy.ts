@@ -61,9 +61,9 @@ export const useFactoryDeploy = () => {
 
   const deploy = useCallback(async () => {
     const store = useFactoryStore.getState();
-    const { parent, children } = store;
+    const { parent, children, childShared } = store;
 
-    const error = validateFactoryForm(parent, children);
+    const error = validateFactoryForm(parent, children, childShared);
     if (error) {
       store.setGlobalError(error);
       return;
@@ -74,7 +74,9 @@ export const useFactoryDeploy = () => {
     }
 
     const parentConfig = buildParentConfig(parent);
-    const childConfigs = children.map((c, i) => buildChildConfig(c, i));
+    const childConfigs = children.map((c, i) =>
+      buildChildConfig(c, childShared, i),
+    );
     const multiCategoricalParent =
       parent.parentMarketKind === "multicategorical";
     const sessionParams = {

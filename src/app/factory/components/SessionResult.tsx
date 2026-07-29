@@ -21,6 +21,7 @@ const SessionResult: React.FC = () => {
   const childMarkets = useFactoryStore((s) => s.childMarkets);
   const parent = useFactoryStore((s) => s.parent);
   const children = useFactoryStore((s) => s.children);
+  const childShared = useFactoryStore((s) => s.childShared);
   const steps = useFactoryStore((s) => s.steps);
   const { address: deployer } = useAccount();
 
@@ -41,6 +42,7 @@ const SessionResult: React.FC = () => {
       childMarkets,
       parent,
       children,
+      childShared,
       steps,
       deployer: deployer ?? undefined,
     };
@@ -98,6 +100,7 @@ const SessionResult: React.FC = () => {
     childMarkets,
     parent,
     children,
+    childShared,
     steps,
     deployer,
   ]);

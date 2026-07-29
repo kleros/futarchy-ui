@@ -1,7 +1,12 @@
 import type { Address } from "viem";
 import { parseEther } from "viem";
 
-import type { ChildForm, DeployStep, ParentForm } from "@/store/factory";
+import type {
+  ChildForm,
+  ChildSharedForm,
+  DeployStep,
+  ParentForm,
+} from "@/store/factory";
 
 import type { SeerChildMarketSnapshotFields } from "@/utils/seerMarketReads";
 
@@ -59,42 +64,45 @@ export const buildParentConfig = (p: ParentForm): ParentCategoricalConfig => ({
 
 export const buildChildConfig = (
   c: ChildForm,
+  shared: ChildSharedForm,
   index: number,
 ): ChildScalarConfig => ({
   parentOutcomeIndex: BigInt(index),
   marketName: c.marketName,
-  outcomeLabelLow: c.outcomeLabelLow,
-  outcomeLabelHigh: c.outcomeLabelHigh,
-  tokenNameLow: c.tokenNameLow,
-  tokenNameHigh: c.tokenNameHigh,
-  lowerBound: safeBigInt(c.lowerBound),
-  upperBound: safeBigInt(c.upperBound),
-  minBond: safeParseEther(c.minBond),
-  openingTime: c.openingTime,
-  category: c.category,
-  lang: c.lang,
+  outcomeLabelLow: shared.outcomeLabelLow,
+  outcomeLabelHigh: shared.outcomeLabelHigh,
+  tokenNameLow: shared.tokenNameLow,
+  tokenNameHigh: shared.tokenNameHigh,
+  lowerBound: safeBigInt(shared.lowerBound),
+  upperBound: safeBigInt(shared.upperBound),
+  minBond: safeParseEther(shared.minBond),
+  openingTime: shared.openingTime,
+  category: shared.category,
+  lang: shared.lang,
 });
 
 export const buildChildBatch = (
   children: ChildForm[],
+  shared: ChildSharedForm,
   startIndex: number,
   endIndex: number,
 ): ChildScalarConfig[] =>
   children
     .slice(startIndex, endIndex)
-    .map((child, i) => buildChildConfig(child, startIndex + i));
+    .map((child, i) => buildChildConfig(child, shared, startIndex + i));
 
 /**
  * Validates the form values against constraints enforced by Seer + the factory:
  * - 2+ outcomes, tokenNames length matches outcomes + 1 invalid slot
  * - non-empty market/outcome/token labels
  * - wrapped token tickers ≤ 31 bytes (Seer enforces this on the wrapped ERC20 names)
- * - scalar `lowerBound < upperBound` and `upperBound < type(uint256).max - 2`
+ * - shared scalar `lowerBound < upperBound` and `upperBound < type(uint256).max - 2`
  * Returns a single human-readable error or undefined when the form is valid.
  */
 export const validateFactoryForm = (
   parent: ParentForm,
   children: ChildForm[],
+  shared: ChildSharedForm,
 ): string | undefined => {
   if (!parent.marketName.trim()) return "Parent market name is required";
   if (!parent.childQuestionTemplate.trim())
@@ -113,31 +121,31 @@ export const validateFactoryForm = (
   if (children.length !== parent.outcomes.length)
     return "Children count must equal parent outcome count";
 
-  const upperBoundCeiling = (1n << 256n) - 3n;
-  for (let i = 0; i < children.length; i++) {
-    const c = children[i];
-    if (!c.marketName.trim()) return `Child ${i + 1}: market name is required`;
-    if (!c.outcomeLabelLow.trim() || !c.outcomeLabelHigh.trim())
-      return `Child ${i + 1}: both outcome labels are required`;
-    if (!c.tokenNameLow.trim() || !c.tokenNameHigh.trim())
-      return `Child ${i + 1}: both token names are required`;
-    if (new TextEncoder().encode(c.tokenNameLow).length > 31)
-      return `Child ${i + 1}: low token name exceeds 31 bytes`;
-    if (new TextEncoder().encode(c.tokenNameHigh).length > 31)
-      return `Child ${i + 1}: high token name exceeds 31 bytes`;
+  if (!shared.outcomeLabelLow.trim() || !shared.outcomeLabelHigh.trim())
+    return "Shared settings: both outcome labels are required";
+  if (!shared.tokenNameLow.trim() || !shared.tokenNameHigh.trim())
+    return "Shared settings: both token names are required";
+  if (new TextEncoder().encode(shared.tokenNameLow).length > 31)
+    return "Shared settings: low token name exceeds 31 bytes";
+  if (new TextEncoder().encode(shared.tokenNameHigh).length > 31)
+    return "Shared settings: high token name exceeds 31 bytes";
 
-    let low: bigint;
-    let high: bigint;
-    try {
-      low = safeBigInt(c.lowerBound);
-      high = safeBigInt(c.upperBound);
-    } catch (e) {
-      return `Child ${i + 1}: ${(e as Error).message}`;
-    }
-    if (low >= high)
-      return `Child ${i + 1}: lower bound must be less than upper bound`;
-    if (high >= upperBoundCeiling)
-      return `Child ${i + 1}: upper bound is too large`;
+  let low: bigint;
+  let high: bigint;
+  try {
+    low = safeBigInt(shared.lowerBound);
+    high = safeBigInt(shared.upperBound);
+  } catch (e) {
+    return `Shared settings: ${(e as Error).message}`;
+  }
+  if (low >= high)
+    return "Shared settings: lower bound must be less than upper bound";
+  if (high >= (1n << 256n) - 3n)
+    return "Shared settings: upper bound is too large";
+
+  for (let i = 0; i < children.length; i++) {
+    if (!children[i].marketName.trim())
+      return `Child ${i + 1}: market name is required`;
   }
   return undefined;
 };
@@ -196,6 +204,7 @@ export const buildSessionSnapshot = (args: {
   childMarkets: Address[];
   parent: ParentForm;
   children: ChildForm[];
+  childShared: ChildSharedForm;
   steps: DeployStep[];
   deployer?: Address;
   childMarketChain?: readonly (SeerChildMarketSnapshotFields | null)[];
@@ -231,17 +240,20 @@ export const buildSessionSnapshot = (args: {
       name: child.marketName,
       marketId: args.childMarkets[index],
       parentMarketOutcome: index,
-      minValue: Number(child.lowerBound),
-      maxValue: Number(child.upperBound),
+      minValue: Number(args.childShared.lowerBound),
+      maxValue: Number(args.childShared.upperBound),
       outcomeLabels: {
-        low: child.outcomeLabelLow,
-        high: child.outcomeLabelHigh,
+        low: args.childShared.outcomeLabelLow,
+        high: args.childShared.outcomeLabelHigh,
       },
-      tokenNames: { low: child.tokenNameLow, high: child.tokenNameHigh },
-      minBond: child.minBond,
-      openingTime: child.openingTime,
-      category: child.category,
-      lang: child.lang,
+      tokenNames: {
+        low: args.childShared.tokenNameLow,
+        high: args.childShared.tokenNameHigh,
+      },
+      minBond: args.childShared.minBond,
+      openingTime: args.childShared.openingTime,
+      category: args.childShared.category,
+      lang: args.childShared.lang,
     };
     if (!chain) return base;
     return {

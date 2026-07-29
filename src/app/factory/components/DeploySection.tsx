@@ -18,6 +18,7 @@ import SessionResult from "./SessionResult";
 const DeploySection: React.FC = () => {
   const parent = useFactoryStore((s) => s.parent);
   const children = useFactoryStore((s) => s.children);
+  const childShared = useFactoryStore((s) => s.childShared);
   const isDeploying = useFactoryStore((s) => s.isDeploying);
   const mode = useFactoryStore((s) => s.mode);
   const sessionId = useFactoryStore((s) => s.sessionId);
@@ -31,8 +32,8 @@ const DeploySection: React.FC = () => {
   const { deploy } = useFactoryDeploy();
 
   const validationError = useMemo(
-    () => validateFactoryForm(parent, children),
-    [parent, children],
+    () => validateFactoryForm(parent, children, childShared),
+    [parent, children, childShared],
   );
 
   const isPhased = children.length > PHASED_THRESHOLD;

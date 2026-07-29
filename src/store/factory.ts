@@ -28,8 +28,12 @@ export interface ParentForm {
   childQuestionTemplate: string;
 }
 
-export interface ChildForm {
-  marketName: string;
+/**
+ * Settings entered once and applied to every scalar child market. Only the
+ * question text and the wrapped tickers differ per child; everything below is
+ * identical across the session, so it lives here instead of on each child.
+ */
+export interface ChildSharedForm {
   outcomeLabelLow: string;
   outcomeLabelHigh: string;
   tokenNameLow: string;
@@ -42,6 +46,11 @@ export interface ChildForm {
   openingTime: number;
   category: string;
   lang: string;
+}
+
+/** Per-child values. Everything else comes from {@link ChildSharedForm}. */
+export interface ChildForm {
+  marketName: string;
 }
 
 export type DeployStepStatus =
@@ -64,6 +73,7 @@ export type DeployMode = "atomic" | "phased";
 
 interface FactoryStore {
   parent: ParentForm;
+  childShared: ChildSharedForm;
   children: ChildForm[];
 
   // ------------ runtime deployment state ------------
@@ -89,6 +99,10 @@ interface FactoryStore {
     key: K,
     value: ChildForm[K],
   ) => void;
+  setChildSharedField: <K extends keyof ChildSharedForm>(
+    key: K,
+    value: ChildSharedForm[K],
+  ) => void;
 
   // ------------ runtime actions ------------
   setMode: (mode: DeployMode | undefined) => void;
@@ -105,33 +119,23 @@ interface FactoryStore {
   resetForm: () => void;
 }
 
-const DEFAULT_OPENING_TIME = 2_000_000_000;
+const DAY_SECONDS = 86_400;
 
-const makeChild = (
-  scalarTickerPrefix: string,
-  parent: ParentForm,
-  outcomeIndex: number,
-): ChildForm => {
-  const outcome = parent.outcomes[outcomeIndex] ?? scalarTickerPrefix;
-  const token = parent.tokenNames[outcomeIndex] ?? "";
-  return {
-    marketName: applyChildQuestionTemplate(
-      parent.childQuestionTemplate,
-      outcome,
-      token,
-    ),
-    outcomeLabelLow: "DOWN",
-    outcomeLabelHigh: "UP",
-    tokenNameLow: `${scalarTickerPrefix.toUpperCase()}_DN`,
-    tokenNameHigh: `${scalarTickerPrefix.toUpperCase()}_UP`,
-    lowerBound: "0",
-    upperBound: "10",
-    minBond: "1",
-    openingTime: parent.openingTime,
-    category: parent.category,
-    lang: parent.lang,
-  };
-};
+/**
+ * Default Reality opening time: seven days out, snapped to the next UTC
+ * midnight. Snapping keeps the value stable between the server prerender and
+ * client hydration of the `datetime-local` input.
+ */
+const defaultOpeningTime = () =>
+  (Math.floor(Date.now() / 1000 / DAY_SECONDS) + 7) * DAY_SECONDS;
+
+const makeChild = (parent: ParentForm, outcomeIndex: number): ChildForm => ({
+  marketName: applyChildQuestionTemplate(
+    parent.childQuestionTemplate,
+    parent.outcomes[outcomeIndex] ?? "",
+    parent.tokenNames[outcomeIndex] ?? "",
+  ),
+});
 
 const initialParent = (): ParentForm => ({
   parentMarketKind: "multicategorical",
@@ -141,13 +145,29 @@ const initialParent = (): ParentForm => ({
   category: "movies",
   lang: "en",
   minBond: "1",
-  openingTime: DEFAULT_OPENING_TIME,
+  openingTime: defaultOpeningTime(),
   childQuestionTemplate: "Score if ${outcome} is watched (0-10)",
 });
 
+const initialChildShared = (): ChildSharedForm => {
+  const p = initialParent();
+  return {
+    outcomeLabelLow: "DOWN",
+    outcomeLabelHigh: "UP",
+    tokenNameLow: "DOWN",
+    tokenNameHigh: "UP",
+    lowerBound: "0",
+    upperBound: "10",
+    minBond: "1",
+    openingTime: p.openingTime,
+    category: p.category,
+    lang: p.lang,
+  };
+};
+
 const initialChildren = (): ChildForm[] => {
   const p = initialParent();
-  return [makeChild("A", p, 0), makeChild("B", p, 1)];
+  return p.outcomes.map((_, i) => makeChild(p, i));
 };
 
 const blankRuntime = {
@@ -162,6 +182,7 @@ const blankRuntime = {
 
 export const useFactoryStore = create<FactoryStore>((set) => ({
   parent: initialParent(),
+  childShared: initialChildShared(),
   children: initialChildren(),
   ...blankRuntime,
 
@@ -170,20 +191,19 @@ export const useFactoryStore = create<FactoryStore>((set) => ({
       const parent = { ...state.parent, [key]: value };
       const syncMeta =
         key === "category" || key === "lang" || key === "openingTime";
-      const refreshChildQuestions = key === "childQuestionTemplate";
-      let children = state.children;
-      if (syncMeta) {
-        children = state.children.map((c) => ({ ...c, [key]: value }));
-      }
-      if (refreshChildQuestions) {
-        children = recomputeChildrenMarketNames({
-          template: parent.childQuestionTemplate,
-          outcomes: parent.outcomes,
-          tokenNames: parent.tokenNames,
-          children,
-        });
-      }
-      return { parent, children };
+      const childShared = syncMeta
+        ? { ...state.childShared, [key]: value }
+        : state.childShared;
+      const children =
+        key === "childQuestionTemplate"
+          ? recomputeChildrenMarketNames({
+              template: parent.childQuestionTemplate,
+              outcomes: parent.outcomes,
+              tokenNames: parent.tokenNames,
+              children: state.children,
+            })
+          : state.children;
+      return { parent, childShared, children };
     }),
 
   addOutcome: () =>
@@ -202,7 +222,7 @@ export const useFactoryStore = create<FactoryStore>((set) => ({
       };
       return {
         parent,
-        children: [...state.children, makeChild(nextLetter, parent, idx)],
+        children: [...state.children, makeChild(parent, idx)],
       };
     }),
 
@@ -274,6 +294,9 @@ export const useFactoryStore = create<FactoryStore>((set) => ({
       ),
     })),
 
+  setChildSharedField: (key, value) =>
+    set((state) => ({ childShared: { ...state.childShared, [key]: value } })),
+
   setMode: (mode) => set({ mode }),
 
   setSteps: (steps) => set({ steps }),
@@ -301,6 +324,7 @@ export const useFactoryStore = create<FactoryStore>((set) => ({
   resetForm: () =>
     set({
       parent: initialParent(),
+      childShared: initialChildShared(),
       children: initialChildren(),
       ...blankRuntime,
     }),
