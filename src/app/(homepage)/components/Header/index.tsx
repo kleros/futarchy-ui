@@ -45,8 +45,8 @@ const Header: React.FC = () => {
         <MarketVolume />
       </div>
       <ExternalLink
-        text="Distilled Clément's Judgement - Session 1"
-        url="https://movies.foresight.kleros.io/"
+        text="Distilled Clément's Judgement - Session 2"
+        url="https://movies-r2.foresight.kleros.io/"
       />
       <div
         className={clsx(
