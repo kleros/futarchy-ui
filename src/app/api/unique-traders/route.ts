@@ -59,16 +59,27 @@ const childMarketsQuery = /* GraphQL */ `
   }
 `;
 
-async function getSeerParentMarket(
-  parentMarket: Address,
-): Promise<SeerParentMarket | undefined> {
+const conditionalEventsQuery = /* GraphQL */ `
+  query GetConditionalEvents($marketIds: [String!], $cursor: String!) {
+    ConditionalEvent(
+      where: { market_id: { _in: $marketIds }, id: { _gt: $cursor } }
+      order_by: { id: asc }
+      limit: ${PAGE_SIZE}
+    ) {
+      id
+      accountId
+    }
+  }
+`;
+
+async function querySeerSubgraph<T>(
+  query: string,
+  variables: Record<string, unknown>,
+): Promise<T> {
   const res = await fetch(SEER_SUBGRAPH_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: childMarketsQuery,
-      variables: { parentMarket: parentMarket.toLowerCase() },
-    }),
+    body: JSON.stringify({ query, variables }),
     next: { revalidate: REVALIDATE_SECONDS },
   });
   if (!res.ok) {
@@ -78,7 +89,37 @@ async function getSeerParentMarket(
   if (errors?.length) {
     throw new Error(`Seer subgraph error: ${errors[0].message}`);
   }
-  return (data?.Market as SeerParentMarket[] | undefined)?.[0];
+  return data as T;
+}
+
+async function getSeerParentMarket(
+  parentMarket: Address,
+): Promise<SeerParentMarket | undefined> {
+  const data = await querySeerSubgraph<{ Market: SeerParentMarket[] }>(
+    childMarketsQuery,
+    { parentMarket: parentMarket.toLowerCase() },
+  );
+  return data.Market?.[0];
+}
+
+// accounts that split/merged/redeemed on the parent or a child market; catches
+// people who minted UP/DOWN tokens but never swapped them on a pool. the
+// indexer attributes these events to the transaction sender, so like swap
+// origins they are user EOAs, not routers or pools
+async function getConditionalEventAccounts(marketIds: string[]) {
+  const accounts = new Set<string>();
+  let cursor = "";
+  for (;;) {
+    const { ConditionalEvent: events } = await querySeerSubgraph<{
+      ConditionalEvent: { id: string; accountId: string }[];
+    }>(conditionalEventsQuery, { marketIds, cursor });
+    for (const event of events) {
+      accounts.add(event.accountId.toLowerCase());
+    }
+    if (events.length < PAGE_SIZE) break;
+    cursor = events[events.length - 1].id;
+  }
+  return accounts;
 }
 
 // each child scalar market trades its UP and DOWN tokens against the parent
@@ -93,18 +134,12 @@ function getChildTokenPairs(parent: SeerParentMarket) {
   });
 }
 
-async function getUniqueTraders(parentMarket: Address) {
+async function getSwapTraders(
+  tokenPairs: ReturnType<typeof getChildTokenPairs>,
+) {
   const subgraphUrl = getGraphUrl();
   if (!subgraphUrl.startsWith("http")) {
     throw new Error("Swapr subgraph URL is not configured");
-  }
-
-  const parent = await getSeerParentMarket(parentMarket);
-  if (!parent) return undefined;
-
-  const tokenPairs = getChildTokenPairs(parent);
-  if (tokenPairs.length === 0) {
-    return [] as Address[];
   }
 
   const client = new GraphQLClient(subgraphUrl, {
@@ -142,7 +177,25 @@ async function getUniqueTraders(parentMarket: Address) {
     cursor = swaps[swaps.length - 1].id;
   }
 
-  return [...traders].sort() as Address[];
+  return traders;
+}
+
+async function getUniqueTraders(parentMarket: Address) {
+  const parent = await getSeerParentMarket(parentMarket);
+  if (!parent) return undefined;
+
+  const tokenPairs = getChildTokenPairs(parent);
+  const marketIds = [
+    parentMarket,
+    ...parent.childMarkets.map((child) => child.address),
+  ].map((address) => `100:${address.toLowerCase()}`);
+
+  const [swapTraders, minters] = await Promise.all([
+    tokenPairs.length > 0 ? getSwapTraders(tokenPairs) : new Set<string>(),
+    getConditionalEventAccounts(marketIds),
+  ]);
+
+  return [...new Set([...swapTraders, ...minters])].sort() as Address[];
 }
 
 export async function GET(request: NextRequest) {
