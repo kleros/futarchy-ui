@@ -10,14 +10,10 @@ export const useIsTradingPeriodEnded = () => {
   useEffect(() => {
     if (ended) return;
 
-    const remainingMs = endTime * 1000 - Date.now();
-    if (remainingMs <= 0) {
-      setEnded(true);
-      return;
-    }
-
-    const timer = setTimeout(() => setEnded(true), remainingMs);
-    return () => clearTimeout(timer);
+    const timer = setInterval(() => {
+      if (isTradingPeriodEnded()) setEnded(true);
+    }, 5_000);
+    return () => clearInterval(timer);
   }, [ended]);
 
   return ended;
