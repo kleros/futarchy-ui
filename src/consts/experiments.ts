@@ -15,6 +15,19 @@ export interface IExperiment {
 
 export const experiments: IExperiment[] = [
   {
+    slug: "movies-s3",
+    name: "Movies Experiment - Session 3",
+    question:
+      "If watched, what percentile score would Clément give to the movie?",
+    url: "https://movies-r3.foresight.kleros.io",
+    icon: "movie",
+    banner: "/experiment-banners/movies-r3-banner.webp",
+    countLabel: "20 Movies",
+    tradingPeriod: "Until September 3rd 00:00 UTC",
+    endTime: 1788393600,
+    status: "live",
+  },
+  {
     slug: "movies-s2",
     name: "Movies Experiment - Session 2",
     question:
@@ -25,7 +38,7 @@ export const experiments: IExperiment[] = [
     countLabel: "20 Movies",
     tradingPeriod: "Until July 5th 00:00 UTC",
     endTime: 1783209600,
-    status: "live",
+    status: "ended",
   },
   {
     slug: "movies",
