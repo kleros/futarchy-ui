@@ -3,10 +3,13 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { useAtlasProvider } from "@kleros/kleros-app";
 import { AlertMessage, Button } from "@kleros/ui-components-library";
+import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePrevious } from "react-use";
 import { useAccount } from "wagmi";
+
+import { isSubscribedQueryKey } from "@/hooks/useIsSubscribed";
 
 import EnsureChain from "@/components/EnsureChain";
 import Loader from "@/components/Loader";
@@ -24,6 +27,7 @@ const pageLayoutClassName = clsx(
 
 const Unsubscribe: React.FC = () => {
   const { address } = useAccount();
+  const queryClient = useQueryClient();
   const [IsUnsubscribed, setIsUnsubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const {
@@ -86,6 +90,7 @@ const Unsubscribe: React.FC = () => {
         return;
       }
       setIsUnsubscribed(true);
+      queryClient.setQueryData(isSubscribedQueryKey(address), false);
       successToast("You have been unsubscribed from notifications.");
     } catch (error) {
       console.error("Unsubscribe failed:", error);
@@ -93,7 +98,7 @@ const Unsubscribe: React.FC = () => {
         errorToast(`Unsubscribe failed: ${error.message}`);
       }
     }
-  }, [address, isVerified, authoriseUser, deleteUser]);
+  }, [address, isVerified, authoriseUser, deleteUser, queryClient]);
 
   if (isLoading) {
     return (
