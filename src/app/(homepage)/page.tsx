@@ -23,6 +23,7 @@ import { markets, parentConditionId } from "@/consts/markets";
 
 import AdvancedSection from "./components/AdvancedSection";
 import Header from "./components/Header";
+import NotificationsBanner from "./components/NotificationsBanner";
 import ParticipateSection from "./components/ParticipateSection";
 import ExportPredictions from "./components/ParticipateSection/CsvUpload/ExportPredictions";
 import PredictAll from "./components/PredictAll";
@@ -63,6 +64,7 @@ export default function Home() {
   return (
     <div className="w-full px-4 py-12 md:px-8 lg:px-32">
       <div className="mx-auto max-w-294">
+        <NotificationsBanner />
         <Header />
         <div className="min-h-100">
           <ChartSection />
