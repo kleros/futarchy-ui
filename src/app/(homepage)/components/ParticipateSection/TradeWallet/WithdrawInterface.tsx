@@ -7,11 +7,11 @@ import { useAccount, useBalance } from "wagmi";
 import { useWithdrawFromTradeExecutor } from "@/hooks/tradeWallet/useWithdrawFromTradeExecutor";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 
+import AmountInput from "@/components/AmountInput";
 import LightButton from "@/components/LightButton";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 
-import AmountInput from "@/components/AmountInput";
 import { Tokens, TokenType } from "@/consts/tokens";
 
 interface WithdrawInterfaceProps {
