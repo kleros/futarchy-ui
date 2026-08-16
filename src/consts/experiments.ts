@@ -11,6 +11,8 @@ export interface IExperiment {
   tradingPeriod: string;
   endTime: number;
   status: ExperimentStatus;
+  /** Parent market address of the current deployment, lowercase. */
+  parentMarket: string;
 }
 
 export const experiments: IExperiment[] = [
@@ -26,6 +28,7 @@ export const experiments: IExperiment[] = [
     tradingPeriod: "Until September 3rd 00:00 UTC",
     endTime: 1788393600,
     status: "live",
+    parentMarket: "0xacc15cfa0f4ae4932b12ab14595941285098436a",
   },
   {
     slug: "movies-s2",
@@ -39,6 +42,7 @@ export const experiments: IExperiment[] = [
     tradingPeriod: "Until July 5th 00:00 UTC",
     endTime: 1783209600,
     status: "ended",
+    parentMarket: "0x6b182ffe23a9df5f5bfb2e9b6b4ce5716e84ab1f",
   },
   {
     slug: "movies",
@@ -52,5 +56,6 @@ export const experiments: IExperiment[] = [
     tradingPeriod: "Until Friday 3rd 18:00 UTC",
     endTime: 1775239200,
     status: "ended",
+    parentMarket: "0x6f7ae2815e7e13c14a6560f4b382ae78e7b1493e",
   },
 ];
