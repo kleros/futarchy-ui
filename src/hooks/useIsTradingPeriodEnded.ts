@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 
 import { endTime } from "@/consts/markets";
 
-export const isTradingPeriodEnded = () => Date.now() / 1000 >= endTime;
+const TRADING_HALTED = false;
+
+export const isTradingPeriodEnded = () =>
+  TRADING_HALTED || Date.now() / 1000 >= endTime;
 
 export const useIsTradingPeriodEnded = () => {
   const [ended, setEnded] = useState(isTradingPeriodEnded);
