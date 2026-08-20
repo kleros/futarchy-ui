@@ -34,8 +34,8 @@ export const invalidMarket: Address =
 
 // in unix timestamp, seconds
 export const startTime: number = 1785801600;
-export const endTime: number = startTime + 30 * 24 * 60 * 60;
-export const endDate: string = "Thursday, 3 September 2026 00:00 UTC";
+export const endTime: number = 1790812740;
+export const endDate: string = "Wednesday, 30 September 2026 23:59 UTC";
 
 export interface IDetails {
   imdbURL?: string;
