@@ -37,9 +37,16 @@ export const startTime: number = 1787926020;
 export const endTime: number = 1789300800;
 export const endDate: string = "Sunday, 13 September 2026 12:00 UTC";
 
+export interface ILocation {
+  name: string;
+  url?: string;
+}
+
 export interface IDetails {
   imdbURL?: string;
   posterURL?: string;
+  pax?: string;
+  locations?: ILocation[];
   summary: string;
 }
 
@@ -91,8 +98,15 @@ export const markets: Array<IMarket> = [
       "0xef6da409eb33b4dee7fffbf33d209b3f1e446092842ff8369a99d4f7fc4ef446",
     details: {
       posterURL: "https://i.imgur.com/ZVAIXyf.jpeg",
+      pax: "50-100",
+      locations: [
+        {
+          name: "The Game Palacio",
+          url: "https://share.google/0G0CEUJtsHe2faQXf",
+        },
+      ],
       summary:
-        "Pax: 50–100\nLocation: The Game Palacio\n\nA relaxed night of arcade games, bowling, food, drinks, and good company. We’ll kick things off with a quick introduction to the organisers, then leave the rest of the evening open for people to play, compete, and hang out. Expect a casual, drop-in-and-out kind of night with plenty of opportunities to meet other people from the ecosystem.\n\n- 30-minute welcome session: A brief introduction to the organisers, who we are/what we do, and the purpose of the event.\n- Free play & networking: Guests are then free to enjoy the arcade games and bowling, grab food and drinks, and mingle throughout the venue at their own pace.",
+        "A relaxed night of arcade games, bowling, food, drinks, and good company. We’ll kick things off with a quick introduction to the organisers, then leave the rest of the evening open for people to play, compete, and hang out. Expect a casual, drop-in-and-out kind of night with plenty of opportunities to meet other people from the ecosystem.",
     },
   },
   {
@@ -111,8 +125,15 @@ export const markets: Array<IMarket> = [
       "0x4c08bf90c211410356ba0d3d1808516c35ca93d77a9697ce7329f9432e503397",
     details: {
       posterURL: "https://i.imgur.com/nAlYoB3.jpeg",
+      pax: "50+",
+      locations: [
+        {
+          name: "Coworking/Event spaces around Mumbai",
+          url: "https://myhq.in/mumbai/event-space/mumbai",
+        },
+      ],
       summary:
-        "Pax: 50+\nLocation: Coworking/Event spaces around Mumbai\n\nA giant custom marble race where the crowd gets to decide what happens on the track. Each round, participants use event tokens to vote on interventions that could help the Kleros marble win — from removing obstacles to adding speed boosts or switching lanes. The winning intervention gets put to the test, with multiple races showing how collective predictions can play out in practice.\n\n- Customise a 3m-long marble run race set and provide 5 marbles.\n- 1 is a Kleros marble. The objective is for the Kleros marble to win, and we’ll have a few mechanisms that could influence the speed of the marbles, such as: removing one obstacle, adding an acceleration piece, switching lanes.\n- Participants allocate their tokens to the intervention mechanism they believe is most likely to maximise Kleros’ chances of winning.\n- The intervention with stronger market support is implemented.\n- Those who win get rewards.\n- Multiple races can be run under the same intervention to illustrate how futarchy predicts possibilities.",
+        "A giant custom marble race where the crowd gets to decide what happens on the track. Each round, participants use event tokens to vote on interventions that could help the Kleros marble win — from removing obstacles to adding speed boosts or switching lanes. The winning intervention gets put to the test, with multiple races showing how collective predictions can play out in practice.",
     },
   },
   {
@@ -131,8 +152,23 @@ export const markets: Array<IMarket> = [
       "0x791ca6a64324c8c2679f96401627792465217caacde2627685cf0bf844f51ffe",
     details: {
       posterURL: "https://i.imgur.com/AQl4yaO.jpeg",
+      pax: "30-50",
+      locations: [
+        {
+          name: "Mystery Rooms",
+          url: "https://www.google.com/search?q=escape+room+mumbai",
+        },
+        {
+          name: "Rare Escape",
+          url: "https://rareescape.in/lower-parel/",
+        },
+        {
+          name: "No Escape",
+          url: "https://share.google/3Hyn6xaupZn26Ln2Y",
+        },
+      ],
       summary:
-        "Pax: 30–50\nLocation: Mystery Rooms, Rare Escape, No Escape\n\nA murder mystery where you’re not just solving the crime — you’re trading on it. Guests investigate clues, question suspects, piece together the timeline, and trade predictions about who did it and why. At the end, the case goes to a Kleros-style tribunal, where players become jurors and stake their event credits on the verdict. Come prepared to investigate, argue your case, and maybe accuse your friends.\n\nAn interactive game where a murder case is introduced with clues lying around the venue. Attendees hunt for clues and cross-examine suspects to trade on Umia, predicting the timeline and motives.\n\nThe event culminates in a Kleros Court tribunal, where players act as decentralised jurors, staking event credits to vote on the true killer and winning prizes based on the Schelling point mechanism.\n\n- Rent an escape room venue.\n- The game setup and NPCs will be our own.\n- We just need their space and existing setup.",
+        "A murder mystery where you’re not just solving the crime — you’re trading on it. Guests investigate clues, question suspects, piece together the timeline, and trade predictions about who did it and why. At the end, the case goes to a Kleros-style tribunal, where players become jurors and stake their event credits on the verdict. Come prepared to investigate, argue your case, and maybe accuse your friends.",
     },
   },
   {
@@ -151,8 +187,39 @@ export const markets: Array<IMarket> = [
       "0x368741e158cbd05abd51b52193d043a068604c88fe79268529ea1386f2abc0f1",
     details: {
       posterURL: "https://i.imgur.com/BlqTPZ9.jpeg",
+      pax: "15+",
+      locations: [
+        {
+          name: "Khar Social",
+          url: "https://share.google/27z8eQZCNCK6pW5nO",
+        },
+        {
+          name: "The Little Easy",
+          url: "https://share.google/SjIcf7ALTM6QihzWZ",
+        },
+        {
+          name: "Khane Khas",
+          url: "https://share.google/XkSrvycY70AmTgiQx",
+        },
+        {
+          name: "Lucky Restaurant",
+          url: "https://share.google/OLgzHjigAvp3UtiEd",
+        },
+        {
+          name: "Bastian Beach Club",
+          url: "https://share.google/C0FdIBK1gC18Qh9tE",
+        },
+        {
+          name: "Cecconi's Mumbai",
+          url: "https://share.google/DaabG6LtxYOAiYUr2",
+        },
+        {
+          name: "antiSOCIAL Lower Parel",
+          url: "https://share.google/VyquiC31sCAKm8gTl",
+        },
+      ],
       summary:
-        "Pax: 15+\n\nPossible Locations:\n- Khar Social\n- The Little Easy\n- Khane Khas\n- Lucky Restaurant\n- Bastian Beach Club\n- Cecconi's Mumbai\n- antiSOCIAL Lower Parel\n\nA smaller, curated dinner bringing together people working across prediction markets, Web3, and the wider ecosystem. This is an evening built around good food and deeper conversations with a carefully selected group of people. A chance to meet interesting people, exchange ideas, and actually have time to talk.\n\n- Invitation-only networking dinner at a restaurant by the seaside.\n- Since it's a curated list of participants, you may get the specific people that you want.\n- Would be more of a formal networking event.",
+        "A smaller, curated dinner bringing together people working across prediction markets, Web3, and the wider ecosystem. This is an evening built around good food and deeper conversations with a carefully selected group of people. A chance to meet interesting people, exchange ideas, and actually have time to talk.",
     },
   },
   {
@@ -171,8 +238,15 @@ export const markets: Array<IMarket> = [
       "0xcdbbe68264cf4e930c1192ba586a498eab93ad0ade256105adad0d8bbe9b8635",
     details: {
       posterURL: "https://i.imgur.com/yMUOueX.jpeg",
+      pax: "50-70",
+      locations: [
+        {
+          name: "Corona Garden Bandra",
+          url: "https://share.google/Uyrt66sTU8kpsRoAu",
+        },
+      ],
       summary:
-        "Pax: 50–70\nLocation: Corona Garden Bandra\n\nA Mumbai-inspired evening built around tuk tuks, street food, cocktails, chai, music, and casual conversations. Wander between a cocktail-serving tuk tuk, a cutting chai and street food station, and a DJ setup tucked into the back of another vehicle. Less conference, more night out — with a distinctly Mumbai twist.\n\nKleros/Umia-themed tuk tuks serving Indian street food and cocktails, with space for casual networking and mingling.\n\n- Tuk-Tuk #1: The Bar — serves custom craft cocktails.\n- Tuk-Tuk #2: The Cutting Chai & Lounge Corner — serves authentic Mumbai cutting chai (spiced milk tea) and local street food staples like Vada Pav and Samosas.\n- Tuk-Tuk #3: The Sound System — a DJ controller and speaker setup in the backseat of one vehicle, playing lo-fi house or chill electronic beats. It keeps the energy upbeat but quiet enough for conversations.\n- Rent an outdoor, private gated venue that allows music and catering.",
+        "A Mumbai-inspired evening built around tuk tuks, street food, cocktails, chai, music, and casual conversations. Wander between a cocktail-serving tuk tuk, a cutting chai and street food station, and a DJ setup tucked into the back of another vehicle. Less conference, more night out — with a distinctly Mumbai twist.",
     },
   },
   {
@@ -191,8 +265,15 @@ export const markets: Array<IMarket> = [
       "0x1a5fb60f7704e03712ce8b363226c1b9fc66b942c9d4eb022d5be7496ced93bd",
     details: {
       posterURL: "https://i.imgur.com/WCXEshP.jpeg",
+      pax: "50+",
+      locations: [
+        {
+          name: "Ajmera IndiKarting",
+          url: "https://share.google/l9eWkZ8pIuNJq2NIG",
+        },
+      ],
       summary:
-        "Pax: 50+\nLocation: Ajmera IndiKarting\n\nA few hours of racing, friendly competition, and hanging out off the conference floor. We’ll start with a quick introduction to the organisers, then get straight onto the track for multiple rounds of go-karting. There may even be a few prediction markets around the races and leaderboard, because naturally, someone should be betting on who’s going to win.\n\n- 30-minute short introduction about us.\n- 2–3 hours of go-karting and casual networking.\n- Could possibly run small prediction markets on who would top the leaderboard, what would happen during the races, etc.",
+        "A few hours of racing, friendly competition, and hanging out off the conference floor. We’ll start with a quick introduction to the organisers, then get straight onto the track for multiple rounds of go-karting. There may even be a few prediction markets around the races and leaderboard, because naturally, someone should be betting on who’s going to win.",
     },
   },
   {
@@ -211,8 +292,22 @@ export const markets: Array<IMarket> = [
       "0xf2b852ac364d6515a1af5e6494c5afb4acf38452abf5bc9847d2e71f0dc97854",
     details: {
       posterURL: "https://i.imgur.com/T1WqIb8.jpeg",
+      locations: [
+        {
+          name: "IFBE (cultural centre)",
+          url: "https://share.google/c26RTskWo7gsaeltl",
+        },
+        {
+          name: "DevX",
+          url: "https://share.google/dYH57MmqYr54sTprD",
+        },
+        {
+          name: "WeWork (cowork space)",
+          url: "https://share.google/YQAlcTOQJpi0AorZl",
+        },
+      ],
       summary:
-        "Location: IFBE (cultural centre), DevX/WeWork (coworking space)\n\nA half-day gathering focused on what happens when prediction markets move from an interesting idea to something people actually rely on. We’ll bring together people building and working around prediction markets to discuss liquidity, oracle resolution, manipulation, institutional adoption, dispute resolution, and the challenges of using markets for real-world decisions.\n\nExpect a mix of focused conversations and plenty of time to meet others working in the space.\n\n- Half-day side event focusing on core discussion topics around prediction markets.\n- 2 hours of sessions bookended by open networking.\n- Need to pull partners to make this work. Prediction markets would be a bit easier, provided that we have the PMs Community Hub.\n\nPossible Topics:\n- Scaling liquidity and oracle resolution mechanics in real-world decision markets\n- Institutional adoption and financial risk frameworks for on-chain markets\n- Dispute resolution, subjective truth, and arbitration standards\n- Prediction markets and manipulation by whales",
+        "A half-day gathering focused on what happens when prediction markets move from an interesting idea to something people actually rely on. We’ll bring together people building and working around prediction markets to discuss liquidity, oracle resolution, manipulation, institutional adoption, dispute resolution, and the challenges of using markets for real-world decisions. Expect a mix of focused conversations and plenty of time to meet others working in the space.",
     },
   },
 ];
