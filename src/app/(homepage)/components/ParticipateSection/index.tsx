@@ -18,7 +18,7 @@ const ParticipateSection: React.FC = () => {
         <p className="text-klerosUIComponentsSecondaryText text-sm">
           {/* NOTE: project specific */}
           <strong className="text-klerosUIComponentsPrimaryText text-base">
-            Set attendance estimates for the events below.
+            Set satisfaction estimates for the events below.
           </strong>{" "}
           <br />
           You can choose how many events you want to predict. <br />

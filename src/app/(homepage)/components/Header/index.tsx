@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
-// import ExternalLink from "@/components/ExternalLink";
+import ExternalLink from "@/components/ExternalLink";
 import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
@@ -44,10 +44,10 @@ const Header: React.FC = () => {
         <UniqueTraders />
         <MarketVolume />
       </div>
-      {/* <ExternalLink
-        text="Distilled Clément's Judgement - Session 3"
-        url="https://movies-r3.foresight.kleros.io/"
-      /> */}
+      <ExternalLink
+        text="DevCon Side Event - Attendance"
+        url="https://devcon-attendance.foresight.kleros.io/"
+      />
       <div
         className={clsx(
           "relative mt-8 box-border w-full overflow-hidden rounded-xl",
@@ -60,12 +60,22 @@ const Header: React.FC = () => {
           alt="Seer header background"
           className="absolute -z-2 size-full object-cover max-md:opacity-35"
         />
-        <div className="flex size-full flex-wrap items-center gap-6 px-6 py-3.75">
+        <div className="flex size-full flex-wrap items-center gap-6 px-6 pt-3.75">
           <SeerLogo />
           <p className="text-klerosUIComponentsPrimaryText text-base">
             {marketMetadata.question}
           </p>
         </div>
+        <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
+          Satisfaction is measured as the attendees&apos; mean rating in the{" "}
+          <ExternalLink
+            text="post-event survey"
+            url="https://tally.so/r/D46oRq"
+            showIcon={false}
+            className="text-xs"
+          />
+          .
+        </p>
       </div>
       {!isLoading && winningMarkets.length > 0 ? (
         <div className="border-b-klerosUIComponentsStroke w-full space-y-2 border-b pb-8">
@@ -95,7 +105,7 @@ const Header: React.FC = () => {
                   >
                     |
                   </span>
-                  {finalAnswer} attendees
+                  {finalAnswer}/10
                 </p>
               </div>
             ))}

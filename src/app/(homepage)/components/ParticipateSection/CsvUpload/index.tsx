@@ -72,17 +72,17 @@ const CsvUploadPopup: React.FC<ICsvUploadPopup> = ({
               marketName,score
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              Go-Karting,85
+              Go-Karting,8.5
             </span>
             <span className="text-klerosUIComponentsPrimaryText text-sm">
-              Networking Dinner,40
+              Networking Dinner,7
             </span>
             <span className="text-klerosUIComponentsSecondaryText text-sm">
               ...
             </span>
           </div>
           <span className="text-klerosUIComponentsPrimaryText text-sm">
-            Each row represents an attendance prediction for an event.
+            Each row represents a satisfaction prediction for an event.
           </span>
         </div>
         <CsvDownload />

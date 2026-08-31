@@ -18,13 +18,13 @@ export const advancedUserGuide =
 export const tgLink = "https://t.me/+HrYn_tzqTGFlYTc0";
 
 export const seerMarketLink =
-  "https://app.seer.pm/markets/100/0xd1d81ec6c50cac45c9930f31f837b62eedfaefc4";
+  "https://app.seer.pm/markets/100/0xf094a219f85fc9880362fe096bd489bccb9b5359";
 
 // number of side events that will be held from the 7 candidates
 export const projectsChosen = 1;
 
 export const parentMarket: Address =
-  "0xd1d81ec6c50cac45c9930f31f837b62eedfaefc4";
+  "0xf094a219f85fc9880362fe096bd489bccb9b5359";
 
 export const parentConditionId =
   "0xe7e8dffc1525910ce4c98ac9986c8349f228f0354ef744463d6736ca831d69f0";
@@ -33,7 +33,7 @@ export const invalidMarket: Address =
   "0x639cfbc882ba81f1c6f59c3afadb40dc9bf7a786";
 
 // in unix timestamp, seconds
-export const startTime: number = 1787926020;
+export const startTime: number = 1788195120;
 export const endTime: number = 1789300800;
 export const endDate: string = "Sunday, 13 September 2026 12:00 UTC";
 
@@ -67,8 +67,9 @@ export interface IMarket {
 }
 
 export const marketMetadata = {
-  name: "DevCon Side Event - Attendance",
-  question: "If held, how many unique non-staff attendees will enter?",
+  name: "DevCon Side Event - Satisfaction",
+  question:
+    "If held, what will the attendees’ mean post-event rating be on a 0-10 scale?",
 };
 
 const MARKET_COLORS = [
@@ -85,17 +86,17 @@ export const markets: Array<IMarket> = [
   {
     name: "Arcade / Bowling Night",
     color: MARKET_COLORS[0],
-    upToken: "0x3d4ab59f162d139803bf1e6d9dd25825a2c3265a",
-    downToken: "0xe3e41888dcc0a5718ff5b29172dc3cdcd16f6748",
+    upToken: "0x0b9aab1393f780cf16d7f227b1803129741d69e4",
+    downToken: "0x7eb9bf5a00d63488e570ba587eb2e2b3629721c6",
     underlyingToken: "0x5b0d7ba8b37d6bea4849d099b68d6e8cbef99ef2",
-    invalidToken: "0x649661d0e42d198ea70b71ed5c54eba4e3d1b29e",
+    invalidToken: "0xe0f3346373a37377e2f1063e28bbd9d2ffee31a5",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0x97fd5612ec07a6966f9fcaaaab2d5adc1c7bc1c4",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0x3bd0de16f4e1481c8a96944a4634c2d8e105e188",
     parentMarketOutcome: 0,
     conditionId:
-      "0xef6da409eb33b4dee7fffbf33d209b3f1e446092842ff8369a99d4f7fc4ef446",
+      "0x0ba1ed5b305bdd214c8eb473ed497517aecee52b76e9d94d68beeac3eab42c10",
     details: {
       posterURL: "https://i.imgur.com/ZVAIXyf.jpeg",
       pax: "50-100",
@@ -112,17 +113,17 @@ export const markets: Array<IMarket> = [
   {
     name: "Marble Race Game",
     color: MARKET_COLORS[1],
-    upToken: "0xa09b3fc8649f632b0c4d0874adbe8460a8c47c48",
-    downToken: "0x8e3a2bc2c17588d2d5d2dd7f46cda7aceb6d7526",
+    upToken: "0xa30a60734f31741ff5c93c782f5c693e4643c517",
+    downToken: "0x8e47a826c9130ccacd212430289afdd5658451a2",
     underlyingToken: "0x6edc7288c3fb0a2b241dd12c2c94a0878853a95a",
-    invalidToken: "0x287658070ef29b224b682e9cc86e4152a1545aae",
+    invalidToken: "0x865a0dae78f91d12bdf8e572d2c45760a7a1a444",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0xe079c1a97ab6d9e833774daf0921074b36163682",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0x8aae56a00c311e3a16095a26b3fdc1ad1969ae55",
     parentMarketOutcome: 1,
     conditionId:
-      "0x4c08bf90c211410356ba0d3d1808516c35ca93d77a9697ce7329f9432e503397",
+      "0x680e76a4483f0e0eeeab924f2c791decbe4916da378d7a533d76864caa1defe8",
     details: {
       posterURL: "https://i.imgur.com/nAlYoB3.jpeg",
       pax: "50+",
@@ -139,17 +140,17 @@ export const markets: Array<IMarket> = [
   {
     name: "Murder Mystery Game",
     color: MARKET_COLORS[2],
-    upToken: "0x53c3b2a50af90995683aefd2b713b08b6b2c0508",
-    downToken: "0xf988bcc13ea72f85dd0628af8ae936e2452b89e5",
+    upToken: "0x034a80decd3913a13ec8b850c198ae292e6bab9c",
+    downToken: "0x519ea47b2bc2ce735a12afd44ef81f6a26f72427",
     underlyingToken: "0xea29108dc06fd73a7ac9e6f2d64e155db3cbcf19",
-    invalidToken: "0x98a5f7b210f3afa613a3010d6a2577f39d6f367e",
+    invalidToken: "0x29f9a461abb26d2d0885f307730f431f945edf30",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0x97e5c16b405ed8e098c6351ff8a7f5bb114baedc",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0x5db467d53408df07d57511f3a816b145b584009e",
     parentMarketOutcome: 2,
     conditionId:
-      "0x791ca6a64324c8c2679f96401627792465217caacde2627685cf0bf844f51ffe",
+      "0x44c2acda4e4e98c85f8ee6c1a86516a1826d0b0b33c1b578f6d991b54c57fe15",
     details: {
       posterURL: "https://i.imgur.com/AQl4yaO.jpeg",
       pax: "30-50",
@@ -174,17 +175,17 @@ export const markets: Array<IMarket> = [
   {
     name: "Networking Dinner",
     color: MARKET_COLORS[3],
-    upToken: "0x19c72eb2faff296caf26bb1ab0b79d2a401a5280",
-    downToken: "0x21a6b5052e11ec90e00469e4f5ec7933243a9df1",
+    upToken: "0x2c8960aa61ed7c5e78f3ac4ccd86744ee2c71eac",
+    downToken: "0x75f2056b4ff8d7e2c187225a0a8d02174025ed8e",
     underlyingToken: "0xfb5f7783c28bf002663517336fd07efbdfdd5ee2",
-    invalidToken: "0xc6d7dc9006c2fe2092921ea73aa52069a7ccbcf7",
+    invalidToken: "0x6e6b015662a7576d3b165e67f07dca5c43cfb6a9",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0xa137ef6eeb1ded3b21c480717979141d90ca50dd",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0x2fdd6b081d9faec9b9a6fc23353c98d7d15ffbd3",
     parentMarketOutcome: 3,
     conditionId:
-      "0x368741e158cbd05abd51b52193d043a068604c88fe79268529ea1386f2abc0f1",
+      "0x8e29cc1776cd66bfeb26d7498ff35ddffc48d1fa19320183e60d04f387adf93d",
     details: {
       posterURL: "https://i.imgur.com/BlqTPZ9.jpeg",
       pax: "15+",
@@ -225,17 +226,17 @@ export const markets: Array<IMarket> = [
   {
     name: "Tuk-Tuk Street Food & Cocktail Night",
     color: MARKET_COLORS[4],
-    upToken: "0x4fcbe896dd47953b41c077584ca626bee6b6ff49",
-    downToken: "0x41fc31aab0a88dec1be07d6bbf23c9ba8affaecc",
+    upToken: "0x64f179aa0e809080039930fc5827c432a31f6815",
+    downToken: "0xe5acb528d4be38c9de75896d32e68be91c967e89",
     underlyingToken: "0x6df1bd62d58d1e5f271029e9d835d62d9f07042b",
-    invalidToken: "0x09d28df0d9562341a50d6cf458e75a010af0ba2f",
+    invalidToken: "0xe02ae235a8b675cdd3ec798c351e73435df2a874",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0xe5e67744d858fdd568bfb1fcdf335bf31a727b1c",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0x0e78cc36d6c99250639d21e26c039ba5e7590ffb",
     parentMarketOutcome: 4,
     conditionId:
-      "0xcdbbe68264cf4e930c1192ba586a498eab93ad0ade256105adad0d8bbe9b8635",
+      "0xeb783c2a0364d5f256039095f6e539c905a0e6222f4f64b35194a09123740e41",
     details: {
       posterURL: "https://i.imgur.com/yMUOueX.jpeg",
       pax: "50-70",
@@ -252,17 +253,17 @@ export const markets: Array<IMarket> = [
   {
     name: "Go-Karting",
     color: MARKET_COLORS[5],
-    upToken: "0xbd74c71e3f6db2bd8d646a06dbbacc46a27c6558",
-    downToken: "0xe7b7ea18b14316321dde5d313b7d0b3d42ce94df",
+    upToken: "0xe524c15d17d6f33f876ad7cf68f845df610584a5",
+    downToken: "0x5f525a5a1adebf5a53e08116429ca0e283562fe3",
     underlyingToken: "0x2f9a847983c8f2f6cbe373c648a84563cd6e8f39",
-    invalidToken: "0xb4ebf5a72ac52ac861831e3a7d4ff746deb7a0a6",
+    invalidToken: "0xc5e98750abec4150c98047ab5f088bde84127ab4",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0xac84fa4f3a3e37befb334db0b58a696e8da8d0a4",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0x91052d4a4107304b34b5e174536f4dd1c269fd7f",
     parentMarketOutcome: 5,
     conditionId:
-      "0x1a5fb60f7704e03712ce8b363226c1b9fc66b942c9d4eb022d5be7496ced93bd",
+      "0x4c368748201b0a837f2725d5de95a4168616a10a1dbdc8371341ca444f597f3e",
     details: {
       posterURL: "https://i.imgur.com/WCXEshP.jpeg",
       pax: "50+",
@@ -279,17 +280,17 @@ export const markets: Array<IMarket> = [
   {
     name: "The Last Mile of a Prediction Market",
     color: MARKET_COLORS[6],
-    upToken: "0xede7200bcd0c064e314e61e7664c3a034536f1d5",
-    downToken: "0xa5a772e324c5b0a35b760cd7a67067063b49905f",
+    upToken: "0x4324ec13fabd8f193abd434ddbd76a96e76a1e11",
+    downToken: "0x5dba2ba26acf6fd3958977d58eec7948d3d8df07",
     underlyingToken: "0x863cc1860f2c491c7345074a5d5d6f7135d4e9d4",
-    invalidToken: "0x62fd7ed1f82134d79ca137edfa3bf824931395b3",
+    invalidToken: "0x3dd9d8af5a1d04721822edc11cd0f3878d3a6818",
     minValue: 0,
-    maxValue: 150,
-    precision: 1,
-    marketId: "0xcf355f361d363220e1eeb63263c8d70a3a7112a0",
+    maxValue: 10,
+    precision: 10,
+    marketId: "0xa9d3ee5a91ef5a63b7c640cbc858f218c409a610",
     parentMarketOutcome: 6,
     conditionId:
-      "0xf2b852ac364d6515a1af5e6494c5afb4acf38452abf5bc9847d2e71f0dc97854",
+      "0xe2629aaf1c267c9979d5d00686a54846d29de407f5c6c1ae9f8f76fd9b896cb9",
     details: {
       posterURL: "https://i.imgur.com/T1WqIb8.jpeg",
       locations: [

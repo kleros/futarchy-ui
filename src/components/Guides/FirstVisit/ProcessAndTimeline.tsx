@@ -9,8 +9,8 @@ export const SubTitle: React.FC = () => {
     <p className="text-klerosUIComponentsSecondaryText text-sm text-wrap whitespace-pre-line">
       Seven candidate side events have been proposed for DevCon. Only one of
       them will be held. At the end of the trading, the market closes, and once
-      the chosen event takes place, its final attendance count is publicly
-      revealed.
+      the chosen event takes place, the attendees&apos; mean post-event rating
+      is publicly revealed.
     </p>
   );
 };

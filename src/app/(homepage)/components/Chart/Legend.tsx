@@ -85,7 +85,7 @@ const Legend: React.FC<ILegend> = ({
             {filteredMarkets.map(([name, { market, data }]) => {
               const isVisible = visibleMarkets.has(name);
               const isHovered = hoveredMarket === name;
-              const value = data.at(-1)?.value?.toFixed(0) ?? "0";
+              const value = data.at(-1)?.value?.toFixed(1) ?? "0.0";
               const color = textColor(market.color);
 
               return (

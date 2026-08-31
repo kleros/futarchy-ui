@@ -61,7 +61,7 @@ const Header: React.FC = () => {
 
                   <div className="space-x-2">
                     <span className="text-klerosUIComponentsPrimaryText text-sm sm:text-base">
-                      Attendance
+                      Rating
                     </span>
                     <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold sm:text-base">
                       {market.prediction
