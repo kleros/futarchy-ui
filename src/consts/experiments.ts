@@ -17,6 +17,20 @@ export interface IExperiment {
 
 export const experiments: IExperiment[] = [
   {
+    slug: "devcon-satisfaction",
+    name: "DevCon Side Event - Satisfaction",
+    question:
+      "If held, what will the attendees’ mean post-event rating be on a 0-10 scale?",
+    url: "https://devcon-satisfaction.foresight.kleros.io",
+    icon: "devcon",
+    banner: "/experiment-banners/devcon-attendance-banner.jpg",
+    countLabel: "7 Events",
+    tradingPeriod: "Until September 13th 12:00 UTC",
+    endTime: 1789300800,
+    status: "live",
+    parentMarket: "0xf094a219f85fc9880362fe096bd489bccb9b5359",
+  },
+  {
     slug: "devcon-attendance",
     name: "DevCon Side Event - Attendance",
     question: "If held, how many unique non-staff attendees will enter?",
