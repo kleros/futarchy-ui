@@ -62,6 +62,13 @@ const iconMap: Record<
     height: 40,
   },
   realt: { type: "svg", light: RealtLightIcon, dark: RealtDarkIcon },
+  devcon: {
+    type: "image",
+    light: "/experiment-icons/devcon.jpg",
+    dark: "/experiment-icons/devcon.jpg",
+    width: 40,
+    height: 40,
+  },
 };
 
 const countdownRenderer = ({
