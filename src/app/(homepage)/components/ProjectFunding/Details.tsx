@@ -9,7 +9,7 @@ const Details: React.FC<IDetails> = ({ imdbURL, posterURL, summary }) => (
     {posterURL ? (
       <img
         src={posterURL}
-        alt="movie poster"
+        alt="event poster"
         loading="lazy"
         decoding="async"
         className="rounded-base max-w-62.5"
@@ -26,7 +26,7 @@ const Details: React.FC<IDetails> = ({ imdbURL, posterURL, summary }) => (
           IMDB
         </Link>
       ) : null}
-      <p className="text-shadow-klerosUIComponentsSecondaryText max-w-160 italic">
+      <p className="text-shadow-klerosUIComponentsSecondaryText max-w-160 whitespace-pre-line">
         {summary}
       </p>
     </div>

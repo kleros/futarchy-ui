@@ -85,14 +85,14 @@ const Legend: React.FC<ILegend> = ({
             {filteredMarkets.map(([name, { market, data }]) => {
               const isVisible = visibleMarkets.has(name);
               const isHovered = hoveredMarket === name;
-              const value = data.at(-1)?.value?.toFixed(2) ?? "0.00";
+              const value = data.at(-1)?.value?.toFixed(0) ?? "0";
               const color = textColor(market.color);
 
               return (
                 <button
                   key={name}
                   type="button"
-                  title={`${name} ${value}%`}
+                  title={`${name} ${value}`}
                   onClick={() => onToggleMarket(name)}
                   onMouseEnter={() => onHoverMarket?.(name)}
                   className={cn(
@@ -111,7 +111,7 @@ const Legend: React.FC<ILegend> = ({
                     <span className="mx-0.5" style={{ color }}>
                       |
                     </span>
-                    {value}%
+                    {value}
                   </p>
                 </button>
               );

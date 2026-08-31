@@ -215,7 +215,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         minimumWidth: 52,
       },
       localization: {
-        priceFormatter: (val: number) => `${val.toFixed(2)}%`,
+        priceFormatter: (val: number) => `${val.toFixed(0)}`,
       },
       leftPriceScale: {
         borderVisible: false,
