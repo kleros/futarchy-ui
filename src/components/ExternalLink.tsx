@@ -21,7 +21,7 @@ const ExternalLink: React.FC<IExternalLink> = ({
     target="_blank"
     rel="noreferrer noopener"
     className={cn(
-      "text-klerosUIComponentsPrimaryBlue items-center text-sm",
+      "text-klerosUIComponentsPrimaryBlue inline-flex items-center text-sm",
       className,
     )}
   >
