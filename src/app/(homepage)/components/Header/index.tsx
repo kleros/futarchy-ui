@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import { useWinningAnswers } from "@/hooks/useWinningAnswers";
 
-// import ExternalLink from "@/components/ExternalLink";
+import ExternalLink from "@/components/ExternalLink";
 import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
@@ -44,10 +44,10 @@ const Header: React.FC = () => {
         <UniqueTraders />
         <MarketVolume />
       </div>
-      {/* <ExternalLink
-        text="Distilled Clément's Judgement - Session 3"
-        url="https://movies-r3.foresight.kleros.io/"
-      /> */}
+      <ExternalLink
+        text="DevCon Side Event - Satisfaction"
+        url="https://devcon-satisfaction.foresight.kleros.io/"
+      />
       <div
         className={clsx(
           "relative mt-8 box-border w-full overflow-hidden rounded-xl",
