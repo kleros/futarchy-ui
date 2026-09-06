@@ -4,13 +4,13 @@ export const positionExplainerLink =
   "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6#30d9a9db4f0881969c23e8152ab1146d";
 
 export const appGuideLink =
-  "https://kleros.notion.site/Kleros-Foresight-Movie-Experiment-Round-2-3729a9db4f0880038348d53411e419e8";
+  "https://app.notion.com/p/kleros/Kleros-Foresight-DevCon-Side-Event-Satisfaction-Session-3cf9a9db4f088021ab0eed008dfc046a";
 
 export const faqLink =
-  "https://kleros.notion.site/Kleros-Foresight-Movie-Experiment-Round-2-3729a9db4f0880038348d53411e419e8#3729a9db4f08800395c3e8ab82f74c01";
+  "https://app.notion.com/p/kleros/Kleros-Foresight-DevCon-Side-Event-Satisfaction-Session-3cf9a9db4f088021ab0eed008dfc046a#3cf9a9db4f0880baaac2fbcd7ed86d52";
 
 export const beginnerUserGuide =
-  "https://kleros.notion.site/Kleros-Foresight-Movie-Experiment-Round-2-3729a9db4f0880038348d53411e419e8";
+  "https://app.notion.com/p/kleros/Kleros-Foresight-DevCon-Side-Event-Satisfaction-Session-3cf9a9db4f088021ab0eed008dfc046a";
 
 export const advancedUserGuide =
   "https://kleros.notion.site/Kleros-Foresight-Advanced-Guide-What-Actually-Happens-After-Your-First-Prediction-30d9a9db4f0880f8a44ecb13d34ad3c6";
