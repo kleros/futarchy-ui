@@ -35,7 +35,7 @@ type MarketsLiquidityResponse = {
 };
 
 function formatPoolBalance(pool: PoolBalance): string {
-  const token0IsOutcome = ["UP", "DOWN"].includes(
+  const token0IsOutcome = /(^|_)(UP|DOWN)$/.test(
     pool.token0.symbol.toUpperCase(),
   );
   const outcome = token0IsOutcome ? pool.token0 : pool.token1;
