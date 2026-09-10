@@ -11,7 +11,7 @@ import { type IMarket } from "@/consts/markets";
 export type { IChartData } from "@/lib/chartData";
 
 export const CHART_DATA_QUERY_KEY = ["chart-data"] as const;
-const CHART_DATA_STORAGE_KEY = "chart-data-cache";
+const CHART_DATA_STORAGE_KEY = "chart-data-cache-v2";
 
 const CHART_DATA_REFETCH_INTERVAL_MS = 5 * 60 * 1000;
 const CHART_POLL_INTERVAL_MS = 3_000;
