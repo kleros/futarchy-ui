@@ -191,6 +191,17 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     return [seriesData, marketsData];
   }, [data]);
 
+  const priceDecimals = useMemo(
+    () =>
+      Math.max(
+        0,
+        ...Object.values(series).map(({ info }) =>
+          Math.round(Math.log10(info.precision)),
+        ),
+      ),
+    [series],
+  );
+
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
@@ -215,7 +226,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         minimumWidth: 52,
       },
       localization: {
-        priceFormatter: (val: number) => `${val.toFixed(1)}`,
+        priceFormatter: (val: number) => val.toFixed(priceDecimals),
       },
       leftPriceScale: {
         borderVisible: false,
@@ -258,6 +269,11 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         lineWidth: 2,
         lastValueVisible: false,
         priceLineVisible: false,
+        priceFormat: {
+          type: "price",
+          precision: priceDecimals,
+          minMove: 1 / 10 ** priceDecimals,
+        },
       });
       lineSeries.setData(
         marketData.data as Array<{ time: UTCTimestamp; value: number }>,
@@ -287,6 +303,7 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     visibleMarkets,
     gridLinesColor,
     applySeriesHighlight,
+    priceDecimals,
   ]);
 
   return (
