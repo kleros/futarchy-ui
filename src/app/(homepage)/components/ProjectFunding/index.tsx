@@ -135,8 +135,8 @@ const ProjectFunding: React.FC = () => {
                           )}
                         >
                           {isEvaluated
-                            ? `(Evaluated: ${answer}%)`
-                            : "(Not evaluated)"}
+                            ? `(Rating: ${answer}/10)`
+                            : "(Not held)"}
                         </span>
                       ) : null}
                     </div>

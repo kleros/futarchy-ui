@@ -136,8 +136,7 @@ const PredictionSliderContent: React.FC = () => {
               color: getReadableTextColor(color),
             }}
           >
-            {/* TODO: updates for individual experiments */}
-            {`${formatWithPrecision(marketEstimate, precision)}%`}
+            {`${formatWithPrecision(marketEstimate, precision)}`}
           </div>
           <span
             className={clsx(
@@ -150,9 +149,8 @@ const PredictionSliderContent: React.FC = () => {
         {isUndefined(resolvedMarket) ? null : (
           <div
             className="pointer-events-none absolute bottom-0"
-            // TODO: updates for individual experiment
             style={{
-              transform: `translateX(calc(${!isUndefined(resolvedMarket.finalAnswer) && width ? (resolvedMarket.finalAnswer / 100) * width : 0}px - 50%))`,
+              transform: `translateX(calc(${!isUndefined(resolvedMarket.finalAnswer) && width ? ((resolvedMarket.finalAnswer - minValue) / (maxValue - minValue)) * width : 0}px - 50%))`,
             }}
           >
             <label className="text-klerosUIComponentsPrimaryText block w-full text-center text-xs">
@@ -164,8 +162,7 @@ const PredictionSliderContent: React.FC = () => {
                 "text-center text-xs text-black",
               )}
             >
-              {/* TODO: updates for individual experiments */}
-              {`${resolvedMarket.finalAnswer}%`}
+              {`${resolvedMarket.finalAnswer}`}
             </div>
             <span className="bg-klerosUIComponentsPrimaryText mx-auto block h-9 w-0.75 rounded-b-full" />
           </div>

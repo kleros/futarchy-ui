@@ -95,7 +95,7 @@ const Legend: React.FC<ILegend> = ({
                 <button
                   key={name}
                   type="button"
-                  title={`${name} ${value}%`}
+                  title={`${name} ${value}`}
                   onClick={() => onToggleMarket(name)}
                   onMouseEnter={() => onHoverMarket?.(name)}
                   className={cn(
@@ -114,7 +114,7 @@ const Legend: React.FC<ILegend> = ({
                     <span className="mx-0.5" style={{ color }}>
                       |
                     </span>
-                    {value}%
+                    {value}
                   </p>
                 </button>
               );
