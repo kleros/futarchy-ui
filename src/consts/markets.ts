@@ -34,8 +34,8 @@ export const invalidMarket: Address =
 
 // in unix timestamp, seconds
 export const startTime: number = 1787926020;
-export const endTime: number = 1789300800;
-export const endDate: string = "Sunday, 13 September 2026 12:00 UTC";
+export const endTime: number = 1789948740;
+export const endDate: string = "Sunday, 20 September 2026 23:59 UTC";
 
 export interface ILocation {
   name: string;
