@@ -1,6 +1,8 @@
 import { Address, erc20Abi, parseUnits, type Abi } from "viem";
 import { gnosis } from "viem/chains";
 
+import { FutarchyFactoryAbi } from "@/contracts/abis/FutarchyFactoryAbi";
+
 import { CondtionalRouterAbi } from "@/abi/ConditionalRouter";
 import { ConditionalTokensAbi } from "@/abi/ConditionalTokens";
 import { CowSwapAbi } from "@/abi/CowSwap";
@@ -65,6 +67,11 @@ const contracts = {
     address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d",
     abi: wrappedXDAIAbi,
     name: "WXDAI",
+  },
+  futarchyFactory: {
+    address: "0xE517493eEe7B0b575EfA89A4E2e6cA834049C7F5",
+    abi: FutarchyFactoryAbi as unknown as Abi,
+    name: "FutarchyFactory",
   },
 } satisfies Record<string, IContract>;
 

@@ -8,13 +8,13 @@ import { useMarketsStore } from "@/store/markets";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import LightButton from "@/components/LightButton";
+import { ScrollFade } from "@/components/ScrollFade";
 
 import CloseIcon from "@/assets/svg/close-icon.svg";
 import ArrowDown from "@/assets/svg/long-arrow-down.svg";
 import ArrowUp from "@/assets/svg/long-arrow-up.svg";
 
 import { formatWithPrecision, isUndefined } from "@/utils";
-import { ScrollFade } from "@/components/ScrollFade";
 
 const Header: React.FC = () => {
   const markets = usePredictionMarkets();
