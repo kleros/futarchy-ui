@@ -1,6 +1,14 @@
 import { GraphQLClient } from "graphql-request";
 import { type NextRequest, NextResponse } from "next/server";
-import { type Address, isAddress } from "viem";
+import {
+  type Abi,
+  createPublicClient,
+  http,
+  type Address,
+  isAddress,
+} from "viem";
+
+import { TradeExecutorAbi } from "@/contracts/abis/TradeExecutorAbi";
 
 import {
   OrderDirection,
@@ -8,6 +16,10 @@ import {
   getSdk as getSwaprSdk,
 } from "@/hooks/liquidity/gql/gql";
 import { getGraphUrl, getToken0Token1 } from "@/hooks/liquidity/utils";
+
+import { predictTradeExecutorAddress } from "@/utils/tradeWallet/predictTradeExecutor";
+
+import { DEFAULT_CHAIN, GNOSIS_RPC } from "@/consts";
 
 const PAGE_SIZE = 1000;
 const REVALIDATE_SECONDS = 300;
@@ -112,10 +124,8 @@ async function getSeerParentMarket(
   return data.Market?.[0];
 }
 
-// accounts that split/merged/redeemed on the parent or a child market; catches
-// people who minted UP/DOWN tokens but never swapped them on a pool. the
-// indexer attributes these events to the transaction sender, so like swap
-// origins they are user EOAs, not routers or pools
+// split/merge/redeem accounts, so positions taken without a pool swap count
+// too. the indexer attributes these to the trade executor, not the owner EOA
 async function getConditionalEventAccounts(marketIds: string[]) {
   const accounts = new Set<string>();
   let cursor = "";
@@ -190,6 +200,35 @@ async function getSwapTraders(
   return traders;
 }
 
+// an executor's owner() is the EOA holding the position; re-predicting from that
+// owner rejects any address that is not one of our trade executors
+async function resolveExecutorOwners(executors: string[]) {
+  if (executors.length === 0) return [];
+
+  const client = createPublicClient({
+    chain: DEFAULT_CHAIN,
+    transport: http(GNOSIS_RPC, { batch: true }),
+  });
+
+  const results = await client.multicall({
+    contracts: executors.map((address) => ({
+      address: address as Address,
+      abi: TradeExecutorAbi as Abi,
+      functionName: "owner",
+    })),
+  });
+
+  return executors.map((executor, index) => {
+    const result = results[index];
+    if (result.status !== "success") return executor;
+
+    const owner = result.result as Address;
+    return predictTradeExecutorAddress(owner).toLowerCase() === executor
+      ? owner.toLowerCase()
+      : executor;
+  });
+}
+
 async function getUniqueTraders(parentMarket: Address) {
   const parent = await getSeerParentMarket(parentMarket);
   if (!parent) return undefined;
@@ -205,7 +244,19 @@ async function getUniqueTraders(parentMarket: Address) {
     getConditionalEventAccounts(marketIds),
   ]);
 
-  return [...new Set([...swapTraders, ...minters])].sort() as Address[];
+  // conditional events are attributed to a user's trade executor, so drop the
+  // executors that trace back to a swapper and keep that swapper's EOA instead
+  const swapperExecutors = new Set(
+    [...swapTraders].map((origin) =>
+      predictTradeExecutorAddress(origin as Address).toLowerCase(),
+    ),
+  );
+  const unmatchedMinters = [...minters].filter(
+    (account) => !swapperExecutors.has(account),
+  );
+  const minterOwners = await resolveExecutorOwners(unmatchedMinters);
+
+  return [...new Set([...swapTraders, ...minterOwners])].sort() as Address[];
 }
 
 export async function GET(request: NextRequest) {

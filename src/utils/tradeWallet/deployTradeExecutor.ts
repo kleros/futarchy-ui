@@ -1,74 +1,19 @@
 import { getBytecode, writeContract } from "@wagmi/core";
-import {
-  Address,
-  encodeAbiParameters,
-  encodePacked,
-  Hex,
-  keccak256,
-} from "viem";
+import { Address } from "viem";
 
 import { CreateCallAbi } from "@/contracts/abis/CreateCallAbi";
-import { TradeExecutorBytecode } from "@/contracts/abis/TradeExecutorAbi";
 import { config } from "@/wagmiConfig";
 
-import { DEFAULT_CHAIN, GNOSIS_CREATE_CALL, SALT_KEY } from "@/consts";
+import { DEFAULT_CHAIN, GNOSIS_CREATE_CALL } from "@/consts";
 
-import { formatBytecode } from "..";
 import { waitForTransaction } from "../waitForTransaction";
 
-interface FactoryDeployParams {
-  factoryAddress: Address;
-  ownerAddress: Address;
-  bytecode: Hex;
-  constructorData: Hex;
-}
+import { getTradeExecutorCreate2Args } from "./predictTradeExecutor";
 
-function generateSalt(ownerAddress: Address): Hex {
-  return keccak256(
-    encodePacked(["string", "address"], [SALT_KEY, ownerAddress]),
-  );
-}
+export async function checkTradeExecutorCreated(account: Address) {
+  const { predictedAddress } = getTradeExecutorCreate2Args(account);
 
-function predictFactoryAddress({
-  factoryAddress,
-  salt,
-  deploymentData,
-}: {
-  factoryAddress: Address;
-  salt: Address;
-  deploymentData: Hex;
-}): Address {
-  const initCodeHash = keccak256(deploymentData);
-
-  const create2Input = encodePacked(
-    ["bytes1", "address", "bytes32", "bytes32"],
-    ["0xff", factoryAddress, salt, initCodeHash],
-  );
-
-  const hash = keccak256(create2Input);
-  return `0x${hash.slice(-40)}` as Address;
-}
-
-async function checkContractCreated({
-  factoryAddress,
-  ownerAddress,
-  bytecode,
-  constructorData,
-}: Omit<FactoryDeployParams, "supports7702">) {
-  const deploymentData = `${bytecode}${constructorData.slice(2)}` as Hex;
-  const salt = generateSalt(ownerAddress);
-
-  // Predict contract address
-  const predictedAddress = predictFactoryAddress({
-    factoryAddress,
-    salt,
-    deploymentData,
-  });
-
-  // Check if already deployed
-  const code = await getBytecode(config, {
-    address: predictedAddress,
-  });
+  const code = await getBytecode(config, { address: predictedAddress });
 
   if (code && code !== "0x") {
     return { isCreated: true, predictedAddress };
@@ -76,37 +21,18 @@ async function checkContractCreated({
   return { isCreated: false };
 }
 
-async function checkAndDeployWithFactory({
-  factoryAddress,
-  ownerAddress,
-  bytecode,
-  constructorData,
-}: FactoryDeployParams) {
-  const deploymentData = `${bytecode}${constructorData.slice(2)}` as Hex;
-  const salt = generateSalt(ownerAddress);
+export async function initTradeExecutor(account: Address) {
+  const { deploymentData, salt, predictedAddress } =
+    getTradeExecutorCreate2Args(account);
 
-  // Predict contract address
-  const predictedAddress = predictFactoryAddress({
-    factoryAddress,
-    salt,
-    deploymentData,
-  });
-
-  // Check if already deployed
-  const { isCreated } = await checkContractCreated({
-    factoryAddress,
-    ownerAddress,
-    bytecode,
-    constructorData,
-  });
-
+  const { isCreated } = await checkTradeExecutorCreated(account);
   if (isCreated) {
     return { predictedAddress };
   }
 
   const result = await waitForTransaction(() =>
     writeContract(config, {
-      address: factoryAddress,
+      address: GNOSIS_CREATE_CALL,
       abi: CreateCallAbi,
       functionName: "performCreate2",
       args: [0n, deploymentData, salt],
@@ -119,24 +45,4 @@ async function checkAndDeployWithFactory({
   }
 
   return { predictedAddress };
-}
-
-export async function initTradeExecutor(account: Address) {
-  const constructorData = encodeAbiParameters([{ type: "address" }], [account]);
-  return await checkAndDeployWithFactory({
-    factoryAddress: GNOSIS_CREATE_CALL,
-    ownerAddress: account,
-    bytecode: formatBytecode(TradeExecutorBytecode),
-    constructorData,
-  });
-}
-
-export async function checkTradeExecutorCreated(account: Address) {
-  const constructorData = encodeAbiParameters([{ type: "address" }], [account]);
-  return await checkContractCreated({
-    factoryAddress: GNOSIS_CREATE_CALL,
-    ownerAddress: account,
-    bytecode: formatBytecode(TradeExecutorBytecode),
-    constructorData,
-  });
 }
