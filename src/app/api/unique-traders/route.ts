@@ -12,6 +12,16 @@ import { getGraphUrl, getToken0Token1 } from "@/hooks/liquidity/utils";
 const PAGE_SIZE = 1000;
 const REVALIDATE_SECONDS = 300;
 
+// Netlify keys the CDN entry on only the query params named here. Without
+// parentMarket every market collapses onto a single cached response.
+const CDN_VARY = "query=parentMarket|__nextDataReq|_rsc";
+
+// Netlify requires every response for a URL to carry the same Netlify-Vary.
+const withVary = (res: NextResponse) => {
+  res.headers.set("Netlify-Vary", CDN_VARY);
+  return res;
+};
+
 // Envio indexer behind Seer's app proxy (Hasura-style schema, addresses lowercase)
 const SEER_SUBGRAPH_URL =
   process.env.SEER_SUBGRAPH_URL ??
@@ -201,16 +211,20 @@ async function getUniqueTraders(parentMarket: Address) {
 export async function GET(request: NextRequest) {
   const parentMarket = request.nextUrl.searchParams.get("parentMarket");
   if (!parentMarket || !isAddress(parentMarket)) {
-    return NextResponse.json(
-      { error: "parentMarket query param must be a valid address" },
-      { status: 400 },
+    return withVary(
+      NextResponse.json(
+        { error: "parentMarket query param must be a valid address" },
+        { status: 400 },
+      ),
     );
   }
 
   try {
     const traders = await getUniqueTraders(parentMarket);
     if (traders === undefined) {
-      return NextResponse.json({ error: "Market not found" }, { status: 404 });
+      return withVary(
+        NextResponse.json({ error: "Market not found" }, { status: 404 }),
+      );
     }
 
     const res = NextResponse.json({
@@ -224,12 +238,14 @@ export async function GET(request: NextRequest) {
       "public, max-age=60, stale-while-revalidate=300, durable",
     );
     res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
-    return res;
+    return withVary(res);
   } catch (error) {
     console.error("unique-traders", error);
-    return NextResponse.json(
-      { error: "Failed to fetch traders data" },
-      { status: 500 },
+    return withVary(
+      NextResponse.json(
+        { error: "Failed to fetch traders data" },
+        { status: 500 },
+      ),
     );
   }
 }
