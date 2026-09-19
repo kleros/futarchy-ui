@@ -6,20 +6,26 @@ import { IDetails } from "@/consts/markets";
 
 const Details: React.FC<IDetails> = ({
   imdbURL,
-  posterURL,
+  posterURLs,
   pax,
   locations,
   summary,
+  rationale,
 }) => (
   <div className="flex flex-wrap items-start gap-4">
-    {posterURL ? (
-      <img
-        src={posterURL}
-        alt="event poster"
-        loading="lazy"
-        decoding="async"
-        className="rounded-base max-w-62.5"
-      />
+    {posterURLs?.length ? (
+      <div className="flex flex-wrap items-start gap-4">
+        {posterURLs.map((posterURL) => (
+          <img
+            key={posterURL}
+            src={posterURL}
+            alt="event poster"
+            loading="lazy"
+            decoding="async"
+            className="rounded-base max-w-100 max-md:max-w-full"
+          />
+        ))}
+      </div>
     ) : null}
     <div className="flex max-w-160 flex-col gap-2">
       {imdbURL ? (
@@ -62,6 +68,16 @@ const Details: React.FC<IDetails> = ({
       <p className="text-shadow-klerosUIComponentsSecondaryText whitespace-pre-line">
         {summary}
       </p>
+      {rationale ? (
+        <>
+          <h4 className="text-klerosUIComponentsPrimaryText font-semibold">
+            Rationale
+          </h4>
+          <p className="text-shadow-klerosUIComponentsSecondaryText whitespace-pre-line">
+            {rationale}
+          </p>
+        </>
+      ) : null}
     </div>
   </div>
 );

@@ -44,10 +44,11 @@ export interface ILocation {
 
 export interface IDetails {
   imdbURL?: string;
-  posterURL?: string;
+  posterURLs?: string[];
   pax?: string;
   locations?: ILocation[];
   summary: string;
+  rationale?: string;
 }
 
 export interface IMarket {
@@ -97,7 +98,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xef6da409eb33b4dee7fffbf33d209b3f1e446092842ff8369a99d4f7fc4ef446",
     details: {
-      posterURL: "https://i.imgur.com/ZVAIXyf.jpeg",
+      posterURLs: ["/events/arcade-bowling.jpg"],
       pax: "50-100",
       locations: [
         {
@@ -106,7 +107,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A relaxed night of arcade games, bowling, food, drinks, and good company. We’ll kick things off with a quick introduction to the organisers, then leave the rest of the evening open for people to play, compete, and hang out. Expect a casual, drop-in-and-out kind of night with plenty of opportunities to meet other people from the ecosystem.",
+        "An easy-going arcade and boutique bowling mixer designed for organic, low-pressure networking. It kicks off with a quick 30-minute introduction by the hosting teams, followed by an open floor with free-play games, private lanes, food, drinks and networking at their pace. There is no rigid program or obligation to stay—guests are free to drop in for a quick game or hang out for the entire evening.",
+      rationale:
+        'Arcade formats are the ultimate "low-brainpower" events that people say yes to on a whim or drop into between other commitments. While crypto side events usually face a heavy 60% RSVP drop-off, scheduling this during the pre-conference hype window keeps attendance high. Expect unique walk-ins to comfortably stabilise between 70 to 110 people. It is a catered, low-commitment, and highly accessible choice.',
     },
   },
   {
@@ -124,16 +127,18 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x4c08bf90c211410356ba0d3d1808516c35ca93d77a9697ce7329f9432e503397",
     details: {
-      posterURL: "https://i.imgur.com/nAlYoB3.jpeg",
+      posterURLs: ["/events/marble-race.jpg", "/events/someplace-else.jpg"],
       pax: "50+",
       locations: [
         {
-          name: "Coworking/Event spaces around Mumbai",
-          url: "https://myhq.in/mumbai/event-space/mumbai",
+          name: "Someplace Else (Jio World Drive, BKC)",
+          url: "https://www.google.com/search?q=Someplace+Else+Jio+World+Drive+BKC+Mumbai",
         },
       ],
       summary:
-        "A giant custom marble race where the crowd gets to decide what happens on the track. Each round, participants use event tokens to vote on interventions that could help the Kleros marble win — from removing obstacles to adding speed boosts or switching lanes. The winning intervention gets put to the test, with multiple races showing how collective predictions can play out in practice.",
+        "A live, interactive game night built around a custom 3-meter physical marble track set up inside a premium lounge bar. Five marbles race per heat, with one designated as the Kleros marble. Before each race, the crowd uses event tokens to vote on physical track interventions—such as removing obstacles, adding speed boosts, or switching lanes—to maximize the Kleros marble's chance of winning. The option with the highest market backing is built into the track live before the marbles run. Multiple heats run through the night to test the crowd's governance accuracy.",
+      rationale:
+        "This is a highly specialised, crypto-native concept that directly targets protocol engineers, prediction market traders, and game theorists. Because a physical table only allows 15 to 20 people to see the loop clearly at one time, raw crowd numbers are naturally capped. routing a live camera feed of the track onto the venue's big display screens turns it into an engaging spectator sport, boosting the active crowd to 40–60 players.",
     },
   },
   {
@@ -151,7 +156,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x791ca6a64324c8c2679f96401627792465217caacde2627685cf0bf844f51ffe",
     details: {
-      posterURL: "https://i.imgur.com/AQl4yaO.jpeg",
+      posterURLs: ["/events/murder-mystery.jpg"],
       pax: "30-50",
       locations: [
         {
@@ -168,7 +173,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A murder mystery where you’re not just solving the crime — you’re trading on it. Guests investigate clues, question suspects, piece together the timeline, and trade predictions about who did it and why. At the end, the case goes to a Kleros-style tribunal, where players become jurors and stake their event credits on the verdict. Come prepared to investigate, argue your case, and maybe accuse your friends.",
+        "An immersive, interactive puzzle experience hosted inside a private rented escape-room environment. The night is set up as a live murder investigation with hidden clues and NPCs. Guests hunt for clues, cross-examine suspects, and trade predictions on the killer. The event culminates in a live Kleros Court live tribunal where players act as decentralised jurors, staking event credits to vote on the true culprit for a chance to win prizes.",
+      rationale:
+        'This event has a hard structural capacity cap of 30 to 50 players. It will naturally attract crowds who love escape rooms and gamified dispute resolution. Because it requires a connected narrative, structured roles, and strict pre-registration, it cannot accommodate a loose "walk-in" crowd or spontaneous drop-ins. Traders should note that this high-commitment format caps raw turnout, meaning attendance will tightly consolidate around the 25–40 player mark.',
     },
   },
   {
@@ -186,40 +193,18 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x368741e158cbd05abd51b52193d043a068604c88fe79268529ea1386f2abc0f1",
     details: {
-      posterURL: "https://i.imgur.com/BlqTPZ9.jpeg",
-      pax: "15+",
+      posterURLs: ["/events/bawri.jpg"],
+      pax: "30+",
       locations: [
         {
-          name: "Khar Social",
-          url: "https://share.google/27z8eQZCNCK6pW5nO",
-        },
-        {
-          name: "The Little Easy",
-          url: "https://share.google/SjIcf7ALTM6QihzWZ",
-        },
-        {
-          name: "Khane Khas",
-          url: "https://share.google/XkSrvycY70AmTgiQx",
-        },
-        {
-          name: "Lucky Restaurant",
-          url: "https://share.google/OLgzHjigAvp3UtiEd",
-        },
-        {
-          name: "Bastian Beach Club",
-          url: "https://share.google/C0FdIBK1gC18Qh9tE",
-        },
-        {
-          name: "Cecconi's Mumbai",
-          url: "https://share.google/DaabG6LtxYOAiYUr2",
-        },
-        {
-          name: "antiSOCIAL Lower Parel",
-          url: "https://share.google/VyquiC31sCAKm8gTl",
+          name: "Bawri",
+          url: "https://www.google.com/search?q=Bawri+BKC+Mumbai",
         },
       ],
       summary:
-        "A smaller, curated dinner bringing together people working across prediction markets, Web3, and the wider ecosystem. This is an evening built around good food and deeper conversations with a carefully selected group of people. A chance to meet interesting people, exchange ideas, and actually have time to talk.",
+        "An exclusive, invite-only networking dinner for a highly curated list of 30+ founders, investors, and core Web3 builders. Hosted at a premier, highly aesthetic BKC fine-dining venue, there are no presentations, keynotes, or pitches—just quiet, premium hospitality and high-level, targeted conversation.",
+      rationale:
+        "Raw headcount is an intentional lag metric here; on total volume, this market will mathematically finish last because it is strictly capped by a private guest list. However, because it is hosted directly inside BKC during the high-energy pre-conference days, invitees don't have to brave long taxi rides, making the actual guest arrival incredibly reliable.",
     },
   },
   {
@@ -237,16 +222,26 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xcdbbe68264cf4e930c1192ba586a498eab93ad0ade256105adad0d8bbe9b8635",
     details: {
-      posterURL: "https://i.imgur.com/yMUOueX.jpeg",
-      pax: "50-70",
+      posterURLs: ["/events/tuk-tuk.jpg", "/events/kleros-tuk-tuks.jpg"],
+      pax: "100+",
       locations: [
         {
-          name: "Corona Garden Bandra",
-          url: "https://share.google/Uyrt66sTU8kpsRoAu",
+          name: "Kyma BKC",
+          url: "https://www.google.com/search?q=Kyma+BKC+Mumbai",
+        },
+        {
+          name: "Blah!",
+          url: "https://www.google.com/search?q=Blah+BKC+Mumbai",
+        },
+        {
+          name: "Hitchki",
+          url: "https://www.google.com/search?q=Hitchki+BKC+Mumbai",
         },
       ],
       summary:
-        "A Mumbai-inspired evening built around tuk tuks, street food, cocktails, chai, music, and casual conversations. Wander between a cocktail-serving tuk tuk, a cutting chai and street food station, and a DJ setup tucked into the back of another vehicle. Less conference, more night out — with a distinctly Mumbai twist.",
+        "A stylised cultural mixer hosted at a premier BKC lounge. The event features custom Kleros-branded Tuk Tuks stationed right at the venue's entrance serving cocktails and safe, premium preparations of local street food (like Vada Pav and Samosas), acting as a unique welcome experience to set the vibe before guests flow into the indoor lounge space. There is no fixed schedule—people can move in and out freely between the outdoor welcome stations and the indoor venue throughout the night.",
+      rationale:
+        "This event has the highest natural crowd pull on the board. Foreign tech travelers love experiencing local Indian culture and providing a secure, high-end way to eat street food right next to the BKC hub is an instant crowd magnet. Having the venue located at BKC makes travel-friction non-existent.",
     },
   },
   {
@@ -264,7 +259,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x1a5fb60f7704e03712ce8b363226c1b9fc66b942c9d4eb022d5be7496ced93bd",
     details: {
-      posterURL: "https://i.imgur.com/WCXEshP.jpeg",
+      posterURLs: ["/events/go-karting.jpg"],
       pax: "50+",
       locations: [
         {
@@ -273,7 +268,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A few hours of racing, friendly competition, and hanging out off the conference floor. We’ll start with a quick introduction to the organisers, then get straight onto the track for multiple rounds of go-karting. There may even be a few prediction markets around the races and leaderboard, because naturally, someone should be betting on who’s going to win.",
+        "A high-octane racing tournament hosted at Ajmera IndiKarting. It starts with a short introduction of the organizers, followed by 2 to 3 hours of actual track driving across multiple structured heats, with food and drinks served between sessions. The night features a live digital leaderboard, podium trophy presentations, a casual spectator lounge with food and drinks for spectators and drivers. There will be a mini prediction market on who tops the leaderboard to keep everyone engaged between their driving heats.",
+      rationale:
+        "Decent ceiling. Go-karting has a powerful organic pull because it offers high adrenaline and a clean break from typical tech networking. But karting has real logistical friction: track capacity per session, wait time between heats, and travel time if the venue isn't central. While actual track driving spots are strictly limited by the number of karts, the spectator and lounge turnout can scale significantly. RSVPs could look strong while actual unique-attendee numbers come in softer if people drift off during the gaps.",
     },
   },
   {
@@ -291,7 +288,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xf2b852ac364d6515a1af5e6494c5afb4acf38452abf5bc9847d2e71f0dc97854",
     details: {
-      posterURL: "https://i.imgur.com/T1WqIb8.jpeg",
+      posterURLs: ["/events/last-mile.jpg"],
       locations: [
         {
           name: "IFBE (cultural centre)",
@@ -307,7 +304,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A half-day gathering focused on what happens when prediction markets move from an interesting idea to something people actually rely on. We’ll bring together people building and working around prediction markets to discuss liquidity, oracle resolution, manipulation, institutional adoption, dispute resolution, and the challenges of using markets for real-world decisions. Expect a mix of focused conversations and plenty of time to meet others working in the space.",
+        'A half-day side event featuring a premium, content-driven salon and panel discussion focused entirely on the hardest structural challenges facing modern prediction markets—such as dispute resolution, oracle bottlenecks, liquidity incentives, and the "last mile" of settling complex real-world data. It features a sharp, 45-minute debate between top minds from prominent prediction market protocols, followed by an open-floor networking lounge with drinks and appetizers. This event relies heavily on co-hosting partners to fully come together, making it a highly relationship-driven play leveraging existing industry contacts.',
+      rationale:
+        "This is a highly specialised, hyper-targeted event designed to pull in founders, researchers, and core prediction market enthusiasts who are already in Mumbai. Turnout depends on securing the right co-hosts. If those partners sign on, premium content-driven formats at Devcon routinely pull over 100+ attendees when properly promoted. This gives the event the highest potential attendance ceiling on the list, meaning a confirmed speaker or partner announcement should visibly shift the market odds.",
     },
   },
 ];
