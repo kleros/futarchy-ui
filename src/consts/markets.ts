@@ -44,10 +44,11 @@ export interface ILocation {
 
 export interface IDetails {
   imdbURL?: string;
-  posterURL?: string;
+  posterURLs?: string[];
   pax?: string;
   locations?: ILocation[];
   summary: string;
+  rationale?: string;
 }
 
 export interface IMarket {
@@ -98,7 +99,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x0ba1ed5b305bdd214c8eb473ed497517aecee52b76e9d94d68beeac3eab42c10",
     details: {
-      posterURL: "https://i.imgur.com/ZVAIXyf.jpeg",
+      posterURLs: ["/events/arcade-bowling.jpg"],
       pax: "50-100",
       locations: [
         {
@@ -107,7 +108,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A relaxed night of arcade games, bowling, food, drinks, and good company. We’ll kick things off with a quick introduction to the organisers, then leave the rest of the evening open for people to play, compete, and hang out. Expect a casual, drop-in-and-out kind of night with plenty of opportunities to meet other people from the ecosystem.",
+        "An easy-going arcade and boutique bowling mixer designed for organic, low-pressure networking. It kicks off with a quick 30-minute introduction by the hosting teams, followed by an open floor with free-play games, private lanes, food, drinks and networking at their pace. There is no rigid program or obligation to stay—guests are free to drop in for a quick game or hang out for the entire evening.",
+      rationale:
+        "Bowling and retro games are universally fun and break the ice instantly. The event is highly likely to get solid satisfaction scores because it avoids awkward networking silences. The only limiting factor is noise—bowling alleys are loud, which means deep business conversations will be fragmented. It’s a very safe bet for a fun night, but unlikely to be a quiet networking hub.",
     },
   },
   {
@@ -125,16 +128,18 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x680e76a4483f0e0eeeab924f2c791decbe4916da378d7a533d76864caa1defe8",
     details: {
-      posterURL: "https://i.imgur.com/nAlYoB3.jpeg",
+      posterURLs: ["/events/marble-race.jpg", "/events/someplace-else.jpg"],
       pax: "50+",
       locations: [
         {
-          name: "Coworking/Event spaces around Mumbai",
-          url: "https://myhq.in/mumbai/event-space/mumbai",
+          name: "Someplace Else (Jio World Drive, BKC)",
+          url: "https://www.google.com/search?q=Someplace+Else+Jio+World+Drive+BKC+Mumbai",
         },
       ],
       summary:
-        "A giant custom marble race where the crowd gets to decide what happens on the track. Each round, participants use event tokens to vote on interventions that could help the Kleros marble win — from removing obstacles to adding speed boosts or switching lanes. The winning intervention gets put to the test, with multiple races showing how collective predictions can play out in practice.",
+        "A live, interactive game night built around a custom 3-meter physical marble track set up inside a premium lounge bar. Five marbles race per heat, with one designated as the Kleros marble. Before each race, the crowd uses event tokens to vote on physical track interventions—such as removing obstacles, adding speed boosts, or switching lanes—to maximize the Kleros marble's chance of winning. The option with the highest market backing is built into the track live before the marbles run. Multiple heats run through the night to test the crowd's governance accuracy.",
+      rationale:
+        "High risk, high reward. It physically demonstrates Kleros's core Schelling point coordination mechanism in real life, which devs will love. The metric depends entirely on fluid execution: if the track physics work seamlessly and the voting rounds are fast, satisfaction will be off the charts. If the marbles get stuck or the digital voting layer lags, the room's energy will drop quickly. Price this share based on your trust in the physical setup.",
     },
   },
   {
@@ -152,7 +157,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x44c2acda4e4e98c85f8ee6c1a86516a1826d0b0b33c1b578f6d991b54c57fe15",
     details: {
-      posterURL: "https://i.imgur.com/AQl4yaO.jpeg",
+      posterURLs: ["/events/murder-mystery.jpg"],
       pax: "30-50",
       locations: [
         {
@@ -169,7 +174,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A murder mystery where you’re not just solving the crime — you’re trading on it. Guests investigate clues, question suspects, piece together the timeline, and trade predictions about who did it and why. At the end, the case goes to a Kleros-style tribunal, where players become jurors and stake their event credits on the verdict. Come prepared to investigate, argue your case, and maybe accuse your friends.",
+        "An immersive, interactive puzzle experience hosted inside a private rented escape-room environment. The night is set up as a live murder investigation with hidden clues and NPCs. Guests hunt for clues, cross-examine suspects, and trade predictions on the killer. The event culminates in a live Kleros Court live tribunal where players act as decentralised jurors, staking event credits to vote on the true culprit for a chance to win prizes.",
+      rationale:
+        "High execution risk, but incredible upside for those who show up. Because it gives every attendee a direct, personalised role and physically mirrors decentralised jury mechanics, the depth of engagement is unmatched. The primary risk is execution pacing: if the script drags or guests arrive late due to traffic, the timeline breaks. If it runs smoothly, it will be a major highlight of the week; if logistics lag, player retention will drop sharply.",
     },
   },
   {
@@ -187,40 +194,18 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x8e29cc1776cd66bfeb26d7498ff35ddffc48d1fa19320183e60d04f387adf93d",
     details: {
-      posterURL: "https://i.imgur.com/BlqTPZ9.jpeg",
-      pax: "15+",
+      posterURLs: ["/events/bawri.jpg"],
+      pax: "30+",
       locations: [
         {
-          name: "Khar Social",
-          url: "https://share.google/27z8eQZCNCK6pW5nO",
-        },
-        {
-          name: "The Little Easy",
-          url: "https://share.google/SjIcf7ALTM6QihzWZ",
-        },
-        {
-          name: "Khane Khas",
-          url: "https://share.google/XkSrvycY70AmTgiQx",
-        },
-        {
-          name: "Lucky Restaurant",
-          url: "https://share.google/OLgzHjigAvp3UtiEd",
-        },
-        {
-          name: "Bastian Beach Club",
-          url: "https://share.google/C0FdIBK1gC18Qh9tE",
-        },
-        {
-          name: "Cecconi's Mumbai",
-          url: "https://share.google/DaabG6LtxYOAiYUr2",
-        },
-        {
-          name: "antiSOCIAL Lower Parel",
-          url: "https://share.google/VyquiC31sCAKm8gTl",
+          name: "Bawri",
+          url: "https://www.google.com/search?q=Bawri+BKC+Mumbai",
         },
       ],
       summary:
-        "A smaller, curated dinner bringing together people working across prediction markets, Web3, and the wider ecosystem. This is an evening built around good food and deeper conversations with a carefully selected group of people. A chance to meet interesting people, exchange ideas, and actually have time to talk.",
+        "An exclusive, invite-only networking dinner for a highly curated list of 30+ founders, investors, and core Web3 builders. Hosted at a premier, highly aesthetic BKC fine-dining venue, there are no presentations, keynotes, or pitches—just quiet, premium hospitality and high-level, targeted conversation.",
+      rationale:
+        "Curation and comfort drive the score here. High-profile founders and VCs actively avoid loud, sweaty mixers; they want quiet spaces where they can actually hear each other and close strategic deals over world-class food. By eliminating travel friction and providing a premium regional Indian dining environment, this event is structurally positioned to get an incredibly high satisfaction score. If the list lands the right mix of people, the mean rating could be the highest of the seven, measuring networking quality rather than room size.",
     },
   },
   {
@@ -238,16 +223,26 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xeb783c2a0364d5f256039095f6e539c905a0e6222f4f64b35194a09123740e41",
     details: {
-      posterURL: "https://i.imgur.com/yMUOueX.jpeg",
-      pax: "50-70",
+      posterURLs: ["/events/tuk-tuk.jpg", "/events/kleros-tuk-tuks.jpg"],
+      pax: "100+",
       locations: [
         {
-          name: "Corona Garden Bandra",
-          url: "https://share.google/Uyrt66sTU8kpsRoAu",
+          name: "Kyma BKC",
+          url: "https://www.google.com/search?q=Kyma+BKC+Mumbai",
+        },
+        {
+          name: "Blah!",
+          url: "https://www.google.com/search?q=Blah+BKC+Mumbai",
+        },
+        {
+          name: "Hitchki",
+          url: "https://www.google.com/search?q=Hitchki+BKC+Mumbai",
         },
       ],
       summary:
-        "A Mumbai-inspired evening built around tuk tuks, street food, cocktails, chai, music, and casual conversations. Wander between a cocktail-serving tuk tuk, a cutting chai and street food station, and a DJ setup tucked into the back of another vehicle. Less conference, more night out — with a distinctly Mumbai twist.",
+        "A stylised cultural mixer hosted at a premier BKC lounge. The event features custom Kleros-branded Tuk Tuks stationed right at the venue's entrance serving cocktails and safe, premium preparations of local street food (like Vada Pav and Samosas), acting as a unique welcome experience to set the vibe before guests flow into the indoor lounge space. There is no fixed schedule—people can move in and out freely between the outdoor welcome stations and the indoor venue throughout the night.",
+      rationale:
+        "The visual of branded crypto Tuk Tuks and local food creates instant FOMO and is designed to go viral on X. The casual, moving layout allows people to naturally mingle, grab a high-quality drink, and chat without being trapped in rigid structures. This format historically scores the highest crowd satisfaction because it feels like a real, immersive experience rather than a corporate pitch.",
     },
   },
   {
@@ -265,7 +260,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0x4c368748201b0a837f2725d5de95a4168616a10a1dbdc8371341ca444f597f3e",
     details: {
-      posterURL: "https://i.imgur.com/WCXEshP.jpeg",
+      posterURLs: ["/events/go-karting.jpg"],
       pax: "50+",
       locations: [
         {
@@ -274,7 +269,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A few hours of racing, friendly competition, and hanging out off the conference floor. We’ll start with a quick introduction to the organisers, then get straight onto the track for multiple rounds of go-karting. There may even be a few prediction markets around the races and leaderboard, because naturally, someone should be betting on who’s going to win.",
+        "A high-octane racing tournament hosted at Ajmera IndiKarting. It starts with a short introduction of the organizers, followed by 2 to 3 hours of actual track driving across multiple structured heats, with food and drinks served between sessions. The night features a live digital leaderboard, podium trophy presentations, a casual spectator lounge with food and drinks for spectators and drivers. There will be a mini prediction market on who tops the leaderboard to keep everyone engaged between their driving heats.",
+      rationale:
+        "Satisfaction is structurally protected here because friendly competition and physical racing are universally memorable. The live leaderboard and podium finishes create natural high-energy moments. The primary risk to satisfaction is downtime: if there are too many attendees, guests will spend a lot of time waiting in the lounge for their 10-minute driving heat. If the organizers manage the race rotation quickly, this will score exceptionally high for pure entertainment value.",
     },
   },
   {
@@ -292,7 +289,7 @@ export const markets: Array<IMarket> = [
     conditionId:
       "0xe2629aaf1c267c9979d5d00686a54846d29de407f5c6c1ae9f8f76fd9b896cb9",
     details: {
-      posterURL: "https://i.imgur.com/T1WqIb8.jpeg",
+      posterURLs: ["/events/last-mile.jpg"],
       locations: [
         {
           name: "IFBE (cultural centre)",
@@ -308,7 +305,9 @@ export const markets: Array<IMarket> = [
         },
       ],
       summary:
-        "A half-day gathering focused on what happens when prediction markets move from an interesting idea to something people actually rely on. We’ll bring together people building and working around prediction markets to discuss liquidity, oracle resolution, manipulation, institutional adoption, dispute resolution, and the challenges of using markets for real-world decisions. Expect a mix of focused conversations and plenty of time to meet others working in the space.",
+        'A half-day side event featuring a premium, content-driven salon and panel discussion focused entirely on the hardest structural challenges facing modern prediction markets—such as dispute resolution, oracle bottlenecks, liquidity incentives, and the "last mile" of settling complex real-world data. It features a sharp, 45-minute debate between top minds from prominent prediction market protocols, followed by an open-floor networking lounge with drinks and appetizers. This event relies heavily on co-hosting partners to fully come together, making it a highly relationship-driven play leveraging existing industry contacts.',
+      rationale:
+        "Maximum satisfaction floor for B2B networking. Attendees are showing up specifically for the technical content and the exact peer group in the room because they deeply care about the topic, not because it looks flashy on a social media story. Because it uses a standard panel-and-lounge format, the physical execution risk is very low—there are no complex games or custom tracks to build. If you believe the market craves deep, actionable infrastructure discussions over loud parties, this share is a highly secure bet for top-tier satisfaction.",
     },
   },
 ];
