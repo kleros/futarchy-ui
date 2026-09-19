@@ -18,11 +18,11 @@ const ParticipateSection: React.FC = () => {
         <p className="text-klerosUIComponentsSecondaryText text-sm">
           {/* NOTE: project specific */}
           <strong className="text-klerosUIComponentsPrimaryText text-base">
-            Set estimates for the movies below.
+            Set satisfaction estimates for the events below.
           </strong>{" "}
           <br />
-          You can choose how many movies you want to predict. <br />
-          Note that the same capital can be used to predict on all movies at
+          You can choose how many events you want to predict. <br />
+          Note that the same capital can be used to predict on all events at
           once.
         </p>
       </Card>
