@@ -6,6 +6,8 @@ import SeerLogo from "@/components/SeerLogo";
 
 import ExternalArrow from "@/assets/svg/external-arrow.svg";
 
+import { seerMarketLink } from "@/consts/markets";
+
 const AdvancedSection: React.FC = () => {
   return (
     <Card
@@ -24,9 +26,7 @@ const AdvancedSection: React.FC = () => {
           Check the opportunities if you want to LP or Trade specific outcome
           tokens in Seer.&nbsp;
           <Link
-            href={
-              "https://app.seer.pm/markets/100/which-movies-will-clement-watch-as-part-of-the-distilled-clements-judgement-expe-2"
-            }
+            href={seerMarketLink}
             target="_blank"
             rel="noreferrer noopener"
             className="text-klerosUIComponentsPrimaryBlue items-center text-sm"
