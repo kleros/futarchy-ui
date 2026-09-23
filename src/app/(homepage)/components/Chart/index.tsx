@@ -28,6 +28,14 @@ export type MarketsData = Record<
   }
 >;
 
+const PULSE_PERIOD_MS = 1600;
+const PULSE_MID = 0.675;
+const PULSE_SWING = 0.325;
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const withAlpha = (hex: string, alpha: number) => {
   const normalized = hex.replace("#", "");
   const r = parseInt(normalized.slice(0, 2), 16);
@@ -36,7 +44,10 @@ const withAlpha = (hex: string, alpha: number) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
+const Chart: React.FC<{ data: IChartData[]; isRefreshing?: boolean }> = ({
+  data,
+  isRefreshing = false,
+}) => {
   const { theme } = useTheme();
   const marketNames = useMemo(() => {
     // Extract all market names from the data
@@ -79,24 +90,36 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   const seriesTitlesRef = useRef<Record<string, string>>({});
   const seriesOrderRef = useRef<Record<string, number>>({});
   const hoveredMarketRef = useRef<string | null>(null);
+  const pulseAlphaRef = useRef(1);
   const [hoveredMarket, setHoveredMarket] = useState<string | null>(null);
+
+  const applySeriesColors = React.useCallback(() => {
+    const map = seriesRefMap.current;
+    const colors = seriesColorsRef.current;
+    const hovered = hoveredMarketRef.current;
+    const pulse = pulseAlphaRef.current;
+
+    Object.entries(map).forEach(([name, s]) => {
+      const baseColor = colors[name];
+      if (!baseColor) return;
+
+      const isDimmed = hovered !== null && name !== hovered;
+      s.applyOptions({
+        color: withAlpha(baseColor, (isDimmed ? 0.2 : 1) * pulse),
+      });
+    });
+  }, []);
 
   const applySeriesHighlight = React.useCallback(
     (marketName: string | null) => {
       const map = seriesRefMap.current;
-      const colors = seriesColorsRef.current;
       const orders = seriesOrderRef.current;
       const isResetting = marketName === null;
 
       Object.entries(map).forEach(([name, s]) => {
-        const baseColor = colors[name];
-        if (!baseColor) return;
-
         const isHovered = name === marketName;
         s.applyOptions({
           lineWidth: isResetting ? 2 : isHovered ? 3 : 1,
-          color:
-            isResetting || isHovered ? baseColor : withAlpha(baseColor, 0.2),
           title: isHovered ? (seriesTitlesRef.current[name] ?? name) : "",
           lastValueVisible: isHovered,
           priceLineVisible: isHovered,
@@ -104,8 +127,9 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
         });
         s.setSeriesOrder(isHovered ? 999 : (orders[name] ?? 0));
       });
+      applySeriesColors();
     },
-    [],
+    [applySeriesColors],
   );
 
   const handleHoverMarket = React.useCallback(
@@ -305,6 +329,31 @@ const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
     applySeriesHighlight,
     priceDecimals,
   ]);
+
+  // Series live on a canvas, so the "waiting on fresh data" pulse has to be
+  // driven frame by frame rather than by CSS.
+  useEffect(() => {
+    if (!isRefreshing || prefersReducedMotion()) {
+      pulseAlphaRef.current = 1;
+      applySeriesColors();
+      return;
+    }
+
+    const start = performance.now();
+    let frame = requestAnimationFrame(function tick(now) {
+      const elapsed = (now - start) % PULSE_PERIOD_MS;
+      const phase = (elapsed / PULSE_PERIOD_MS) * 2 * Math.PI;
+      pulseAlphaRef.current = PULSE_MID + PULSE_SWING * Math.cos(phase);
+      applySeriesColors();
+      frame = requestAnimationFrame(tick);
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      pulseAlphaRef.current = 1;
+      applySeriesColors();
+    };
+  }, [isRefreshing, applySeriesColors]);
 
   return (
     <div className="mt-6 flex size-full flex-col">
