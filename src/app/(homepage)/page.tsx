@@ -15,13 +15,13 @@ import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import LazyFirstVisitGuide from "@/components/Guides/LazyFirstVisitGuide";
-import Loader from "@/components/Loader";
 
 import { isUndefined } from "@/utils";
 
 import { markets, parentConditionId } from "@/consts/markets";
 
 import AdvancedSection from "./components/AdvancedSection";
+import ChartSkeleton from "./components/ChartSkeleton";
 import Header from "./components/Header";
 import NotificationsBanner from "./components/NotificationsBanner";
 import ParticipateSection from "./components/ParticipateSection";
@@ -31,11 +31,7 @@ import ProjectFunding from "./components/ProjectFunding";
 
 const ChartSection = dynamic(() => import("./components/ChartSection"), {
   ssr: false,
-  loading: () => (
-    <div className="flex h-100 w-full items-center justify-center">
-      <Loader />
-    </div>
-  ),
+  loading: () => <ChartSkeleton />,
 });
 
 export default function Home() {
