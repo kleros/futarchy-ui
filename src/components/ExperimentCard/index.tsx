@@ -101,6 +101,7 @@ const countdownRenderer = ({
 
 export interface ExperimentCardProps extends IExperiment {
   priority?: boolean;
+  isRedeemable?: boolean;
 }
 
 const ExperimentCard: React.FC<ExperimentCardProps> = ({
@@ -114,6 +115,7 @@ const ExperimentCard: React.FC<ExperimentCardProps> = ({
   endTime,
   status,
   priority = false,
+  isRedeemable = false,
 }) => {
   const [hovered, setHovered] = useState(false);
   const icons = iconMap[icon];
@@ -156,14 +158,26 @@ const ExperimentCard: React.FC<ExperimentCardProps> = ({
             animate={{ opacity: hovered ? 0.7 : 0 }}
             transition={{ duration: 0.25 }}
           />
-          <span
-            className={clsx(
-              "absolute top-3 right-3 rounded-full px-2.5 py-0.5 text-xs font-medium",
-              statusStyles[status].className,
-            )}
-          >
-            {statusStyles[status].label}
-          </span>
+          <div className="absolute top-3 right-3 flex items-center gap-2">
+            {isRedeemable ? (
+              <span
+                className={clsx(
+                  "rounded-full px-2.5 py-0.5 text-xs font-medium",
+                  "bg-klerosUIComponentsSecondaryPurple text-white",
+                )}
+              >
+                Redeemable
+              </span>
+            ) : null}
+            <span
+              className={clsx(
+                "rounded-full px-2.5 py-0.5 text-xs font-medium",
+                statusStyles[status].className,
+              )}
+            >
+              {statusStyles[status].label}
+            </span>
+          </div>
         </motion.div>
 
         <motion.div
