@@ -276,6 +276,7 @@ export const useTradeExecutorPredict = (onSuccess?: () => unknown) => {
       setTimeout(() => {
         queryClient.refetchQueries({ queryKey: ["useTokenBalance"] });
         queryClient.refetchQueries({ queryKey: ["useTokensBalances"] });
+        queryClient.refetchQueries({ queryKey: ["capital-deployed"] });
       }, 3000);
     },
   });
