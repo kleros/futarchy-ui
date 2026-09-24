@@ -28,14 +28,6 @@ export type MarketsData = Record<
   }
 >;
 
-const PULSE_PERIOD_MS = 1600;
-const PULSE_MID = 0.675;
-const PULSE_SWING = 0.325;
-
-const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
 const withAlpha = (hex: string, alpha: number) => {
   const normalized = hex.replace("#", "");
   const r = parseInt(normalized.slice(0, 2), 16);
@@ -44,10 +36,7 @@ const withAlpha = (hex: string, alpha: number) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const Chart: React.FC<{ data: IChartData[]; isRefreshing?: boolean }> = ({
-  data,
-  isRefreshing = false,
-}) => {
+const Chart: React.FC<{ data: IChartData[] }> = ({ data }) => {
   const { theme } = useTheme();
   const marketNames = useMemo(() => {
     // Extract all market names from the data
@@ -90,14 +79,12 @@ const Chart: React.FC<{ data: IChartData[]; isRefreshing?: boolean }> = ({
   const seriesTitlesRef = useRef<Record<string, string>>({});
   const seriesOrderRef = useRef<Record<string, number>>({});
   const hoveredMarketRef = useRef<string | null>(null);
-  const pulseAlphaRef = useRef(1);
   const [hoveredMarket, setHoveredMarket] = useState<string | null>(null);
 
   const applySeriesColors = React.useCallback(() => {
     const map = seriesRefMap.current;
     const colors = seriesColorsRef.current;
     const hovered = hoveredMarketRef.current;
-    const pulse = pulseAlphaRef.current;
 
     Object.entries(map).forEach(([name, s]) => {
       const baseColor = colors[name];
@@ -105,7 +92,7 @@ const Chart: React.FC<{ data: IChartData[]; isRefreshing?: boolean }> = ({
 
       const isDimmed = hovered !== null && name !== hovered;
       s.applyOptions({
-        color: withAlpha(baseColor, (isDimmed ? 0.2 : 1) * pulse),
+        color: withAlpha(baseColor, isDimmed ? 0.2 : 1),
       });
     });
   }, []);
@@ -250,7 +237,7 @@ const Chart: React.FC<{ data: IChartData[]; isRefreshing?: boolean }> = ({
         minimumWidth: 52,
       },
       localization: {
-        priceFormatter: (val: number) => val.toFixed(priceDecimals),
+        priceFormatter: (val: number) => `${val.toFixed(priceDecimals)}%`,
       },
       leftPriceScale: {
         borderVisible: false,
@@ -329,31 +316,6 @@ const Chart: React.FC<{ data: IChartData[]; isRefreshing?: boolean }> = ({
     applySeriesHighlight,
     priceDecimals,
   ]);
-
-  // Series live on a canvas, so the "waiting on fresh data" pulse has to be
-  // driven frame by frame rather than by CSS.
-  useEffect(() => {
-    if (!isRefreshing || prefersReducedMotion()) {
-      pulseAlphaRef.current = 1;
-      applySeriesColors();
-      return;
-    }
-
-    const start = performance.now();
-    let frame = requestAnimationFrame(function tick(now) {
-      const elapsed = (now - start) % PULSE_PERIOD_MS;
-      const phase = (elapsed / PULSE_PERIOD_MS) * 2 * Math.PI;
-      pulseAlphaRef.current = PULSE_MID + PULSE_SWING * Math.cos(phase);
-      applySeriesColors();
-      frame = requestAnimationFrame(tick);
-    });
-
-    return () => {
-      cancelAnimationFrame(frame);
-      pulseAlphaRef.current = 1;
-      applySeriesColors();
-    };
-  }, [isRefreshing, applySeriesColors]);
 
   return (
     <div className="mt-6 flex size-full flex-col">
