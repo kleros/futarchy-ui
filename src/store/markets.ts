@@ -117,7 +117,7 @@ export const useMarketsStore = create<MarketsStore>()(
         }),
     }),
     {
-      name: "futarchy-predictions",
+      name: "futarchy-predictions-v2",
       partialize: (state) => ({
         markets: Object.fromEntries(
           Object.entries(state.markets)
