@@ -7,12 +7,11 @@ import ExternalLink from "@/components/ExternalLink";
 import SeerLogo from "@/components/SeerLogo";
 
 import SeerHeaderBackground from "@/assets/png/seer-header-bg.png";
-import ChartBar from "@/assets/svg/chart-bar.svg";
 
 import { cn } from "@/utils";
 import { getReadableTextColor } from "@/utils/getReadableTextColor";
 
-import { endDate, marketMetadata } from "@/consts/markets";
+import { marketMetadata } from "@/consts/markets";
 
 import Countdown from "./Countdown";
 import LiquiditySummary from "./LiquiditySummary";
@@ -29,15 +28,6 @@ const Header: React.FC = () => {
         {marketMetadata.name}
       </h1>
       <div className="flex flex-wrap gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <ChartBar className="size-3.5" />
-          <span className="text-klerosUIComponentsSecondaryText text-sm">
-            Trading Period:
-          </span>
-          <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-            Until {endDate}
-          </span>
-        </div>
         <Countdown />
         <LiquiditySummary />
         <ProfitLoss />
