@@ -8,8 +8,11 @@ export interface IExperiment {
   icon: string;
   banner: string;
   countLabel: string;
-  tradingPeriod: string;
+  /** Omit to hide the trading period. */
+  tradingPeriod?: string;
   endTime: number;
+  /** Shown in place of the countdown timer. */
+  countdownLabel?: string;
   status: ExperimentStatus;
   /** Parent market address of the current deployment, lowercase. */
   parentMarket: string;
@@ -52,8 +55,8 @@ export const experiments: IExperiment[] = [
     icon: "movie",
     banner: "/experiment-banners/movies-r3-banner.webp",
     countLabel: "20 Movies",
-    tradingPeriod: "Until September 30th 23:59 UTC",
     endTime: 1790812740,
+    countdownLabel: "Ending soon",
     status: "live",
     parentMarket: "0xacc15cfa0f4ae4932b12ab14595941285098436a",
   },

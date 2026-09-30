@@ -113,6 +113,7 @@ const ExperimentCard: React.FC<ExperimentCardProps> = ({
   countLabel,
   tradingPeriod,
   endTime,
+  countdownLabel,
   status,
   priority = false,
   isRedeemable = false,
@@ -216,24 +217,32 @@ const ExperimentCard: React.FC<ExperimentCardProps> = ({
                   transition={{ duration: 0.3, delay: 0.05 }}
                   className="mt-2 flex flex-col gap-2"
                 >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <TradingIcon className="size-4 shrink-0 [&_path]:fill-[#4872FF]" />
-                    <span className="text-klerosUIComponentsSecondaryText shrink-0 text-sm">
-                      Trading Period:
-                    </span>
-                    <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
-                      {tradingPeriod}
-                    </span>
-                  </div>
+                  {tradingPeriod ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <TradingIcon className="size-4 shrink-0 [&_path]:fill-[#4872FF]" />
+                      <span className="text-klerosUIComponentsSecondaryText shrink-0 text-sm">
+                        Trading Period:
+                      </span>
+                      <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+                        {tradingPeriod}
+                      </span>
+                    </div>
+                  ) : null}
                   <div className="flex items-center gap-2">
                     <CountdownIcon className="size-4 [&_path]:fill-[#4872FF]" />
                     <span className="text-klerosUIComponentsSecondaryText text-sm">
                       Countdown:
                     </span>
-                    <Countdown
-                      date={new Date(endTime * 1000)}
-                      renderer={countdownRenderer}
-                    />
+                    {countdownLabel ? (
+                      <span className="text-klerosUIComponentsPrimaryText text-sm font-semibold">
+                        {countdownLabel}
+                      </span>
+                    ) : (
+                      <Countdown
+                        date={new Date(endTime * 1000)}
+                        renderer={countdownRenderer}
+                      />
+                    )}
                   </div>
                 </motion.div>
               ) : null}
