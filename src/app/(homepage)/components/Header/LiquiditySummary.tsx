@@ -124,7 +124,7 @@ const LiquidityModal: React.FC<ILiquidityModal> = ({
 
 const LiquiditySummary: React.FC = () => {
   const [isOpen, toggleIsOpen] = useToggle(false);
-  const { price: sDaiPrice } = useSDaiPrice();
+  const { price: sDaiPrice, isLoading: isLoadingSDaiPrice } = useSDaiPrice();
 
   const {
     data: liquidityData,
@@ -145,10 +145,10 @@ const LiquiditySummary: React.FC = () => {
   });
 
   const totalLabel = useMemo(() => {
-    if (isLoading) return "...";
-    if (isError || !liquidityData) return "N/A";
-    return `${formatBigNumbers(liquidityData.totalLiquiditySDai)} sDAI`;
-  }, [liquidityData, isError, isLoading]);
+    if (isLoading || isLoadingSDaiPrice) return "...";
+    if (isError || !liquidityData || !sDaiPrice) return "N/A";
+    return `~$${formatBigNumbers(liquidityData.totalLiquiditySDai * sDaiPrice)}`;
+  }, [liquidityData, isError, isLoading, sDaiPrice, isLoadingSDaiPrice]);
 
   const markets = useMemo(
     (): MarketLiquidity[] =>
@@ -161,7 +161,7 @@ const LiquiditySummary: React.FC = () => {
 
   const totalLiquiditySDai = liquidityData?.totalLiquiditySDai ?? 0;
   const totalLiquidityUSD = totalLiquiditySDai * sDaiPrice;
-  const canOpen = markets.length > 0;
+  const canOpen = markets.length > 0 && sDaiPrice > 0;
 
   return (
     <div className="flex items-center gap-2">
