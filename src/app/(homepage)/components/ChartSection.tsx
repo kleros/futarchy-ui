@@ -13,13 +13,11 @@ import ChartSkeleton from "./ChartSkeleton";
 
 const ChartSection: React.FC = () => {
   const initialPlaceholder = useRef(readChartCache()).current;
-  const { data: chartData, isRefreshing } = useChartData(markets, {
-    initialPlaceholder,
-  });
+  const { data: chartData } = useChartData(markets, { initialPlaceholder });
 
   if (isUndefined(chartData)) return <ChartSkeleton />;
 
-  return <Chart data={chartData} {...{ isRefreshing }} />;
+  return <Chart data={chartData} />;
 };
 
 export default ChartSection;
