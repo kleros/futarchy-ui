@@ -11,7 +11,7 @@ import StatsBarIcon from "@/assets/svg/stats-bar.svg";
 import { formatBigNumbers } from "@/utils";
 
 const MarketVolume: React.FC = () => {
-  const { price: sDaiPrice } = useSDaiPrice();
+  const { price: sDaiPrice, isLoading: isLoadingSDaiPrice } = useSDaiPrice();
   const { data, isLoading, isError } = useQuery<MarketVolumeResponse>({
     queryKey: ["market-volume"],
     queryFn: async () => {
@@ -26,10 +26,10 @@ const MarketVolume: React.FC = () => {
   });
 
   const volumeLabel = useMemo(() => {
-    if (isLoading) return "...";
-    if (isError || !data) return "N/A";
+    if (isLoading || isLoadingSDaiPrice) return "...";
+    if (isError || !data || !sDaiPrice) return "N/A";
     return `~$${formatBigNumbers(data.totalVolumeSDai * sDaiPrice)}`;
-  }, [data, isError, isLoading, sDaiPrice]);
+  }, [data, isError, isLoading, sDaiPrice, isLoadingSDaiPrice]);
 
   return (
     <div className="flex items-center gap-2">
