@@ -18,8 +18,6 @@ import StatsBarIcon from "@/assets/svg/stats-bar.svg";
 
 import { formatBigNumbers } from "@/utils";
 
-import { markets } from "@/consts/markets";
-
 interface INotionalVolumeModal {
   isOpen: boolean;
   toggleIsOpen: () => void;
