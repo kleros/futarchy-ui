@@ -44,7 +44,10 @@ const Header: React.FC = () => {
         <UniqueTraders />
         <MarketVolume />
       </div>
-
+      <ExternalLink
+        text="DevCon Side Event - Satisfaction"
+        url="https://devcon-satisfaction.foresight.kleros.io/"
+      />
       <div
         className={clsx(
           "relative mt-8 box-border w-full overflow-hidden rounded-xl",
@@ -57,22 +60,12 @@ const Header: React.FC = () => {
           alt="Seer header background"
           className="absolute -z-2 size-full object-cover max-md:opacity-35"
         />
-        <div className="flex size-full flex-wrap items-center gap-6 px-6 pt-3.75">
+        <div className="flex size-full flex-wrap items-center gap-6 px-6 py-3.75">
           <SeerLogo />
           <p className="text-klerosUIComponentsPrimaryText text-base">
             {marketMetadata.question}
           </p>
         </div>
-        <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
-          You can look at{" "}
-          <ExternalLink
-            text="previous assessments"
-            url="https://www.criticker.com/profile/clesaege/"
-            showIcon={false}
-            className="text-xs"
-          />
-          , to get an idea of what he would like/dislike.
-        </p>
       </div>
       {!isLoading && winningMarkets.length > 0 ? (
         <div className="border-b-klerosUIComponentsStroke w-full space-y-2 border-b pb-8">
@@ -102,7 +95,7 @@ const Header: React.FC = () => {
                   >
                     |
                   </span>
-                  {finalAnswer}%
+                  {finalAnswer} attendees
                 </p>
               </div>
             ))}
