@@ -44,7 +44,10 @@ const Header: React.FC = () => {
         <UniqueTraders />
         <MarketVolume />
       </div>
-
+      <ExternalLink
+        text="DevCon Side Event - Attendance"
+        url="https://devcon-attendance.foresight.kleros.io/"
+      />
       <div
         className={clsx(
           "relative mt-8 box-border w-full overflow-hidden rounded-xl",
@@ -64,14 +67,14 @@ const Header: React.FC = () => {
           </p>
         </div>
         <p className="text-klerosUIComponentsSecondaryText px-6 pb-3.75 text-xs whitespace-pre-line">
-          You can look at{" "}
+          Satisfaction is measured as the attendees&apos; mean rating in the{" "}
           <ExternalLink
-            text="previous assessments"
-            url="https://www.criticker.com/profile/clesaege/"
+            text="post-event survey"
+            url="https://tally.so/r/D46oRq"
             showIcon={false}
             className="text-xs"
           />
-          , to get an idea of what he would like/dislike.
+          .
         </p>
       </div>
       {!isLoading && winningMarkets.length > 0 ? (
@@ -102,7 +105,7 @@ const Header: React.FC = () => {
                   >
                     |
                   </span>
-                  {finalAnswer}%
+                  {finalAnswer}/10
                 </p>
               </div>
             ))}
