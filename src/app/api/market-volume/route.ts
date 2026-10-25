@@ -18,8 +18,23 @@ import { markets } from "@/consts/markets";
 
 type PoolRow = GetPoolsQuery["pools"][number];
 
+type OutcomeNotionalVolume = {
+  outcome: "UP" | "DOWN";
+  /** Outcome tokens traded. */
+  volume: number;
+  notionalSDai: number;
+};
+
+export type MarketNotionalVolume = {
+  name: string;
+  notionalSDai: number;
+  outcomes: OutcomeNotionalVolume[];
+};
+
 export type MarketVolumeResponse = {
   totalVolumeSDai: number;
+  totalNotionalSDai: number;
+  data: MarketNotionalVolume[];
 };
 
 function pairKey(tokenA: Address, tokenB: Address) {
@@ -27,18 +42,17 @@ function pairKey(tokenA: Address, tokenB: Address) {
   return `${token0.toLowerCase()}-${token1.toLowerCase()}`;
 }
 
-function poolUnderlyingVolume(pool: PoolRow, underlying: Address) {
-  const address = underlying.toLowerCase();
-  if (pool.token0.id.toLowerCase() === address) {
-    return Number(pool.volumeToken0);
-  }
-  if (pool.token1.id.toLowerCase() === address) {
-    return Number(pool.volumeToken1);
-  }
-  return 0;
+function poolVolumeLegs(pool: PoolRow | undefined, underlying: Address) {
+  if (!pool) return { underlying: 0, outcome: 0 };
+
+  const volume0 = Number(pool.volumeToken0);
+  const volume1 = Number(pool.volumeToken1);
+  return pool.token0.id.toLowerCase() === underlying.toLowerCase()
+    ? { underlying: volume0, outcome: volume1 }
+    : { underlying: volume1, outcome: volume0 };
 }
 
-async function getTotalVolumeSDai() {
+async function getMarketVolumes(): Promise<MarketVolumeResponse> {
   const subgraphUrl = getGraphUrl();
   if (!subgraphUrl.startsWith("http")) {
     throw new Error("Swapr subgraph URL is not configured");
@@ -73,20 +87,42 @@ async function getTotalVolumeSDai() {
     ]),
   );
 
-  return markets.reduce((total, market) => {
-    const upPool = poolsByPair.get(
-      pairKey(market.underlyingToken, market.upToken),
-    );
-    const downPool = poolsByPair.get(
-      pairKey(market.underlyingToken, market.downToken),
-    );
-    // we only want underlying volume to ltr convert to sDAI
-    const underlyingVolume =
-      (upPool ? poolUnderlyingVolume(upPool, market.underlyingToken) : 0) +
-      (downPool ? poolUnderlyingVolume(downPool, market.underlyingToken) : 0);
+  let totalVolumeSDai = 0;
+  let totalNotionalSDai = 0;
 
-    return total + underlyingToSessionSDai(underlyingVolume);
-  }, 0);
+  const data = markets.map((market): MarketNotionalVolume => {
+    const up = poolVolumeLegs(
+      poolsByPair.get(pairKey(market.underlyingToken, market.upToken)),
+      market.underlyingToken,
+    );
+    const down = poolVolumeLegs(
+      poolsByPair.get(pairKey(market.underlyingToken, market.downToken)),
+      market.underlyingToken,
+    );
+
+    // An UP or DOWN token redeems for at most one underlying, so its notional
+    // is one underlying.
+    const outcomes: OutcomeNotionalVolume[] = [
+      {
+        outcome: "UP",
+        volume: up.outcome,
+        notionalSDai: underlyingToSessionSDai(up.outcome),
+      },
+      {
+        outcome: "DOWN",
+        volume: down.outcome,
+        notionalSDai: underlyingToSessionSDai(down.outcome),
+      },
+    ];
+    const notionalSDai = underlyingToSessionSDai(up.outcome + down.outcome);
+
+    totalVolumeSDai += underlyingToSessionSDai(up.underlying + down.underlying);
+    totalNotionalSDai += notionalSDai;
+
+    return { name: market.name, notionalSDai, outcomes };
+  });
+
+  return { totalVolumeSDai, totalNotionalSDai, data };
 }
 
 export async function OPTIONS() {
@@ -102,11 +138,7 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const totalVolumeSDai = await getTotalVolumeSDai();
-
-    const res = NextResponse.json({
-      totalVolumeSDai,
-    } satisfies MarketVolumeResponse);
+    const res = NextResponse.json(await getMarketVolumes());
     res.headers.set("Access-Control-Allow-Origin", "*");
     res.headers.set(
       "Netlify-CDN-Cache-Control",

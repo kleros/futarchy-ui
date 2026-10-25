@@ -85,7 +85,8 @@ const Legend: React.FC<ILegend> = ({
             {filteredMarkets.map(([name, { market, data }]) => {
               const isVisible = visibleMarkets.has(name);
               const isHovered = hoveredMarket === name;
-              const value = data.at(-1)?.value?.toFixed(2) ?? "0.00";
+              // finer than market.precision, which sets the chart axis decimals
+              const value = (data.at(-1)?.value ?? 0).toFixed(2);
               const color = textColor(market.color);
 
               return (

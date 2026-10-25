@@ -48,16 +48,20 @@ export async function calculateMarketLiquidity(
     ["UP", upPrice],
     ["DOWN", downPrice],
   ] as const) {
+    const isOutcome = (symbol: string) => {
+      const upper = symbol.toUpperCase();
+      return upper === outcome || upper.endsWith(`_${outcome}`);
+    };
+
     const pool = poolBalance.find(
       (entry) =>
         entry &&
-        (entry.token0.symbol.toUpperCase() === outcome ||
-          entry.token1.symbol.toUpperCase() === outcome),
+        (isOutcome(entry.token0.symbol) || isOutcome(entry.token1.symbol)),
     );
 
     if (!pool) continue;
 
-    const outcomeIsToken0 = pool.token0.symbol.toUpperCase() === outcome;
+    const outcomeIsToken0 = isOutcome(pool.token0.symbol);
     const outcomeBalance = outcomeIsToken0
       ? pool.token0.balance
       : pool.token1.balance;

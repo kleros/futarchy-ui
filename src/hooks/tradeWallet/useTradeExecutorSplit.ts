@@ -64,6 +64,7 @@ export const useTradeExecutorSplit = (onSuccess?: () => unknown) => {
       onSuccess?.();
       queryClient.refetchQueries({ queryKey: ["useTokenBalance"] });
       queryClient.refetchQueries({ queryKey: ["useTokensBalances"] });
+      queryClient.refetchQueries({ queryKey: ["capital-deployed"] });
     },
   });
 };
