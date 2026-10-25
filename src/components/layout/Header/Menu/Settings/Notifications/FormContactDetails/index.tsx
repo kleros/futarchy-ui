@@ -7,8 +7,11 @@ import {
   Form,
   TextField,
 } from "@kleros/ui-components-library";
+import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useAccount } from "wagmi";
+
+import { isSubscribedQueryKey } from "@/hooks/useIsSubscribed";
 
 import InfoCard from "@/components/InfoCard";
 
@@ -41,6 +44,7 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
   const [emailInput, setEmailInput] = useState<string>("");
   const [isConfirmingUnsubscribe, setIsConfirmingUnsubscribe] = useState(false);
   const { address } = useAccount();
+  const queryClient = useQueryClient();
   const {
     user,
     isAddingUser,
@@ -97,6 +101,7 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
         }
         setEmailInput("");
         setIsConfirmingUnsubscribe(false);
+        queryClient.setQueryData(isSubscribedQueryKey(address), false);
         successToast("You have been unsubscribed from notifications.");
         togglePopup();
       })
@@ -104,7 +109,7 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
         console.error("Unsubscribe failed:", err);
         errorToast(`Unsubscribe failed: ${err?.message || "Unknown error"}`);
       });
-  }, [address, deleteUser, togglePopup]);
+  }, [address, deleteUser, queryClient, togglePopup]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,6 +117,7 @@ const FormContactDetails: React.FC<FormDetailsParams> = ({
       return;
     }
     const handleSuccess = (action: string) => {
+      queryClient.setQueryData(isSubscribedQueryKey(address), true);
       successToast(`${action} successful!`);
       togglePopup();
     };

@@ -1,19 +1,31 @@
 import { Button, Card } from "@kleros/ui-components-library";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import { useToggle } from "react-use";
 
+import { useIsTradingPeriodEnded } from "@/hooks/useIsTradingPeriodEnded";
 import { usePredictionMarkets } from "@/hooks/usePredictionMarkets";
 
 import EnsureChain from "@/components/EnsureChain";
 
 import CheckOutline from "@/assets/svg/check-outline-button.svg";
 
-import { PredictAllPopup } from "./PredictAllPopup";
-import SuccessPopup from "./PredictAllPopup/SuccessPopup";
+const PredictAllPopup = dynamic(
+  () =>
+    import("./PredictAllPopup").then((mod) => ({
+      default: mod.PredictAllPopup,
+    })),
+  { ssr: false },
+);
+
+const SuccessPopup = dynamic(() => import("./PredictAllPopup/SuccessPopup"), {
+  ssr: false,
+});
 
 const PredictAll: React.FC = () => {
   const [isOpen, toggleIsOpen] = useToggle(false);
   const markets = usePredictionMarkets();
+  const isTradingPeriodEnded = useIsTradingPeriodEnded();
   const [isSuccessPopupOpen, toggleSuccessPopup] = useToggle(false);
 
   return (
@@ -42,17 +54,19 @@ const PredictAll: React.FC = () => {
           }
           text="Predict Selected"
           onPress={toggleIsOpen}
-          isDisabled={markets.length === 0}
+          isDisabled={markets.length === 0 || isTradingPeriodEnded}
         />
         {isOpen ? (
           <PredictAllPopup {...{ isOpen, toggleIsOpen, toggleSuccessPopup }} />
         ) : null}
-        <SuccessPopup
-          isVisible={isSuccessPopupOpen}
-          closePopup={() => {
-            toggleSuccessPopup(false);
-          }}
-        />
+        {isSuccessPopupOpen ? (
+          <SuccessPopup
+            isVisible={isSuccessPopupOpen}
+            closePopup={() => {
+              toggleSuccessPopup(false);
+            }}
+          />
+        ) : null}
       </EnsureChain>
     </Card>
   );

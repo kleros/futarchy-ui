@@ -5,6 +5,7 @@ import { useToggle } from "react-use";
 import { useAccount } from "wagmi";
 
 import { useTradeWallet } from "@/context/TradeWalletContext";
+import { useCapitalDeployed } from "@/hooks/useCapitalDeployed";
 import { useMarketResolutionInfo } from "@/hooks/useMarketResolutionInfo";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 
@@ -39,6 +40,12 @@ export const TradeWallet = () => {
     address: tradeExecutor,
     token: collateral.address,
   });
+
+  const {
+    data: capitalDeployed,
+    isLoading: isCapitalDeployedLoading,
+    isError: isCapitalDeployedError,
+  } = useCapitalDeployed(tradeExecutor);
 
   const blockExplorerUrl = chain?.blockExplorers?.default?.url;
 
@@ -134,23 +141,48 @@ export const TradeWallet = () => {
               </div>
             </div>
 
-            {/* Right side: balance */}
+            {/* Right side: balance and total traded */}
             <div
               className={clsx(
-                "flex h-full flex-col items-start p-6 max-md:pl-0",
+                "flex h-full flex-wrap items-start gap-x-10 gap-y-4 p-6 max-md:pl-0",
                 "border-klerosUIComponentsStroke border-t md:border-t-0 md:border-l",
               )}
             >
-              <h3 className="text-klerosUIComponentsSecondaryText text-sm">
-                sDai Balance
-              </h3>
-              <h4 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
-                {isBalanceLoading ? (
-                  <span className="animate-pulse">Loading...</span>
-                ) : (
-                  <span>{formatValue(balanceData?.value ?? 0n)}</span>
-                )}
-              </h4>
+              <div className="flex flex-col items-start">
+                <h3 className="text-klerosUIComponentsSecondaryText text-sm">
+                  sDai Balance
+                </h3>
+                <h4 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
+                  {isBalanceLoading ? (
+                    <span className="animate-pulse">Loading...</span>
+                  ) : (
+                    <span>{formatValue(balanceData?.value ?? 0n)}</span>
+                  )}
+                </h4>
+              </div>
+
+              <div className="flex flex-col items-start">
+                <WithHelpTooltip
+                  tooltipMsg={`Total sDai you have committed to predictions this session.
+                              Deposits made in xDai or Foresight Credits are counted
+                              once converted to sDai.`}
+                >
+                  <h3 className="text-klerosUIComponentsSecondaryText text-sm">
+                    Total Traded
+                  </h3>
+                </WithHelpTooltip>
+                <h4 className="text-klerosUIComponentsPrimaryText text-2xl font-semibold">
+                  {isCapitalDeployedLoading ? (
+                    <span className="animate-pulse">Loading...</span>
+                  ) : (
+                    <span>
+                      {isCapitalDeployedError
+                        ? "-"
+                        : formatValue(capitalDeployed ?? 0n)}
+                    </span>
+                  )}
+                </h4>
+              </div>
             </div>
           </div>
           <ProjectBalances />

@@ -52,6 +52,30 @@ query GetPools(
   }
 }
 
+query GetSwaps(
+  $skip: Int = 0
+  $first: Int
+  $orderBy: Swap_orderBy
+  $orderDirection: OrderDirection
+  $where: Swap_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  swaps(
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
+    subgraphError: $subgraphError
+  ) {
+    id
+    origin
+    __typename
+  }
+}
+
 query GetTicks(
   $skip: Int = 0
   $first: Int

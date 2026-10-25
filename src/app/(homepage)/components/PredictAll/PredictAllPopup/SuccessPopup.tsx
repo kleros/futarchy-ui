@@ -4,11 +4,12 @@ import { useAtlasProvider } from "@kleros/kleros-app";
 import { Button, Modal, TextField } from "@kleros/ui-components-library";
 import clsx from "clsx";
 
+import { useIsSubscribed } from "@/hooks/useIsSubscribed";
+
+import InfoCard from "@/components/InfoCard";
 import FormContactDetails from "@/components/layout/Header/Menu/Settings/Notifications/FormContactDetails";
 
 import CheckIcon from "@/assets/svg/check-circle.svg";
-
-import InfoCard from "@/components/InfoCard";
 
 interface ISuccessPopup {
   isVisible: boolean;
@@ -16,8 +17,7 @@ interface ISuccessPopup {
 }
 const SuccessPopup: React.FC<ISuccessPopup> = ({ isVisible, closePopup }) => {
   const { user } = useAtlasProvider();
-
-  const isSubscribed = Boolean(user?.email);
+  const { isSubscribed } = useIsSubscribed();
 
   return (
     <Modal
@@ -36,27 +36,29 @@ const SuccessPopup: React.FC<ISuccessPopup> = ({ isVisible, closePopup }) => {
       <hr className="border-klerosUIComponentsStroke w-full" />
       {isSubscribed ? (
         <div className="flex w-full flex-col items-center gap-8">
-          <div>
-            {isSubscribed ? null : (
-              <h2 className="text-klerosUIComponentsPrimaryText w-full text-center text-base font-semibold">
-                Subscribe for Email Notifications
-              </h2>
-            )}
-            <p className="text-klerosUIComponentsSecondaryText w-full text-center text-sm">
-              You will receive a notification on the following email once the
-              market resolves.
-            </p>
-          </div>
+          <p className="text-klerosUIComponentsSecondaryText w-full text-center text-sm">
+            {user?.email
+              ? "You will receive a notification on the following email once the market resolves."
+              : "You are already subscribed to notifications. " +
+                "You will receive an email once the market resolves."}
+          </p>
           <div className="space-y-2">
-            <TextField
-              isDisabled
-              value={user?.email}
-              className={clsx("w-full [&_input]:text-sm", "[&>label]:hidden")}
-              label="Email"
-            />
+            {user?.email ? (
+              <TextField
+                isDisabled
+                value={user?.email}
+                className={clsx("w-full [&_input]:text-sm", "[&>label]:hidden")}
+                label="Email"
+              />
+            ) : null}
             <InfoCard
               className="w-fit text-sm wrap-break-word"
-              msg="You can update your subscription preference at any time on Settings. Please make sure that you have confirmed your email."
+              msg={
+                user?.email
+                  ? "You can update your subscription preference at any time on Settings. " +
+                    "Please make sure that you have confirmed your email."
+                  : "You can update your email or subscription preference at any time on Settings."
+              }
             />
           </div>
           <Button small text="Close" onPress={closePopup} />
@@ -64,11 +66,9 @@ const SuccessPopup: React.FC<ISuccessPopup> = ({ isVisible, closePopup }) => {
       ) : (
         <div className="flex w-full flex-col items-center gap-11.25">
           <div>
-            {isSubscribed ? null : (
-              <h2 className="text-klerosUIComponentsPrimaryText w-full text-center text-base font-semibold">
-                Subscribe for Email Notifications
-              </h2>
-            )}
+            <h2 className="text-klerosUIComponentsPrimaryText w-full text-center text-base font-semibold">
+              Subscribe for Email Notifications
+            </h2>
             <p className="text-klerosUIComponentsSecondaryText w-full text-center text-sm">
               We advise you to subscribe to receive notifications about the
               progress of your predictions.
